@@ -1,0 +1,409 @@
+/* ============================================
+   Gagal Pickup / Pembatalan — Page Styles
+   Prefix: gp- (untuk avoid conflict)
+   ============================================ */
+
+/* ---------- Page Wrapper ---------- */
+.gp-page {
+    padding: 24px 28px;
+    background: #f8fafc;
+    min-height: 100%;
+    font-family: 'Plus Jakarta Sans', 'Figtree', sans-serif;
+}
+
+/* ---------- Page Header ---------- */
+.gp-header {
+    margin-bottom: 20px;
+}
+
+.gp-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+/* ---------- Info Banner ---------- */
+.gp-info-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.gp-info-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.gp-info-text {
+    flex: 1;
+}
+
+.gp-info-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d4ed8;
+    margin: 0 0 4px 0;
+}
+
+.gp-info-desc {
+    font-size: 13px;
+    color: #374151;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.gp-info-illustration {
+    flex-shrink: 0;
+    opacity: 0.85;
+}
+
+/* ---------- Stats Grid ---------- */
+.gp-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 1100px) {
+    .gp-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+    .gp-stats-grid { grid-template-columns: 1fr; }
+}
+
+.gp-stat-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 18px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: box-shadow 0.2s;
+}
+
+.gp-stat-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+}
+
+.gp-stat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.gp-stat-icon--red    { background: #fee2e2; }
+.gp-stat-icon--orange { background: #ffedd5; }
+.gp-stat-icon--yellow { background: #fef9c3; }
+.gp-stat-icon--purple { background: #ede9fe; }
+
+.gp-stat-body { flex: 1; }
+
+.gp-stat-label {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0 0 2px 0;
+    font-weight: 500;
+}
+
+.gp-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 2px 0;
+    line-height: 1.1;
+}
+
+.gp-stat-sub {
+    font-size: 11px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+/* ---------- Table Card ---------- */
+.gp-table-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* ---------- Toolbar ---------- */
+.gp-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 18px;
+    border-bottom: 1px solid #f3f4f6;
+    flex-wrap: wrap;
+}
+
+.gp-search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+.gp-search-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.gp-search-input {
+    width: 100%;
+    padding: 9px 14px 9px 36px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #374151;
+    outline: none;
+    background: #f9fafb;
+    transition: border-color 0.2s, background 0.2s;
+    box-sizing: border-box;
+}
+
+.gp-search-input::placeholder { color: #9ca3af; }
+
+.gp-search-input:focus {
+    border-color: #3b82f6;
+    background: #fff;
+}
+
+.gp-toolbar-right {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.gp-btn-date,
+.gp-btn-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    background: #fff;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.gp-btn-date:hover,
+.gp-btn-filter:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+/* ---------- Table ---------- */
+.gp-table-wrap {
+    overflow-x: auto;
+}
+
+.gp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    min-width: 760px;
+}
+
+.gp-table thead tr {
+    background: #f9fafb;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.gp-table thead th {
+    padding: 11px 18px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.gp-table tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.15s;
+}
+
+.gp-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.gp-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.gp-table tbody td {
+    padding: 14px 18px;
+    vertical-align: middle;
+    color: #374151;
+}
+
+/* Order ID */
+.gp-order-id {
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 2px 0;
+    font-size: 13.5px;
+}
+
+.gp-order-sub {
+    font-size: 12px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+/* Customer */
+.gp-customer-name {
+    font-weight: 500;
+    color: #111827;
+    margin: 0 0 2px 0;
+}
+
+.gp-customer-phone {
+    font-size: 12px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+/* Date */
+.gp-date {
+    font-weight: 500;
+    color: #374151;
+    margin: 0 0 2px 0;
+}
+
+.gp-time {
+    font-size: 12px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+/* ---------- Badges ---------- */
+.gp-badge {
+    display: inline-block;
+    padding: 4px 11px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.gp-badge--gagal {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fca5a5;
+}
+
+.gp-badge--batal {
+    background: #fff7ed;
+    color: #ea580c;
+    border: 1px solid #fed7aa;
+}
+
+/* ---------- Detail Button ---------- */
+.gp-btn-detail {
+    padding: 7px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    background: #fff;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+
+.gp-btn-detail:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    color: #111827;
+}
+
+/* ---------- Pagination ---------- */
+.gp-pagination-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-top: 1px solid #f3f4f6;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.gp-pagination-info {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.gp-pagination {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.gp-page-btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    background: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.gp-page-btn:hover:not(:disabled):not(.gp-page-btn--active) {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+.gp-page-btn--active {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+    font-weight: 600;
+}
+
+.gp-page-btn--nav:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.gp-page-ellipsis {
+    font-size: 13px;
+    color: #9ca3af;
+    padding: 0 4px;
+    user-select: none;
+}

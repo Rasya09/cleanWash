@@ -1,0 +1,396 @@
+/* ============================================
+   Pesanan Saya — Page Styles
+   Prefix: ps- (untuk avoid conflict)
+   ============================================ */
+
+/* ---------- Page Wrapper ---------- */
+.ps-page {
+    padding: 28px 32px;
+    background: #f8fafc;
+    min-height: 100%;
+    font-family: 'Plus Jakarta Sans', 'Figtree', sans-serif;
+}
+
+/* ---------- Page Header ---------- */
+.ps-header {
+    margin-bottom: 24px;
+}
+
+.ps-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #111827;
+    margin: 0 0 4px 0;
+}
+
+.ps-subtitle {
+    font-size: 13.5px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* ---------- Stats Grid ---------- */
+.ps-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+    .ps-stats-grid { grid-template-columns: 1fr; }
+}
+
+.ps-stat-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 20px 22px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    transition: box-shadow 0.2s;
+}
+
+.ps-stat-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+}
+
+.ps-stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ps-stat-icon--blue   { background: #eff6ff; }
+.ps-stat-icon--orange { background: #fff7ed; }
+.ps-stat-icon--green  { background: #f0fdf4; }
+
+.ps-stat-body { flex: 1; }
+
+.ps-stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #9ca3af;
+    margin: 0 0 4px 0;
+    text-transform: uppercase;
+}
+
+.ps-stat-value {
+    font-size: 30px;
+    font-weight: 800;
+    color: #111827;
+    margin: 0;
+    line-height: 1;
+}
+
+/* ---------- Table Card ---------- */
+.ps-table-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+/* ---------- Search ---------- */
+.ps-search-wrap {
+    position: relative;
+    padding: 18px 20px 0;
+}
+
+.ps-search-icon {
+    position: absolute;
+    left: 34px;
+    top: 50%;
+    transform: translateY(-30%);
+    pointer-events: none;
+}
+
+.ps-search-input {
+    width: 100%;
+    max-width: 440px;
+    padding: 10px 16px 10px 38px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 13.5px;
+    color: #374151;
+    background: #f9fafb;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.ps-search-input::placeholder { color: #9ca3af; }
+
+.ps-search-input:focus {
+    border-color: #3b82f6;
+    background: #fff;
+}
+
+/* ---------- Toolbar (Tabs + Actions) ---------- */
+.ps-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid #f3f4f6;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Tabs */
+.ps-tabs {
+    display: flex;
+    gap: 4px;
+}
+
+.ps-tab {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #6b7280;
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.ps-tab:hover:not(.ps-tab--active) {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.ps-tab--active {
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 700;
+}
+
+/* Action Buttons */
+.ps-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.ps-btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    background: #fff;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.ps-btn-action:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+/* ---------- Table ---------- */
+.ps-table-wrap {
+    overflow-x: auto;
+}
+
+.ps-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    min-width: 700px;
+}
+
+.ps-table thead tr {
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.ps-table thead th {
+    padding: 12px 20px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.ps-table tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.15s;
+}
+
+.ps-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.ps-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.ps-table tbody td {
+    padding: 16px 20px;
+    vertical-align: middle;
+    color: #374151;
+}
+
+/* Order ID */
+.ps-order-id {
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 3px 0;
+    font-size: 14px;
+}
+
+.ps-order-time {
+    font-size: 12px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+/* Customer Avatar */
+.ps-customer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ps-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    letter-spacing: 0.03em;
+}
+
+.ps-avatar--blue  { background: #dbeafe; color: #1d4ed8; }
+.ps-avatar--green { background: #dcfce7; color: #15803d; }
+.ps-avatar--gray  { background: #f3f4f6; color: #4b5563; }
+
+.ps-customer-name {
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Total */
+.ps-total {
+    font-weight: 700;
+    color: #111827;
+}
+
+/* ---------- Badges ---------- */
+.ps-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.ps-badge--proses {
+    background: #fef9c3;
+    color: #a16207;
+    border: 1px solid #fde047;
+}
+
+.ps-badge--selesai {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+}
+
+.ps-badge--batal {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fca5a5;
+}
+
+/* ---------- Detail Link ---------- */
+.ps-link-detail {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #2563eb;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.ps-link-detail:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+/* ---------- Pagination ---------- */
+.ps-pagination-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid #f3f4f6;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.ps-pagination-info {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #9ca3af;
+    letter-spacing: 0.04em;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.ps-pagination {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ps-page-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    background: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.ps-page-btn:hover:not(.ps-page-btn--active) {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+.ps-page-btn--active {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+    font-weight: 700;
+}
+
+.ps-page-btn--nav {
+    color: #6b7280;
+}
