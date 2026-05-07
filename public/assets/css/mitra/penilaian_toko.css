@@ -1,0 +1,277 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #2563EB;
+    --blue-light: #EFF6FF;
+    --blue-mid: #DBEAFE;
+    --green: #16A34A;
+    --green-bg: #DCFCE7;
+    --orange: #D97706;
+    --orange-bg: #FEF3C7;
+    --red: #DC2626;
+    --red-bg: #FEE2E2;
+    --yellow: #F59E0B;
+    --gray-900: #111827;
+    --gray-700: #374151;
+    --gray-600: #4B5563;
+    --gray-500: #6B7280;
+    --gray-400: #9CA3AF;
+    --gray-300: #D1D5DB;
+    --gray-200: #E5E7EB;
+    --gray-100: #F3F4F6;
+    --gray-50: #F9FAFB;
+    --white: #FFFFFF;
+    --sidebar-w: 220px;
+    --radius: 10px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+    --font: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--gray-50);
+    color: var(--gray-900);
+    display: flex;
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* ── MAIN ── */
+  .main-wrap {
+    flex: 1; display: flex; flex-direction: column; min-height: 100vh;
+  }
+
+  /* ── CONTENT ── */
+  .content { padding: 28px 32px; flex: 1; }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; margin-bottom: 22px;
+  }
+  .page-header h1 { font-size: 22px; font-weight: 700; margin-bottom: 3px; }
+  .page-header p { font-size: 13px; color: var(--gray-500); }
+  .btn-outline {
+    display: flex; align-items: center; gap: 6px;
+    border: 1px solid var(--gray-300); border-radius: 8px;
+    padding: 8px 16px; background: white;
+    font-family: var(--font); font-size: 13.5px; font-weight: 500;
+    color: var(--gray-700); cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-outline:hover { background: var(--gray-50); }
+
+  /* ── STAT CARDS ── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr;
+    gap: 14px; margin-bottom: 20px;
+  }
+  .stat-card {
+    background: white; border: 1px solid var(--gray-200);
+    border-radius: var(--radius); padding: 16px 18px;
+    box-shadow: var(--shadow-sm);
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .stat-card .label { font-size: 12px; color: var(--gray-500); margin-bottom: 6px; }
+  .stat-card .value { font-size: 28px; font-weight: 700; line-height: 1; }
+  .stat-card .sub { font-size: 12px; color: var(--gray-500); margin-top: 4px; }
+  .stat-card .trend {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 12px; font-weight: 600;
+    color: var(--green); background: var(--green-bg);
+    border-radius: 5px; padding: 2px 7px; margin-top: 2px;
+  }
+  .stat-icon-wrap {
+    width: 38px; height: 38px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .stat-icon-wrap.purple { background: #EDE9FE; }
+  .stat-icon-wrap.green  { background: var(--green-bg); }
+  .stat-icon-wrap.yellow { background: var(--orange-bg); }
+  .stat-icon-wrap.red    { background: var(--red-bg); }
+
+  .stars-row { display: flex; align-items: center; gap: 2px; margin: 4px 0; font-size: 17px; }
+  .star-filled { color: var(--yellow); }
+  .star-half   { color: var(--yellow); position: relative; display: inline-block; }
+  .star-empty  { color: var(--gray-300); }
+
+  /* ── MIDDLE GRID ── */
+  .middle-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px; margin-bottom: 20px;
+  }
+
+  .panel {
+    background: white; border: 1px solid var(--gray-200);
+    border-radius: var(--radius); padding: 20px 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .panel h3 { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+
+  /* Ringkasan Rating */
+  .rating-summary { display: flex; gap: 28px; align-items: flex-start; }
+  .rating-big { text-align: center; flex-shrink: 0; }
+  .rating-big .num { font-size: 52px; font-weight: 700; line-height: 1; }
+  .rating-big .stars-row { justify-content: center; margin: 6px 0 4px; }
+  .rating-big small { font-size: 12px; color: var(--gray-500); }
+
+  .bar-list { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
+  .bar-row .star-label { display: flex; align-items: center; gap: 3px; min-width: 32px; color: var(--gray-600); font-weight: 500; }
+  .bar-row .bar-track { flex: 1; height: 8px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
+  .bar-row .bar-fill { height: 100%; background: var(--yellow); border-radius: 99px; }
+  .bar-row .bar-count { min-width: 56px; text-align: right; color: var(--gray-500); font-size: 12px; }
+
+  /* Rating per Kategori */
+  .kategori-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .kategori-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 0; border-bottom: 1px solid var(--gray-100);
+    gap: 8px;
+  }
+  .kategori-item:last-child { border-bottom: none; }
+  .kat-label { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--gray-700); }
+  .kat-label .kicon { font-size: 15px; }
+  .kat-right { display: flex; align-items: center; gap: 6px; }
+  .kat-stars { display: flex; gap: 1px; font-size: 13px; }
+  .kat-score { font-size: 13px; font-weight: 700; color: var(--gray-900); }
+
+  .promo-box {
+    background: #F5F3FF; border-radius: var(--radius);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 24px 20px;
+    gap: 10px;
+  }
+  .promo-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: #DDD6FE;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+  }
+  .promo-box p { font-size: 14px; font-weight: 700; color: var(--gray-800); }
+  .promo-box small { font-size: 12px; color: var(--gray-500); }
+
+  /* ── BOTTOM GRID ── */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 16px;
+  }
+
+  /* Ulasan Terbaru */
+  .filter-tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab {
+    border: 1px solid var(--gray-200);
+    border-radius: 7px; padding: 5px 13px;
+    background: white; font-family: var(--font);
+    font-size: 13px; cursor: pointer; color: var(--gray-600);
+    transition: all .15s;
+  }
+  .tab:hover { background: var(--gray-100); }
+  .tab.active {
+    background: var(--blue); border-color: var(--blue);
+    color: white; font-weight: 600;
+  }
+
+  /* Review Cards */
+  .review-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .review-card {
+    background: white; border: 1px solid var(--gray-200);
+    border-radius: var(--radius); padding: 16px 18px;
+    box-shadow: var(--shadow-sm);
+    display: flex; gap: 14px;
+  }
+
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    font-weight: 700; font-size: 14px; color: white;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .av-blue   { background: #60A5FA; }
+  .av-indigo { background: #818CF8; }
+  .av-green  { background: #34D399; }
+  .av-pink   { background: #F472B6; }
+
+  .review-body { flex: 1; min-width: 0; }
+  .review-top { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; flex-wrap: wrap; }
+  .reviewer-name { font-size: 13.5px; font-weight: 700; }
+  .pelanggan-badge {
+    background: var(--green-bg); color: var(--green);
+    font-size: 11px; font-weight: 600;
+    border-radius: 5px; padding: 2px 8px;
+  }
+
+  .review-meta { font-size: 12px; color: var(--gray-500); margin-bottom: 6px; }
+  .review-meta span { margin-right: 6px; }
+
+  .review-stars { display: flex; gap: 2px; font-size: 14px; margin-bottom: 8px; }
+  .review-date  { font-size: 12px; color: var(--gray-400); margin-left: auto; }
+
+  .review-text { font-size: 13px; color: var(--gray-700); line-height: 1.55; }
+
+  .review-images { display: flex; gap: 8px; margin-top: 10px; }
+  .review-img {
+    width: 64px; height: 64px; border-radius: 8px;
+    object-fit: cover; background: var(--gray-200);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; overflow: hidden;
+  }
+  .review-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+
+  .review-more {
+    font-size: 18px; color: var(--gray-400);
+    cursor: pointer; margin-left: auto;
+    background: none; border: none;
+    align-self: flex-start; padding: 0 4px;
+  }
+
+  /* ── SIDEBAR KATA PELANGGAN ── */
+  .sidebar-panel {
+    background: white; border: 1px solid var(--gray-200);
+    border-radius: var(--radius); padding: 20px 18px;
+    box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .sidebar-panel h3 { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+
+  .kata-list { display: flex; flex-direction: column; gap: 0; }
+  .kata-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .kata-item:last-child { border-bottom: none; }
+  .kata-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .kata-icon.green  { background: var(--green-bg); }
+  .kata-icon.blue   { background: var(--blue-light); }
+  .kata-icon.yellow { background: var(--orange-bg); }
+  .kata-icon.red    { background: var(--red-bg); }
+
+  .kata-info strong { font-size: 15px; font-weight: 700; display: block; }
+  .kata-info small  { font-size: 12px; color: var(--gray-500); }
+
+  .btn-primary {
+    display: flex; align-items: center; justify-content: center;
+    background: var(--blue); color: white;
+    border: none; border-radius: 9px; padding: 12px;
+    font-family: var(--font); font-size: 13.5px; font-weight: 600;
+    cursor: pointer; margin-top: 16px;
+    transition: background .15s; width: 100%;
+  }
+  .btn-primary:hover { background: #1D4ED8; }
+
+  /* review star+date row */
+  .review-star-row {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 8px;
+  }

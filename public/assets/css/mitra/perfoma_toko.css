@@ -1,0 +1,192 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #f4f6f9;
+    color: #1a1d23;
+    font-size: 13px;
+    min-height: 100vh;
+  }
+
+  /* ── Layout ── */
+  .page { 
+    /* max-width: 1280px;  */
+    /* margin: 0 auto;  */
+    padding: 24px 28px; }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .header-title h1 { font-size: 20px; font-weight: 700; color: #111827; }
+  .header-title p  { font-size: 12.5px; color: #6b7280; margin-top: 2px; }
+  .header-actions  { display: flex; gap: 10px; align-items: center; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: 1px solid #d1d5db; background: #fff; color: #374151;
+    white-space: nowrap;
+  }
+  .btn-primary { background: #2563eb; color: #fff; border-color: #2563eb; }
+  .btn svg { width: 15px; height: 15px; }
+
+  /* ── KPI Cards ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .kpi-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+  }
+  .kpi-label { font-size: 11.5px; color: #6b7280; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .kpi-label .icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .icon-blue   { background: #eff6ff; }
+  .icon-purple { background: #f5f3ff; }
+  .icon-green  { background: #f0fdf4; }
+  .icon-orange { background: #fff7ed; }
+  .icon-cyan   { background: #ecfeff; }
+  .icon-red    { background: #fef2f2; }
+  .kpi-value  { font-size: 22px; font-weight: 700; color: #111827; }
+  .kpi-change { font-size: 11.5px; margin-top: 4px; display: flex; align-items: center; gap: 3px; }
+  .up   { color: #16a34a; }
+  .down { color: #dc2626; }
+  .kpi-change span { color: #6b7280; }
+
+  /* ── Main Grid ── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    padding: 20px;
+  }
+  .card-title { font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 16px; }
+
+  /* ── Grafik Performa ── */
+  .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .legend { display: flex; gap: 16px; margin-bottom: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: #6b7280; }
+  .legend-dot { width: 20px; height: 2.5px; border-radius: 2px; }
+  .dot-blue   { background: #3b82f6; }
+  .dot-purple { background: #8b5cf6; }
+  .dot-green  { background: #10b981; }
+
+  .chart-wrap { position: relative; height: 200px; }
+
+  svg.chart { width: 100%; height: 100%; }
+
+  .tooltip-box {
+    position: absolute;
+    top: 18px; left: 52%;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    font-size: 12px;
+    pointer-events: none;
+  }
+  .tooltip-date { font-weight: 600; color: #111827; margin-bottom: 6px; }
+  .tooltip-row  { display: flex; align-items: center; gap: 6px; color: #374151; margin-bottom: 3px; }
+  .tooltip-dot  { width: 8px; height: 8px; border-radius: 50%; }
+  .tooltip-val  { margin-left: auto; font-weight: 600; padding-left: 16px; }
+
+  .x-axis { display: flex; justify-content: space-between; padding: 4px 0 0; font-size: 11px; color: #9ca3af; }
+
+  .select-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 500;
+    cursor: pointer; border: 1px solid #d1d5db; background: #fff; color: #374151;
+  }
+
+  /* ── Donut ── */
+  .donut-wrap { display: flex; align-items: center; gap: 24px; margin-bottom: 16px; }
+  .donut-svg  { flex-shrink: 0; }
+  .donut-legend { flex: 1; }
+  .donut-row  { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 12.5px; }
+  .donut-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .donut-pct  { margin-left: auto; font-weight: 600; color: #111827; }
+
+  .info-box {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .info-box a { color: #2563eb; text-decoration: none; font-weight: 500; }
+
+  /* ── Bottom Grid ── */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 16px;
+  }
+
+  /* ── Service Table ── */
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    text-align: left; font-size: 12px; color: #6b7280; font-weight: 500;
+    padding: 0 0 10px; border-bottom: 1px solid #f3f4f6;
+  }
+  tbody tr { border-bottom: 1px solid #f9fafb; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody td { padding: 12px 0; vertical-align: middle; }
+  .service-name { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 13px; }
+  .service-img {
+    width: 38px; height: 38px; border-radius: 8px; background: #f3f4f6;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    overflow: hidden;
+  }
+  .metric-val  { font-weight: 600; font-size: 13px; }
+  .metric-chg  { font-size: 11px; }
+
+  .see-all { text-align: center; margin-top: 14px; }
+  .see-all a { color: #2563eb; font-size: 13px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+
+  /* ── Heatmap ── */
+  .heatmap-wrap { overflow-x: auto; }
+  .heatmap-grid { display: flex; gap: 3px; align-items: flex-start; }
+  .heatmap-days { display: flex; flex-direction: column; gap: 3px; padding-top: 0; }
+  .heatmap-day  { height: 16px; width: 28px; font-size: 10.5px; color: #9ca3af; display: flex; align-items: center; }
+  .heatmap-cols { display: flex; gap: 3px; }
+  .heatmap-col  { display: flex; flex-direction: column; gap: 3px; }
+  .heatmap-cell { width: 16px; height: 16px; border-radius: 3px; background: #dbeafe; }
+
+  .heatmap-x    { display: flex; justify-content: space-between; margin-top: 6px; padding-left: 31px; font-size: 10.5px; color: #9ca3af; }
+  .heatmap-legend { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 11px; color: #9ca3af; }
+  .heatmap-legend-bar { display: flex; gap: 2px; }
+  .heatmap-legend-cell { width: 12px; height: 12px; border-radius: 2px; }
+
+  /* ── Insight ── */
+  .insight-title { font-size: 14px; font-weight: 700; color: #111827; margin: 18px 0 10px; }
+  .insight-item  { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 10px; font-size: 12.5px; color: #374151; }
+  .insight-icon  { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── Footer ── */
+  .footer { font-size: 11.5px; color: #9ca3af; margin-top: 16px; display: flex; align-items: center; gap: 5px; }
+
+  /* ── Responsive adjustments ── */
+  @media (max-width: 1024px) {
+    .kpi-grid { grid-template-columns: repeat(3,1fr); }
+    .main-grid, .bottom-grid { grid-template-columns: 1fr; }
+  }
