@@ -146,10 +146,6 @@
       <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7 7h10M7 12h6"/><rect x="2" y="3" width="20" height="18" rx="2"/></svg>
       Diskon
     </a>
-    <a class="nav-item" href="{{ route('voucher-toko') }}">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 12V22H4V12M22 7H2v5h20V7zM12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>
-      Voucher Toko Saya
-    </a>
 
     <div class="nav-section-label">Layanan Customer</div>
     <a class="nav-item" href="{{ route('penilaian-toko') }}">

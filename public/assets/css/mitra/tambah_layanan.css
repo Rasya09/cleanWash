@@ -1,0 +1,492 @@
+/* ============================================
+   Tambah Layanan — Page Styles
+   Prefix: tl-
+   ============================================ */
+
+.tl-page {
+    padding: 24px 28px 40px;
+    background: #f8fafc;
+    min-height: 100%;
+    font-family: 'Plus Jakarta Sans', 'Figtree', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ---------- Page Header ---------- */
+.tl-page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.tl-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.tl-breadcrumb-link {
+    font-size: 13px;
+    color: #6b7280;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.tl-breadcrumb-link:hover { color: #2563eb; }
+
+.tl-breadcrumb-current {
+    font-size: 13px;
+    color: #374151;
+    font-weight: 500;
+}
+
+.tl-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 4px 0;
+}
+
+.tl-subtitle {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.tl-btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    background: #fff;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+}
+
+.tl-btn-back:hover { background: #f3f4f6; border-color: #d1d5db; }
+
+/* ---------- Main Layout ---------- */
+.tl-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr 280px;
+    gap: 18px;
+    align-items: flex-start;
+}
+
+@media (max-width: 1100px) {
+    .tl-layout { grid-template-columns: 200px 1fr; }
+    .tl-sidebar { grid-column: 2; }
+}
+
+@media (max-width: 700px) {
+    .tl-layout { grid-template-columns: 1fr; }
+    .tl-sidebar { grid-column: 1; }
+}
+
+/* ---------- Stepper ---------- */
+.tl-stepper {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+.tl-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    position: relative;
+}
+
+.tl-step-line {
+    width: 2px;
+    height: 32px;
+    background: #e5e7eb;
+    margin-left: 15px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.tl-step-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    border: 2px solid #e5e7eb;
+    color: #9ca3af;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+
+.tl-step-circle--active {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+    box-shadow: 0 0 0 4px #dbeafe;
+}
+
+.tl-step-label {
+    padding-top: 4px;
+}
+
+.tl-step-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 2px 0;
+}
+
+.tl-step--active .tl-step-name {
+    color: #2563eb;
+}
+
+.tl-step-desc {
+    font-size: 11.5px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+/* ---------- Form Area ---------- */
+.tl-form-area {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 24px;
+}
+
+.tl-form-header {
+    margin-bottom: 22px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.tl-form-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 4px 0;
+}
+
+.tl-form-desc {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* ---------- Form Fields ---------- */
+.tl-field {
+    margin-bottom: 20px;
+}
+
+.tl-label {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.tl-required {
+    color: #ef4444;
+    margin-left: 2px;
+}
+
+.tl-optional {
+    font-size: 12px;
+    font-weight: 400;
+    color: #9ca3af;
+    margin-left: 4px;
+}
+
+/* Input */
+.tl-input-wrap {
+    position: relative;
+}
+
+.tl-input {
+    width: 100%;
+    padding: 11px 60px 11px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    font-size: 13.5px;
+    color: #374151;
+    background: #fff;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+}
+
+.tl-input::placeholder { color: #9ca3af; }
+
+.tl-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px #dbeafe;
+}
+
+.tl-counter {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    font-size: 11.5px;
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+/* Select */
+.tl-select-wrap {
+    position: relative;
+}
+
+.tl-select {
+    width: 100%;
+    padding: 11px 40px 11px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    font-size: 13.5px;
+    color: #374151;
+    background: #fff;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+}
+
+.tl-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px #dbeafe;
+}
+
+.tl-select-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* Field Hint */
+.tl-field-hint {
+    font-size: 12px;
+    color: #9ca3af;
+    margin: 6px 0 0 0;
+}
+
+/* ---------- Tips Box ---------- */
+.tl-tips-box {
+    display: flex;
+    gap: 12px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 6px;
+}
+
+.tl-tips-icon { flex-shrink: 0; margin-top: 1px; }
+
+.tl-tips-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1d4ed8;
+    margin: 0 0 3px 0;
+}
+
+.tl-tips-text {
+    font-size: 12.5px;
+    color: #374151;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ---------- Right Sidebar ---------- */
+.tl-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.tl-sidebar-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 18px;
+}
+
+.tl-sidebar-card--tips {
+    background: #f9fafb;
+}
+
+.tl-sidebar-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 4px 0;
+}
+
+.tl-sidebar-desc {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0 0 14px 0;
+}
+
+/* ---------- Upload Zone ---------- */
+.tl-upload-zone {
+    position: relative;
+    border: 2px dashed #bfdbfe;
+    border-radius: 10px;
+    background: #f0f7ff;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    overflow: hidden;
+}
+
+.tl-upload-zone:hover,
+.tl-upload-zone--drag {
+    border-color: #2563eb;
+    background: #dbeafe;
+}
+
+.tl-upload-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+.tl-upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 16px;
+    pointer-events: none;
+    gap: 4px;
+}
+
+.tl-upload-icon {
+    width: 60px;
+    height: 60px;
+    background: #dbeafe;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.tl-upload-cta {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2563eb;
+    margin: 0;
+}
+
+.tl-upload-or {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.tl-upload-hint {
+    font-size: 11.5px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+.tl-upload-preview {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    border-radius: 8px;
+}
+
+/* ---------- Tips List ---------- */
+.tl-tips-list {
+    list-style: none;
+    margin: 10px 0 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.tl-tips-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12.5px;
+    color: #374151;
+    line-height: 1.4;
+}
+
+.tl-tips-list li svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+/* ---------- Bottom Actions ---------- */
+.tl-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 4px;
+}
+
+.tl-btn-batal {
+    padding: 10px 24px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #374151;
+    background: #fff;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    font-family: inherit;
+}
+
+.tl-btn-batal:hover { background: #f3f4f6; border-color: #d1d5db; }
+
+.tl-btn-next {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #fff;
+    background: #2563eb;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-family: inherit;
+}
+
+.tl-btn-next:hover { background: #1d4ed8; }
