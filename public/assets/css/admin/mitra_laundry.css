@@ -1,0 +1,558 @@
+/* ========== ROOT VARIABLES ========== */
+:root{
+  --bg:#f5f7fb;
+  --panel:#ffffff;
+  --line:#e8edf5;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --blue:#2f6fed;
+  --blue-soft:#e8f0ff;
+  --green:#2fb66d;
+  --green-soft:#e9f8ef;
+  --orange:#f7b650;
+  --orange-soft:#fff2da;
+  --red:#ef6b6b;
+  --red-soft:#ffe6e6;
+  --shadow:0 10px 30px rgba(34, 51, 84, .08);
+}
+
+/* ========== RESET & BASE ========== */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* ========== LAYOUT UTAMA ========== */
+.app{
+  display:flex;
+  min-height:100vh;
+}
+
+/* ========== SIDEBAR ========== */
+.sidebar{
+  width:240px;
+  background:#fff;
+  border-right:1px solid var(--line);
+  padding:18px 14px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+/* Brand / Logo */
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:4px 6px 10px;
+}
+.brand-icon{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(180deg,#4b8df8,#2f6fed);
+  color:#fff;display:grid;place-items:center;
+  font-weight:700;
+}
+.brand-title{font-weight:800;font-size:18px;line-height:1}
+.brand-subtitle{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* Menu Navigasi */
+.menu{display:flex;flex-direction:column;gap:4px}
+.menu-group{
+  margin:12px 8px 6px;
+  font-size:11px;
+  letter-spacing:.08em;
+  color:#7b8494;
+  font-weight:700;
+}
+.menu-item{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:10px;
+  text-decoration:none;
+  color:#3f4653;
+  font-size:13px;
+  font-weight:500;
+}
+.menu-item span:first-child{width:18px;text-align:center;opacity:.9}
+.menu-item.active{
+  background:linear-gradient(90deg,#edf4ff,#dfeaff);
+  color:#2d60d4;
+  font-weight:700;
+}
+.badge{
+  margin-left:auto;
+  display:inline-grid;
+  place-items:center;
+  min-width:18px;
+  height:18px;
+  border-radius:999px;
+  font-style:normal;
+  font-size:11px;
+  color:#fff;
+  padding:0 5px;
+}
+.badge.red{background:#ef4444}
+.chev{margin-left:auto;color:#98a1b2}
+
+/* Kartu Bantuan */
+.help-card{
+  margin-top:auto;
+  background:linear-gradient(180deg,#f4f7ff,#eaf1ff);
+  border:1px solid #dde7ff;
+  border-radius:16px;
+  padding:14px;
+}
+.help-title{font-weight:700;font-size:14px}
+.help-text{font-size:12px;color:var(--muted);margin:6px 0 12px}
+.help-card button{
+  width:100%;
+  border:none;
+  background:var(--blue);
+  color:#fff;
+  border-radius:10px;
+  padding:10px 12px;
+  font-weight:700;
+}
+
+/* ========== AREA KONTEN UTAMA ========== */
+.main{flex:1;padding:14px 16px 16px 14px}
+
+/* ========== TOPBAR ========== */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:14px;
+}
+.page-title-wrap{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+}
+.hamburger{
+  width:34px;height:34px;border-radius:10px;
+  display:grid;place-items:center;
+  color:#5f6a7c;
+}
+h1{margin:0;font-size:24px;line-height:1.1}
+.page-title-wrap p{
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:13px;
+}
+
+/* Aksi Topbar (Search, Notifikasi, Profile) */
+.topbar-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.search{
+  position:relative;
+  width:260px;
+}
+.search input{
+  width:100%;
+  padding:12px 40px 12px 16px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  outline:none;
+  font:inherit;
+}
+.search span{
+  position:absolute;
+  right:13px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#98a1b2;
+}
+.notification{
+  width:34px;height:34px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  background:#fff;
+  position:relative;
+}
+.notification em{
+  position:absolute;
+  right:-2px;top:-2px;
+  background:#ef4444;color:#fff;
+  width:16px;height:16px;border-radius:999px;
+  font-style:normal;font-size:10px;
+  display:grid;place-items:center;
+  border:2px solid #fff;
+}
+.profile{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:6px 10px 6px 6px;
+}
+.avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(180deg,#d5dbe6,#aeb7c7);
+}
+.profile-text{display:flex;flex-direction:column;font-size:12px}
+.profile-text strong{font-size:13px}
+.profile-text span{color:var(--muted)}
+
+/* ========== KONTEN UTAMA (GRID) ========== */
+.content{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 330px;
+  gap:14px;
+  align-items:start;
+}
+.center-panel,.detail-panel{
+  background:transparent;
+}
+
+/* ========== STATISTIK KARTU (4 kolom) ========== */
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:12px;
+}
+.stat-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+  padding:14px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.stat-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:grid;place-items:center;
+  font-size:18px;
+}
+.stat-icon.blue{background:var(--blue-soft);color:var(--blue)}
+.stat-icon.green{background:var(--green-soft);color:var(--green)}
+.stat-icon.orange{background:var(--orange-soft);color:var(--orange)}
+.stat-icon.red{background:var(--red-soft);color:var(--red)}
+.stat-label{font-size:12px;color:var(--muted)}
+.stat-value{font-size:28px;font-weight:800;line-height:1.05;margin:2px 0}
+.stat-sub{font-size:11px;color:var(--muted)}
+
+/* ========== TAB NAVIGASI ========== */
+.tabs{
+  background:#fff;
+  border:1px solid var(--line);
+  border-bottom:none;
+  border-radius:16px 16px 0 0;
+  padding:0 14px;
+  display:flex;
+  gap:22px;
+  box-shadow:var(--shadow);
+}
+.tab{
+  text-decoration:none;
+  color:#5d6677;
+  font-size:13px;
+  padding:14px 0 13px;
+  border-bottom:2px solid transparent;
+}
+.tab.active{
+  color:var(--blue);
+  font-weight:700;
+  border-bottom-color:var(--blue);
+}
+
+/* ========== TOOLBAR (Filter & Pencarian) ========== */
+.toolbar{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  background:#fff;
+  border:1px solid var(--line);
+  border-top:none;
+  padding:12px 14px 14px;
+  box-shadow:var(--shadow);
+}
+.toolbar .search{width:100%;max-width:270px}
+select,.filter-btn,.icon-btn,.pagination button,.pagination a,.page-size{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:10px;
+  height:36px;
+  padding:0 12px;
+  color:#4b5563;
+  font:inherit;
+}
+.toolbar select{min-width:110px}
+.filter-btn{
+  min-width:84px;
+  background:#fff;
+}
+
+/* ========== TABEL DATA ========== */
+.table-wrap{
+  background:#fff;
+  border:1px solid var(--line);
+  border-top:none;
+  padding:0 10px 8px;
+  box-shadow:var(--shadow);
+}
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0 8px;
+}
+thead th{
+  text-align:left;
+  font-size:12px;
+  color:#596272;
+  font-weight:700;
+  padding:6px 10px;
+}
+tbody td{
+  padding:10px 10px;
+  font-size:13px;
+  color:#2f3745;
+  vertical-align:middle;
+  border-top:1px solid transparent;
+  border-bottom:1px solid transparent;
+}
+tbody tr{
+  background:#fff;
+  box-shadow:0 0 0 1px rgba(232,237,245,.9);
+}
+tbody tr.selected{
+  background:#eef4ff;
+}
+tbody tr td:first-child,
+thead th:first-child{width:34px}
+
+/* Kolom Partner dengan Logo */
+.partner{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.logo{
+  width:30px;height:30px;border-radius:8px;
+  background:#f1f5ff;
+  display:grid;
+  place-items:center;
+  font-size:14px;
+}
+.logo.blue{background:#eaf2ff;color:#2f6fed}
+.logo.sky{background:#e9fbff;color:#35a7d7}
+.logo.navy{background:#e9f0ff;color:#214d9c}
+.logo.red{background:#ffecec;color:#ea6b6b}
+.logo.orange{background:#fff1db;color:#f59e0b}
+.partner strong{display:block;font-size:13px}
+.partner span{display:block;font-size:11px;color:var(--muted);margin-top:3px}
+.rating span{color:var(--muted)}
+
+/* Status Badge (Pill) */
+.pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:82px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+}
+.pill.green{background:var(--green-soft);color:var(--green)}
+.pill.yellow{background:var(--orange-soft);color:#d98c00}
+.pill.red{background:var(--red-soft);color:#d95e5e}
+.pill.pink{background:#ffe9eb;color:#e35d6a}
+.pill.soft{min-width:auto;padding:4px 8px}
+.icon-btn{
+  width:32px;
+  padding:0;
+  margin-right:4px;
+}
+.check input{transform:scale(.95)}
+
+/* ========== FOOTER TABEL (Pagination) ========== */
+.table-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:8px 6px 0;
+  color:#667085;
+  font-size:12px;
+}
+.page-size{display:grid;place-items:center;min-width:98px}
+.pagination{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.pagination a,.pagination button{
+  width:30px;
+  display:grid;
+  place-items:center;
+  text-decoration:none;
+}
+.pagination a.active{
+  background:var(--blue);
+  color:#fff;
+  border-color:var(--blue);
+}
+
+/* ========== PANEL DETAIL (Sisi Kanan) ========== */
+.detail-panel{
+  background:#fff;
+  border-left:1px solid var(--line);
+  border-radius:0;
+  box-shadow:-12px 0 24px rgba(34,51,84,.04);
+  padding:14px;
+  position:sticky;
+  top:14px;
+  height:calc(100vh - 28px);
+  overflow:auto;
+}
+
+/* Header Detail */
+.detail-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:12px;
+}
+.detail-head h2{
+  font-size:16px;
+  margin:0;
+}
+.detail-head span{color:#8a93a4;font-size:20px}
+
+/* Hero Section Detail */
+.detail-hero{
+  display:flex;
+  gap:12px;
+  margin-bottom:12px;
+}
+.hero-img{
+  width:84px;height:84px;border-radius:16px;
+  background:linear-gradient(135deg,#d6c3a7,#9f7f58);
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.35);
+}
+.hero-info h3{margin:8px 0 4px;font-size:18px}
+.hero-info .meta{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* Tab dalam Panel Detail */
+.detail-tabs{
+  display:flex;
+  gap:16px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:12px;
+}
+.detail-tabs a{
+  text-decoration:none;
+  font-size:12px;
+  color:#6b7280;
+  padding:8px 0 10px;
+  border-bottom:2px solid transparent;
+}
+.detail-tabs a.active{
+  color:var(--blue);
+  font-weight:700;
+  border-bottom-color:var(--blue);
+}
+
+/* Informasi Detail */
+.detail-section{
+  margin-bottom:16px;
+}
+.detail-section h4{
+  margin:0 0 12px;
+  font-size:14px;
+}
+.info-grid{
+  display:grid;
+  grid-template-columns:120px 1fr;
+  row-gap:10px;
+  column-gap:10px;
+  font-size:12px;
+}
+.info-grid > div:nth-child(odd){color:#6b7280}
+
+/* Metode Pembayaran */
+.pay-methods{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.pay-methods span{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:4px 8px;
+  font-size:11px;
+  background:#fff;
+}
+
+/* Kinerja / Performa */
+.section-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.section-head select{height:30px;padding:0 10px;border-radius:8px}
+.perf-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:8px 0;
+  font-size:12px;
+  border-bottom:1px dashed #edf1f6;
+}
+.perf-item:last-child{border-bottom:none}
+.green-text{color:var(--green)}
+.red-text{color:#e25858}
+
+/* Tombol Aksi Detail */
+.detail-actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+.primary,.secondary,.danger-btn{
+  width:100%;
+  border:none;
+  border-radius:10px;
+  height:40px;
+  font:inherit;
+  font-weight:700;
+}
+.primary{
+  background:var(--blue);
+  color:#fff;
+}
+.secondary{
+  width:42px;
+  background:#fff;
+  border:1px solid var(--line);
+}
+.danger-btn{
+  margin-top:10px;
+  background:#fff;
+  color:#e15858;
+  border:1px solid #f0b8b8;
+}
+
+/* ========== RESPONSIVE (max-width 1280px) ========== */
+@media (max-width: 1280px){
+  .content{grid-template-columns:1fr}
+  .detail-panel{position:static;height:auto}
+}
