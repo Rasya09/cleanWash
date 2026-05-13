@@ -109,3 +109,55 @@ Route::get('performa-toko', function () {
 Route::get('kesehatan-toko', function () {
     return view('mitra.data.kesehatan_toko');
 })->name('kesehatan-toko');
+
+Route::get('dashboard-admin', function () {
+    return view('admin.dashboard');
+})->name('dashboard-admin');
+
+Route::get('user-admin', function () {
+    return view('admin.user');
+})->name('user-admin');
+
+Route::get('mitra_laundry-admin', function () {
+    return view('admin.mitra_laundry');
+})->name('mitra_laundry-admin');
+
+Route::get('verifikasi_mitra-admin', function () {
+    return view('admin.verifikasi_mitra');
+})->name('verifikasi_mitra-admin');
+
+Route::get('pesanan-admin', function () {
+    return view('admin.pesanan');
+})->name('pesanan-admin');
+
+Route::get('pembayaran-admin', function () {
+    return view('admin.pembayaran');
+})->name('pembayaran-admin');
+
+Route::get('review_rating-admin', function () {
+    return view('admin.review_rating');
+})->name('review_rating-admin');
+
+Route::get('komplain-admin', function () {
+    return view('admin.komplain');
+})->name('komplain-admin');
+
+Route::get('statistik_laporan-admin', function () {
+    return view('admin.statistik_laporan');
+})->name('statistik_laporan-admin');
+
+Route::get('aktivitas-admin', function () {
+    return view('admin.aktivitas');
+})->name('aktivitas-admin');
+
+Route::get('pengaturan_platform-admin', function () {
+    return view('admin.pengaturan_platform');
+})->name('pengaturan_platform-admin');
+
+Route::get('admin_role-admin', function () {
+    return view('admin.admin_role');
+})->name('admin_role-admin');
+
+Route::get('notifikasi-admin', function () {
+    return view('admin.notifikasi');
+})->name('notifikasi-admin');
