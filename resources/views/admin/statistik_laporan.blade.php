@@ -12,13 +12,16 @@
 </head>
 <body>
   <div class="app">
-    <aside class="sidebar">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar" id="sidebar">
       <div class="brand">
         <div class="brand-logo">◎</div>
         <div>
           <div class="brand-name">LaundryHub</div>
           <div class="brand-subtitle">Admin Panel</div>
         </div>
+        <button class="close-sidebar" id="closeSidebar">✕</button>
       </div>
 
       <nav class="menu">
@@ -53,7 +56,7 @@
     <main class="main">
       <header class="topbar">
         <div class="page-title-wrap">
-          <button class="icon-btn">☰</button>
+          <button class="icon-btn" id="menuToggle">☰</button>
           <div>
             <h1>Statistik & Laporan</h1>
             <p>Pantau performa platform dan buat laporan berdasarkan periode tertentu.</p>
@@ -328,72 +331,90 @@
   </div>
 
   <script>
+    // --- FUNGSI SIDEBAR MENU ---
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const closeSidebar = document.getElementById('closeSidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    function toggleMenu() {
+      sidebar.classList.toggle('show');
+      sidebarOverlay.classList.toggle('show');
+    }
+
+    // Event listeners untuk membuka/menutup sidebar
+    menuToggle.addEventListener('click', toggleMenu);
+    closeSidebar.addEventListener('click', toggleMenu);
+    sidebarOverlay.addEventListener('click', toggleMenu);
+
+
+    // --- FUNGSI CHART.JS ---
     const ctx = document.getElementById('trendChart').getContext('2d');
 
-new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: ['1 Mei', '6 Mei', '11 Mei', '16 Mei', '21 Mei', '26 Mei', '31 Mei'],
-    datasets: [
-      {
-        label: 'Pesanan',
-        data: [120, 150, 132, 178, 140, 165, 155],
-        borderColor: '#2563eb',
-        backgroundColor: 'rgba(37, 99, 235, 0.10)',
-        pointBackgroundColor: '#2563eb',
-        pointBorderColor: '#fff',
-        pointBorderWidth: 2,
-        pointRadius: 4,
-        tension: 0.4,
-        fill: true
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['1 Mei', '6 Mei', '11 Mei', '16 Mei', '21 Mei', '26 Mei', '31 Mei'],
+        datasets: [
+          {
+            label: 'Pesanan',
+            data: [120, 150, 132, 178, 140, 165, 155],
+            borderColor: '#2563eb',
+            backgroundColor: 'rgba(37, 99, 235, 0.10)',
+            pointBackgroundColor: '#2563eb',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            tension: 0.4,
+            fill: true
+          },
+          {
+            label: 'Pendapatan (Rp)',
+            data: [80, 110, 95, 130, 105, 145, 120],
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.08)',
+            pointBackgroundColor: '#10b981',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            tension: 0.4,
+            fill: false
+          }
+        ]
       },
-      {
-        label: 'Pendapatan (Rp)',
-        data: [80, 110, 95, 130, 105, 145, 120],
-        borderColor: '#10b981',
-        backgroundColor: 'rgba(16, 185, 129, 0.08)',
-        pointBackgroundColor: '#10b981',
-        pointBorderColor: '#fff',
-        pointBorderWidth: 2,
-        pointRadius: 4,
-        tension: 0.4,
-        fill: false
-      }
-    ]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-        align: 'start',
-        labels: {
-          usePointStyle: true,
-          boxWidth: 8,
-          boxHeight: 8
-        }
-      }
-    },
-    scales: {
-      x: {
-        grid: {
-          display: false
-        }
-      },
-      y: {
-        beginAtZero: true,
-        grid: {
-          color: '#e5e7eb'
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'start',
+            labels: {
+              usePointStyle: true,
+              boxWidth: 8,
+              boxHeight: 8
+            }
+          }
         },
-        ticks: {
-          stepSize: 50
+        scales: {
+          x: {
+            grid: {
+              display: false
+            }
+          },
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: '#e5e7eb'
+            },
+            ticks: {
+              stepSize: 50
+            }
+          }
         }
       }
-    }
-  }
-});
+    });
   </script>
 </body>
 </html>

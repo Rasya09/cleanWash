@@ -4,7 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LaundryHub – Pengaturan Platform</title>
+  {{-- Base styles --}}
   <link rel="stylesheet" href="{{ asset('assets/css/admin/pengaturan_platform.css') }}">
+  {{-- Responsive overrides (link SETELAH base) --}}
+  <link rel="stylesheet" href="{{ asset('assets/css/admin/pengaturan_platform_responsive.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
@@ -63,10 +66,15 @@
       <p>Kelola konfigurasi dan pengaturan utama platform LaundryHub.</p>
     </div>
     <div class="topbar-right">
+      <!-- Search bar desktop -->
       <div class="search-box">
         <i class="fas fa-magnifying-glass"></i>
-        <input type="text" placeholder="Cari pengaturan..." />
+        <input type="text" id="desktopSearch" placeholder="Cari pengaturan..." />
       </div>
+      <!-- Tombol search mobile -->
+      <button class="btn-mobile-search" id="mobileSearchToggle" title="Cari">
+        <i class="fas fa-magnifying-glass"></i>
+      </button>
       <button class="notif-btn">
         <i class="fas fa-bell"></i>
         <span class="notif-badge">3</span>
@@ -81,6 +89,14 @@
       </div>
     </div>
   </header>
+
+  <!-- Mobile Search Bar (muncul di bawah topbar saat tombol diklik) -->
+  <div class="mobile-search-bar" id="mobileSearchBar">
+    <div class="search-box">
+      <i class="fas fa-magnifying-glass"></i>
+      <input type="text" id="mobileSearch" placeholder="Cari pengaturan..." />
+    </div>
+  </div>
 
   <!-- CONTENT AREA -->
   <div class="content-area">
@@ -407,49 +423,42 @@ Jakarta Selatan, DKI Jakarta 12410</textarea>
 </div>
 
 <script>
-  /* ========================================
-   LaundryHub Admin Panel – script.js
-======================================== */
+/* ============================================================
+   LaundryHub Admin Panel – Script
+============================================================ */
 
-// ── TOAST NOTIFICATION ──────────────────
+// ── TOAST NOTIFICATION ──────────────────────────────────────
 let toastTimer = null;
 
 function showToast(msg) {
-  const toast = document.getElementById('toast');
+  const toast    = document.getElementById('toast');
   const toastMsg = document.getElementById('toastMsg');
-
   toastMsg.textContent = msg;
   toast.classList.add('show');
-
   if (toastTimer) clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// ── TAB SWITCHING ────────────────────────
+// ── TAB SWITCHING ───────────────────────────────────────────
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
-
-    const tabName = tab.getAttribute('data-tab');
-    if (tabName !== 'umum') {
+    if (tab.getAttribute('data-tab') !== 'umum') {
       showToast(`Tab "${tab.textContent}" belum tersedia.`);
     }
   });
 });
 
-// ── SIDEBAR TOGGLE (MOBILE) ──────────────
+// ── SIDEBAR TOGGLE (MOBILE) ─────────────────────────────────
 const menuToggle = document.getElementById('menuToggle');
-const sidebar = document.querySelector('.sidebar');
+const sidebar    = document.querySelector('.sidebar');
 let overlay = null;
 
 function openSidebar() {
   sidebar.classList.add('open');
   overlay = document.createElement('div');
-  overlay.style.cssText = `
-    position:fixed;inset:0;background:rgba(0,0,0,.35);
-    z-index:99;transition:opacity .25s;
-  `;
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:199;transition:opacity .25s;';
   document.body.appendChild(overlay);
   overlay.addEventListener('click', closeSidebar);
 }
@@ -463,7 +472,30 @@ menuToggle.addEventListener('click', () => {
   sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
 });
 
-// ── TOGGLE SWITCH FEEDBACK ───────────────
+// ── MOBILE SEARCH TOGGLE ────────────────────────────────────
+const mobileSearchToggle = document.getElementById('mobileSearchToggle');
+const mobileSearchBar    = document.getElementById('mobileSearchBar');
+const mobileSearchInput  = document.getElementById('mobileSearch');
+
+mobileSearchToggle.addEventListener('click', () => {
+  mobileSearchBar.classList.toggle('open');
+  if (mobileSearchBar.classList.contains('open')) {
+    mobileSearchInput.focus();
+  }
+});
+
+// ── SEARCH: live filter sections (desktop + mobile) ─────────
+function filterSections(query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('.settings-section').forEach(sec => {
+    sec.style.display = (!q || sec.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
+}
+
+document.getElementById('desktopSearch').addEventListener('input', e => filterSections(e.target.value));
+mobileSearchInput.addEventListener('input', e => filterSections(e.target.value));
+
+// ── TOGGLE SWITCH FEEDBACK ───────────────────────────────────
 document.querySelectorAll('.toggle-switch input[type="checkbox"]').forEach(checkbox => {
   checkbox.addEventListener('change', () => {
     const label = checkbox.closest('.toggle-item').querySelector('.toggle-label').textContent;
@@ -472,10 +504,9 @@ document.querySelectorAll('.toggle-switch input[type="checkbox"]').forEach(check
   });
 });
 
-// ── NAV ITEM ACTIVE STATE ────────────────
+// ── NAV ITEM ACTIVE STATE ────────────────────────────────────
 document.querySelectorAll('.nav-item').forEach(item => {
-  item.addEventListener('click', (e) => {
-    // Only mark active for non-arrow items
+  item.addEventListener('click', () => {
     if (!item.classList.contains('has-arrow')) {
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       item.classList.add('active');
@@ -483,39 +514,24 @@ document.querySelectorAll('.nav-item').forEach(item => {
   });
 });
 
-// ── SEARCH BOX (live filter sections) ───
-const searchInput = document.querySelector('.search-box input');
-searchInput.addEventListener('input', () => {
-  const q = searchInput.value.toLowerCase().trim();
-  document.querySelectorAll('.settings-section').forEach(sec => {
-    const text = sec.textContent.toLowerCase();
-    sec.style.display = (!q || text.includes(q)) ? '' : 'none';
-  });
+// ── SAVE NOTES WITH Ctrl+Enter ───────────────────────────────
+document.querySelector('.notes-area').addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') showToast('Catatan disimpan!');
 });
 
-// ── SAVE NOTES WITH Ctrl+Enter ───────────
-document.querySelector('.notes-area').addEventListener('keydown', (e) => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-    showToast('Catatan disimpan!');
-  }
-});
-
-// ── INIT: mark logo area as clickable ───
+// ── LOGO PREVIEW: klik untuk ganti ──────────────────────────
 document.querySelector('.logo-preview').addEventListener('click', () => {
   const inp = document.createElement('input');
   inp.type = 'file';
   inp.accept = 'image/png, image/jpeg';
-  inp.onchange = (e) => {
+  inp.onchange = e => {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-      showToast('Ukuran file melebihi 2MB!');
-      return;
-    }
+    if (file.size > 2 * 1024 * 1024) { showToast('Ukuran file melebihi 2MB!'); return; }
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      const preview = document.querySelector('.logo-preview');
-      preview.innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />`;
+    reader.onload = ev => {
+      document.querySelector('.logo-preview').innerHTML =
+        `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />`;
       showToast('Logo berhasil diubah!');
     };
     reader.readAsDataURL(file);
@@ -523,8 +539,8 @@ document.querySelector('.logo-preview').addEventListener('click', () => {
   inp.click();
 });
 
-// ── SCROLL ANIMATION (fade-in sections) ─
-const observer = new IntersectionObserver((entries) => {
+// ── SCROLL ANIMATION (fade-in sections) ─────────────────────
+const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.style.opacity = '1';

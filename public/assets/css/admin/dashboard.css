@@ -46,18 +46,22 @@ img { display: block; max-width: 100%; }
 
 
 /* ===== SIDEBAR ===== */
+/* Sidebar Default: Tersembunyi di kiri luar layar */
 .sidebar {
-  width: var(--sidebar-width);
-  background: var(--white);
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  display: flex;
-  flex-direction: column;
-  border-right: 1px solid var(--border);
-  overflow-y: auto;
-  z-index: 100;
+    width: 280px;
+    position: fixed;
+    left: -280px; /* Sembunyi ke kiri */
+    top: 0;
+    bottom: 0;
+    z-index: 1001; /* Harus di atas header */
+    transition: all 0.3s ease; /* Efek slide yang halus */
+    background: var(--white);
+    visibility: hidden;
+}
+
+.sidebar.active {
+    left: 0;
+    visibility: visible;
 }
 
 .sidebar-logo {
@@ -240,6 +244,14 @@ img { display: block; max-width: 100%; }
   min-height: 100vh;
 }
 
+.main-content, 
+.header {
+    margin-left: 0 !important;
+    width: 100% !important;
+    left: 0 !important;
+    transition: all 0.3s ease;
+}
+
 .main-content {
   margin-left: var(--sidebar-width);
   margin-top: 60px;
@@ -251,7 +263,7 @@ img { display: block; max-width: 100%; }
 /* ===== STAT CARDS ===== */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 20px;
 }
@@ -756,11 +768,8 @@ img { display: block; max-width: 100%; }
 }
 
 .header-menu-btn {
-  color: var(--text-mid);
-  display: flex;
-  align-items: center;
-  padding: 6px;
-  border-radius: 6px;
+    display: flex !important; /* Munculkan di semua ukuran layar */
+    cursor: pointer;
 }
 
 .header-menu-btn:hover {
@@ -968,4 +977,441 @@ img { display: block; max-width: 100%; }
   white-space: nowrap;
   opacity: 0;
   transition: opacity 0.1s;
+}
+
+/* =========================================
+   SIDEBAR TOGGLE
+========================================= */
+
+.app-wrapper{
+  display:flex;
+  min-height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:280px;
+  min-width:280px;
+  transition:all 0.3s ease;
+  overflow:hidden;
+}
+
+/* SIDEBAR CLOSED */
+.app-wrapper.sidebar-collapsed .sidebar{
+  width:0;
+  min-width:0;
+  opacity:0;
+  padding:0;
+}
+
+/* MAIN CONTENT */
+.main-content{
+  flex: 1;
+  transition: all 0.3s ease;
+}
+
+.header{
+  transition: all 0.3s ease;
+}
+
+/* BUTTON MENU */
+.header-menu-btn{
+  border:none;
+  background:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* ICON SIZE */
+.header-menu-btn svg{
+  width:24px;
+  height:24px;
+}
+
+/* Sidebar default: sembunyi di kiri luar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px; /* Sembunyikan ke kiri */
+    width: 280px;
+    height: 100vh;
+    z-index: 1100;
+    transition: all 0.3s ease;
+    background: var(--white);
+    visibility: hidden; /* Tambahkan ini */
+}
+
+/* Tambahkan ini: Saat dipicu JavaScript */
+.sidebar.active {
+    left: 0;
+    visibility: visible;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1050; /* Di bawah sidebar, di atas main content */
+    display: none; /* Sembunyi secara default */
+}
+
+.sidebar-overlay.active {
+    display: block; /* Muncul saat sidebar aktif */
+}
+
+.header-menu-btn {
+    display: flex !important; /* Pastikan selalu muncul */
+    cursor: pointer;
+}
+/* MOBILE */
+@media(max-width:992px){
+
+  .sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    z-index:999;
+    background:#fff;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+  }
+
+  .app-wrapper.sidebar-collapsed .sidebar{
+    transform:translateX(-100%);
+    width:280px;
+    min-width:280px;
+    opacity:1;
+  }
+
+}
+
+/* =========================================
+   RESPONSIVE TABLET & MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+  html,
+  body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  .app-wrapper {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* ===== SIDEBAR ===== */
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 260px;
+    height: 100dvh;
+    max-height: 100dvh;
+
+    z-index: 999;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    transition: left .3s ease;
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  /* overlay */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    display: none; /* Sembunyi default */
+}
+
+  .sidebar-overlay.active {
+    display: block;
+}
+
+  /* ===== HEADER ===== */
+
+  .header {
+    left: 0;
+    width: 100%;
+
+    padding: 0 14px;
+
+    gap: 10px;
+  }
+
+  .header-title-block h2 {
+    font-size: 16px;
+  }
+
+  .header-title-block p {
+    font-size: 11px;
+  }
+
+  .header-user-info {
+    display: none;
+  }
+
+  .header-date-range {
+    display: none;
+  }
+
+  /* ===== MAIN CONTENT ===== */
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    max-width: 100%;
+
+    padding: 16px 14px;
+
+    overflow-x: hidden;
+  }
+
+  /* ===== STATS ===== */
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+  }
+
+  /* ===== MID ROW ===== */
+
+  .mid-row {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  /* ===== BOTTOM ROW ===== */
+
+  .bottom-row {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  /* ===== CARD ===== */
+
+  .card {
+    width: 100%;
+    max-width: 100%;
+
+    overflow: hidden;
+
+    padding: 16px;
+  }
+
+  /* ===== SECTION ===== */
+
+  .section-header {
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  /* ===== VERIFIKASI ===== */
+
+  .verif-item {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .verif-date-block {
+    text-align: left;
+    width: 100%;
+  }
+
+  .btn-verif {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* ===== AKTIVITAS ===== */
+
+  .activity-item {
+    align-items: flex-start;
+  }
+
+  /* ===== MITRA ===== */
+
+  .mitra-item {
+    align-items: flex-start;
+  }
+
+  /* ===== CHART ===== */
+
+  .chart-wrapper {
+    overflow-x: auto;
+  }
+
+  .chart-svg {
+    min-width: 600px;
+  }
+}
+
+
+/* ===== MOBILE SIDEBAR ===== */
+
+@media (max-width: 768px) {
+
+  .sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 260px;
+    height: 100vh;
+
+    background: #fff;
+    z-index: 9999;
+
+    transform: translateX(-100%);
+    transition: transform .3s ease;
+
+    overflow-y: auto;
+  }
+
+  .sidebar.active{
+    transform: translateX(0);
+  }
+
+  .sidebar-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: .3s ease;
+    z-index: 9998;
+  }
+
+  .sidebar-overlay.active{
+    opacity: 1;
+    visibility: visible;
+  }
+
+}
+
+/* =========================================
+   FIX OVERFLOW & SIDEBAR
+========================================= */
+
+/* cegah geser horizontal */
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* wrapper utama */
+.app-wrapper {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* desktop/tablet */
+@media (min-width: 769px) {
+
+  .sidebar {
+    width: 280px;
+    min-width: 280px;
+  }
+
+  .header {
+    left: 280px;
+    width: calc(100% - 280px);
+  }
+
+  .main-content {
+    margin-left: 0 !important; /* Paksa margin jadi 0 di mobile */
+    width: 100% !important;   /* Paksa lebar jadi 100% layar */
+    overflow-x: hidden;
+    padding: 12px;
+  }
+
+  /* biar card/grid tidak dorong layar */
+  .stats-grid,
+  .mid-row,
+  .bottom-row {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .card,
+  .stat-card {
+    min-width: 0;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+  .sidebar {
+    left: -280px;
+    width: 280px;
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  .header {
+    left: 0;
+    width: 100%;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 16px;
+  }
+
+  /* grid mobile */
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mid-row,
+  .bottom-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* biar isi card tidak bikin overflow */
+  .card,
+  .stat-card,
+  .verif-item,
+  .mitra-item,
+  .activity-item {
+    min-width: 0;
+    overflow: hidden;
+  }
 }

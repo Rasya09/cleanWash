@@ -220,7 +220,11 @@ ul { list-style: none; }
   padding: 6px;
   border-radius: var(--radius-sm);
   display: none;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition), color var(--transition);
 }
+.menu-toggle:hover { background: var(--bg); color: var(--primary); }
 
 .topbar-title h1 {
   font-size: 18px;
@@ -407,7 +411,10 @@ ul { list-style: none; }
   font-size: 26px;
   color: var(--primary);
   border: 2px solid var(--border);
+  cursor: pointer;
+  transition: border-color var(--transition);
 }
+.logo-preview:hover { border-color: var(--primary); }
 
 .btn-outline-sm {
   padding: 6px 14px;
@@ -598,6 +605,8 @@ ul { list-style: none; }
   gap: 9px;
   font-size: 12px;
 }
+
+/* Info Icon */
 .info-icon {
   width: 26px; height: 26px;
   border-radius: 6px;
@@ -605,13 +614,27 @@ ul { list-style: none; }
   font-size: 11px;
   flex-shrink: 0;
 }
-.info-icon.blue { background: #eff6ff; color: var(--primary); }
-.info-icon.green { background: #f0fdf4; color: var(--success); }
-.info-icon.teal { background: #f0fdfa; color: var(--teal); }
+.info-icon.blue   { background: #eff6ff; color: var(--primary); }
+.info-icon.green  { background: #f0fdf4; color: var(--success); }
+.info-icon.teal   { background: #f0fdfa; color: var(--teal); }
 .info-icon.purple { background: #f5f3ff; color: var(--purple); }
 .info-icon.orange { background: #fff7ed; color: var(--orange); }
-.info-icon.gray { background: #f3f4f6; color: var(--text-sub); }
-.info-icon.red { background: #fef2f2; color: var(--danger); }
+.info-icon.gray   { background: #f3f4f6; color: var(--text-sub); }
+.info-icon.red    { background: #fef2f2; color: var(--danger); }
+
+/* Action Icon (used in Aksi Cepat list) */
+.action-icon {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.action-icon.blue   { background: #eff6ff; color: var(--primary); }
+.action-icon.green  { background: #f0fdf4; color: var(--success); }
+.action-icon.teal   { background: #f0fdfa; color: var(--teal); }
+.action-icon.purple { background: #f5f3ff; color: var(--purple); }
+.action-icon.red    { background: #fef2f2; color: var(--danger); }
 
 .info-key { color: var(--text-sub); flex: 1; }
 .info-val { font-weight: 600; font-size: 11px; text-align: right; }
@@ -702,29 +725,236 @@ ul { list-style: none; }
 ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
-/* ===========================
-   RESPONSIVE
-=========================== */
+/* ============================================================
+   PENGATURAN PLATFORM — Responsive Styles
+   File  : pengaturan_platform_responsive.css
+   Covers: 1100px · 900px · 768px · 600px · 480px
+   Link AFTER pengaturan_platform.css
+============================================================ */
+
+/* ─────────────────────────────────────────
+   Mobile Search Bar
+   (hidden by default, shown via JS toggle)
+───────────────────────────────────────────*/
+.btn-mobile-search {
+  display: none;                      /* visible only on mobile (see ≤768px) */
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  align-items: center; justify-content: center;
+  color: var(--text-sub);
+  font-size: 15px;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+.btn-mobile-search:hover { border-color: var(--primary); color: var(--primary); }
+
+/* Full-width search bar that drops below topbar on mobile */
+.mobile-search-bar {
+  display: none;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  position: sticky;
+  top: var(--topbar-h);
+  z-index: 49;
+}
+.mobile-search-bar.open { display: flex; }
+.mobile-search-bar .search-box {
+  display: flex;
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  gap: 8px;
+  align-items: center;
+}
+.mobile-search-bar .search-box input {
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 14px;
+  width: 100%;
+}
+
+
+/* ══════════════════════════════════════════
+   ≤ 1100px  Wide Tablet / Small Laptop
+══════════════════════════════════════════ */
 @media (max-width: 1100px) {
   .right-panel { width: 240px; }
   .toggle-grid { grid-template-columns: 1fr; }
 }
 
+
+/* ══════════════════════════════════════════
+   ≤ 900px  Tablet Portrait
+══════════════════════════════════════════ */
 @media (max-width: 900px) {
   :root { --sidebar-width: 0px; }
-  .sidebar { transform: translateX(-100%); width: 220px; transition: transform .25s ease; }
-  .sidebar.open { transform: translateX(0); width: 220px; }
+
+  /* Sidebar: slide-in drawer */
+  .sidebar {
+    transform: translateX(-100%);
+    width: 220px;
+    transition: transform .25s ease;
+    z-index: 200;
+  }
+  .sidebar.open { transform: translateX(0); }
+
   .main-wrapper { margin-left: 0; }
-  .menu-toggle { display: flex; }
+  .menu-toggle  { display: flex; }
+
+  /* Stack content vertically */
   .content-area { flex-direction: column; }
-  .right-panel { width: 100%; }
-  .form-grid { grid-template-columns: 1fr; }
+  .right-panel  { width: 100%; }
+
+  /* Single-column forms */
+  .form-grid   { grid-template-columns: 1fr; }
   .toggle-grid { grid-template-columns: 1fr; }
 }
 
+
+/* ══════════════════════════════════════════
+   ≤ 768px  Tablet / Mobile  ← FOKUS UTAMA
+══════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── Root ── */
+  :root { --topbar-h: 60px; }
+
+  /* ── Topbar ── */
+  .topbar          { padding: 0 16px; gap: 10px; }
+  .topbar-title h1 { font-size: 16px; }
+  .topbar-title p  { display: none; }           /* sembunyikan subtitle */
+  .search-box      { display: none; }           /* pakai mobile search */
+  .user-info       { display: none; }
+
+  /* tampilkan tombol search mobile */
+  .btn-mobile-search { display: flex; }
+
+  /* ── Konten ── */
+  .content-area { padding: 14px 14px 32px; gap: 14px; }
+
+  /* ── Tabs: sticky saat scroll ── */
+  .tabs-wrapper {
+    position: sticky;
+    top: var(--topbar-h);
+    z-index: 40;
+  }
+  .tab { padding: 10px 14px; font-size: 12.5px; }
+
+  /* ── Section ── */
+  .settings-main    { gap: 14px; }
+  .section-header   { padding: 14px 16px 12px; }
+  .section-header h2{ font-size: 14px; }
+  .section-body     { padding: 16px; }
+
+  /* ── Tombol simpan: full-width ── */
+  .section-footer               { margin-top: 14px; justify-content: stretch; }
+  .section-footer .btn-primary  { width: 100%; text-align: center; }
+
+  /* ── Logo area: horizontal ── */
+  .logo-area {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .logo-preview { width: 60px; height: 60px; font-size: 20px; }
+
+  /* ── Toggle items ── */
+  .toggle-item { padding: 12px; gap: 10px; }
+
+  /* ── Panel kanan ── */
+  .right-panel { gap: 12px; }
+  .panel-card  { padding: 14px 16px; }
+
+  /* ── Prevent iOS auto-zoom pada input ── */
+  .form-group input,
+  .form-group textarea,
+  .select-wrap select {
+    font-size: 16px;
+  }
+
+  /* ── Sidebar nav: tap-target lebih besar ── */
+  .nav-item { padding: 10px; }
+
+  /* ── Toast: lebih rendah ── */
+  .toast { bottom: 20px; right: 16px; left: 16px; }
+}
+
+
+/* ══════════════════════════════════════════
+   ≤ 600px  Large Phone
+══════════════════════════════════════════ */
 @media (max-width: 600px) {
-  .topbar { padding: 0 14px; gap: 10px; }
-  .search-box { display: none; }
-  .user-info { display: none; }
-  .content-area { padding: 12px 12px 28px; }
+  .topbar       { padding: 0 14px; gap: 8px; }
+  .content-area { padding: 12px 12px 28px; gap: 12px; }
+
+  /* Sembunyikan panah dropdown user */
+  .user-profile > .fa-chevron-down { display: none; }
+
+  /* Panel: horizontal scroll jika melebihi layar */
+  .info-list li { font-size: 11.5px; }
+}
+
+
+/* ══════════════════════════════════════════
+   ≤ 480px  Small Phone
+══════════════════════════════════════════ */
+@media (max-width: 480px) {
+
+  /* ── Topbar ── */
+  .topbar          { padding: 0 12px; gap: 6px; }
+  .topbar-title h1 { font-size: 14.5px; }
+
+  /* ── Konten ── */
+  .content-area { padding: 10px 10px 24px; gap: 10px; }
+
+  /* ── Tabs lebih kompak ── */
+  .tab { padding: 9px 11px; font-size: 11.5px; }
+
+  /* ── Section ── */
+  .section-header    { padding: 12px 14px 10px; }
+  .section-header h2 { font-size: 13px; }
+  .section-body      { padding: 12px 14px; }
+
+  /* ── Toggle items ── */
+  .toggle-label { font-size: 12px; }
+  .toggle-desc  { font-size: 10.5px; }
+  .toggle-item  { padding: 10px; gap: 8px; }
+
+  /* ── Logo area: kembali vertikal pada layar sangat kecil ── */
+  .logo-area    { flex-direction: column; align-items: flex-start; }
+  .logo-preview { width: 54px; height: 54px; font-size: 18px; }
+
+  /* ── Panel ── */
+  .panel-card  { padding: 12px 14px; }
+  .panel-title { font-size: 13px; }
+  .panel-sub   { font-size: 10.5px; }
+
+  /* ── Action & Info icon lebih kecil ── */
+  .action-icon,
+  .info-icon { width: 24px; height: 24px; font-size: 10px; }
+
+  /* ── Toast: bottom sheet style ── */
+  .toast {
+    bottom: 0; right: 0; left: 0;
+    border-radius: 12px 12px 0 0;
+    justify-content: center;
+    padding: 14px 20px;
+  }
+
+  /* ── Tombol notif: kecilkan sedikit ── */
+  .notif-btn { width: 32px; height: 32px; font-size: 13px; }
+
+  /* ── Notes area lebih pendek ── */
+  .notes-area { height: 76px; }
+
+  /* ── Help section di sidebar ── */
+  .sidebar-help { padding: 12px; margin: 8px 8px 12px; }
 }

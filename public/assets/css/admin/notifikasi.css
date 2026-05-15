@@ -1,6 +1,6 @@
 /* =========================================
    LAUNDRYHUB – NOTIFIKASI ADMIN PANEL
-   style.css
+   notifikasi.css  (base styles)
    ========================================= */
 
 /* --- CSS VARIABLES --- */
@@ -71,7 +71,7 @@ button { cursor: pointer; border: none; background: none; }
   top: 0;
   left: 0;
   bottom: 0;
-  z-index: 100;
+  z-index: 300;
   transition: transform .25s ease;
   overflow-y: auto;
 }
@@ -190,6 +190,18 @@ button { cursor: pointer; border: none; background: none; }
 }
 .btn-help:hover { background: var(--primary-dark); }
 
+/* Sidebar Overlay (mobile backdrop) */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,.45);
+  backdrop-filter: blur(2px);
+  z-index: 200;
+  transition: opacity .25s;
+}
+.sidebar-overlay.active { display: block; }
+
 /* =========================================
    MAIN WRAPPER
    ========================================= */
@@ -223,13 +235,16 @@ button { cursor: pointer; border: none; background: none; }
   color: var(--text-muted);
   padding: 6px;
 }
-.topbar-title { flex: 1; }
+.topbar-title { flex: 1; min-width: 0; }
 .topbar-title h1 {
   font-family: var(--font-head);
   font-weight: 800;
   font-size: 20px;
   color: var(--text-main);
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .topbar-title p { font-size: 13px; color: var(--text-muted); }
 
@@ -237,6 +252,7 @@ button { cursor: pointer; border: none; background: none; }
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 .search-box {
   display: flex;
@@ -296,6 +312,7 @@ button { cursor: pointer; border: none; background: none; }
   font-weight: 700;
   font-size: 12px;
   display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
 }
 .user-name { font-weight: 600; font-size: 13px; display: block; line-height: 1.2; font-family: var(--font-head); }
 .user-role { font-size: 11px; color: var(--text-muted); display: block; }
@@ -450,6 +467,11 @@ button { cursor: pointer; border: none; background: none; }
   transition: background .15s;
 }
 .btn-filter:hover { background: var(--border); }
+
+/* Mobile filter selects wrapper */
+.filter-selects-row {
+  display: contents; /* flat on desktop */
+}
 
 /* =========================================
    TABS BAR
@@ -885,7 +907,7 @@ button { cursor: pointer; border: none; background: none; }
   inset: 0;
   background: rgba(15,23,42,.4);
   backdrop-filter: blur(4px);
-  z-index: 200;
+  z-index: 400;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -980,6 +1002,10 @@ button { cursor: pointer; border: none; background: none; }
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 .stat-card { animation: fadeIn .3s ease both; }
 .stat-card:nth-child(1) { animation-delay: .05s; }
 .stat-card:nth-child(2) { animation-delay: .10s; }
@@ -987,21 +1013,304 @@ button { cursor: pointer; border: none; background: none; }
 .stat-card:nth-child(4) { animation-delay: .20s; }
 
 /* =========================================
-   RESPONSIVE
+   LAUNDRYHUB – NOTIFIKASI ADMIN PANEL
+   notifikasi-responsive.css
+   Responsive styles: ≤1100px, ≤768px, ≤480px
    ========================================= */
+
+
+/* ─────────────────────────────────────────
+   BREAKPOINT: ≤ 1100px  (tablet landscape)
+   ───────────────────────────────────────── */
 @media (max-width: 1100px) {
-  .detail-panel { display: none; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .detail-panel {
+    display: none;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
+
+
+/* ─────────────────────────────────────────
+   BREAKPOINT: ≤ 768px  (tablet & mobile)
+   ───────────────────────────────────────── */
 @media (max-width: 768px) {
-  .sidebar { transform: translateX(-100%); }
-  .sidebar.open { transform: translateX(0); }
-  .main-wrapper { margin-left: 0; }
-  .topbar-toggle { display: flex; }
-  .search-box { display: none; }
-  .stats-grid { grid-template-columns: 1fr 1fr; }
-  .content-area { padding: 14px; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: none;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* ── Main wrapper ── */
+  .main-wrapper {
+    margin-left: 0;
+  }
+
+  /* ── Topbar ── */
+  .topbar {
+    padding: 0 14px;
+    gap: 10px;
+    height: 60px;
+  }
+  .topbar-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .topbar-title h1 {
+    font-size: 16px;
+  }
+  .topbar-title p {
+    display: none;
+  }
+  /* Hide search box – use filter bar search instead */
+  .search-box {
+    display: none;
+  }
+  /* Collapse user info to avatar only */
+  .user-info,
+  .topbar-user > .fa-chevron-down {
+    display: none;
+  }
+  .topbar-user {
+    padding: 4px;
+    gap: 0;
+  }
+
+  /* ── Content area ── */
+  .content-area {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  /* ── Stats grid ── */
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .stat-card {
+    padding: 14px;
+    gap: 12px;
+    border-radius: var(--radius);
+  }
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  .stat-value {
+    font-size: 20px;
+  }
+  .stat-label {
+    font-size: 11px;
+  }
+
+  /* ── Filter bar ── */
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .filter-search {
+    min-width: unset;
+    width: 100%;
+  }
+  /* Wrap selects in a responsive row */
+  .filter-selects-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .filter-selects-row .filter-select {
+    flex: 1 1 calc(33.333% - 6px);
+    min-width: 90px;
+  }
+  .filter-date {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .btn-filter {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* ── Tabs bar ── */
+  .tabs-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    gap: 0;
+  }
+  .tabs-left {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .tabs-left::-webkit-scrollbar {
+    display: none;
+  }
+  /* "Buat Notifikasi" button below tabs */
+  .tabs-bar > .btn-primary {
+    margin: 10px 12px;
+    width: calc(100% - 24px);
+    justify-content: center;
+  }
+
+  /* ── Table ── */
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* Hide less important columns on mobile */
+  .notif-table th:nth-child(3),
+  .notif-table td:nth-child(3),
+  .notif-table th:nth-child(4),
+  .notif-table td:nth-child(4),
+  .notif-table th:nth-child(5),
+  .notif-table td:nth-child(5) {
+    display: none;
+  }
+  .notif-table th,
+  .notif-table td {
+    padding: 10px 10px;
+  }
+  .notif-title-info .title-sub {
+    display: none;
+  }
+
+  /* ── Pagination ── */
+  .pagination-bar {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+    padding: 12px;
+  }
+  .pagination-right {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  /* Show only first, active, and last page buttons */
+  .pagination-btns .page-btn:not(:first-child):not(:last-child):not(.active) {
+    display: none;
+  }
+  .page-ellipsis {
+    display: none;
+  }
+
+  /* ── Detail panel — full-screen overlay on mobile ── */
+  .detail-panel {
+    /* Overrides the display:none from ≤1100px */
+    position: fixed;
+    inset: 0;
+    top: 60px; /* matches reduced topbar height */
+    width: 100%;
+    max-height: none;
+    height: calc(100vh - 60px);
+    border-radius: 0;
+    border: none;
+    z-index: 250;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp .22s ease;
+    overflow-y: auto;
+  }
+  /* JS sets display:flex when a row is clicked — this lets it show */
+  .detail-panel.is-open {
+    display: flex !important;
+  }
 }
+
+
+/* ─────────────────────────────────────────
+   BREAKPOINT: ≤ 480px  (small phones)
+   ───────────────────────────────────────── */
 @media (max-width: 480px) {
-  .stats-grid { grid-template-columns: 1fr; }
+
+  /* ── Stats: maintain 2-col but shrink ── */
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .stat-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px;
+  }
+  .stat-sub {
+    display: none;
+  }
+  .stat-value {
+    font-size: 18px;
+  }
+  .stat-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 14px;
+  }
+
+  /* ── Topbar ── */
+  .topbar {
+    padding: 0 10px;
+    gap: 8px;
+    height: 56px;
+  }
+  .topbar-title h1 {
+    font-size: 15px;
+  }
+
+  /* ── Filter selects: 2 per row ── */
+  .filter-selects-row .filter-select {
+    flex: 1 1 calc(50% - 4px);
+  }
+
+  /* ── Table ── */
+  .notif-table th:nth-child(7),
+  .notif-table td:nth-child(7) {
+    display: none;
+  }
+
+  /* ── Modal — bottom sheet on phones ── */
+  .modal-overlay {
+    align-items: flex-end;
+  }
+  .modal-box {
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 90dvh;
+    overflow-y: auto;
+    transform: translateY(100%);
+  }
+  .modal-overlay.open .modal-box {
+    transform: translateY(0);
+  }
+  .modal-footer {
+    flex-wrap: wrap;
+    justify-content: stretch;
+  }
+  .modal-footer .btn-primary,
+  .modal-footer .btn-secondary {
+    flex: 1 1 40%;
+    justify-content: center;
+    min-width: 0;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* ── Pagination: minimal ── */
+  .page-size-select {
+    display: none;
+  }
 }

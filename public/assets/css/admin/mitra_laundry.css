@@ -17,8 +17,15 @@
 }
 
 /* ========== RESET & BASE ========== */
-*{box-sizing:border-box}
-html,body{height:100%}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+}
+
 body{
   margin:0;
   font-family:Inter,system-ui,sans-serif;
@@ -27,20 +34,45 @@ body{
 }
 
 /* ========== LAYOUT UTAMA ========== */
-.app{
-  display:flex;
-  min-height:100vh;
+.app {
+  display: flex;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
+
 /* ========== SIDEBAR ========== */
-.sidebar{
-  width:240px;
-  background:#fff;
-  border-right:1px solid var(--line);
-  padding:18px 14px;
-  display:flex;
-  flex-direction:column;
-  gap:18px;
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px; /* Sembunyikan ke kiri */
+  width: 260px;
+  height: 100vh;
+  z-index: 1100;
+  background: #fff;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  visibility: hidden;
+}
+
+.sidebar.active {
+  left: 0;
+  visibility: visible;
+  box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+}
+
+/* Overlay (Layar Gelap saat Menu Buka) */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1050;
+  display: none;
+  backdrop-filter: blur(2px);
+}
+
+.sidebar-overlay.active {
+  display: block;
 }
 
 /* Brand / Logo */
@@ -122,7 +154,14 @@ body{
 }
 
 /* ========== AREA KONTEN UTAMA ========== */
-.main{flex:1;padding:14px 16px 16px 14px}
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0 !important;
+  padding:14px 16px 16px 14px;
+  overflow-x: hidden; /* Anti geser kanan */
+}
 
 /* ========== TOPBAR ========== */
 .topbar{
@@ -300,18 +339,18 @@ select,.filter-btn,.icon-btn,.pagination button,.pagination a,.page-size{
 }
 
 /* ========== TABEL DATA ========== */
-.table-wrap{
-  background:#fff;
-  border:1px solid var(--line);
-  border-top:none;
-  padding:0 10px 8px;
-  box-shadow:var(--shadow);
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+  border: 1px solid var(--line);
 }
-table{
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0 8px;
+
+table {
+  min-width: 850px; /* Lebar minimum tabel di HP */
 }
+
 thead th{
   text-align:left;
   font-size:12px;
@@ -555,4 +594,197 @@ thead th:first-child{width:34px}
 @media (max-width: 1280px){
   .content{grid-template-columns:1fr}
   .detail-panel{position:static;height:auto}
+}
+/* Responsivitas Grid & Konten */
+@media (max-width: 1024px) {
+  .content {
+    grid-template-columns: 1fr; /* Tumpuk panel kiri dan detail ke bawah */
+  }
+  
+  .stats {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  
+  .topbar {
+    padding: 0 15px;
+  }
+}
+/* ========== MOBILE RESPONSIVE LENGKAP ========== */
+/* Hapus/override overflow hidden di parent untuk mobile */
+@media (max-width: 768px) {
+  
+  
+  body,
+  .app,
+  .main,
+  .content {
+    overflow-x: hidden;
+  }
+
+  .table-wrap {
+    width: 100%;
+    min-width: 0; /* Hapus batas min */
+  }
+  
+  table { 
+    min-width: 0 !important; /* Kritikal: biarkan table shrink */
+    width: 100%;
+  }
+  
+  .filter-btn {
+    font-size: 15px;
+  }
+  
+  /* Sembunyikan kolom: rating, status, aksi di mobile */
+  thead th:nth-child(n+5), /* Mulai kolom 5 (Rating dst.) */
+  tbody td:nth-child(n+5) { display: none; }
+  
+  /* Kompres kolom utama */
+  thead th, tbody td { 
+    padding: 8px 4px; 
+    font-size: 12px; 
+    white-space: nowrap; /* Cegah wrap teks */
+  }
+  
+  /* Prioritaskan kolom esensial */
+  .partner { font-size: 11px; }
+  .partner strong { font-size: 12px; }
+}
+
+@media (max-width: 425px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+    width: 100%;
+    }
+  
+  .search {
+    width: 100%;
+  }
+  
+  .topbar-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+   body {
+    font-size: 12px;
+  }
+
+  h1 {
+    font-size: 18px;
+  }
+
+  .page-title-wrap p {
+    font-size: 11px;
+  }
+
+  /* Topbar */
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .search {
+    width: 100%;
+  }
+
+  .search input {
+    font-size: 12px;
+    padding: 10px 36px 10px 12px;
+  }
+
+  .detail-panel {
+    width: 100%;
+  }
+
+  .table-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    
+  }
+  
+  .table-wrap {
+    max-height: 400px;
+    max-width: 400px;
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+
+  .toolbar {
+    max-height: 400px;
+    max-width: 400px;
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+
+  .tabs {
+    max-height: 400px;
+    max-width: 400px;
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+  
+  .filter-btn {
+    font-size: 12px;;
+  }
+}
+
+@media (max-width: 375px) {
+   .table-wrap {
+    max-height: 350px;
+    max-width: 350px;
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+
+  .toolbar {
+    max-height: 350px;
+    max-width: 350px;
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+
+  .tabs {
+    max-height: 350px;
+    max-width: 350px;
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 320px) {
+   .table-wrap {
+    max-height: 300px;
+    max-width: 300px;
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+
+  .toolbar {
+    max-height: 300px;
+    max-width: 300px;
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+
+  .tabs {
+    max-height: 300px;
+    max-width: 300px;
+    overflow-y: auto;
+    overflow-x: auto;
+  }
 }

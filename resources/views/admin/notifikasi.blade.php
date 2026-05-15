@@ -5,10 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LaundryHub – Notifikasi</title>
   <link rel="stylesheet" href="{{ asset('assets/css/admin/notifikasi.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/css/admin/notifikasi-responsive.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
+
+<!-- SIDEBAR OVERLAY (mobile backdrop) -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
@@ -33,16 +37,16 @@
       <i class="fa-solid fa-chevron-right sub-arrow"></i>
     </a>
     <a href="#" class="nav-item"><i class="fa-solid fa-credit-card"></i> Pembayaran</a>
-    <a href="#" class="nav-item"><i class="fa-solid fa-star"></i> Review & Rating</a>
+    <a href="#" class="nav-item"><i class="fa-solid fa-star"></i> Review &amp; Rating</a>
     <a href="#" class="nav-item"><i class="fa-solid fa-triangle-exclamation"></i> Komplain / Laporan <span class="badge">2</span></a>
 
     <div class="nav-section-label">LAPORAN &amp; ANALITIK</div>
-    <a href="#" class="nav-item"><i class="fa-solid fa-chart-bar"></i> Statistik & Laporan</a>
+    <a href="#" class="nav-item"><i class="fa-solid fa-chart-bar"></i> Statistik &amp; Laporan</a>
     <a href="#" class="nav-item"><i class="fa-solid fa-clock-rotate-left"></i> Aktivitas</a>
 
     <div class="nav-section-label">PENGATURAN</div>
     <a href="#" class="nav-item"><i class="fa-solid fa-sliders"></i> Pengaturan Platform</a>
-    <a href="#" class="nav-item"><i class="fa-solid fa-user-shield"></i> Admin & Role</a>
+    <a href="#" class="nav-item"><i class="fa-solid fa-user-shield"></i> Admin &amp; Role</a>
     <a href="#" class="nav-item active"><i class="fa-solid fa-bell"></i> Notifikasi</a>
   </nav>
 
@@ -134,30 +138,33 @@
             <i class="fa-solid fa-search"></i>
             <input type="text" placeholder="Cari judul notifikasi, modul, atau penerima..." id="tableSearch" />
           </div>
-          <select class="filter-select">
-            <option>Semua Modul</option>
-            <option>Pesanan</option>
-            <option>Pembayaran</option>
-            <option>Review & Rating</option>
-            <option>Verifikasi Mitra</option>
-            <option>Komplain</option>
-            <option>Laporan</option>
-            <option>Marketing</option>
-            <option>Keamanan</option>
-          </select>
-          <select class="filter-select">
-            <option>Semua Tipe</option>
-            <option>Email</option>
-            <option>Push</option>
-            <option>SMS</option>
-          </select>
-          <select class="filter-select">
-            <option>Status</option>
-            <option>Terkirim</option>
-            <option>Terjadwal</option>
-            <option>Gagal</option>
-            <option>Draf</option>
-          </select>
+          <!-- Selects wrapped for responsive row layout on mobile -->
+          <div class="filter-selects-row">
+            <select class="filter-select">
+              <option>Semua Modul</option>
+              <option>Pesanan</option>
+              <option>Pembayaran</option>
+              <option>Review &amp; Rating</option>
+              <option>Verifikasi Mitra</option>
+              <option>Komplain</option>
+              <option>Laporan</option>
+              <option>Marketing</option>
+              <option>Keamanan</option>
+            </select>
+            <select class="filter-select">
+              <option>Semua Tipe</option>
+              <option>Email</option>
+              <option>Push</option>
+              <option>SMS</option>
+            </select>
+            <select class="filter-select">
+              <option>Status</option>
+              <option>Terkirim</option>
+              <option>Terjadwal</option>
+              <option>Gagal</option>
+              <option>Draf</option>
+            </select>
+          </div>
           <div class="filter-date">
             <i class="fa-regular fa-calendar"></i>
             <span>1 Mei 2024 - 31 Mei 2024</span>
@@ -620,9 +627,8 @@ function showDetail(n) {
     </div>
   `;
 
-  // Show panel on small screens too
-  panel.style.display = 'flex';
-  panel.style.animation = 'fadeIn .2s ease';
+  // On mobile (≤768px) show panel as full-screen overlay via class
+  panel.classList.add('is-open');
 }
 
 // ─── FILTER / SEARCH ─────────────────────────────────────────────────────────
@@ -666,15 +672,38 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.row-check').forEach(cb => cb.checked = this.checked);
   });
 
-  // Detail close
+  // Detail close — juga menyembunyikan panel di mobile
   document.getElementById('detailClose').addEventListener('click', () => {
+    document.getElementById('detailPanel').classList.remove('is-open');
     clearDetail();
     document.querySelectorAll('.notif-row').forEach(r => r.classList.remove('selected'));
   });
 
-  // Sidebar toggle
+  // Sidebar toggle + overlay
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+
+  function openSidebar() {
+    sidebar.classList.add('open');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
   document.getElementById('sidebarToggle').addEventListener('click', () => {
-    document.getElementById('sidebar').classList.toggle('open');
+    sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+  });
+  overlay.addEventListener('click', closeSidebar);
+
+  // Tutup sidebar saat nav item diklik di mobile
+  sidebar.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      if (window.innerWidth <= 768) closeSidebar();
+    });
   });
 
   // Modal Buat Notifikasi
@@ -705,13 +734,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Auto-open first row detail
   const firstRow = document.querySelector('.notif-row');
-  if (firstRow) {
-    firstRow.click();
-  }
+  if (firstRow) firstRow.click();
 });
 
 function clearDetail() {
+  const panel = document.getElementById('detailPanel');
   const body = document.getElementById('detailBody');
+  panel.classList.remove('is-open');
   body.innerHTML = `
     <div class="detail-empty">
       <i class="fa-solid fa-bell-slash"></i>

@@ -46,11 +46,12 @@
         <button class="btn btn-primary">Pusat Bantuan</button>
       </div>
     </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <main class="main">
       <header class="topbar">
         <div class="page-title-wrap">
-          <button class="icon-btn">☰</button>
+          <button class="icon-btn" id="menuToggle">☰</button>
           <div>
             <h1>Aktivitas</h1>
             <p>Pantau semua aktivitas pengguna di platform.</p>
@@ -307,19 +308,44 @@
   </div>
 
   <script>
-    document.querySelectorAll('.menu-item').forEach(item => {
-  item.addEventListener('click', e => {
-    e.preventDefault();
-    document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-    item.classList.add('active');
-  });
-});
+    document.addEventListener("DOMContentLoaded", function () {
+  const menuToggle = document.getElementById("menuToggle");
+  const sidebar = document.querySelector(".sidebar");
+  
+  // 1. Pastikan overlay tersedia
+  let overlay = document.getElementById("sidebarOverlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "sidebarOverlay";
+    overlay.className = "sidebar-overlay";
+    document.body.appendChild(overlay);
+  }
 
-document.querySelectorAll('.table-wrap tbody tr').forEach(row => {
-  row.addEventListener('click', () => {
-    document.querySelectorAll('.table-wrap tbody tr').forEach(r => r.classList.remove('selected'));
-    row.classList.add('selected');
+  // 2. Fungsi Toggle Buka/Tutup
+  menuToggle.addEventListener("click", function (e) {
+    e.stopPropagation();
+    sidebar.classList.toggle("active");
+    overlay.classList.toggle("active");
+
+    if (sidebar.classList.contains("active")) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
   });
+
+  // 3. Klik Overlay untuk Menutup
+  overlay.addEventListener("click", function () {
+    sidebar.classList.remove("active");
+    overlay.classList.remove("active");
+    document.body.style.overflow = "auto"; // Normal kembali
+  });
+
+  // 4. Klik di dalam sidebar tidak menutup menu
+  sidebar.addEventListener("click", function (e) {
+    e.stopPropagation();
+  });
+  
 });
   </script>
 </body>

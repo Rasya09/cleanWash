@@ -65,7 +65,13 @@
       <!-- Topbar / Header Atas -->
       <header class="topbar">
         <div class="page-title-wrap">
-          <div class="hamburger">☰</div>
+          <button id="menuToggle" class="btn-menu" style="display: flex; background: none; border: none; cursor: pointer; padding: 10px; margin-right: 10px;">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f2937" stroke-width="2">
+    <line x1="3" y1="12" x2="21" y2="12"></line>
+    <line x1="3" y1="6" x2="21" y2="6"></line>
+    <line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</button>
           <div>
             <h1>Mitra Laundry</h1>
             <p>Kelola semua mitra laundry yang terdaftar di platform.</p>
@@ -161,7 +167,7 @@
             <select>
               <option>Urutkan</option>
             </select>
-            <button class="filter-btn">⏷ Filter</button>
+            <button class="filter-btn">Filter ⏷</button>
           </div>
 
           <!-- Tabel Data Mitra -->
@@ -432,5 +438,52 @@
       </section>
     </main>
   </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+  const menuToggle = document.getElementById("menuToggle");
+  const sidebar = document.querySelector(".sidebar");
+  
+  // 1. Inisialisasi Overlay
+  let overlay = document.querySelector(".sidebar-overlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.className = "sidebar-overlay";
+    document.body.appendChild(overlay);
+  }
+
+  // 2. Fungsi Buka/Tutup
+  function toggleSidebar() {
+    sidebar.classList.toggle("active");
+    overlay.classList.toggle("active");
+    
+    // Kunci scroll body agar tidak bisa geser saat menu buka
+    if (sidebar.classList.contains("active")) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }
+
+  // 3. Event Listeners
+  if (menuToggle) {
+    menuToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleSidebar();
+    });
+  }
+
+  // Klik di luar (overlay) untuk menutup
+  overlay.addEventListener("click", toggleSidebar);
+
+  // Klik menu item untuk menutup (opsional, cocok untuk mobile)
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('click', () => {
+      sidebar.classList.remove("active");
+      overlay.classList.remove("active");
+      document.body.style.overflow = "auto";
+    });
+  });
+});
+  </script>
 </body>
 </html>

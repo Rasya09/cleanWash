@@ -1,5 +1,10 @@
-* {
-  box-sizing: border-box;
+*, *::before, *::after {
+  box-sizing: border-box; /* Menghitung padding dalam lebar total */
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden; /* Mengunci agar tidak bisa geser kanan */
   margin: 0;
   padding: 0;
 }
@@ -26,17 +31,27 @@ body {
 
 .app {
   display: flex;
+  width: 100%;
+  max-width: 100vw;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .sidebar {
-  width: 260px;
-  background: #fff;
-  border-right: 1px solid var(--line);
-  padding: 18px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  position: fixed;
+  top: 0;
+  left: -280px; /* Sembunyi */
+  width: 280px;
+  height: 100vh;
+  z-index: 1100;
+  transition: all 0.3s ease;
+  visibility: hidden;
+}
+
+.sidebar.active {
+  left: 0;
+  visibility: visible;
+  box-shadow: 4px 0 15px rgba(0,0,0,0.1);
 }
 
 .brand {
@@ -102,11 +117,13 @@ body {
 .help-text { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
 
 .main {
-  flex: 1;
-  padding: 18px 20px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+    flex: 1;
+    width: 100%;
+    max-width: 100vw; /* Tambahkan ini agar tidak meluber */
+    margin-left: 0 !important; /* Paksa 0 karena sidebar sudah fixed overlay */
+    padding: 20px;
+    overflow-x: hidden; /* Tambahkan ini sebagai pengunci terakhir */
+    position: relative;
 }
 
 .topbar {
@@ -195,6 +212,7 @@ body {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 14px;
+  margin-bottom: 20px;
 }
 .stat-card {
   background: var(--card);
@@ -265,14 +283,22 @@ body {
 .date { white-space: nowrap; }
 
 .table-wrap {
-  overflow: auto;
-  border-radius: 14px;
+  width: 100%;
+  overflow-x: auto; /* Tabel yang lebar akan di-scroll di dalam wadahnya saja */
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
 }
 
 table {
   width: 100%;
-  border-collapse: collapse;
-  min-width: 980px;
+  min-width: 600px; /* Biar tabel tetap terbaca di HP (hanya tabel yang di-scroll) */
+}
+
+.stats-grid, .grid-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); /* Cegah kolom dorong layar */
+  width: 100%;
+  gap: 15px;
 }
 
 thead th {
@@ -462,10 +488,167 @@ pre {
   .detail-panel { order: 2; }
 }
 
-@media (max-width: 900px) {
-  .sidebar { display: none; }
-  .topbar { flex-direction: column; align-items: stretch; }
-  .topbar-right { justify-content: space-between; flex-wrap: wrap; }
-  .search-box { width: 100%; }
-  .filters { grid-template-columns: 1fr 1fr; }
+/* =========================
+   FIX RESPONSIVE 768px
+========================= */
+
+@media (max-width: 768px) {
+
+  /* cegah horizontal scroll */
+  html,
+  body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  .app {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .main {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    padding: 14px;
+  }
+
+  /* sidebar full tinggi layar & tidak ikut scroll */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 270px;
+    height: 100dvh; /* full layar mobile */
+    max-height: 100dvh;
+
+    background: #fff;
+    z-index: 999;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    transition: left .3s ease;
+    border-right: 1px solid var(--line);
+
+    padding-bottom: 30px;
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  /* overlay */
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+
+    background: rgba(0,0,0,.4);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: .3s ease;
+    z-index: 998;
+  }
+
+  .sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* topbar */
+  .topbar {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .topbar-right {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  /* stats */
+  .stats {
+    grid-template-columns: 1fr;
+    margin-top: 20px;
+  }
+
+  /* content */
+  .content {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  /* table fix */
+  .left-panel,
+  .detail-panel {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .table-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 900px;
+  }
+}
+
+/* --- SINKRONISASI SIDEBAR --- */
+
+/* Sidebar Default (Tersembunyi) */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px; /* Sembunyikan ke kiri */
+  width: 270px;
+  height: 100vh;
+  background: #fff;
+  z-index: 1100;
+  transition: all 0.3s ease;
+  border-right: 1px solid var(--line);
+}
+
+/* Saat Sidebar Aktif */
+.sidebar.active {
+  left: 0;
+  box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+}
+
+/* Overlay (Layar Gelap) */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 1050;
+  display: none; /* Sembunyi default */
+  backdrop-filter: blur(2px);
+}
+
+.sidebar-overlay.active {
+  display: block;
+}
+
+/* Main Content harus selalu full width karena sidebar melayang (overlay) */
+.main {
+  margin-left: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 1;
+}
+
+/* Cegah Scroll Horizontal */
+html, body, .app {
+  overflow-x: hidden;
+  max-width: 100%;
 }

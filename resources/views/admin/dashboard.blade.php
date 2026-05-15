@@ -710,6 +710,37 @@ window.addEventListener('resize', () => {
   drawBarChart();
 });
 
+
+document.addEventListener("DOMContentLoaded", function () {
+  const menuBtn = document.querySelector(".header-menu-btn");
+  const sidebar = document.querySelector(".sidebar");
+
+  // 1. Buat overlay (pastikan hanya dibuat satu kali)
+  let overlay = document.querySelector(".sidebar-overlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.className = "sidebar-overlay";
+    document.body.appendChild(overlay);
+  }
+
+  // 2. Fungsi Klik Tombol Garis 3 (Toggle Buka/Tutup)
+  menuBtn.addEventListener("click", function (e) {
+    e.stopPropagation(); // Agar klik tidak tembus ke elemen di bawahnya
+    sidebar.classList.toggle("active");
+    overlay.classList.toggle("active");
+  });
+
+  // 3. Klik di mana saja pada Overlay untuk menutup sidebar
+  overlay.addEventListener("click", function () {
+    sidebar.classList.remove("active");
+    overlay.classList.remove("active");
+  });
+
+  // 4. (Tambahan) Klik di dalam sidebar tidak akan menutup sidebar
+  sidebar.addEventListener("click", function (e) {
+    e.stopPropagation();
+  });
+});
 </script>
 
 </body>

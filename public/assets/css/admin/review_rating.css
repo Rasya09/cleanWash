@@ -451,3 +451,54 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--primary);cursor:p
   box-shadow:0 2px 8px rgba(37,99,235,.3);transition:all var(--tx);font-family:var(--fb);
 }
 .btn-save:hover{background:var(--primary-dark)}
+
+@media (max-width:768px){
+  .htitle h1 {
+    font-size:16px;
+  }
+
+  .htitle p {
+    font-size: 12px;
+  }
+
+  .hsearch {
+    display: none;
+  }
+
+}
+
+@media (max-width: 425px){
+  .htitle h1 {
+    font-size:14px;
+  }
+
+  .htitle p {
+    font-size: 10px;
+  }
+
+  .nbtn {
+    border: none;
+  }
+
+  .uprof {
+    border: none;
+  }
+  
+  .uinfo {
+    display: none;
+  }
+
+  .chev {
+    display: none;
+  }
+
+  .stat-row {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .tabs {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}

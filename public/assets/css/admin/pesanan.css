@@ -1291,3 +1291,44 @@ input[type="checkbox"] {
 .table-wrapper::-webkit-scrollbar { height: 5px; width: 5px; }
 .table-wrapper::-webkit-scrollbar-track { background: var(--gray-50); }
 .table-wrapper::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 4px; }
+
+@media (max-width: 768px) {
+  .header-title h1{
+    font-size: 14px;
+  }
+
+  .header-title p {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 425px) {
+  .notif-btn {
+    border: none;
+  }
+
+  .header-search {
+    display: none;
+  }
+
+  .user-profile {
+    border: none;
+  }
+
+  .user-info {
+    display: none;
+  }
+
+  .chevron-icon {
+    display: none;
+  }
+
+  .tab-bar{
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .pagination-info {
+    display: none;
+  }
+}

@@ -274,7 +274,6 @@ body {
 .stat-icon.red    { background: #FEE2E2; }
 .stat-icon.purple { background: #EDE9FE; }
 
-.stat-data {}
 .stat-label { font-size: 12px; color: var(--gray-400); font-weight: 500; margin-bottom: 2px; }
 .stat-value {
   font-family: var(--font-head); font-size: 22px; font-weight: 800;
@@ -650,3 +649,65 @@ input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--primary)
   font-family: var(--font-body);
 }
 .btn-refund:hover { background: var(--danger-light); }
+
+@media (max-width: 768px) {
+  .stat-row {
+    max-width: 800px;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 425px) {
+  /* Biarkan body bisa scroll saat di mobile agar tabel terlihat */
+  body {
+    overflow-y: auto;
+    height: auto;
+  }
+
+  .content {
+    min-width: 100%;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow: visible; /* Pastikan konten tidak terpotong */
+  }
+
+  .header-title h1 { font-size: 14px; }
+  .header-title p { font-size: 10px; }
+  .u-info, .chevron { display: none; }
+  .user-profile { border: none; }
+  .notif-btn { width: 24px; height: 24px; border: none; }
+
+  .stat-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .stat-card { width: 100%; }
+  .stat-value { font-size: 14px; }
+  .stat-label, .stat-sub { font-size: 10px; }
+
+  .tab-bar {
+    max-width: 100%;
+    overflow-x: auto;
+    display: flex;
+  }
+
+  .table-wrap {
+    overflow-x: auto; /* Agar tabel bisa di-geser kanan-kiri */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .data-table {
+    min-width: 600px; /* Memberikan ruang agar tabel tidak gepeng */
+  }
+
+  .pagi-info { 
+    display: none;
+  }
+
+  .pagi-bar {
+  display: flex; 
+  }
+}

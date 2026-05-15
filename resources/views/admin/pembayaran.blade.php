@@ -84,11 +84,6 @@
       <p>Kelola semua transaksi pembayaran di platform.</p>
     </div>
 
-    <div class="header-search">
-      <span class="search-ico">🔍</span>
-      <input type="text" placeholder="Cari transaksi, order ID, mitra..."/>
-    </div>
-
     <div class="header-actions">
       <button class="notif-btn">
         🔔 <span class="notif-badge">3</span>
@@ -152,7 +147,7 @@
           <div class="stat-icon purple">💰</div>
           <div class="stat-data">
             <div class="stat-label">Total Nominal</div>
-            <div class="stat-value big">Rp125.430.000</div>
+            <div class="stat-value">Rp125.430.000</div>
             <div class="stat-sub">Semua transaksi</div>
           </div>
         </div>
@@ -426,7 +421,11 @@
         <div class="pagi-info">Menampilkan 1 – 8 dari 1.248 data</div>
         <div class="pagi-right">
           <div class="pp-select">
-            <select><option>10</option><option>25</option><option>50</option></select>
+            <select>
+              <option>10</option>
+              <option>25</option>
+              <option>50</option>
+            </select>
             / halaman
           </div>
           <div class="pg-btns">
