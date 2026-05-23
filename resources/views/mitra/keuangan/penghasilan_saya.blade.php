@@ -13,8 +13,8 @@
     <!-- PAGE HEADER -->
     <div class="page-header">
       <div>
-        <h1>Penghasilan Saya</h1>
-        <p>Pantau penghasilan dan transaksi bisnis laundry Anda</p>
+        {{-- <h1>Penghasilan Saya</h1>
+        <p>Pantau penghasilan dan transaksi bisnis laundry Anda</p> --}}
       </div>
       <div class="header-actions">
         <button class="date-picker-btn">📅 1 – 31 Mei 2024 ▾</button>

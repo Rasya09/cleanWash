@@ -11,8 +11,6 @@
   <main class="content">
     <div class="page-header">
       <div>
-        <h1>Layanan Saya</h1>
-        <p>Kelola semua layanan laundry yang tersedia di toko Anda</p>
       </div>
       <button class="btn-primary">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 2v10M2 7h10"/></svg>

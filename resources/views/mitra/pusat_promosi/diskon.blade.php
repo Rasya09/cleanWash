@@ -15,8 +15,6 @@
     <!-- Page Header -->
     <div class="page-header">
       <div>
-        <h1>Diskon</h1>
-        <p>Buat dan kelola diskon untuk menarik lebih banyak pelanggan</p>
       </div>
       <button class="btn-primary">＋ Buat Diskon Baru</button>
     </div>

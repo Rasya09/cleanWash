@@ -14,6 +14,7 @@
   --red:#ef6b6b;
   --red-soft:#ffe6e6;
   --shadow:0 10px 30px rgba(34, 51, 84, .08);
+  --sidebar-width: 220px;
 }
 
 /* ========== RESET & BASE ========== */
@@ -32,97 +33,14 @@ body{
   min-height:100vh;
 }
 
-/* ========== SIDEBAR ========== */
-.sidebar{
-  width:240px;
-  background:#fff;
-  border-right:1px solid var(--line);
-  padding:18px 14px;
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-}
-
-/* Brand / Logo */
-.brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:4px 6px 10px;
-}
-.brand-icon{
-  width:34px;height:34px;border-radius:9px;
-  background:linear-gradient(180deg,#4b8df8,#2f6fed);
-  color:#fff;display:grid;place-items:center;
-  font-weight:700;
-}
-.brand-title{font-weight:800;font-size:18px;line-height:1}
-.brand-subtitle{font-size:12px;color:var(--muted);margin-top:4px}
-
-/* Menu Navigasi */
-.menu{display:flex;flex-direction:column;gap:4px}
-.menu-group{
-  margin:12px 8px 6px;
-  font-size:11px;
-  letter-spacing:.08em;
-  color:#7b8494;
-  font-weight:700;
-}
-.menu-item{
-  position:relative;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 12px;
-  border-radius:10px;
-  text-decoration:none;
-  color:#3f4653;
-  font-size:13px;
-  font-weight:500;
-}
-.menu-item span:first-child{width:18px;text-align:center;opacity:.9}
-.menu-item.active{
-  background:linear-gradient(90deg,#edf4ff,#dfeaff);
-  color:#2d60d4;
-  font-weight:700;
-}
-.badge{
-  margin-left:auto;
-  display:inline-grid;
-  place-items:center;
-  min-width:18px;
-  height:18px;
-  border-radius:999px;
-  font-style:normal;
-  font-size:11px;
-  color:#fff;
-  padding:0 5px;
-}
-.badge.red{background:#ef4444}
-.chev{margin-left:auto;color:#98a1b2}
-
-/* Kartu Bantuan */
-.help-card{
-  margin-top:auto;
-  background:linear-gradient(180deg,#f4f7ff,#eaf1ff);
-  border:1px solid #dde7ff;
-  border-radius:16px;
-  padding:14px;
-}
-.help-title{font-weight:700;font-size:14px}
-.help-text{font-size:12px;color:var(--muted);margin:6px 0 12px}
-.help-card button{
-  width:100%;
-  border:none;
-  background:var(--blue);
-  color:#fff;
-  border-radius:10px;
-  padding:10px 12px;
-  font-weight:700;
-}
-
 /* ========== AREA KONTEN UTAMA ========== */
-.main{flex:1;padding:14px 16px 16px 14px}
+.main{
+  margin-left: var(--sidebar-width);
+  margin-top: 60px;
+  padding: 22px 24px;
+  flex: 1;
+  min-height: calc(100vh - 60px);
+}
 
 /* ========== TOPBAR ========== */
 .topbar{
@@ -419,7 +337,7 @@ thead th:first-child{width:34px}
   padding:14px;
   position:sticky;
   top:14px;
-  height:calc(100vh - 28px);
+  height:calc(90vh - 28px);
   overflow:auto;
 }
 

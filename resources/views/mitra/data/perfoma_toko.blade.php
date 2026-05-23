@@ -10,7 +10,7 @@
   <!-- Header -->
   <div class="header">
     <div class="header-title">
-      <h1>Performa Toko</h1>
+      {{-- <h1>Performa Toko</h1> --}}
       <p>Pantau perkembangan toko dan kinerja bisnis Anda</p>
     </div>
     <div class="header-actions">

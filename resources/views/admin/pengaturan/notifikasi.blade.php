@@ -1,58 +1,10 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LaundryHub – Notifikasi</title>
+@extends('admin.layouts.app')
+
+@section('css')
   <link rel="stylesheet" href="{{ asset('assets/css/admin/notifikasi.css') }}">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-</head>
-<body>
+@endsection
 
-<!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-icon"><i class="fa-solid fa-shirt"></i></div>
-    <div class="logo-text">
-      <span class="logo-name">LaundryHub</span>
-      <span class="logo-sub">Admin Panel</span>
-    </div>
-  </div>
-
-  <nav class="sidebar-nav">
-    <div class="nav-section-label">DASHBOARD</div>
-    <a href="#" class="nav-item"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
-
-    <div class="nav-section-label">MANAJEMEN</div>
-    <a href="#" class="nav-item"><i class="fa-solid fa-users"></i> User / Customer</a>
-    <a href="#" class="nav-item"><i class="fa-solid fa-store"></i> Mitra Laundry</a>
-    <a href="#" class="nav-item"><i class="fa-solid fa-clipboard-check"></i> Verifikasi Mitra <span class="badge">8</span></a>
-    <a href="#" class="nav-item has-sub">
-      <i class="fa-solid fa-box"></i> Pesanan (via Mitra)
-      <i class="fa-solid fa-chevron-right sub-arrow"></i>
-    </a>
-    <a href="#" class="nav-item"><i class="fa-solid fa-credit-card"></i> Pembayaran</a>
-    <a href="#" class="nav-item"><i class="fa-solid fa-star"></i> Review & Rating</a>
-    <a href="#" class="nav-item"><i class="fa-solid fa-triangle-exclamation"></i> Komplain / Laporan <span class="badge">2</span></a>
-
-    <div class="nav-section-label">LAPORAN &amp; ANALITIK</div>
-    <a href="#" class="nav-item"><i class="fa-solid fa-chart-bar"></i> Statistik & Laporan</a>
-    <a href="#" class="nav-item"><i class="fa-solid fa-clock-rotate-left"></i> Aktivitas</a>
-
-    <div class="nav-section-label">PENGATURAN</div>
-    <a href="#" class="nav-item"><i class="fa-solid fa-sliders"></i> Pengaturan Platform</a>
-    <a href="#" class="nav-item"><i class="fa-solid fa-user-shield"></i> Admin & Role</a>
-    <a href="#" class="nav-item active"><i class="fa-solid fa-bell"></i> Notifikasi</a>
-  </nav>
-
-  <div class="sidebar-help">
-    <div class="help-title">Butuh bantuan?</div>
-    <a href="#" class="help-link">Kunjungi Pusat Bantuan</a>
-    <button class="btn-help"><i class="fa-solid fa-headset"></i> Pusat Bantuan</button>
-  </div>
-</aside>
-
+@section('content')
 <!-- MAIN WRAPPER -->
 <div class="main-wrapper">
 
@@ -296,6 +248,9 @@
     </div>
   </div>
 </div>
+@endsection
+
+@push('scripts')
 
 <script>
   /* =========================================
@@ -719,5 +674,4 @@ function clearDetail() {
     </div>`;
 }
 </script>
-</body>
-</html>
+@endpush

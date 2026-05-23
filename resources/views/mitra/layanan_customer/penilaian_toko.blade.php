@@ -14,8 +14,6 @@
     <!-- Page Header -->
     <div class="page-header">
       <div>
-        <h1>Penilaian Toko</h1>
-        <p>Lihat rating dan ulasan pelanggan terhadap toko Anda</p>
       </div>
       <button class="btn-outline">⬇ Unduh Laporan</button>
     </div>

@@ -1,76 +1,11 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LaundryHub - Aktivitas</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+@extends('admin.layouts.app')
+
+@section('css')
   <link rel="stylesheet" href="{{ asset('assets/css/admin/aktivitas.css') }}">
-</head>
-<body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-icon">🧺</div>
-        <div>
-          <div class="brand-title">LaundryHub</div>
-          <div class="brand-subtitle">Admin Panel</div>
-        </div>
-      </div>
+@endsection
 
-      <nav class="menu">
-        <a href="#" class="menu-item">Dashboard</a>
-
-        <div class="menu-group">MANAJEMEN</div>
-        <a href="#" class="menu-item">User / Customer</a>
-        <a href="#" class="menu-item">Mitra Laundry</a>
-        <a href="#" class="menu-item">Verifikasi Mitra <span class="badge red">8</span></a>
-        <a href="#" class="menu-item">Pesanan (via Mitra)</a>
-        <a href="#" class="menu-item">Pembayaran</a>
-        <a href="#" class="menu-item">Review & Rating</a>
-        <a href="#" class="menu-item">Komplain / Laporan <span class="badge red">2</span></a>
-        <a href="#" class="menu-item">Statistik & Laporan</a>
-        <a href="#" class="menu-item active">Aktivitas</a>
-
-        <div class="menu-group">PENGATURAN</div>
-        <a href="#" class="menu-item">Pengaturan Platform</a>
-        <a href="#" class="menu-item">Admin & Role</a>
-        <a href="#" class="menu-item">Notifikasi</a>
-      </nav>
-
-      <div class="help-card">
-        <div class="help-title">Butuh bantuan?</div>
-        <div class="help-text">Kunjungi Pusat Bantuan</div>
-        <button class="btn btn-primary">Pusat Bantuan</button>
-      </div>
-    </aside>
-
+@section('content')
     <main class="main">
-      <header class="topbar">
-        <div class="page-title-wrap">
-          <button class="icon-btn">☰</button>
-          <div>
-            <h1>Aktivitas</h1>
-            <p>Pantau semua aktivitas pengguna di platform.</p>
-          </div>
-        </div>
-
-        <div class="topbar-right">
-          <div class="search-box">
-            <input type="text" placeholder="Cari mitra, pesanan, pelanggan..." />
-          </div>
-          <button class="icon-btn bell">🔔<span class="notif-dot">3</span></button>
-          <div class="profile">
-            <img src="https://i.pravatar.cc/100?img=12" alt="Profile">
-            <div>
-              <div class="profile-name">Super Admin</div>
-              <div class="profile-role">Administrator</div>
-            </div>
-          </div>
-        </div>
-      </header>
 
       <section class="stats">
         <div class="stat-card blue">
@@ -290,22 +225,26 @@
 
           <div class="detail-section">
             <h3>Data Perubahan</h3>
-            <pre>{
-  "order_id": "#ORD-2024-0508-0001",
-  "customer": "Andi Pratama",
-  "service": "Cuci Kiloan",
-  "berat": "8.5 kg",
-  "total": "85000",
-  "status": "Menunggu Pickup"
-}</pre>
+            <pre>
+                {
+                "order_id": "#ORD-2024-0508-0001",
+                "customer": "Andi Pratama",
+                "service": "Cuci Kiloan",
+                "berat": "8.5 kg",
+                "total": "85000",
+                "status": "Menunggu Pickup"
+                }
+            </pre>
           </div>
 
           <button class="btn btn-outline full">Lihat Detail Order</button>
         </aside>
       </section>
     </main>
-  </div>
+@endsection
 
+@push('scripts')
+    
   <script>
     document.querySelectorAll('.menu-item').forEach(item => {
   item.addEventListener('click', e => {
@@ -322,5 +261,4 @@ document.querySelectorAll('.table-wrap tbody tr').forEach(row => {
   });
 });
   </script>
-</body>
-</html>
+@endpush

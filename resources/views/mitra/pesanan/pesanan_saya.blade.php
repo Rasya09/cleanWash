@@ -13,7 +13,6 @@
 
     {{-- Page Header --}}
     <div class="ps-header">
-        <h1 class="ps-title">Pesnan Saya</h1>
         <p class="ps-subtitle">Kelola dan pantau semua pesanan laundry Anda di sini.</p>
     </div>
 

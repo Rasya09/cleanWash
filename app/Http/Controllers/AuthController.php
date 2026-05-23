@@ -10,27 +10,32 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    // ======================
+
+    // =====================================
     // SHOW LOGIN
-    // ======================
+    // =====================================
 
     public function showLogin()
     {
         return view('auth.login');
     }
 
-    // ======================
+
+
+    // =====================================
     // SHOW REGISTER
-    // ======================
+    // =====================================
 
     public function showRegister()
     {
         return view('auth.register');
     }
 
-    // ======================
+
+
+    // =====================================
     // REGISTER
-    // ======================
+    // =====================================
 
     public function register(Request $request)
     {
@@ -38,22 +43,44 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
+            'phone' => 'required|numeric|unique:users',
             'password' => 'required|min:6|confirmed'
         ]);
 
-        User::create([
+
+        // =========================
+        // CREATE USER
+        // =========================
+
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
+            'role' => 'user',
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect('/login')
+
+        // =========================
+        // AUTO LOGIN
+        // =========================
+
+        Auth::login($user);
+
+
+        // =========================
+        // REDIRECT
+        // =========================
+
+        return redirect('/user/home')
             ->with('success', 'Register berhasil');
     }
 
-    // ======================
+
+
+    // =====================================
     // LOGIN
-    // ======================
+    // =====================================
 
     public function login(Request $request)
     {
@@ -63,28 +90,50 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
+
         if (Auth::attempt($credentials)) {
 
             $request->session()->regenerate();
 
-            return redirect('/dashboard');
+            // =========================
+            // ADMIN
+            // =========================
+
+            if (Auth::user()->role == 'admin') {
+
+                return redirect('/admin/dashboard');
+            }
+
+
+            // =========================
+            // MITRA
+            // =========================
+
+            if (Auth::user()->role == 'mitra') {
+
+                return redirect('/mitra/dashboard');
+            }
+
+
+            // =========================
+            // USER
+            // =========================
+
+            return redirect('/user/dashboard');
         }
 
-        return back()->with('error', 'Email atau password salah');
+
+        return back()->with(
+            'error',
+            'Email atau password salah'
+        );
     }
 
-    // ======================
-    // DASHBOARD
-    // ======================
 
-    public function dashboard()
-    {
-        return view('dashboard');
-    }
 
-    // ======================
+    // =====================================
     // LOGOUT
-    // ======================
+    // =====================================
 
     public function logout(Request $request)
     {
@@ -97,4 +146,5 @@ class AuthController extends Controller
 
         return redirect('/login');
     }
+
 }

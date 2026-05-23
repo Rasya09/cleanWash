@@ -9,23 +9,6 @@
 
 <div class="tl-page">
 
-    {{-- Breadcrumb + Header --}}
-    <div class="tl-page-header">
-        <div>
-            <div class="tl-breadcrumb">
-                <a href="#" class="tl-breadcrumb-link">Layanan Saya</a>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                <span class="tl-breadcrumb-current">Tambah Layanan</span>
-            </div>
-            <h1 class="tl-title">Tambah Layanan</h1>
-            <p class="tl-subtitle">Lengkapi informasi layanan Anda dengan benar</p>
-        </div>
-        <a href="#" class="tl-btn-back">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-            Kembali ke Daftar Layanan
-        </a>
-    </div>
-
     {{-- Main Content --}}
     <div class="tl-layout">
 

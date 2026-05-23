@@ -11,8 +11,8 @@
   <!-- Page Header -->
   <div class="page-header">
     <div class="page-title">
-      <h1>Saldo Saya</h1>
-      <p>Kelola saldo dan transaksi keuangan toko Anda</p>
+      {{-- <h1>Saldo Saya</h1>
+      <p>Kelola saldo dan transaksi keuangan toko Anda</p> --}}
     </div>
     <div class="page-actions">
       <button class="btn-outline">

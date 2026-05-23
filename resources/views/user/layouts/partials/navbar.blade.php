@@ -10,7 +10,22 @@
             <a href="{{ route('layanan') }}" class="{{request()->routeIs('layanan') ? 'active' : ''}}">Layanan</a>
         </nav>
         <div class="nav-actions">
+        @guest
+            {{-- Belum login: tampil tombol Login --}}
             <a href="{{ route('login') }}" class="btn-login">Login</a>
-        </div>
+        @endguest
+
+        @auth
+            {{-- Sudah login: tampil nama + tombol Logout --}}
+            <div class="nav-profile">
+                <span class="nav-username">{{ Auth::user()->name }}</span>
+
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn-logout">Logout</button>
+                </form>
+            </div>
+        @endauth
+    </div>
     </div>
 </header>

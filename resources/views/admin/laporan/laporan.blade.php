@@ -1,81 +1,12 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LaundryHub - Statistik & Laporan</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+@extends('admin.layouts.app')
+
+@section('css')
   <link rel="stylesheet" href="{{ asset('assets/css/admin/statistik_laporan.css') }}">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0"></script>
-</head>
-<body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-logo">◎</div>
-        <div>
-          <div class="brand-name">LaundryHub</div>
-          <div class="brand-subtitle">Admin Panel</div>
-        </div>
-      </div>
+    
+@endsection
 
-      <nav class="menu">
-        <a href="#" class="menu-item active">Dashboard</a>
-
-        <div class="menu-section">Manajemen</div>
-        <a href="#" class="menu-item">User / Customer</a>
-        <a href="#" class="menu-item">Mitra Laundry</a>
-        <a href="#" class="menu-item">Verifikasi Mitra <span class="badge">8</span></a>
-        <a href="#" class="menu-item">Pesanan (via Mitra)</a>
-        <a href="#" class="menu-item">Pembayaran</a>
-        <a href="#" class="menu-item">Review & Rating</a>
-        <a href="#" class="menu-item">Komplain / Laporan <span class="badge red">2</span></a>
-
-        <div class="menu-section">Laporan & Analitik</div>
-        <a href="#" class="menu-item active-sub">Statistik & Laporan</a>
-        <a href="#" class="menu-item">Aktivitas</a>
-
-        <div class="menu-section">Pengaturan</div>
-        <a href="#" class="menu-item">Pengaturan Platform</a>
-        <a href="#" class="menu-item">Admin & Role</a>
-        <a href="#" class="menu-item">Notifikasi</a>
-      </nav>
-
-      <div class="help-box">
-        <div class="help-title">Butuh bantuan?</div>
-        <div class="help-text">Kunjungi Pusat Bantuan</div>
-        <button>Pusat Bantuan</button>
-      </div>
-    </aside>
-
+@section('content')
     <main class="main">
-      <header class="topbar">
-        <div class="page-title-wrap">
-          <button class="icon-btn">☰</button>
-          <div>
-            <h1>Statistik & Laporan</h1>
-            <p>Pantau performa platform dan buat laporan berdasarkan periode tertentu.</p>
-          </div>
-        </div>
-
-        <div class="top-actions">
-          <div class="search">
-            <input type="text" placeholder="Cari mitra, pesanan, pelanggan..." />
-            <span>⌕</span>
-          </div>
-          <button class="icon-circle">🔔<span class="notif-dot">3</span></button>
-          <div class="profile">
-            <div class="avatar"></div>
-            <div>
-              <div class="profile-name">Super Admin</div>
-              <div class="profile-role">Administrator</div>
-            </div>
-            <span>▾</span>
-          </div>
-        </div>
-      </header>
 
       <div class="toolbar">
         <div class="tabs">
@@ -325,9 +256,10 @@
         </div>
       </section>
     </main>
-  </div>
+@endsection
 
-  <script>
+@push('scripts')
+      <script>
     const ctx = document.getElementById('trendChart').getContext('2d');
 
 new Chart(ctx, {
@@ -395,5 +327,4 @@ new Chart(ctx, {
   }
 });
   </script>
-</body>
-</html>
+@endpush

@@ -13,12 +13,12 @@
     <div class="kt-page-header">
         <div>
             <div class="kt-title-row">
-                <h1 class="kt-title">Kesehatan Toko</h1>
-                <button class="kt-info-btn" title="Info">
+                {{-- <h1 class="kt-title">Kesehatan Toko</h1> --}}
+                {{-- <button class="kt-info-btn" title="Info">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                </button>
+                </button> --}}
             </div>
-            <p class="kt-subtitle">Pantau kesehatan toko Anda agar performa tetap optimal</p>
+            {{-- <p class="kt-subtitle">Pantau kesehatan toko Anda agar performa tetap optimal</p> --}}
         </div>
         <div class="kt-header-actions">
             <button class="kt-btn-date">

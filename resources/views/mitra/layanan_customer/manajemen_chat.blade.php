@@ -12,13 +12,13 @@
   <main class="content">
 
     <!-- Page Header -->
-    <div class="page-header">
+    {{-- <div class="page-header">
       <div>
         <h1>Manajemen Chat</h1>
         <p>Kelola semua percakapan dengan pelanggan Anda</p>
       </div>
       <button class="btn-settings">⚙️ Pengaturan Auto Reply</button>
-    </div>
+    </div> --}}
 
     <!-- ══════════ CHAT LAYOUT ══════════ -->
     <div class="chat-layout">

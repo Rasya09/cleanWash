@@ -1,105 +1,14 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('admin.layouts.app')
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>LaundryHub - User / Customer</title>
-
-  <!-- CSS Utama -->
+@section('css')
   <link rel="stylesheet" href="{{ asset('assets/css/admin/user.css') }}">
+@endsection
 
-  <!-- Google Font: Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
-
-<body> <!-- Menambahkan tag pembuka body yang hilang di snippet sebelumnya -->
-  <div class="app">
-    
-    <!-- BAGIAN SIDEBAR (Navigasi Kiri) -->
-    <aside class="sidebar">
-      <!-- Logo & Identitas Aplikasi -->
-      <div class="brand">
-        <div class="brand-icon">
-          <i class="fa-solid fa-square-plus"></i>
-        </div>
-        <div>
-          <div class="brand-title">LaundryHub</div>
-          <div class="brand-subtitle">Admin Panel</div>
-        </div>
-      </div>
-
-      <!-- Navigasi Menu -->
-      <nav class="menu">
-        <a class="menu-item" href="#"><i class="fa-regular fa-house"></i><span>Dashboard</span></a>
-
-        <div class="menu-group">MANAJEMEN</div>
-
-        <a class="menu-item active" href="#"><i class="fa-regular fa-user"></i><span>User / Customer</span></a>
-        <a class="menu-item" href="#"><i class="fa-regular fa-building"></i><span>Mitra Laundry</span></a>
-        <a class="menu-item" href="#"><i class="fa-regular fa-circle-check"></i><span>Verifikasi Mitra</span><span class="badge red">8</span></a>
-        <a class="menu-item" href="#"><i class="fa-regular fa-clipboard"></i><span>Pesanan (via Mitra)</span><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a class="menu-item" href="#"><i class="fa-regular fa-credit-card"></i><span>Pembayaran</span></a>
-
-        <div class="menu-group">MODERASI</div>
-        <a class="menu-item" href="#"><i class="fa-regular fa-star"></i><span>Review & Rating</span></a>
-        <a class="menu-item" href="#"><i class="fa-regular fa-circle-exclamation"></i><span>Komplain / Laporan</span><span class="badge red">2</span></a>
-
-        <div class="menu-group">LAPORAN & ANALITIK</div>
-        <a class="menu-item" href="#"><i class="fa-solid fa-chart-simple"></i><span>Statistik & Laporan</span></a>
-        <a class="menu-item" href="#"><i class="fa-regular fa-clock"></i><span>Aktivitas</span></a>
-
-        <div class="menu-group">PENGATURAN</div>
-        <a class="menu-item" href="#"><i class="fa-solid fa-gear"></i><span>Pengaturan Platform</span></a>
-        <a class="menu-item" href="#"><i class="fa-regular fa-user"></i><span>Admin & Role</span></a>
-        <a class="menu-item" href="#"><i class="fa-regular fa-bell"></i><span>Notifikasi</span></a>
-      </nav>
-
-      <!-- Kartu Bantuan / Support -->
-      <div class="help-card">
-        <div class="help-title">Butuh bantuan?</div>
-        <div class="help-text">Kunjungi Pusat Bantuan kami</div>
-        <button class="help-btn">Pusat Bantuan</button>
-        <div class="help-illustration">🎧</div>
-      </div>
-    </aside>
-
+@section('content')
+    <div class="app">
     <!-- BAGIAN KONTEN UTAMA (Kanan) -->
     <main class="main">
       
-      <!-- Topbar / Header Atas -->
-      <header class="topbar">
-        <div class="top-left">
-          <button class="icon-btn"><i class="fa-solid fa-bars"></i></button>
-          <div>
-            <h1>User / Customer</h1>
-            <div class="breadcrumb">Dashboard <span>›</span> User / Customer</div>
-          </div>
-        </div>
-
-        <!-- Notifikasi & Profil Admin -->
-        <div class="top-right">
-          <button class="notif">
-            <i class="fa-regular fa-bell"></i>
-            <span class="dot">3</span>
-          </button>
-          <div class="profile">
-            <img src="https://i.pravatar.cc/100?img=12" alt="Admin" />
-            <div>
-              <div class="profile-name">Super Admin</div>
-              <div class="profile-role">Administrator</div>
-            </div>
-            <i class="fa-solid fa-chevron-down"></i>
-          </div>
-        </div>
-      </header>
-
       <!-- Area Isi Halaman -->
       <section class="content">
         
@@ -318,5 +227,8 @@
       </section>
     </main>
   </div>
-</body>
-</html>
+@endsection
+
+@push('scripts')
+    
+@endpush

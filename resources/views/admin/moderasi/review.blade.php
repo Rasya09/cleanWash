@@ -1,82 +1,13 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>LaundryHub – Review &amp; Rating</title>
+@extends('admin.layouts.app')
+
+@section('css')
   <link rel="stylesheet" href="{{ asset('assets/css/admin/review_rating.css') }}">
-</head>
-<body>
+    
+@endsection
 
-<!-- ══════════ SIDEBAR ══════════ -->
-<aside class="sidebar">
-  <div class="sb-brand">
-    <div class="b-icon">🧺</div>
-    <div class="b-text">
-      <h2>LaundryHub</h2>
-      <span>Admin Panel</span>
-    </div>
-  </div>
-
-  <nav class="sb-nav">
-    <div class="ni"><span class="ico">🏠</span> Dashboard</div>
-
-    <div class="nl">Manajemen</div>
-    <div class="ni"><span class="ico">👤</span> User / Customer</div>
-    <div class="ni"><span class="ico">🏪</span> Mitra Laundry</div>
-    <div class="ni"><span class="ico">✅</span> Verifikasi Mitra <span class="nbadge">8</span></div>
-    <div class="ni"><span class="ico">📦</span> Pesanan (via Mitra) ›</div>
-    <div class="ni"><span class="ico">💳</span> Pembayaran</div>
-
-    <div class="nl">Moderasi</div>
-    <div class="ni active"><span class="ico">⭐</span> Review &amp; Rating</div>
-    <div class="ni"><span class="ico">🚩</span> Komplain / Laporan <span class="nbadge">2</span></div>
-
-    <div class="nl">Laporan &amp; Analitik</div>
-    <div class="ni"><span class="ico">📊</span> Statistik &amp; Laporan</div>
-    <div class="ni"><span class="ico">📋</span> Aktivitas</div>
-
-    <div class="nl">Pengaturan</div>
-    <div class="ni"><span class="ico">⚙️</span> Pengaturan Platform</div>
-    <div class="ni"><span class="ico">🛡️</span> Admin &amp; Role</div>
-    <div class="ni"><span class="ico">🔔</span> Notifikasi</div>
-  </nav>
-
-  <div class="sb-foot">
-    <div class="help-card">
-      <p>Butuh bantuan?</p>
-      <small>Kunjungi Pusat Bantuan</small>
-      <div class="hbtns">
-        <button class="hbtn p">🎧 Pusat Bantuan</button>
-        <button class="hbtn s">🎧</button>
-      </div>
-    </div>
-  </div>
-</aside>
-
-<!-- ══════════ MAIN ══════════ -->
+@section('content')
+    <!-- ══════════ MAIN ══════════ -->
 <div class="main">
-
-  <!-- HEADER -->
-  <header class="hdr">
-    <button class="ham" id="hamBtn"><span></span><span></span><span></span></button>
-    <div class="htitle">
-      <h1>Review &amp; Rating</h1>
-      <p>Kelola semua review dan rating yang diberikan pelanggan terhadap mitra laundry.</p>
-    </div>
-    <div class="hsearch">
-      <span class="sico">🔍</span>
-      <input type="text" placeholder="Cari mitra, pelanggan, atau order ID..."/>
-    </div>
-    <div class="hacts">
-      <button class="nbtn">🔔<span class="nbadge2">2</span></button>
-      <div class="uprof">
-        <div class="uav">SA</div>
-        <div class="uinfo"><h4>Super Admin</h4><span>Administrator</span></div>
-        <span class="chev">▾</span>
-      </div>
-    </div>
-  </header>
 
   <!-- PAGE BODY -->
   <div class="pgbody">
@@ -575,8 +506,10 @@
 
   </div><!-- /pgbody -->
 </div><!-- /main -->
+@endsection
 
-<script>
+@push('scripts')
+    <script>
   function selectRow(row) {
     document.querySelectorAll('tbody tr').forEach(r => {
       r.classList.remove('sel');
@@ -609,5 +542,4 @@
     sb.style.display = sb.style.display === 'none' ? 'flex' : 'none';
   });
 </script>
-</body>
-</html>
+@endpush

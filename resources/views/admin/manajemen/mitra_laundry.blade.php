@@ -1,99 +1,14 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+@extends('admin.layouts.app')
 
-  <title>LaundryHub - Mitra Laundry</title>
-
-  <!-- Pengaturan Font & Assets -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+@section('css')
   <link rel="stylesheet" href="{{ asset('assets/css/admin/mitra_laundry.css') }}">
+    
+@endsection
 
-</head>
-<body>
-  <div class="app">
-    <!-- BAGIAN SIDEBAR (Navigasi Kiri) -->
-    <aside class="sidebar">
-      <!-- Identitas Brand -->
-      <div class="brand">
-        <div class="brand-icon">⌂</div>
-        <div>
-          <div class="brand-title">LaundryHub</div>
-          <div class="brand-subtitle">Admin Panel</div>
-        </div>
-      </div>
-
-      <!-- Menu Navigasi -->
-      <nav class="menu">
-        <a class="menu-item" href="#"><span>⌂</span>Dashboard</a>
-
-        <div class="menu-group">MANAJEMEN</div>
-        <a class="menu-item" href="#"><span>👤</span>User / Customer</a>
-        <a class="menu-item active" href="#"><span>🏪</span>Mitra Laundry</a>
-        <a class="menu-item" href="#"><span>☑</span>Verifikasi Mitra <em class="badge red">8</em></a>
-        <a class="menu-item" href="#"><span>▣</span>Pesanan (via Mitra) <span class="chev">›</span></a>
-        <a class="menu-item" href="#"><span>💳</span>Pembayaran</a>
-
-        <div class="menu-group">MODERASI</div>
-        <a class="menu-item" href="#"><span>☆</span>Review & Rating</a>
-        <a class="menu-item" href="#"><span>☍</span>Komplain / Laporan <em class="badge red">2</em></a>
-
-        <div class="menu-group">LAPORAN & ANALITIK</div>
-        <a class="menu-item" href="#"><span>▤</span>Statistik & Laporan</a>
-        <a class="menu-item" href="#"><span>◔</span>Aktivitas</a>
-
-        <div class="menu-group">PENGATURAN</div>
-        <a class="menu-item" href="#"><span>⚙</span>Pengaturan Platform</a>
-        <a class="menu-item" href="#"><span>👥</span>Admin & Role</a>
-        <a class="menu-item" href="#"><span>🔔</span>Notifikasi</a>
-      </nav>
-
-      <!-- Kartu Bantuan -->
-      <div class="help-card">
-        <div class="help-title">Butuh bantuan?</div>
-        <div class="help-text">Kunjungi Pusat Bantuan</div>
-        <button>Pusat Bantuan</button>
-      </div>
-    </aside>
-
+@section('content')
+    <div class="app">
     <!-- BAGIAN KONTEN UTAMA (Kanan) -->
     <main class="main">
-      <!-- Topbar / Header Atas -->
-      <header class="topbar">
-        <div class="page-title-wrap">
-          <div class="hamburger">☰</div>
-          <div>
-            <h1>Mitra Laundry</h1>
-            <p>Kelola semua mitra laundry yang terdaftar di platform.</p>
-          </div>
-        </div>
-
-        <div class="topbar-actions">
-          <div class="search">
-            <input type="text" placeholder="Cari mitra laundry..." />
-            <span>⌕</span>
-          </div>
-
-          <div class="notification">
-            <span>🔔</span>
-            <em>3</em>
-          </div>
-
-          <!-- Profil User Admin -->
-          <div class="profile">
-            <div class="avatar"></div>
-            <div class="profile-text">
-              <strong>Super Admin</strong>
-              <span>Administrator</span>
-            </div>
-            <div class="chev">⌄</div>
-          </div>
-        </div>
-      </header>
 
       <!-- Area Konten Utama -->
       <section class="content">
@@ -432,5 +347,8 @@
       </section>
     </main>
   </div>
-</body>
-</html>
+@endsection
+
+@push('scripts')
+    
+@endpush

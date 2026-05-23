@@ -1,101 +1,14 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <!-- Meta Tags & Basic Setup -->
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LaundryHub - Verifikasi Mitra</title>
+@extends('admin.layouts.app')
 
-  <!-- External Fonts & Icons -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+@section('css')
   <link rel="stylesheet" href="{{ asset('assets/css/admin/verifikasi_mitra.css') }}">
-</head>
+@endsection
 
-<body>
-  <!-- Main Application Container -->
-  <div class="app">
-    
-    <!-- Sidebar Navigation -->
-    <aside class="sidebar">
-      <!-- Brand Header -->
-      <div class="brand">
-        <div class="brand-logo">
-          <i class="fa-solid fa-bag-shopping"></i>
-        </div>
-        <div class="brand-text">
-          <div class="brand-name">LaundryHub</div>
-          <div class="brand-sub">Admin Panel</div>
-        </div>
-      </div>
-
-      <!-- Main Navigation Menu -->
-      <nav class="menu">
-        <!-- Dashboard Section -->
-        <a href="#" class="menu-item"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
-
-        <!-- Manajemen Section -->
-        <div class="menu-section">Manajemen</div>
-        <a href="#" class="menu-item"><i class="fa-solid fa-users"></i><span>User / Customer</span></a>
-        <a href="#" class="menu-item"><i class="fa-solid fa-store"></i><span>Mitra Laundry</span></a>
-        <a href="#" class="menu-item active"><i class="fa-solid fa-circle-check"></i><span>Verifikasi Mitra</span><span class="badge">8</span></a>
-        <a href="#" class="menu-item"><i class="fa-solid fa-cart-shopping"></i><span>Pesanan (via Mitra)</span></a>
-        <a href="#" class="menu-item"><i class="fa-solid fa-credit-card"></i><span>Pembayaran</span></a>
-
-        <!-- Moderasi Section -->
-        <div class="menu-section">Moderasi</div>
-        <a href="#" class="menu-item"><i class="fa-regular fa-star"></i><span>Review & Rating</span></a>
-        <a href="#" class="menu-item"><i class="fa-regular fa-flag"></i><span>Komplain / Laporan</span><span class="badge red">2</span></a>
-
-        <!-- Laporan & Analitik Section -->
-        <div class="menu-section">Laporan & Analitik</div>
-        <a href="#" class="menu-item"><i class="fa-solid fa-chart-column"></i><span>Statistik & Laporan</span></a>
-        <a href="#" class="menu-item"><i class="fa-solid fa-chart-line"></i><span>Aktivitas</span></a>
-
-        <!-- Pengaturan Section -->
-        <div class="menu-section">Pengaturan</div>
-        <a href="#" class="menu-item"><i class="fa-solid fa-gear"></i><span>Pengaturan Platform</span></a>
-        <a href="#" class="menu-item"><i class="fa-solid fa-user-gear"></i><span>Admin & Role</span></a>
-        <a href="#" class="menu-item"><i class="fa-regular fa-bell"></i><span>Notifikasi</span></a>
-      </nav>
-
-      <!-- Help/Support Card -->
-      <div class="help-card">
-        <div>
-          <div class="help-title">Butuh bantuan?</div>
-          <div class="help-sub">Kunjungi Pusat Bantuan</div>
-        </div>
-        <button>Pusat Bantuan</button>
-      </div>
-    </aside>
+@section('content')
+    <div class="app">
 
     <!-- Main Content Area -->
     <main class="main">
-      
-      <!-- Top Navigation Bar -->
-      <header class="topbar">
-        <div class="top-left">
-          <button class="icon-btn"><i class="fa-solid fa-bars"></i></button>
-        </div>
-        <div class="top-right">
-          <!-- Notification Bell -->
-          <button class="icon-bell">
-            <i class="fa-regular fa-bell"></i>
-            <span class="notif">3</span>
-          </button>
-          <!-- User Profile -->
-          <div class="profile">
-            <img src="https://i.pravatar.cc/100?img=12" alt="Admin" />
-            <div class="profile-text">
-              <div class="profile-name">Super Admin</div>
-              <div class="profile-role">Administrator</div>
-            </div>
-            <i class="fa-solid fa-chevron-down chevron"></i>
-          </div>
-        </div>
-      </header>
 
       <!-- Page Header -->
       <div class="page-head">
@@ -369,5 +282,8 @@
       </section>
     </main>
   </div>
-</body>
-</html>
+@endsection
+
+@push('scripts')
+    
+@endpush

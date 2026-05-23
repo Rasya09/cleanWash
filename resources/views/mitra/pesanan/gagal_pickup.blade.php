@@ -11,11 +11,6 @@
 
 <div class="gp-page">
 
-    {{-- Page Header --}}
-    <div class="gp-header">
-        <h1 class="gp-title">Gagal Pickup / Pembatalan</h1>
-    </div>
-
     {{-- Info Banner --}}
     <div class="gp-info-banner">
         <div class="gp-info-icon">

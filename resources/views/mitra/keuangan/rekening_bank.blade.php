@@ -11,8 +11,8 @@
   <!-- Page Header -->
   <div class="page-header">
     <div class="page-title">
-      <h1>Rekening Bank</h1>
-      <p>Kelola rekening bank untuk pencairan saldo dan transaksi keuangan</p>
+      {{-- <h1>Rekening Bank</h1>
+      <p>Kelola rekening bank untuk pencairan saldo dan transaksi keuangan</p> --}}
     </div>
     <button class="btn-primary">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 4v16m8-8H4"/></svg>
