@@ -120,7 +120,7 @@ class AuthController extends Controller
             // USER
             // =========================
 
-            return redirect('/');
+            return redirect('/user/home');
         }
 
 
