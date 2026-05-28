@@ -131,7 +131,7 @@
             </div>
 
             <div class="modal-footer">
-                <a href="{{ route('detail_pesanan') }}" class="btn-primary w-100" style="display:inline-block; text-decoration:none; box-sizing:border-box;">Lanjutkan Pemesanan</a>
+                <a href="{{ route('user.detail-pesanan') }}" class="btn-primary w-100" style="display:inline-block; text-decoration:none; box-sizing:border-box;">Lanjutkan Pemesanan</a>
             </div>
         </div>
     </div>

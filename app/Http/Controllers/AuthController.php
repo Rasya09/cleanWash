@@ -57,6 +57,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'role' => 'user',
+            'status' => 'active',
             'password' => Hash::make($request->password),
         ]);
 
@@ -119,7 +120,7 @@ class AuthController extends Controller
             // USER
             // =========================
 
-            return redirect('/user/dashboard');
+            return redirect('/');
         }
 
 

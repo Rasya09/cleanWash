@@ -12,6 +12,22 @@
     --text-light:    #9aaab8;
     --border:        #d8e4ee;
     --font:          'Poppins', sans-serif;
+    --blue-primary: #1a56e8;
+    --blue-dark: #0d1e5c;
+    --blue-light: #e8eeff;
+    --blue-subtle: #f0f4ff;
+    --blue-faded: rgba(26,86,232,0.1);
+    --white: #ffffff;
+    --grey-96: #f5f5f7;
+    --grey-97: #f7f7f9;
+    --text-secondary: #4a5a8a;
+    --border: 1px solid #e5e9f5;
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --shadow-card: 0 2px 20px rgba(0,0,0,0.06);
+    --nav-h: 72px;
 }
 
 body {

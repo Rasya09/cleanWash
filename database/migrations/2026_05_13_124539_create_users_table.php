@@ -14,13 +14,60 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
 
             $table->id();
+
+            // =========================
+            // USER INFO
+            // =========================
+
             $table->string('name');
-            $table->string('email')->unique();
-            $table->string('phone')->nullable();
-            $table->enum('role', ['admin', 'mitra', 'user'])
-                  ->default('user');
+
+            $table->string('email')
+                  ->unique();
+
+            $table->string('phone')
+                  ->unique();
+
+
+
+            // =========================
+            // ROLE
+            // =========================
+
+            $table->enum('role', [
+                'admin',
+                'mitra',
+                'user'
+            ])->default('user');
+
+
+
+            // =========================
+            // STATUS
+            // =========================
+
+            $table->enum('status', [
+                'active',
+                'blocked'
+            ])->default('active');
+
+
+
+            // =========================
+            // AUTH
+            // =========================
+
             $table->string('password');
+
+            $table->rememberToken();
+
+
+
+            // =========================
+            // TIMESTAMP
+            // =========================
+
             $table->timestamps();
+
         });
     }
 

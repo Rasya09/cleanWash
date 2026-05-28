@@ -12,10 +12,22 @@ class User extends Authenticatable
         'email',
         'phone',
         'role',
+        'status',
         'password'
+
     ];
+
+
 
     protected $hidden = [
         'password',
+        'remember_token'
+
     ];
+    
+    public function addresses()
+    {
+        return $this->hasMany(UserAddress::class);
+    }
 }
+

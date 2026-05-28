@@ -69,7 +69,7 @@
                         <div class="antar-jemput">
                             <p><i class="fa-solid fa-motorcycle"></i> Antar Jemput</p>
                         </div>
-                        <a href="{{ route('pesanan') }}" class="btn-pesan">Pesan Sekarang</a>
+                        <a href="{{ route('user.pesanan') }}" class="btn-pesan">Pesan Sekarang</a>
                     </div>
                 </div>
             </section>

@@ -2,6 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserAddressController;
+use App\Models\UserAddress;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\MitraRegisterController;
+
 
 
 // ======================================================
@@ -86,9 +91,41 @@ Route::middleware('auth')->prefix('user')->group(function () {
         return view('user.pembayaran');
     })->name('user.pembayaran');
 
+    Route::get('/chat', function () {
+        return view('user.chat');
+    })->name('user.chat');
+    
     Route::get('/profile', function () {
-        return view('user.profile_customer');
+        $addresses = UserAddress::where(
+            'user_id',
+            Auth::id()
+        )->get();
+        return view('user.profile_customer', compact('addresses'));
     })->name('user.profile');
+
+    Route::get('/alamat-saya', function () {
+        $addresses = UserAddress::where(
+            'user_id',
+            Auth::id()
+        )->get();
+        return view('user.alamat_saya', compact('addresses'));
+    })->name('user.alamat-saya');
+
+    Route::put('/alamat/{id}/primary',
+    [UserAddressController::class, 'setPrimary'])
+    ->name('alamat.primary');
+
+    Route::put('/alamat/{id}/update',
+    [UserAddressController::class, 'update'])
+    ->name('alamat.update');
+
+    Route::delete('/alamat/{id}/delete',
+    [UserAddressController::class, 'destroy'])
+    ->name('alamat.delete');
+
+    Route::post('/alamat/store',
+    [UserAddressController::class, 'store'])
+    ->name('alamat.store');
 
 });
 
@@ -99,10 +136,34 @@ Route::middleware('auth')->prefix('user')->group(function () {
 
 Route::middleware('auth')->prefix('mitra')->group(function () {
 
+    Route::middleware('auth') ->prefix('register') ->group(function () {
+
+        Route::get('/step-1', function () {
+            return view('auth.register_mitra.step1');
+        })->name('mitra.register.step1');
+
+        Route::post('/step-1/store', 
+            [MitraRegisterController::class, 'storeStep1'])
+            ->name('mitra.register.step1.store');
+
+        Route::get('/step-2/{id}',
+            [MitraRegisterController::class, 'step2'])
+            ->name('mitra.register.step2');
+
+        Route::post('/step-2/{id}/store',
+            [MitraRegisterController::class, 'storeStep2'])
+            ->name('mitra.register.step2.store');
+
+        Route::get('/step-3/{id}', function ($id) {
+            return "STEP 3 ID : " . $id;
+        })->name('mitra.register.step3');
+
+    });
+
+
     Route::get('/dashboard', function () {
         return view('mitra.home');
     })->name('mitra.dashboard');
-
 
     // PESANAN
     Route::get('/pesanan-saya', function () {
@@ -188,7 +249,6 @@ Route::middleware('auth')->prefix('admin')->group(function () {
         return view('admin.home');
     })->name('admin.dashboard');
 
-
     // MANAJEMEN
     Route::get('/user', function () {
         return view('admin.manajemen.user');
@@ -212,22 +272,8 @@ Route::middleware('auth')->prefix('admin')->group(function () {
         return view('admin.moderasi.komplain');
     })->name('admin.komplain');
 
-    // LAPORAN
-    Route::get('/laporan', function () {
-        return view('admin.laporan.laporan');
-    })->name('admin.laporan');
-    
-    Route::get('/aktivitas', function () {
-        return view('admin.laporan.aktivitas');
-    })->name('admin.aktivitas');
-
 
     // PENGATURAN 
-    
-    Route::get('/role', function () {
-        return view('admin.pengaturan.role');
-    })->name('admin.role');
-    
     Route::get('/notifikasi', function () {
         return view('admin.pengaturan.notifikasi');
     })->name('admin.notifikasi');

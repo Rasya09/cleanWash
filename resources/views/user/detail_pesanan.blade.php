@@ -291,7 +291,7 @@
                         <p class="va-box__bank">Bank BRI</p>
                     </div> -->
 
-                    <button class="btn-bayar"><a href="{{ route('pembayaran') }}">Bayar Sekarang</a></button>
+                    <button class="btn-bayar"><a href="{{ route('user.pembayaran') }}">Bayar Sekarang</a></button>
                 </section>
 
                 <!-- Aksi -->

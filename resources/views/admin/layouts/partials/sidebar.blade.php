@@ -67,32 +67,8 @@
         <span class="nav-badge">2</span>
       </a>
 
-      <!-- Laporan & Analitik -->
-      <div class="nav-section-label">Laporan &amp; Analitik</div>
-
-      <a class="nav-item {{ request()->routeIs('admin.laporan') ? 'active' : '' }}" href="{{ route('admin.laporan') }}">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-        </svg>
-        Statistik &amp; Laporan
-      </a>
-
-      <a class="nav-item {{ request()->routeIs('admin.aktivitas') ? 'active' : '' }}" href="{{ route('admin.aktivitas') }}">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        Aktivitas
-      </a>
-
       <!-- Pengaturan -->
       <div class="nav-section-label">Pengaturan</div>
-
-      <a class="nav-item {{ request()->routeIs('admin.role') ? 'active' : '' }}" href="{{ route('admin.role') }}">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zM3 5h.01M21 5h.01M3 19h.01M21 19h.01"/>
-        </svg>
-        Admin &amp; Role
-      </a>
 
       <a class="nav-item {{ request()->routeIs('admin.notifikasi') ? 'active' : '' }}" href="{{ route('admin.notifikasi') }}">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
