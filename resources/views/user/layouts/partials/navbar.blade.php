@@ -2,6 +2,7 @@
 /* ===== NAVBAR ===== */
     .nav {
       /* position: fixed; */
+      position: relative;
       top: 0; left: 0; right: 0;
       height: var(--nav-h);
       background: rgba(255,255,255,0.90);
