@@ -367,9 +367,83 @@
         /* ===== FILTER TOGGLE (mobile) ===== */
         const filterToggle = document.getElementById('filterToggle');
         const sidebar = document.getElementById('sidebar');
-        filterToggle.addEventListener('click', () => {
-            const open = sidebar.classList.toggle('open');
-            filterToggle.innerHTML = open ? '✕ Sembunyikan Filter' : '🔧 Tampilkan Filter Pencarian';
-        });
+        if (filterToggle && sidebar) {
+            filterToggle.addEventListener('click', () => {
+                const open = sidebar.classList.toggle('open');
+                filterToggle.innerHTML = open ? '✕ Sembunyikan Filter' : '🔧 Tampilkan Filter Pencarian';
+            });
+        }
+
+        // Interaksi filter layanan
+        const filterChips = document.querySelectorAll('.filter-chip');
+        if (filterChips.length > 0) {
+            const btnSemuaLayanan = filterChips[0];
+            const otherChips = Array.from(filterChips).slice(1);
+
+            btnSemuaLayanan.addEventListener('click', () => {
+                btnSemuaLayanan.classList.add('active');
+                otherChips.forEach(chip => chip.classList.remove('active'));
+            });
+
+            otherChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    chip.classList.toggle('active');
+                    const anyActive = otherChips.some(c => c.classList.contains('active'));
+                    if (anyActive) {
+                        btnSemuaLayanan.classList.remove('active');
+                    } else {
+                        btnSemuaLayanan.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        // Interaksi filter status
+        const btnStatuses = document.querySelectorAll('.btn-status');
+        if (btnStatuses.length > 0) {
+            btnStatuses.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    btnStatuses.forEach(b => {
+                        b.classList.remove('primary');
+                        b.classList.add('outline');
+                    });
+                    btn.classList.remove('outline');
+                    btn.classList.add('primary');
+                });
+            });
+        }
+
+        // Tombol reset filter
+        const btnReset = document.querySelector('.btn-reset');
+        const priceSlider = document.querySelector('.price-slider');
+        const filterSelect = document.querySelector('.filter-select');
+
+        if (btnReset) {
+            btnReset.addEventListener('click', () => {
+                if (filterChips.length > 0) {
+                    filterChips[0].classList.add('active');
+                    for (let i = 1; i < filterChips.length; i++) {
+                        filterChips[i].classList.remove('active');
+                    }
+                }
+                
+                if (btnStatuses.length > 0) {
+                    btnStatuses[0].classList.add('primary');
+                    btnStatuses[0].classList.remove('outline');
+                    if (btnStatuses[1]) {
+                        btnStatuses[1].classList.remove('primary');
+                        btnStatuses[1].classList.add('outline');
+                    }
+                }
+
+                if (priceSlider) {
+                    priceSlider.value = priceSlider.max;
+                }
+
+                if (filterSelect) {
+                    filterSelect.selectedIndex = 0;
+                }
+            });
+        }
     </script>
 @endpush
