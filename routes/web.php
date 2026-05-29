@@ -6,6 +6,8 @@ use App\Http\Controllers\UserAddressController;
 use App\Models\UserAddress;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MitraRegisterController;
+use App\Http\Controllers\AdminController;
+
 
 
 
@@ -61,7 +63,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
 // USER (wajib login)
 // ======================================================
 
-Route::middleware('auth')->prefix('user')->group(function () {
+Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
 
     Route::get('/home', function () {
         return view('user.home');
@@ -134,7 +136,7 @@ Route::middleware('auth')->prefix('user')->group(function () {
 // MITRA (wajib login)
 // ======================================================
 
-Route::middleware('auth')->prefix('mitra')->group(function () {
+Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
 
     Route::middleware('auth') ->prefix('register') ->group(function () {
 
@@ -157,6 +159,26 @@ Route::middleware('auth')->prefix('mitra')->group(function () {
         Route::get('/step-3/{id}', function ($id) {
             return "STEP 3 ID : " . $id;
         })->name('mitra.register.step3');
+
+        Route::get('/step-3/{id}',
+            [MitraRegisterController::class, 'step3'])
+            ->name('mitra.register.step3');
+
+        Route::post('/step-3/store/{id}',
+            [MitraRegisterController::class, 'storeStep3'])
+            ->name('mitra.register.step3.store');
+
+        Route::get('/step-4/{id}',
+            [MitraRegisterController::class, 'step4'])
+            ->name('mitra.register.step4');
+
+        Route::post('/step-4/store/{id}',
+            [MitraRegisterController::class, 'storeStep4'])
+            ->name('mitra.register.step4.store');
+
+        Route::get('/success',
+            [MitraRegisterController::class, 'success'])
+            ->name('mitra.register.success');
 
     });
 
@@ -243,7 +265,7 @@ Route::middleware('auth')->prefix('mitra')->group(function () {
 // ADMIN (wajib login)
 // ======================================================
 
-Route::middleware('auth')->prefix('admin')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
     Route::get('/dashboard', function () {
         return view('admin.home');
@@ -258,9 +280,16 @@ Route::middleware('auth')->prefix('admin')->group(function () {
         return view('admin.manajemen.mitra_laundry');
     })->name('admin.mitra');
 
-    Route::get('/verifikasi-mitra', function () {
-        return view('admin.manajemen.verifikasi_mitra');
-    })->name('admin.verifikasi');
+    Route::get('/verifikasi-mitra',[AdminController::class, 'index']
+    )->name('admin.verifikasi');
+
+    Route::put('/admin/mitra/{id}/approve',
+        [AdminController::class, 'approve'])
+        ->name('admin.mitra.approve');
+
+    Route::put('/admin/mitra/{id}/reject',
+        [AdminController::class, 'reject'])
+        ->name('admin.mitra.reject');
 
 
     // MODERASI

@@ -34,27 +34,43 @@
                 <h1 class="form-title">Masuk</h1>
                 <p class="form-subtitle">Buat akun baru Anda</p>
 
-                <form onsubmit="return false;">
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
 
                     <div class="field">
                         <span class="field-icon">
                             <img src="{{ asset('assets/icons/User_fill.png') }}" alt="User Icon" />
                         </span>
-                        <input type="text" placeholder="Masukkan Email/No HP" autocomplete="username" />
+                        <input 
+                            type="email" 
+                            name="email"
+                            placeholder="Masukkan Email" 
+                            autocomplete="username"
+                            value="{{ old('email') }}"
+                        />
                     </div>
 
                     <div class="field">
                         <span class="field-icon">
                             <img src="{{ asset('assets/icons/password-01.png') }}" alt="Password Icon" />
                         </span>
-                        <input type="password" placeholder="Masukkan Password" autocomplete="new-password" />
+                        <input 
+                            type="password" 
+                            name="password"
+                            placeholder="Masukkan Password" 
+                            autocomplete="current-password" 
+                        />
                     </div>
 
                     <div class="forgot-wrap">
                         <a href="#" class="forgot-link">Lupa Password?</a>
                     </div>
 
-                    <button class="btn-login" type="submit"><a href="/index.html">Login</a></button>
+                    <button class="btn-login" type="submit">Login</button>
+
+                    @if(session('error'))
+                        <p style="color:red;">{{ session('error') }}</p>
+                    @endif
 
                 </form>
 

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class MitraLaundry extends Model
 {
+    protected $table = 'mitra_laundries';
+
     protected $fillable = [
         'user_id',
         // Step 1
@@ -14,29 +16,23 @@ class MitraLaundry extends Model
         'email',
         'phone',
         'description',
-        // Step 2
-        'address',
-        'village',
-        'district',
-        'city',
         'province',
+        'city',
+        'district',
+        'village',
         'postal_code',
-        // Step 3
+        'address',
         'logo',
-        // Step 4
+        'store_photos',
         'ktp',
         'nib',
         'npwp',
         'status'
     ];
 
-    public function storePhotos()
+    public function user()
     {
-        return $this->hasMany(MitraStorePhoto::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function businessPhotos()
-    {
-        return $this->hasMany(MitraBusinessPhoto::class);
-    }
 }
