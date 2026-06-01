@@ -61,6 +61,8 @@
       font-weight: 500;
       color: var(--text-secondary);
       transition: background 0.2s;
+      display: inline-block;
+      text-align: center;
     }
     .btn-ghost a {
       color: var(--text-secondary);
@@ -78,6 +80,8 @@
       color: #fff;
       letter-spacing: 0.14px;
       transition: background 0.2s;
+      display: inline-block;
+      text-align: center;
     }
     .btn-primary a {
       color: #fff;
@@ -189,14 +193,82 @@
     .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
     .hamburger.open span:nth-child(2) { opacity: 0; }
     .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+    /* MOBILE NAV */
+    .mobile-nav {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      display: none;
+      flex-direction: column;
+      gap: 15px;
+      z-index: 999;
+      transform: translateY(-10px);
+      opacity: 0;
+      transition: all 0.3s ease-in-out;
+      border-top: 1px solid rgba(26,86,232,0.08);
+    }
+    .mobile-nav.open {
+      display: flex;
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .mobile-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .mobile-menu a {
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-secondary, #666);
+    }
+    .mobile-menu a.active {
+      color: var(--blue-primary, #1a56e8);
+      font-weight: 600;
+    }
+    .mobile-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    /* RESPONSIVE QUERIES */
+    @media (max-width: 1024px) {
+      .nav {
+        padding: 0 20px;
+      }
+      .nav-menu {
+        display: none;
+      }
+      .nav-actions {
+        display: none;
+      }
+      .nav-user {
+        display: none;
+      }
+      .hamburger {
+        display: flex;
+      }
+    }
 </style>
+
 <!-- ===== NAVBAR ===== -->
 <nav class="nav">
   <a href="{{ route('home') }}" class="nav-brand">
-    <img class="nav-logo-icon" src="{{ asset('assets/images/CW.png') }}" alt="Clean Wash Logo" class="nav-logo-icon" />
+    <img class="nav-logo-icon" src="{{ asset('assets/images/CW.png') }}" alt="Clean Wash Logo" />
   </a>
 
-  <!-- Desktop menu -->
+  <!-- Menu Desktop -->
   <ul class="nav-menu">
     <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a></li>
     <li><a href="{{ route('cari-laundry') }}" class="{{ request()->routeIs('cari-laundry') ? 'active' : '' }}" >Cari Laundry</a></li>
@@ -204,10 +276,10 @@
   </ul>
 
   @guest
-  <!-- Desktop: Auth buttons (logged out) -->
+  <!-- Aksi Navbar Desktop (Guest) -->
   <div class="nav-actions" id="navActionsDesktop">
-    <button class="btn-ghost"><a href="/register">Daftar</a></button>
-    <button class="btn-primary"><a href="/login">Masuk</a></button>
+    <a href="/register" class="btn-ghost">Daftar</a>
+    <a href="/login" class="btn-primary">Masuk</a>
   </div>
   @endguest
 
@@ -221,8 +293,9 @@
             $initial = strtoupper(substr($name,0,2));
         }
     @endphp
+    <!-- Aksi Navbar Desktop (Auth) -->
     <div class="nav-user" id="navUserDesktop">
-        <div class="nav-user-avatar" id="desktopAvatar">{{ $initial }}</div>
+        <div class="nav-user-avatar" id="desktopAvatar" onclick="toggleDropdown()">{{ $initial }}</div>
         <div class="nav-user-info">
         <span class="nav-user-name">{{ Auth::user()->name }}</span>
         <span class="nav-user-role">Pengguna Aktif</span>
@@ -236,17 +309,93 @@
         <button class="dropdown-item"><a href="{{ route('admin.dashboard') }}">Dashboard admin</a></button>
         @endif
         <div class="dropdown-divider"></div>
-        <form action="{{ route('logout') }}" method="POST">
+        <form action="{{ route('logout') }}" method="POST" style="margin:0; width:100%;">
             @csrf
             <button type="submit" class="dropdown-item danger">Keluar</button>
         </form>
-        
         </div>
     </div>
-    <!-- Hamburger (mobile/tablet) -->
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
   @endauth
 
+  <!-- Menu Hamburger -->
+  <button class="hamburger" id="hamburger" aria-label="Menu" onclick="toggleMobileNav()">
+    <span></span><span></span><span></span>
+  </button>
+
+  <!-- Navbar Mobile -->
+  <div class="mobile-nav" id="mobileNav">
+      <ul class="mobile-menu">
+          <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a></li>
+          <li><a href="{{ route('cari-laundry') }}" class="{{ request()->routeIs('cari-laundry') ? 'active' : '' }}">Cari Laundry</a></li>
+          <li><a href="{{ route('layanan') }}" class="{{ request()->routeIs('layanan') ? 'active' : '' }}">Layanan</a></li>
+      </ul>
+
+      @guest
+      <!-- Aksi Navbar Mobile (Guest) -->
+      <div class="mobile-actions">
+          <a href="/register" class="btn-ghost" style="width: 100%; box-sizing: border-box;">Daftar</a>
+          <a href="/login" class="btn-primary" style="width: 100%; box-sizing: border-box;">Masuk</a>
+      </div>
+      @endguest
+
+      @auth
+      <!-- Aksi Navbar Mobile (Auth) -->
+      <div class="dropdown-divider"></div>
+      <ul class="mobile-menu">
+          <li><a href="{{ route('user.profile') }}">Profil Saya</a></li>
+          <li><a href="#">Obrolan</a></li>
+          @if(Auth::user()->role == 'admin')
+          <li><a href="{{ route('admin.dashboard') }}">Dashboard admin</a></li>
+          @endif
+          <li>
+              <form action="{{ route('logout') }}" method="POST" style="margin:0;">
+                  @csrf
+                  <button type="submit" style="background:none; border:none; color:#e03232; font-weight:500; font-size:16px; padding:0; text-align:left; width:100%; cursor:pointer;">Keluar</button>
+              </form>
+          </li>
+      </ul>
+      @endauth
+  </div>
 </nav>
+
+<!-- Skrip Logika Navbar -->
+<script>
+    function toggleDropdown() {
+        const desktopDropdown = document.getElementById('desktopDropdown');
+        if (desktopDropdown) {
+            desktopDropdown.classList.toggle('open');
+        }
+    }
+
+    function toggleMobileNav() {
+        const hamburger = document.getElementById('hamburger');
+        const mobileNav = document.getElementById('mobileNav');
+        if (hamburger && mobileNav) {
+            const isOpen = hamburger.classList.toggle('open');
+            if (isOpen) {
+                mobileNav.style.display = 'flex';
+                void mobileNav.offsetWidth;
+                mobileNav.classList.add('open');
+            } else {
+                mobileNav.classList.remove('open');
+                setTimeout(() => { mobileNav.style.display = 'none'; }, 300);
+            }
+        }
+    }
+
+    document.addEventListener('click', (e) => {
+        const navUser = document.getElementById('navUserDesktop');
+        const desktopDropdown = document.getElementById('desktopDropdown');
+        if (navUser && desktopDropdown && !navUser.contains(e.target)) {
+            desktopDropdown.classList.remove('open');
+        }
+
+        const mobileNav = document.getElementById('mobileNav');
+        const hamburger = document.getElementById('hamburger');
+        if (mobileNav && hamburger && !mobileNav.contains(e.target) && !hamburger.contains(e.target)) {
+            if (mobileNav.classList.contains('open')) {
+                toggleMobileNav();
+            }
+        }
+    });
+</script>
