@@ -1,5 +1,5 @@
 <!-- ====== SIDEBAR ====== -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
     <!-- Logo -->
     <div class="sidebar-logo">
       <div class="sidebar-logo-icon">

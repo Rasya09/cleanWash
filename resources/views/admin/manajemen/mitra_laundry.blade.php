@@ -6,6 +6,8 @@
 @endsection
 
 @section('content')
+    <!-- Overlay backdrop untuk sidebar mobile -->
+
     <div class="app">
     <!-- BAGIAN KONTEN UTAMA (Kanan) -->
     <main class="main">
@@ -276,8 +278,8 @@
           </div>
         </div>
 
-        <!-- PANEL DETAIL (Sisi Kanan) -->
-        <aside class="detail-panel">
+        <!-- PANEL DETAIL dihapus: diganti modal popup -->
+        <aside class="detail-panel" style="display:none">
           <div class="detail-head">
             <h2>Detail Mitra Laundry</h2>
             <span>×</span>
@@ -347,8 +349,250 @@
       </section>
     </main>
   </div>
+
+  <!-- ========== MODAL DETAIL MITRA ========== -->
+  <div class="modal-overlay" id="mitraModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-box">
+
+      <!-- Header -->
+      <div class="modal-header">
+        <h2 id="modalTitle">Detail Mitra Laundry</h2>
+        <button class="modal-close" id="modalClose" aria-label="Tutup">&times;</button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+
+        <!-- Hero -->
+        <div class="modal-hero">
+          <div class="modal-hero-img" id="modalHeroEmoji">🧺</div>
+          <div class="modal-hero-info">
+            <span class="pill green" id="modalStatusBadge">Terverifikasi</span>
+            <h3 id="modalName">Laundry Bersih Sejahtera</h3>
+            <div class="meta" id="modalId">#MITRA-0001</div>
+            <div class="meta rating" id="modalRating">★ 4.8 <span>(128 ulasan)</span></div>
+            <div class="meta" id="modalJoin">Bergabung: 6 Mei 2024</div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="modal-tabs" role="tablist">
+          <button class="active" data-tab="info" role="tab">Informasi</button>
+          <button data-tab="layanan" role="tab">Layanan</button>
+          <button data-tab="performa" role="tab">Performa</button>
+          <button data-tab="dokumen" role="tab">Dokumen</button>
+        </div>
+
+        <!-- Tab: Informasi -->
+        <div class="modal-tab-content active" id="tab-info">
+          <div class="modal-info-grid">
+            <div>Pemilik</div>           <div id="modalOwner">Andi Pratama</div>
+            <div>No. WhatsApp</div>      <div id="modalPhone">0812-3456-7890</div>
+            <div>Email</div>             <div id="modalEmail">andipratama@email.com</div>
+            <div>Alamat Toko</div>       <div id="modalAddress">Jl. Melati No.12, Cipete<br>Jakarta Selatan</div>
+            <div>Kota</div>              <div id="modalCity">Jakarta Selatan</div>
+            <div>Jam Operasional</div>   <div id="modalHours">07:00 – 21:00</div>
+            <div>Antar Jemput</div>      <div><span class="pill green soft" id="modalPickup">Aktif</span></div>
+            <div>Radius Layanan</div>    <div id="modalRadius">5 km</div>
+            <div>Metode Bayar</div>
+            <div class="pay-methods" id="modalPayment">
+              <span>QRIS</span><span>Cash</span><span>Transfer</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Layanan -->
+        <div class="modal-tab-content" id="tab-layanan">
+          <div class="layanan-list">
+            <div class="layanan-item">
+              <div><strong>Cuci + Setrika</strong><br><span style="color:var(--muted);font-size:11px">Reguler 3 hari</span></div>
+              <span class="price">Rp 6.000/kg</span>
+            </div>
+            <div class="layanan-item">
+              <div><strong>Cuci Express</strong><br><span style="color:var(--muted);font-size:11px">Selesai hari ini</span></div>
+              <span class="price">Rp 10.000/kg</span>
+            </div>
+            <div class="layanan-item">
+              <div><strong>Dry Cleaning</strong><br><span style="color:var(--muted);font-size:11px">2-3 hari kerja</span></div>
+              <span class="price">Rp 25.000/item</span>
+            </div>
+            <div class="layanan-item">
+              <div><strong>Cuci Sepatu</strong><br><span style="color:var(--muted);font-size:11px">2 hari</span></div>
+              <span class="price">Rp 30.000/pasang</span>
+            </div>
+            <div class="layanan-item">
+              <div><strong>Cuci Karpet</strong><br><span style="color:var(--muted);font-size:11px">3-5 hari kerja</span></div>
+              <span class="price">Rp 15.000/m²</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Performa -->
+        <div class="modal-tab-content" id="tab-performa">
+          <div class="section-head" style="margin-bottom:12px">
+            <h4 style="margin:0;font-size:13px">Ringkasan Performa</h4>
+            <select style="height:30px;padding:0 10px;border-radius:8px;border:1px solid var(--line);font:inherit">
+              <option>7 Hari Terakhir</option>
+              <option>30 Hari Terakhir</option>
+              <option>3 Bulan</option>
+            </select>
+          </div>
+          <div class="modal-perf-item"><span>📊 Tingkat Penyelesaian</span><b class="green-text">● 98%</b></div>
+          <div class="modal-perf-item"><span>💬 Waktu Respon Chat</span><b>18 menit</b></div>
+          <div class="modal-perf-item"><span>📦 Pesanan Selesai</span><b class="green-text">45 &nbsp;↑ +12%</b></div>
+          <div class="modal-perf-item"><span>✕ Pesanan Dibatalkan</span><b class="red-text">2 &nbsp;↑ +5%</b></div>
+          <div class="modal-perf-item"><span>⭐ Rating Rata-rata</span><b id="modalPerfRating">4.8</b></div>
+          <div class="modal-perf-item"><span>💰 Pendapatan (estimasi)</span><b class="green-text">Rp 2,7 jt</b></div>
+        </div>
+
+        <!-- Tab: Dokumen -->
+        <div class="modal-tab-content" id="tab-dokumen">
+          <div class="doc-list">
+            <div class="doc-item">
+              <div class="doc-icon">📄</div>
+              <div class="doc-info">
+                <strong>KTP Pemilik</strong>
+                <span>Diunggah 6 Mei 2024</span>
+              </div>
+              <div class="doc-status"><span class="pill green soft">Terverifikasi</span></div>
+            </div>
+            <div class="doc-item">
+              <div class="doc-icon">🏢</div>
+              <div class="doc-info">
+                <strong>NIB / SIUP</strong>
+                <span>Diunggah 6 Mei 2024</span>
+              </div>
+              <div class="doc-status"><span class="pill green soft">Terverifikasi</span></div>
+            </div>
+            <div class="doc-item">
+              <div class="doc-icon">📍</div>
+              <div class="doc-info">
+                <strong>Foto Toko</strong>
+                <span>3 foto diunggah</span>
+              </div>
+              <div class="doc-status"><span class="pill green soft">Terverifikasi</span></div>
+            </div>
+            <div class="doc-item">
+              <div class="doc-icon">🏦</div>
+              <div class="doc-info">
+                <strong>Rekening Bank</strong>
+                <span>BCA - 1234567890</span>
+              </div>
+              <div class="doc-status"><span class="pill green soft">Terverifikasi</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Aksi -->
+        <div class="modal-footer">
+          <div class="row">
+            <button class="primary">▣ Lihat Pesanan Mitra</button>
+            <button class="secondary">⋯</button>
+          </div>
+          <button class="danger-btn" style="margin-top:0">⏻ Suspend Mitra</button>
+        </div>
+
+      </div><!-- /modal-body -->
+    </div><!-- /modal-box -->
+  </div><!-- /modal-overlay -->
+
 @endsection
 
 @push('scripts')
-    
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  // ── 1. TABLE SCROLL WRAPPER ───────────────────────────────
+  const tableWrap = document.querySelector('.table-wrap');
+  if (tableWrap) { tableWrap.style.overflowX = 'auto'; tableWrap.style.webkitOverflowScrolling = 'touch'; }
+
+  // ── 3. DATA MITRA ─────────────────────────────────────────
+  const mitraData = [
+    { name:'Laundry Bersih Sejahtera', id:'#MITRA-0001', emoji:'🧺', owner:'Andi Pratama',  email:'andipratama@email.com',   phone:'0812-3456-7890', address:'Jl. Melati No.12, Cipete<br>Jakarta Selatan', city:'Jakarta Selatan', hours:'07:00 – 21:00', radius:'5 km', rating:'4.8', ulasan:128, status:'green',  statusLabel:'Terverifikasi', join:'6 Mei 2024' },
+    { name:'Quick Wash Laundry',       id:'#MITRA-0002', emoji:'◎',  owner:'Budi Santoso',  email:'budisantoso@email.com',   phone:'0813-2345-6789', address:'Jl. Cihampelas No.45<br>Bandung',             city:'Bandung',         hours:'06:00 – 22:00', radius:'7 km', rating:'4.6', ulasan:98,  status:'green',  statusLabel:'Terverifikasi', join:'6 Mei 2024' },
+    { name:'Fresh & Clean Laundry',    id:'#MITRA-0003', emoji:'☁',  owner:'Siti Aisyah',   email:'sitiaisyah@email.com',    phone:'0821-9876-5432', address:'Jl. Rungkut Asri No.8<br>Surabaya',           city:'Surabaya',        hours:'08:00 – 20:00', radius:'4 km', rating:'4.7', ulasan:76,  status:'yellow', statusLabel:'Menunggu',      join:'5 Mei 2024' },
+    { name:'LaundryKita',              id:'#MITRA-0004', emoji:'▣',  owner:'Dewi Lestari',  email:'dewilestari@email.com',   phone:'0822-1122-3344', address:'Jl. Margonda Raya No.20<br>Depok',            city:'Depok',           hours:'07:00 – 21:00', radius:'6 km', rating:'4.5', ulasan:64,  status:'green',  statusLabel:'Terverifikasi', join:'5 Mei 2024' },
+    { name:'CleanPro Laundry',         id:'#MITRA-0005', emoji:'✦',  owner:'Fahmi Hidayat', email:'fahmihidayat@email.com',  phone:'0838-7766-5544', address:'Jl. Ahmad Yani No.55<br>Bekasi',              city:'Bekasi',          hours:'08:00 – 20:00', radius:'5 km', rating:'4.3', ulasan:52,  status:'pink',   statusLabel:'Suspended',     join:'4 Mei 2024' },
+    { name:'Rapi & Wangi Laundry',     id:'#MITRA-0006', emoji:'⬤',  owner:'Rina Marlina',  email:'rinamarlina@email.com',   phone:'0856-9988-7766', address:'Jl. Malioboro No.10<br>Yogyakarta',           city:'Yogyakarta',      hours:'07:00 – 21:00', radius:'8 km', rating:'4.4', ulasan:41,  status:'green',  statusLabel:'Terverifikasi', join:'3 Mei 2024' },
+    { name:'Super Laundry Express',    id:'#MITRA-0007', emoji:'⦿',  owner:'Dimas Saputra', email:'dimassaputra@email.com',  phone:'0811-2233-4455', address:'Jl. M.H. Thamrin No.7<br>Tangerang',          city:'Tangerang',       hours:'06:00 – 22:00', radius:'6 km', rating:'4.2', ulasan:33,  status:'red',    statusLabel:'Ditolak',       join:'2 Mei 2024' },
+    { name:'Laundry Baik Hati',        id:'#MITRA-0008', emoji:'◈',  owner:'Hendra Wijaya', email:'hendrawijaya@email.com',  phone:'0812-6677-8899', address:'Jl. Ijen No.3<br>Malang',                    city:'Malang',          hours:'07:00 – 20:00', radius:'5 km', rating:'4.9', ulasan:87,  status:'yellow', statusLabel:'Menunggu',      join:'1 Mei 2024' },
+  ];
+
+  // ── 4. MODAL LOGIC ────────────────────────────────────────
+  const modal     = document.getElementById('mitraModal');
+  const modalClose = document.getElementById('modalClose');
+
+  function openModal(d) {
+    // Isi data hero
+    document.getElementById('modalHeroEmoji').textContent  = d.emoji;
+    document.getElementById('modalName').textContent       = d.name;
+    document.getElementById('modalId').textContent         = d.id;
+    document.getElementById('modalRating').innerHTML       = '★ ' + d.rating + ' <span>(' + d.ulasan + ' ulasan)</span>';
+    document.getElementById('modalJoin').textContent       = 'Bergabung: ' + d.join;
+
+    const badge = document.getElementById('modalStatusBadge');
+    badge.className  = 'pill ' + d.status;
+    badge.textContent = d.statusLabel;
+
+    // Isi data informasi
+    document.getElementById('modalOwner').textContent   = d.owner;
+    document.getElementById('modalPhone').textContent   = d.phone;
+    document.getElementById('modalEmail').textContent   = d.email;
+    document.getElementById('modalAddress').innerHTML   = d.address;
+    document.getElementById('modalCity').textContent    = d.city;
+    document.getElementById('modalHours').textContent   = d.hours;
+    document.getElementById('modalRadius').textContent  = d.radius;
+    document.getElementById('modalPerfRating').textContent = d.rating;
+
+    // Reset ke tab Informasi
+    switchTab('info');
+
+    // Tampilkan modal
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+    document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
+  }
+
+  modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // ── 5. TAB SWITCHING DALAM MODAL ─────────────────────────
+  function switchTab(tabName) {
+    document.querySelectorAll('.modal-tabs button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === tabName);
+    });
+    document.querySelectorAll('.modal-tab-content').forEach(pane => {
+      pane.classList.toggle('active', pane.id === 'tab-' + tabName);
+    });
+  }
+  document.querySelectorAll('.modal-tabs button').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  // ── 6. ROW CLICK → buka modal ────────────────────────────
+  document.querySelectorAll('tbody tr').forEach((row, i) => {
+    const data = mitraData[i];
+    if (!data) return;
+    row.style.cursor = 'pointer';
+    row.addEventListener('click', function (e) {
+      // Jangan buka modal kalau klik checkbox
+      if (e.target.type === 'checkbox') return;
+      document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
+      this.classList.add('selected');
+      openModal(data);
+    });
+  });
+
+});
+</script>
 @endpush

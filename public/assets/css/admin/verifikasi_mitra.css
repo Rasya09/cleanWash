@@ -25,6 +25,7 @@ body{
   font-family:'Inter',sans-serif;
   background:var(--bg);
   color:var(--text);
+  overflow-x: hidden;
 }
 
 /* ========== LAYOUT UTAMA ========== */
@@ -40,6 +41,7 @@ body{
   padding: 22px 24px;
   flex: 1;
   min-height: calc(100vh - 60px);
+  transition: all 0.3s ease;
 }
 
 /* ========== HEADER HALAMAN ========== */
@@ -56,10 +58,12 @@ body{
   border-radius:12px;
   padding:10px 14px;
   font-size:13px;color:#344054;
+  background: #fff;
   box-shadow:var(--shadow);
 }
 
-/* ========== STATISTIK KARTU (4 kolom) ========== */
+
+/* ========== STATISTIK KARTU ========== */
 .stats{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -80,6 +84,7 @@ body{
   width:44px;height:44px;border-radius:12px;
   display:grid;place-items:center;
   font-size:18px;
+  flex-shrink: 0;
 }
 .violet .stat-icon{background:#efeaff;color:#7468e8}
 .orange .stat-icon{background:#fff3db;color:#f0a11e}
@@ -94,7 +99,7 @@ body{
 /* ========== GRID KONTEN (list & detail) ========== */
 .content-grid{
   display:grid;
-  grid-template-columns: 31% 69%;
+  grid-template-columns: 35% 65%;
   gap:14px;
 }
 .panel{
@@ -103,8 +108,7 @@ body{
   border-radius:16px;
   box-shadow:var(--shadow);
 }
-.list-panel{padding:14px}
-.detail-panel{padding:14px}
+.list-panel, .detail-panel{padding:14px}
 
 /* Header Panel */
 .panel-head{
@@ -119,19 +123,22 @@ body{
   font-size:15px;
 }
 
-/* Filter & Pencarian */
+/* Pencarian & Filter (Panel Kiri) */
 .search-row{
   display:flex;
   gap:8px;
+  flex-wrap: wrap;
 }
 .search-box,.filter-box,.filter-icon{
   height:36px;
   border-radius:10px;
   display:flex;
   align-items:center;
+  border: 1px solid var(--line);
 }
 .search-box{
-  width:196px;
+  flex: 1;
+  min-width: 140px;
   padding:0 10px;
   gap:8px;
   color:#98a2b3;
@@ -144,9 +151,11 @@ body{
   padding:0 12px;
   gap:8px;
   font-size:12px;color:#344054;
+  cursor: pointer;
 }
 .filter-icon{
   width:36px;justify-content:center;color:#667085;
+  cursor: pointer;
 }
 
 /* Daftar Pending */
@@ -159,10 +168,16 @@ body{
   border:1px solid #edf0f5;
   border-radius:14px;
   background:#fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.pending-item:hover {
+  background: #fcfcfc;
 }
 .pending-item.active{
   border-color:#8fb0ef;
   box-shadow:inset 0 0 0 1px #d7e4ff;
+  background: var(--blue-soft);
 }
 .pending-item img{
   width:44px;height:44px;border-radius:12px;object-fit:cover;
@@ -188,11 +203,16 @@ body{
   margin-top:14px;
   font-size:12px;
   color:#667085;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 .pagination{display:flex;gap:6px}
 .pagination button{
   width:28px;height:28px;border-radius:8px;
   color:#667085;
+  border: 1px solid var(--line);
+  background: #fff;
+  cursor: pointer;
 }
 .pagination button.active{
   background:var(--blue);
@@ -200,7 +220,22 @@ body{
   border-color:var(--blue);
 }
 
-/* ========== AREA DETAIL ========== */
+/* ========== AREA DETAIL (Panel Kanan) ========== */
+.head-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.btn-back {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  color: var(--text);
+  cursor: pointer;
+  padding: 4px;
+  display: none; /* Disembunyikan di layar besar */
+}
+
 .detail-head .action-group{
   display:flex;gap:10px;
 }
@@ -211,9 +246,13 @@ body{
   font-size:12px;
   display:flex;
   align-items:center;
+  justify-content: center;
   gap:8px;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  font-weight: 500;
 }
-.btn.secondary{color:#344054}
+.btn.secondary{background: #fff; color:#344054}
 .btn.primary{
   background:var(--blue);
   color:#fff;
@@ -226,6 +265,7 @@ body{
   align-items:center;
   gap:16px;
   padding:12px 4px 16px;
+  flex-wrap: wrap;
 }
 .partner-avatar{
   width:76px;height:76px;border-radius:50%;
@@ -263,23 +303,23 @@ body{
 .info-box{
   border:1px solid var(--line);
   border-radius:14px;
-  padding:12px;
+  padding:14px;
 }
 .info-box h4,.photo-box h4{
   margin:0 0 12px;
   font-size:14px;
 }
-.info-list{display:flex;flex-direction:column;gap:9px}
+.info-list{display:flex;flex-direction:column;gap:10px}
 .info-row{
   display:grid;
-  grid-template-columns:18px 140px 1fr;
+  grid-template-columns:18px 100px 1fr;
   gap:8px;
   align-items:start;
   font-size:12px;
 }
 .info-row i{color:#98a2b3;margin-top:2px}
 .info-row span{color:#667085}
-.info-row b{font-weight:500;color:#344054}
+.info-row b{font-weight:500;color:#344054; word-break: break-word;}
 
 /* Daftar Dokumen */
 .doc-list{display:flex;flex-direction:column;gap:10px}
@@ -288,8 +328,11 @@ body{
   align-items:center;
   gap:10px;
   justify-content:space-between;
-  padding:8px 4px;
+  padding:8px;
+  border-radius: 10px;
+  border: 1px solid transparent;
 }
+.doc-row:hover { border-color: var(--line); background: #fafafa; }
 .doc-left{display:flex;align-items:center;gap:10px;min-width:0}
 .doc-ico{
   width:30px;height:30px;border-radius:8px;
@@ -301,7 +344,7 @@ body{
 .doc-ico.green{background:#e9f9ef;color:#1ea65c}
 .doc-ico.mint{background:#edfdf7;color:#0f9d58}
 .doc-title{font-size:12px;font-weight:700}
-.doc-sub{font-size:11px;color:#667085;margin-top:3px}
+.doc-sub{font-size:11px;color:#667085;margin-top:3px; word-break: break-all;}
 .doc-status{
   font-size:11px;
   color:#1d9b57;
@@ -310,11 +353,13 @@ body{
   padding:5px 9px;
   font-weight:700;
   margin-left:auto;
-  margin-right:4px;
 }
 .eye-btn{
-  width:28px;height:28px;border-radius:999px;
+  width:28px;height:28px;border-radius:8px;
   color:#667085;
+  border: 1px solid var(--line);
+  background: #fff;
+  cursor: pointer;
 }
 
 /* Galeri Foto */
@@ -322,7 +367,7 @@ body{
   margin-top:12px;
   border:1px solid var(--line);
   border-radius:14px;
-  padding:12px;
+  padding:14px;
 }
 .photo-list{
   display:grid;
@@ -345,15 +390,147 @@ body{
   justify-content:center;
   gap:8px;
   background:#fff;
+  cursor: pointer;
 }
-.photo-more i{font-size:24px}
-.photo-more span{font-size:12px;color:#667085}
+.photo-more i{font-size:20px}
+.photo-more span{font-size:11px;color:#667085}
 
-/* ========== RESPONSIVE (max-width 1280px) ========== */
+
+/* =======================================================
+   RESPONSIVE QUERIES
+======================================================= */
+
+/* Tablet & Layar Menengah */
 @media (max-width: 1280px){
-  .sidebar{width:220px}
-  .content-grid{grid-template-columns:1fr}
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .info-grid{grid-template-columns:1fr}
-  .photo-list{grid-template-columns:repeat(3,1fr)}
+  /* Setup Grid Master-Detail ke 1 Kolom */
+  .content-grid { grid-template-columns: 1fr; }
+  
+  /* Sembunyikan Panel Detail secara default di Mobile/Tablet */
+  .detail-panel { display: none; }
+  
+  /* Munculkan tombol Back */
+  .btn-back { display: block; }
+  
+  /* Jika di-klik (punya class show-detail): 
+     Sembunyikan List, Munculkan Detail */
+  .content-grid.show-detail .list-panel { display: none; }
+  .content-grid.show-detail .detail-panel { display: block; }
+
+  /* Kartu Statistik menjadi 2 Kolom */
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .photo-list { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Smartphone Landscape / Tablet Kecil */
+@media (max-width: 768px){
+  .header-menu-btn { 
+    display: none; 
+  }
+
+   .sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    width: min(280px, 72vw) !important;
+    max-width: 85vw !important;
+    transform: translateX(-100%);
+    transition: transform .28s ease;
+    z-index: 100;
+    overflow-y: auto;
+    display: flex !important;
+    flex-direction: column;
+    background: #fff;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0,0,0,.18);
+  }
+  .sidebar-close-btn { display: flex !important; }
+
+  /* Header penuh dari kiri */
+  .header {
+    left: 0 !important;
+    padding: 0 14px;
+  }
+  .hamburger-btn { display: flex; }
+
+  /* Hapus offset sidebar */
+  .main {
+    margin-left: 0;
+    padding: 14px;
+  }
+  
+  .main { margin-left: 0; padding: 16px; }
+  .page-head { flex-direction: column; gap: 12px; }
+  .date-pill { width: 100%; justify-content: center; }
+  .list-head { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .search-row { width: 100%; }
+  .info-grid { grid-template-columns: 1fr; }
+  .photo-list { grid-template-columns: repeat(3, 1fr); }
+  .detail-head { flex-direction: column; align-items: flex-start; gap: 14px;}
+  .detail-head .action-group { width: 100%; display: flex; }
+  .action-group .btn { flex: 1; }
+
+  /* =========================================
+     LOGIKA SIDEBAR & OVERLAY (MOBILE) 
+  ========================================= */
+  
+  /* Efek Gelap Transparan di Belakang Sidebar */
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(17, 24, 39, 0.4);
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  /* Targetkan class container sidebar Anda (sesuaikan jika namanya contoh: .main-sidebar / .side-menu) */
+  .sidebar {
+    position: fixed;
+    left: -260px; /* Menyembunyikan sidebar ke kiri luar layar */
+    top: 0;
+    bottom: 0;
+    z-index: 999;
+    transition: all 0.3s ease;
+  }
+
+  /* Ketika tombol di klik, class ini akan aktif di tag <body> */
+  body.sidebar-open .sidebar {
+    left: 0; /* Sidebar bergeser masuk ke dalam layar */
+  }
+  body.sidebar-open .sidebar-overlay {
+    opacity: 1;
+    visibility: visible;
+  }
+  body.sidebar-open {
+    overflow: hidden; /* Mencegah halaman utama di-scroll saat sidebar aktif */
+  }
+
+}
+
+/* Smartphone Portrait / HP Terkecil */
+@media (max-width: 480px){
+  .stats { grid-template-columns: 1fr; }
+  .stat-card { padding: 14px; }
+  
+  .pagination-wrap { flex-direction: column; align-items: flex-start; gap: 12px; }
+  
+  /* Supaya Teks Info Laundry tidak gepeng, label di-stack ke atas */
+  .info-row { grid-template-columns: 18px 1fr; gap: 6px; }
+  .info-row span { font-weight: 500; }
+  .info-row b { grid-column: 2; margin-bottom: 8px; font-weight: 600; font-size: 13px;}
+
+  .action-group { flex-direction: column; }
+  
+  .photo-list { grid-template-columns: repeat(2, 1fr); }
+  
+  .doc-row { flex-direction: column; align-items: flex-start; }
+  .doc-status { margin-left: 0; }
+  .eye-btn { align-self: flex-end; margin-top: -30px;}
 }

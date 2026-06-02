@@ -1,115 +1,11 @@
-@section('css-sidebar')
-  <link rel="stylesheet" href="{{ asset('assets/css/mitra/sidebar.css') }}">
-@endsection
-
-<style>
-    /* ── SIDEBAR ── */
-  .sidebar {
-    width: var(--sidebar-width);
-    background: var(--white);
-    height: 100vh;
-    position: fixed;
-    top: 0; left: 0;
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid var(--neutral-100);
-    z-index: 100;
-    overflow-y: auto;
-  }
-
-  .sidebar-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 18px 16px;
-    border-bottom: 1px solid var(--neutral-100);
-  }
-
-  .logo-icon {
-    width: 38px; height: 38px;
-    background: var(--primary);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-size: 18px;
-  }
-
-  .logo-text { line-height: 1.2; }
-  .logo-text .name { font-weight: 700; font-size: 13px; color: var(--neutral); }
-  .logo-text .sub { font-size: 11px; color: var(--neutral-500); }
-
-  .sidebar-nav { padding: 12px 0; flex: 1; }
-
-  .nav-section-label {
-    font-size: 10px; font-weight: 600;
-    color: var(--neutral-500);
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    padding: 12px 16px 4px;
-  }
-
-  .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 9px 16px;
-    font-size: 13px; font-weight: 500;
-    color: var(--neutral-500);
-    cursor: pointer;
-    border-radius: 0;
-    transition: all 0.15s;
-    text-decoration: none;
-  }
-
-  .nav-item:hover { background: var(--neutral-50); color: var(--primary); }
-
-  .nav-item.active {
-    background: var(--primary-light);
-    color: var(--primary);
-    font-weight: 600;
-    border-right: 3px solid var(--primary);
-  }
-
-  .nav-item svg { flex-shrink: 0; opacity: 0.7; }
-  .nav-item.active svg { opacity: 1; }
-
-  .sidebar-help {
-    margin: 12px;
-    background: linear-gradient(135deg, #e0f2fe 0%, #eff6ff 100%);
-    border-radius: var(--radius-md);
-    padding: 14px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .help-title { font-size: 12px; font-weight: 700; color: var(--neutral); }
-  .help-sub { font-size: 11px; color: var(--neutral-500); margin-bottom: 10px; }
-
-  .btn-help {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 7px 16px;
-    border-radius: 8px;
-    font-size: 12px; font-weight: 600;
-    cursor: pointer;
-    font-family: 'Poppins', sans-serif;
-  }
-
-  .help-avatar {
-    position: absolute; right: 10px; bottom: 0;
-    font-size: 32px;
-    line-height: 1;
-  }
-</style>
-
 <!-- ═══ SIDEBAR ═══ -->
-<aside class="sidebar">
-    <a href="{{ route('mitra.dashboard') }}">
-        <div class="sidebar-logo">
-            <div class="logo-icon">🧺</div>
-            <div class="logo-text">
+<aside class="sidebar" id="mitraSidebar">
+    <a href="{{ route('mitra.dashboard') }}" class="sidebar-logo">
+        <div class="logo-icon">🧺</div>
+        <div class="logo-text">
             <div class="name">Mitra Laundry</div>
             <div class="sub">Dashboard</div>
         </div>
-    </div>
     </a>
 
   <nav class="sidebar-nav">
@@ -149,7 +45,7 @@
 
     <div class="nav-section-label">Layanan Customer</div>
     <a class="nav-item {{ request()->routeIs('mitra.penilaian') ? 'active' : '' }}" href="{{ route('mitra.penilaian') }}">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.１１８l-3.976-2.888c-.784-.57-.38-１．８１.588-１．８１h4．９１４a１ １ ０ ００．９５１-.６９l１．５１９-４．６７４z"/></svg>
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
       Penilaian Toko
     </a>
     <a class="nav-item {{ request()->routeIs('mitra.chat') ? 'active' : '' }}" href="{{ route('mitra.chat') }}">
@@ -185,7 +81,7 @@
   <div class="sidebar-help">
     <div class="help-title">Butuh bantuan?</div>
     <div class="help-sub">Kunjungi Pusat Bantuan</div>
-    <button class="btn-help">Pusat Bantuan</button>
+    <button type="button" class="btn-help">Pusat Bantuan</button>
     <div class="help-avatar">🎧</div>
   </div>
 </aside>

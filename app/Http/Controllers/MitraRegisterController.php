@@ -65,9 +65,11 @@ class MitraRegisterController extends Controller
             'city' => $request->city,
             'province' => $request->province,
             'postal_code' => $request->postal_code,
+            'status' => 'pending',
         ]);
 
         return redirect()
-            ->route('mitra.register.step3', $mitra->id);
+            ->route('mitra.register.step3', $mitra->id)
+            ->with('success', 'Data alamat tersimpan. Menunggu verifikasi admin.');
     }
 }

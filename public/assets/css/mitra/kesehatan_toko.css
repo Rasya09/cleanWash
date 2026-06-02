@@ -3,9 +3,8 @@
 ========================= */
 
 .kt-page{
-    padding: 24px;
-    background: #f5f7fb;
-    min-height: 100vh;
+    padding: 20px 24px 28px;
+    max-width: 100%;
     font-family: 'Poppins', sans-serif;
 }
 
@@ -503,6 +502,88 @@ button{
 }
 
 /* =========================
+   CHART & PENCAPAIAN (kartu putih)
+========================= */
+
+.kt-chart-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.04);
+    padding: 20px;
+}
+
+.kt-chart-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.kt-chart-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 300px;
+}
+
+.kt-pencapaian-section {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.04);
+    padding: 20px;
+}
+
+.kt-pencapaian-section .kt-section-title {
+    margin-bottom: 14px;
+}
+
+.kt-pencapaian-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.kt-pencapaian-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    background: #f9fafb;
+    border: 1px solid #f3f4f6;
+    border-radius: 14px;
+}
+
+.kt-pencapaian-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.kt-pencapaian-icon--green { background: #dcfce7; }
+.kt-pencapaian-icon--blue  { background: #dbeafe; }
+.kt-pencapaian-icon--purple { background: #ede9fe; }
+
+.kt-pencapaian-name {
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 2px;
+}
+
+.kt-pencapaian-desc {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.kt-pencapaian-date {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 4px;
+}
+
+/* =========================
    RESPONSIVE
 ========================= */
 
@@ -527,31 +608,82 @@ button{
 
 }
 
-@media(max-width:768px){
+@media (max-width: 1024px) {
+    .kt-page { padding: 16px 18px 24px; }
+    .kt-score-num { font-size: 36px; }
+}
 
-    .kt-page-header{
+@media (max-width: 768px) {
+    .kt-page { padding: 14px 14px 20px; }
+
+    .kt-page-header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
     }
 
-    .kt-header-actions{
+    .kt-header-actions {
         width: 100%;
         flex-wrap: wrap;
     }
 
-    .kt-detail-grid{
-        grid-template-columns: 1fr;
+    .kt-btn-date,
+    .kt-btn-unduh {
+        flex: 1;
+        min-width: calc(50% - 6px);
+        justify-content: center;
+        font-size: 12px;
+        padding: 10px 12px;
     }
 
-    .kt-congrats-banner{
+    .kt-score-left {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .kt-score-num { font-size: 32px; }
+
+    .kt-detail-grid { grid-template-columns: 1fr; }
+
+    .kt-congrats-banner {
         flex-direction: column;
         align-items: flex-start;
         gap: 16px;
     }
 
-    .kt-faktor-item{
-        flex-direction: column;
-        align-items: flex-start;
+    .kt-btn-tips { width: 100%; justify-content: center; }
+
+    .kt-faktor-item {
+        flex-wrap: wrap;
     }
 
+    .kt-btn-detail { width: 100%; text-align: center; margin-top: 8px; }
+}
+
+@media (max-width: 480px) {
+    .kt-page { padding: 12px 12px 18px; }
+
+    .kt-header-actions { flex-direction: column; }
+
+    .kt-btn-date,
+    .kt-btn-unduh {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .kt-title { font-size: 24px; }
+
+    .kt-section-title { font-size: 18px; }
+
+    .kt-compare-row {
+        grid-template-columns: 70px 1fr 56px;
+        font-size: 12px;
+    }
+
+    .kt-score-main { padding: 18px; }
+}
+
+@media (max-width: 360px) {
+    .kt-score-num { font-size: 28px; }
+    .kt-detail-score { font-size: 22px; }
+    .kt-detail-card { padding: 14px; }
 }

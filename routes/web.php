@@ -6,6 +6,7 @@ use App\Http\Controllers\UserAddressController;
 use App\Models\UserAddress;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MitraRegisterController;
+use App\Http\Controllers\Admin\VerifikasiMitraController;
 
 
 
@@ -258,9 +259,12 @@ Route::middleware('auth')->prefix('admin')->group(function () {
         return view('admin.manajemen.mitra_laundry');
     })->name('admin.mitra');
 
-    Route::get('/verifikasi-mitra', function () {
-        return view('admin.manajemen.verifikasi_mitra');
-    })->name('admin.verifikasi');
+    Route::get('/verifikasi-mitra', [VerifikasiMitraController::class, 'index'])
+        ->name('admin.verifikasi');
+    Route::post('/verifikasi-mitra/{mitra}/approve', [VerifikasiMitraController::class, 'approve'])
+        ->name('admin.verifikasi.approve');
+    Route::post('/verifikasi-mitra/{mitra}/reject', [VerifikasiMitraController::class, 'reject'])
+        ->name('admin.verifikasi.reject');
 
 
     // MODERASI

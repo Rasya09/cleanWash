@@ -74,7 +74,7 @@
       </div>
     </div>
 
-    <!-- TABLE SECTION + DETAIL PANEL -->
+    <!-- TABLE SECTION + DETAIL PANEL (inline, visible ≥1100px) -->
     <div class="table-detail-wrapper">
 
       <!-- TABLE SECTION -->
@@ -127,7 +127,7 @@
             <button class="tab-btn" data-tab="draf">Draf <span class="tab-count">156</span></button>
           </div>
           <button class="btn-primary" id="btnBuatNotif">
-            <i class="fa-solid fa-plus"></i> Buat Notifikasi
+            <i class="fa-solid fa-plus"></i> <span class="btn-label">Buat Notifikasi</span>
           </button>
         </div>
 
@@ -176,13 +176,12 @@
         </div>
       </div>
 
-      <!-- DETAIL PANEL -->
+      <!-- DETAIL PANEL — inline sidebar (visible ≥1100px only via CSS) -->
       <div class="detail-panel" id="detailPanel">
         <div class="detail-header">
           <h3>Detail Notifikasi</h3>
           <button class="detail-close" id="detailClose"><i class="fa-solid fa-xmark"></i></button>
         </div>
-
         <div class="detail-body" id="detailBody">
           <div class="detail-empty">
             <i class="fa-solid fa-bell-slash"></i>
@@ -194,6 +193,22 @@
     </div><!-- /table-detail-wrapper -->
   </div><!-- /content-area -->
 </div><!-- /main-wrapper -->
+
+<!-- DETAIL POPUP — overlay modal (visible <1100px) -->
+<div class="detail-popup-overlay" id="detailPopupOverlay">
+  <div class="detail-popup-box" id="detailPopupBox">
+    <div class="detail-header">
+      <h3>Detail Notifikasi</h3>
+      <button class="detail-close" id="detailPopupClose"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="detail-body" id="detailPopupBody">
+      <!-- Content injected by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR BACKDROP (mobile full-screen overlay) -->
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
 <!-- MODAL BUAT NOTIFIKASI -->
 <div class="modal-overlay" id="modalOverlay">
@@ -251,11 +266,10 @@
 @endsection
 
 @push('scripts')
-
 <script>
   /* =========================================
    LAUNDRYHUB – NOTIFIKASI ADMIN PANEL
-   script.js
+   script.js — RESPONSIVE UPDATE
    ========================================= */
 
 'use strict';
@@ -383,7 +397,7 @@ const notifications = [
     bahasa: 'Bahasa Indonesia',
     dibuat: 'Super Admin',
     dibuatPada: '6 Mei 2024, 17:00 WIB',
-    konten: 'Promo eksklusif hanya untuk Anda! 🎉\n\nDapatkan DISKON 20% untuk layanan cuci kiloan.\nBerlaku: 7–10 Mei 2024\n\nGunakan kode: LAUNDRY20',
+    konten: 'Promo eksklusif hanya untuk Anda!\n\nDapatkan DISKON 20% untuk layanan cuci kiloan.\nBerlaku: 7–10 Mei 2024\n\nGunakan kode: LAUNDRY20',
     statTotal: 4820, statTerkirim: 578, statTerbaca: 210, statGagal: 4242,
     iconClass: 'fa-bullhorn', iconBg: '#fdf4ff', iconColor: '#9333ea',
     modulClass: 'mod-marketing'
@@ -457,6 +471,11 @@ function pct(val, total) {
   return Math.round((val / total) * 100) + '%';
 }
 
+/** True jika layar dalam mode popup (lebar < 1100px) */
+function isPopupMode() {
+  return window.innerWidth < 1100;
+}
+
 // ─── RENDER TABLE ────────────────────────────────────────────────────────────
 function renderTable(data) {
   const tbody = document.getElementById('notifTableBody');
@@ -502,9 +521,14 @@ function renderTable(data) {
     tr.addEventListener('click', e => {
       if (e.target.closest('.aksi-btn') || e.target.closest('.row-check')) return;
       const idx = parseInt(tr.dataset.idx);
-      showDetail(data[idx]);
       tbody.querySelectorAll('.notif-row').forEach(r => r.classList.remove('selected'));
       tr.classList.add('selected');
+
+      if (isPopupMode()) {
+        showDetailPopup(data[idx]);
+      } else {
+        showDetailPanel(data[idx]);
+      }
     });
   });
 
@@ -514,17 +538,14 @@ function renderTable(data) {
   });
 }
 
-// ─── SHOW DETAIL ─────────────────────────────────────────────────────────────
-function showDetail(n) {
-  const panel = document.getElementById('detailPanel');
-  const body = document.getElementById('detailBody');
-
+// ─── BUILD DETAIL HTML ───────────────────────────────────────────────────────
+function buildDetailHTML(n) {
   const sentPct = pct(n.statTerkirim, n.statTotal);
   const readPct = pct(n.statTerbaca, n.statTotal);
   const failPct = pct(n.statGagal, n.statTotal);
   const kontenHtml = n.konten.replace(/\n/g, '<br/>');
 
-  body.innerHTML = `
+  return `
     <div>
       <span class="detail-status-badge ${statusClass(n.status)}" style="margin-bottom:8px;display:inline-flex">${n.status}</span>
       <div class="detail-notif-title">${n.judul}</div>
@@ -574,10 +595,31 @@ function showDetail(n) {
       </div>
     </div>
   `;
+}
 
-  // Show panel on small screens too
-  panel.style.display = 'flex';
+// ─── SHOW DETAIL — Inline panel (≥1100px) ────────────────────────────────────
+function showDetailPanel(n) {
+  const body = document.getElementById('detailBody');
+  body.innerHTML = buildDetailHTML(n);
+  const panel = document.getElementById('detailPanel');
   panel.style.animation = 'fadeIn .2s ease';
+}
+
+// ─── SHOW DETAIL — Popup modal (<1100px) ─────────────────────────────────────
+function showDetailPopup(n) {
+  const overlay = document.getElementById('detailPopupOverlay');
+  const body    = document.getElementById('detailPopupBody');
+  body.innerHTML = buildDetailHTML(n);
+  body.scrollTop = 0;
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDetailPopup() {
+  const overlay = document.getElementById('detailPopupOverlay');
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 // ─── FILTER / SEARCH ─────────────────────────────────────────────────────────
@@ -594,6 +636,35 @@ function filterData() {
     const matchQ = !q || n.judul.toLowerCase().includes(q) || n.sub.toLowerCase().includes(q) || n.penerima.toLowerCase().includes(q);
     return matchTab && matchQ;
   });
+}
+
+// ─── CLEAR DETAIL ─────────────────────────────────────────────────────────────
+function clearDetail() {
+  const body = document.getElementById('detailBody');
+  body.innerHTML = `
+    <div class="detail-empty">
+      <i class="fa-solid fa-bell-slash"></i>
+      <p>Pilih notifikasi untuk melihat detail</p>
+    </div>`;
+}
+
+// ─── SIDEBAR TOGGLE ──────────────────────────────────────────────────────────
+function openSidebar() {
+  const sidebar  = document.getElementById('sidebar');
+  const backdrop = document.getElementById('sidebarBackdrop');
+  if (!sidebar) return;
+  sidebar.classList.add('open');
+  backdrop.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSidebar() {
+  const sidebar  = document.getElementById('sidebar');
+  const backdrop = document.getElementById('sidebarBackdrop');
+  if (!sidebar) return;
+  sidebar.classList.remove('open');
+  backdrop.classList.remove('active');
+  document.body.style.overflow = '';
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
@@ -621,30 +692,40 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.row-check').forEach(cb => cb.checked = this.checked);
   });
 
-  // Detail close
+  // Detail inline close
   document.getElementById('detailClose').addEventListener('click', () => {
     clearDetail();
     document.querySelectorAll('.notif-row').forEach(r => r.classList.remove('selected'));
   });
 
-  // Sidebar toggle
-  document.getElementById('sidebarToggle').addEventListener('click', () => {
-    document.getElementById('sidebar').classList.toggle('open');
+  // Detail popup close
+  document.getElementById('detailPopupClose').addEventListener('click', () => {
+    closeDetailPopup();
+    document.querySelectorAll('.notif-row').forEach(r => r.classList.remove('selected'));
+  });
+
+  // Close popup by clicking backdrop
+  document.getElementById('detailPopupOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('detailPopupOverlay')) {
+      closeDetailPopup();
+      document.querySelectorAll('.notif-row').forEach(r => r.classList.remove('selected'));
+    }
   });
 
   // Modal Buat Notifikasi
   const modalOverlay = document.getElementById('modalOverlay');
   document.getElementById('btnBuatNotif').addEventListener('click', () => {
     modalOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
   });
-  document.getElementById('modalClose').addEventListener('click', () => {
+  const closeModal = () => {
     modalOverlay.classList.remove('open');
-  });
-  document.getElementById('modalCancel').addEventListener('click', () => {
-    modalOverlay.classList.remove('open');
-  });
+    document.body.style.overflow = '';
+  };
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('modalCancel').addEventListener('click', closeModal);
   modalOverlay.addEventListener('click', e => {
-    if (e.target === modalOverlay) modalOverlay.classList.remove('open');
+    if (e.target === modalOverlay) closeModal();
   });
 
   // Pagination buttons
@@ -658,20 +739,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Auto-open first row detail
-  const firstRow = document.querySelector('.notif-row');
-  if (firstRow) {
-    firstRow.click();
+  // Auto-open first row detail on desktop
+  if (!isPopupMode()) {
+    const firstRow = document.querySelector('.notif-row');
+    if (firstRow) firstRow.click();
   }
-});
 
-function clearDetail() {
-  const body = document.getElementById('detailBody');
-  body.innerHTML = `
-    <div class="detail-empty">
-      <i class="fa-solid fa-bell-slash"></i>
-      <p>Pilih notifikasi untuk melihat detail</p>
-    </div>`;
-}
+  // On resize: switch behaviour if needed
+  window.addEventListener('resize', () => {
+    // If now in wide mode and popup is open, close it
+    if (!isPopupMode()) {
+      const popupOverlay = document.getElementById('detailPopupOverlay');
+      if (popupOverlay.classList.contains('open')) {
+        closeDetailPopup();
+      }
+    }
+    // If now in wide mode, ensure sidebar overflow is reset
+    if (window.innerWidth > 768) {
+      document.body.style.overflow = '';
+      const backdrop = document.getElementById('sidebarBackdrop');
+      backdrop.classList.remove('active');
+    }
+  });
+
+  // ESC closes popup / sidebar
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeDetailPopup();
+      closeSidebar();
+      document.getElementById('modalOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  });
+});
 </script>
 @endpush

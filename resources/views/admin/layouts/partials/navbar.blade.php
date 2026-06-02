@@ -1,13 +1,20 @@
+@php
+  $routeName = request()->route()?->getName() ?? '';
+  $headerMeta = config('admin_header.' . $routeName, [
+    'title' => 'Admin Panel',
+    'subtitle' => 'LaundryHub — panel administrasi platform.',
+  ]);
+@endphp
 <!-- ====== HEADER ====== -->
 <header class="header">
-    <button class="header-menu-btn">
+    <button class="header-menu-btn" type="button" aria-label="Menu">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
       </svg>
     </button>
     <div class="header-title-block">
-      <h2>Dashboard</h2>
-      <p>Selamat datang kembali, Admin! Berikut ringkasan performa platform Anda.</p>
+      <h2>@yield('page_title', $headerMeta['title'])</h2>
+      <p>@yield('page_subtitle', $headerMeta['subtitle'])</p>
     </div>
     <div class="header-spacer"></div>
 

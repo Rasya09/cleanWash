@@ -1,29 +1,35 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background: #f4f6f9;
-    color: #1a1d23;
-    font-size: 13px;
-    min-height: 100vh;
+  /* ── Layout halaman (bukan header layout mitra) ── */
+  .page {
+    padding: 20px 24px 28px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
 
-  /* ── Layout ── */
-  .page { 
-    /* max-width: 1280px;  */
-    /* margin: 0 auto;  */
-    padding: 24px 28px; }
+  .page .card,
+  .page .kpi-grid,
+  .page .main-grid,
+  .page .bottom-grid {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
 
-  /* ── Header ── */
-  .header {
+  /* ── Header halaman ── */
+  .pt-page-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+    gap: 16px;
     margin-bottom: 20px;
+    flex-wrap: wrap;
   }
-  .header-title h1 { font-size: 20px; font-weight: 700; color: #111827; }
-  .header-title p  { font-size: 12.5px; color: #6b7280; margin-top: 2px; }
-  .header-actions  { display: flex; gap: 10px; align-items: center; }
+  .pt-header-title h1 { font-size: 20px; font-weight: 700; color: #111827; }
+  .pt-header-title p  { font-size: 12.5px; color: #6b7280; margin-top: 2px; }
+  .pt-header-actions  { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
   .btn {
     display: inline-flex; align-items: center; gap: 6px;
@@ -163,6 +169,15 @@
   .see-all { text-align: center; margin-top: 14px; }
   .see-all a { color: #2563eb; font-size: 13px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
 
+  /* ── Scroll horizontal (area overflow di layar sempit) ── */
+  .pt-scroll-x {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+
   /* ── Heatmap ── */
   .heatmap-wrap { overflow-x: auto; }
   .heatmap-grid { display: flex; gap: 3px; align-items: flex-start; }
@@ -185,8 +200,205 @@
   /* ── Footer ── */
   .footer { font-size: 11.5px; color: #9ca3af; margin-top: 16px; display: flex; align-items: center; gap: 5px; }
 
-  /* ── Responsive adjustments ── */
+  /* ── Responsive ── */
+  @media (max-width: 1280px) {
+    .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
   @media (max-width: 1024px) {
-    .kpi-grid { grid-template-columns: repeat(3,1fr); }
+    .page { padding: 16px 18px 24px; }
+    .kpi-grid { grid-template-columns: repeat(3, 1fr); }
     .main-grid, .bottom-grid { grid-template-columns: 1fr; }
+    .donut-wrap { flex-direction: column; align-items: flex-start; }
+  }
+
+  @media (max-width: 768px) {
+    .page { padding: 14px 14px 20px; }
+    .pt-page-header { flex-direction: column; align-items: stretch; }
+    .pt-header-actions { width: 100%; }
+    .pt-header-actions .btn { flex: 1; justify-content: center; min-width: 0; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .kpi-value { font-size: 18px; }
+    .chart-wrap { height: 180px; }
+    .card { padding: 16px; }
+    .heatmap-wrap { margin: 0 -4px; }
+    table { font-size: 12px; }
+    .service-img { width: 32px; height: 32px; }
+  }
+
+  @media (max-width: 480px) {
+    .page { padding: 12px 12px 18px; }
+    .kpi-grid { grid-template-columns: 1fr; }
+    .kpi-card { padding: 14px; }
+    .btn { width: 100%; justify-content: center; }
+    .pt-header-actions { flex-direction: column; }
+    .chart-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .legend { flex-wrap: wrap; gap: 10px; }
+    .pt-scroll-x--legend .legend { flex-wrap: nowrap; }
+    .tooltip-box { display: none; }
+    thead th:nth-child(3),
+    thead th:nth-child(4),
+    tbody td:nth-child(3),
+    tbody td:nth-child(4) { display: none; }
+  }
+
+  @media (max-width: 425px) {
+  .mitra-page-content:has(.page-perfoma-toko) {
+    overflow-x: clip;
+  }
+
+  .page-perfoma-toko {
+    padding: 12px 10px 16px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .page-perfoma-toko .pt-page-header,
+  .page-perfoma-toko .pt-header-actions,
+  .page-perfoma-toko .kpi-grid,
+  .page-perfoma-toko .main-grid,
+  .page-perfoma-toko .bottom-grid {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .page-perfoma-toko .main-grid > *,
+  .page-perfoma-toko .bottom-grid > * {
+    min-width: 0;
+  }
+
+  .page-perfoma-toko .kpi-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .page-perfoma-toko .kpi-card {
+    width: 100%;
+  }
+
+  .page-perfoma-toko .card {
+    padding: 12px;
+    border-radius: 10px;
+    overflow: visible;
+    min-width: 0;
+  }
+
+  /* Hanya area yang melebihi layar yang bisa di-geser */
+  .page-perfoma-toko .pt-scroll-x {
+    position: relative;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+    scrollbar-width: thin;
+    padding-bottom: 6px;
+  }
+
+  .page-perfoma-toko .pt-scroll-x::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .page-perfoma-toko .pt-scroll-x::-webkit-scrollbar-thumb {
+    background: #9ca3af;
+    border-radius: 3px;
+  }
+
+  .page-perfoma-toko .pt-scroll-x--legend .legend {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    width: max-content;
+    min-width: min(100%, max-content);
+    gap: 14px;
+    padding-right: 12px;
+  }
+
+  .page-perfoma-toko .pt-scroll-x__inner--chart {
+    width: 580px;
+    min-width: 580px;
+  }
+
+  .page-perfoma-toko .pt-scroll-x--chart .chart-wrap {
+    height: 160px;
+    width: 580px;
+    min-width: 580px;
+    max-width: none;
+  }
+
+  .page-perfoma-toko .pt-scroll-x--chart svg.chart {
+    width: 580px;
+    min-width: 580px;
+    max-width: none;
+    height: 100%;
+  }
+
+  .page-perfoma-toko .pt-scroll-x--chart .x-axis {
+    width: 580px;
+    min-width: 580px;
+    box-sizing: border-box;
+  }
+
+  .page-perfoma-toko .pt-scroll-x--donut .donut-wrap {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: max-content;
+    min-width: 320px;
+    padding-right: 12px;
+  }
+
+  .page-perfoma-toko .pt-scroll-x--table table {
+    width: max-content;
+    min-width: 520px;
+  }
+
+  /* Tampilkan semua kolom tabel; geser untuk melihat sisanya */
+  .page-perfoma-toko thead th:nth-child(3),
+  .page-perfoma-toko thead th:nth-child(4),
+  .page-perfoma-toko tbody td:nth-child(3),
+  .page-perfoma-toko tbody td:nth-child(4) {
+    display: table-cell;
+  }
+
+  .page-perfoma-toko .pt-scroll-x--heatmap .heatmap-wrap {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .page-perfoma-toko .pt-scroll-x__inner--heatmap {
+    width: max-content;
+    min-width: 480px;
+  }
+
+  .page-perfoma-toko .pt-scroll-x--heatmap .heatmap-grid {
+    width: max-content;
+    min-width: 480px;
+  }
+
+  .page-perfoma-toko .pt-scroll-x--heatmap .heatmap-x {
+    width: 480px;
+    min-width: 480px;
+    box-sizing: border-box;
+  }
+
+  .page-perfoma-toko .btn {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .page-perfoma-toko .pt-header-actions .btn {
+    flex: none;
+  }
+  }
+
+  @media (max-width: 360px) {
+    .page { padding: 10px 8px 14px; }
+    .kpi-label { font-size: 10.5px; }
+    .kpi-value { font-size: 16px; }
+    .card-title { font-size: 13px; }
   }
