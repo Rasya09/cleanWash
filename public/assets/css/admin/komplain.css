@@ -410,6 +410,9 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--primary);cursor:p
     width:100% !important;
   }
 
+  .header-title-block h2 { font-size: 15px; font-weight: 600; }
+  .header-title-block p  { display: none; }
+
   /* ── Main: no sidebar gap ── */
   .main{
     margin-left:0 !important;
@@ -509,6 +512,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--primary);cursor:p
 /* ── 480px ── */
 @media(max-width:480px){
   .main{padding:8px !important}
+  .header-title-block h2 { font-size: 15px; font-weight: 600; }
   .stat-row{gap:6px}
   .scard{padding:10px 10px;gap:8px}
 
@@ -537,6 +541,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--primary);cursor:p
 
 /* ── 360px ── */
 @media(max-width:360px){
+  .header-title-block h2 { font-size: 13px; font-weight: 600; }
   .stat-row{grid-template-columns:1fr}
   .stat-row .scard:first-child{grid-column:auto}
   .tabs .tab{padding:9px 10px;font-size:12px}

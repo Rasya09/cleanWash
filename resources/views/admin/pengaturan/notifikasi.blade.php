@@ -11,8 +11,8 @@
   <!-- TOPBAR -->
   <header class="topbar">
     <button class="topbar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
-    <div class="topbar-title">
-      <h1>Notifikasi</h1>
+    <div class="topbar-title header-title-block">
+      <h2>Notifikasi</h2>
       <p>Kelola dan pantau semua notifikasi yang dikirimkan melalui platform.</p>
     </div>
     <div class="topbar-right">
@@ -24,13 +24,23 @@
         <i class="fa-solid fa-bell"></i>
         <span class="dot-badge">1</span>
       </button>
-      <div class="topbar-user">
-        <div class="user-avatar">SA</div>
-        <div class="user-info">
-          <span class="user-name">Super Admin</span>
-          <span class="user-role">Administrator</span>
+      <div class="topbar-user-wrap">
+        <div class="topbar-user" id="notifProfileToggle" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false">
+          <div class="user-avatar">SA</div>
+          <div class="user-info">
+            <span class="user-name">Super Admin</span>
+            <span class="user-role">Administrator</span>
+          </div>
+          <i class="fa-solid fa-chevron-down notif-profile-chevron"></i>
         </div>
-        <i class="fa-solid fa-chevron-down"></i>
+        <div class="topbar-user-menu" id="notifProfileMenu">
+          <a href="#" class="topbar-user-menu-item">Pengaturan Akun</a>
+          <div class="topbar-user-menu-divider"></div>
+          <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="topbar-user-menu-item logout-item">Log out</button>
+          </form>
+        </div>
       </div>
     </div>
   </header>
@@ -771,6 +781,27 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.style.overflow = '';
     }
   });
+
+  const notifProfileToggle = document.getElementById('notifProfileToggle');
+  const notifProfileMenu = document.getElementById('notifProfileMenu');
+  const notifProfileChevron = document.querySelector('.notif-profile-chevron');
+
+  if (notifProfileToggle && notifProfileMenu) {
+    notifProfileToggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const isOpen = notifProfileMenu.classList.toggle('active');
+      notifProfileToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      notifProfileChevron?.classList.toggle('rotate', isOpen);
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!notifProfileToggle.contains(e.target) && !notifProfileMenu.contains(e.target)) {
+        notifProfileMenu.classList.remove('active');
+        notifProfileToggle.setAttribute('aria-expanded', 'false');
+        notifProfileChevron?.classList.remove('rotate');
+      }
+    });
+  }
 });
 </script>
 @endpush

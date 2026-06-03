@@ -18,8 +18,8 @@
   --info: #7c3aed;
   --info-light: #f5f3ff;
 
-  --sidebar-w: 230px;
-  --topbar-h: 72px;
+  --sidebar-w: 220px;
+  --topbar-h: 60px;
 
   --bg: #f1f5f9;
   --surface: #ffffff;
@@ -49,7 +49,6 @@ body {
   font-family: var(--font-body);
   background: var(--bg);
   color: var(--text-main);
-  display: flex;
   font-size: 14px;
   line-height: 1.5;
 }
@@ -209,8 +208,14 @@ button { cursor: pointer; border: none; background: none; }
 /* =========================================
    MAIN WRAPPER
    ========================================= */
+/* Halaman ini memakai topbar internal — sembunyikan header global agar tidak bentrok */
+.header {
+  display: none !important;
+}
+
 .main-wrapper {
   margin-left: var(--sidebar-w);
+  padding-top: var(--topbar-h);
   flex: 1;
   min-width: 0;
   display: flex;
@@ -219,12 +224,14 @@ button { cursor: pointer; border: none; background: none; }
 }
 
 /* =========================================
-   TOPBAR
+   TOPBAR — selaras header global admin
    ========================================= */
 .topbar {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 90;
+  left: var(--sidebar-w);
+  right: 0;
+  z-index: 99;
   height: var(--topbar-h);
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -241,17 +248,25 @@ button { cursor: pointer; border: none; background: none; }
   flex-shrink: 0;
 }
 .topbar-title { flex: 1; min-width: 0; }
-.topbar-title h1 {
-  font-family: var(--font-head);
-  font-weight: 800;
-  font-size: 20px;
-  color: var(--text-main);
+.topbar-title h1,
+.topbar-title h2 {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-dark, #1A1D23);
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.topbar-title p { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar-title p {
+  font-size: 12px;
+  color: var(--text-light, #9CA3AF);
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .topbar-right {
   display: flex;
@@ -301,6 +316,7 @@ button { cursor: pointer; border: none; background: none; }
   border: 2px solid var(--surface);
   font-family: var(--font-head);
 }
+.topbar-user-wrap { position: relative; flex-shrink: 0; }
 .topbar-user {
   display: flex; align-items: center; gap: 10px;
   cursor: pointer;
@@ -309,6 +325,47 @@ button { cursor: pointer; border: none; background: none; }
   transition: background .15s;
 }
 .topbar-user:hover { background: var(--bg); }
+.topbar-user-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 220px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity .2s ease, transform .2s ease, visibility .2s ease;
+  z-index: 200;
+}
+.topbar-user-menu.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.topbar-user-menu-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-main);
+  text-decoration: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+.topbar-user-menu-item:hover { background: var(--primary-light); color: var(--primary); }
+.topbar-user-menu-divider { height: 1px; background: var(--border); }
+.topbar-user-menu-item.logout-item:hover { background: var(--danger-light); color: var(--danger); }
+.notif-profile-chevron { transition: transform .2s ease; }
+.notif-profile-chevron.rotate { transform: rotate(180deg); }
 .user-avatar {
   width: 34px; height: 34px;
   border-radius: 50%;
@@ -1081,6 +1138,16 @@ button { cursor: pointer; border: none; background: none; }
 .stat-card:nth-child(4) { animation-delay: .20s; }
 
 /* =========================================
+   RESPONSIVE — 1024px (tablet / narrow laptop)
+   Selaraskan lebar sidebar dengan layout admin global
+   ========================================= */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-w: 200px;
+  }
+}
+
+/* =========================================
    RESPONSIVE — 1280px (large laptop)
    ========================================= */
 @media (max-width: 1280px) {
@@ -1113,6 +1180,7 @@ button { cursor: pointer; border: none; background: none; }
   .search-box { display: none; }
   .user-info { display: none; }
   .topbar-user > .fa-chevron-down { display: none; }
+  .notif-profile-chevron { display: none; }
 
   .filter-date span { display: none; }
   .filter-date { padding: 7px 10px; }
@@ -1141,9 +1209,11 @@ button { cursor: pointer; border: none; background: none; }
   .main-wrapper { margin-left: 0; }
   .topbar-toggle { display: flex; }
 
-  /* Topbar compact */
-  .topbar { padding: 0 14px; height: 60px; }
-  .topbar-title h1 { font-size: 17px; }
+  /* Topbar compact — selaras header global di mobile */
+  .topbar { left: 0 !important; padding: 0 14px; height: 60px; }
+  .topbar-title h1,
+  .topbar-title h2 { font-size: 15px; font-weight: 600; }
+  .topbar-title p { display: none; }
 
   /* Content */
   .content-area { padding: 12px; gap: 12px; }
@@ -1221,7 +1291,10 @@ button { cursor: pointer; border: none; background: none; }
   .stat-value { font-size: 18px; }
   .stat-label { font-size: 11px; }
 
-  .topbar-title h1 { font-size: 15px; }
+  .topbar { height: 54px; }
+  .main-wrapper { padding-top: 54px; }
+  .topbar-title h1,
+  .topbar-title h2 { font-size: 15px; font-weight: 600; }
 
   /* Hide checkbox column */
   .notif-table th:nth-child(1),
@@ -1245,6 +1318,8 @@ button { cursor: pointer; border: none; background: none; }
   .stat-card { padding: 10px 10px; gap: 8px; }
   .stat-icon { width: 32px; height: 32px; font-size: 13px; }
   .stat-value { font-size: 16px; }
-  .topbar { padding: 0 10px; height: 56px; }
-  .topbar-title h1 { font-size: 14px; }
+  .topbar { padding: 0 10px; height: 54px; }
+  .main-wrapper { padding-top: 54px; }
+  .topbar-title h1,
+  .topbar-title h2 { font-size: 13px; font-weight: 600; }
 }

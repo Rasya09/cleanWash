@@ -766,7 +766,7 @@ img { display: block; max-width: 100%; }
 
 .header-menu-btn {
   color: var(--text-mid);
-  display: flex;
+  display: none;
   align-items: center;
   padding: 6px;
   border-radius: 6px;
@@ -783,7 +783,7 @@ img { display: block; max-width: 100%; }
 
 .header-title-block h2 {
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-dark);
   line-height: 1.2;
 }
@@ -869,8 +869,78 @@ img { display: block; max-width: 100%; }
   border-radius: var(--radius-sm);
 }
 
+.header-user-dropdown {
+  position: relative;
+  flex-shrink: 0;
+}
+
 .header-user:hover {
   background: var(--bg);
+}
+
+.header-user-chevron {
+  width: 14px;
+  height: 14px;
+  color: var(--text-light);
+  transition: transform 0.2s ease;
+}
+
+.header-user-chevron.rotate {
+  transform: rotate(180deg);
+}
+
+.header-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 220px;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  z-index: 200;
+}
+
+.header-dropdown-menu.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.header-dropdown-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dark);
+  text-decoration: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.header-dropdown-item:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.header-dropdown-divider {
+  height: 1px;
+  background: var(--border);
+}
+
+.header-dropdown-item.logout-item:hover {
+  background: #FEF2F2;
+  color: var(--red);
 }
 
 .header-avatar {
@@ -1033,6 +1103,15 @@ img { display: block; max-width: 100%; }
 .sidebar-close-btn:hover { background: var(--bg); }
 .sidebar-close-btn svg { width: 18px; height: 18px; }
 
+/* Sembunyikan tombol menu di layar ≥1024px (sidebar tetap terlihat) */
+@media (min-width: 1024px) {
+  .header-menu-btn,
+  .hamburger-btn,
+  .topbar-toggle {
+    display: none !important;
+  }
+}
+
 
 /* ─────────────────────────────────────────
    ≤1280px : Laptop kecil / tablet landscape
@@ -1062,7 +1141,7 @@ img { display: block; max-width: 100%; }
   }
 
   .header-user-info { display: none; }
-  .header-user svg  { display: none; }
+  .header-user-chevron { display: none; }
 
   .header-date-range span { display: none; }
 
@@ -1152,6 +1231,7 @@ img { display: block; max-width: 100%; }
   .header-date-range span { display: none; }
 
   .header-title-block p { display: none; }
+  .header-title-block h2 { font-weight: 600; }
 }
 
 
@@ -1173,7 +1253,7 @@ img { display: block; max-width: 100%; }
     min-height: calc(100vh - 54px);
   }
 
-  .header-title-block h2 { font-size: 15px; }
+  .header-title-block h2 { font-size: 15px; font-weight: 600; }
 
   /* Stats: 1 kolom di phone kecil */
   .stats-grid {
@@ -1227,7 +1307,7 @@ img { display: block; max-width: 100%; }
   .stat-value { font-size: 17px; }
   .stat-value.rp { font-size: 13px; }
 
-  .header-title-block h2 { font-size: 13px; }
+  .header-title-block h2 { font-size: 13px; font-weight: 600; }
 
   /* Verif item compact */
   .verif-name { font-size: 12px; }

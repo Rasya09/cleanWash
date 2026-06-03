@@ -348,8 +348,8 @@ select{
   }
 
   /* Header title kecil */
-  .header-title h2 { font-size: 15px; }
-  .header-title p  { display: none; }
+  .header-title-block h2 { font-size: 15px; font-weight: 600; }
+  .header-title-block p  { display: none; }
 }
 
 /* ─────────────────────────────────
@@ -363,6 +363,8 @@ select{
     padding: 10px;
     min-height: calc(100vh - 54px);
   }
+
+  .header-title-block h2 { font-size: 15px; font-weight: 600; }
 
   /* KPI 1 kolom */
   .cards { grid-template-columns: 1fr; gap: 8px; }
@@ -405,6 +407,8 @@ select{
    ───────────────────────────────── */
 @media (max-width: 360px) {
   .main { padding: 8px; }
+
+  .header-title-block h2 { font-size: 13px; font-weight: 600; }
 
   .cards { gap: 7px; }
   .kpi { padding: 12px; gap: 10px; }

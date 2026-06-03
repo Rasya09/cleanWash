@@ -455,6 +455,8 @@ body{
     left: 0 !important;
     padding: 0 14px;
   }
+  .header-title-block h2 { font-size: 15px; font-weight: 600; }
+  .header-title-block p  { display: none; }
   .hamburger-btn { display: flex; }
 
   /* Hapus offset sidebar */
@@ -516,6 +518,7 @@ body{
 
 /* Smartphone Portrait / HP Terkecil */
 @media (max-width: 480px){
+  .header-title-block h2 { font-size: 15px; font-weight: 600; }
   .stats { grid-template-columns: 1fr; }
   .stat-card { padding: 14px; }
   

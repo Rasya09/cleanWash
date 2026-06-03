@@ -434,6 +434,9 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--primary);cursor:p
     left:0 !important;width:100% !important;
   }
 
+  .header-title-block h2 { font-size: 15px; font-weight: 600; }
+  .header-title-block p  { display: none; }
+
   .main{
     margin-left:0 !important;
     width:100% !important;
@@ -490,6 +493,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--primary);cursor:p
 
 @media(max-width:480px){
   .main{padding:8px !important}
+  .header-title-block h2 { font-size: 15px; font-weight: 600; }
   .dtbl th:nth-child(3),.dtbl td:nth-child(3),
   .dtbl th:nth-child(6),.dtbl td:nth-child(6){display:none}
   .fsel{min-width:100%}
@@ -497,6 +501,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--primary);cursor:p
 }
 
 @media(max-width:360px){
+  .header-title-block h2 { font-size: 13px; font-weight: 600; }
   .stat-row{grid-template-columns:1fr}
   .stat-row .scard:first-child{grid-column:auto}
 }
