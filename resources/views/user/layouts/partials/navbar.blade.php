@@ -295,7 +295,7 @@
     @endphp
     <!-- Aksi Navbar Desktop (Auth) -->
     <div class="nav-user" id="navUserDesktop">
-        <div class="nav-user-avatar" id="desktopAvatar" onclick="toggleDropdown()">{{ $initial }}</div>
+        <div class="nav-user-avatar" id="desktopAvatar">{{ $initial }}</div>
         <div class="nav-user-info">
         <span class="nav-user-name">{{ Auth::user()->name }}</span>
         <span class="nav-user-role">Pengguna Aktif</span>
@@ -358,15 +358,7 @@
   </div>
 </nav>
 
-<!-- Skrip Logika Navbar -->
 <script>
-    function toggleDropdown() {
-        const desktopDropdown = document.getElementById('desktopDropdown');
-        if (desktopDropdown) {
-            desktopDropdown.classList.toggle('open');
-        }
-    }
-
     function toggleMobileNav() {
         const hamburger = document.getElementById('hamburger');
         const mobileNav = document.getElementById('mobileNav');
@@ -384,12 +376,6 @@
     }
 
     document.addEventListener('click', (e) => {
-        const navUser = document.getElementById('navUserDesktop');
-        const desktopDropdown = document.getElementById('desktopDropdown');
-        if (navUser && desktopDropdown && !navUser.contains(e.target)) {
-            desktopDropdown.classList.remove('open');
-        }
-
         const mobileNav = document.getElementById('mobileNav');
         const hamburger = document.getElementById('hamburger');
         if (mobileNav && hamburger && !mobileNav.contains(e.target) && !hamburger.contains(e.target)) {
