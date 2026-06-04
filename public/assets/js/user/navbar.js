@@ -1,46 +1,38 @@
-/* ===================================== */
-/* DROPDOWN */
-/* ===================================== */
-
 document.addEventListener('DOMContentLoaded', () => {
+    const hamburger       = document.getElementById('hamburger');
+    const mobileMenu      = document.getElementById('mobileMenu');
+    const desktopAvatar   = document.getElementById('desktopAvatar');
+    const desktopDropdown = document.getElementById('desktopDropdown');
+    const navUserDesktop  = document.getElementById('navUserDesktop');
 
-    const avatar =
-        document.getElementById('desktopAvatar');
+    console.log('hamburger:', hamburger);
+    console.log('mobileMenu:', mobileMenu);
 
-    const dropdown =
-        document.getElementById('desktopDropdown');
-
-    const navUser =
-        document.getElementById('navUserDesktop');
-
-    // =====================================
-    // OPEN DROPDOWN
-    // =====================================
-
-    if(avatar){
-
-        avatar.addEventListener('click', function(e){
-
+    if (hamburger && mobileMenu) {
+        hamburger.addEventListener('click', (e) => {
             e.stopPropagation();
-
-            dropdown.classList.toggle('open');
-
+            hamburger.classList.toggle('open');
+            mobileMenu.classList.toggle('open');
+            console.log('burger diklik, menu:', mobileMenu.classList.contains('open'));
         });
-
     }
 
-    // =====================================
-    // CLOSE IF CLICK OUTSIDE
-    // =====================================
+    if (desktopAvatar && desktopDropdown) {
+        desktopAvatar.addEventListener('click', (e) => {
+            e.stopPropagation();
+            desktopDropdown.classList.toggle('open');
+        });
+    }
 
-    document.addEventListener('click', function(e){
-
-        if(navUser && !navUser.contains(e.target)){
-
-            dropdown.classList.remove('open');
-
+    document.addEventListener('click', (e) => {
+        if (navUserDesktop && !navUserDesktop.contains(e.target)) {
+            desktopDropdown?.classList.remove('open');
         }
-
+        if (hamburger && mobileMenu &&
+            !hamburger.contains(e.target) &&
+            !mobileMenu.contains(e.target)) {
+            hamburger.classList.remove('open');
+            mobileMenu.classList.remove('open');
+        }
     });
-
 });

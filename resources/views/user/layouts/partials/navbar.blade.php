@@ -21,22 +21,20 @@
   </div>
   @endguest
 
-  @auth
+    @auth
     @php
-        $name = Auth::user()->name;
-        $words = explode(' ', $name);
-        if(count($words) >= 2){
-            $initial = strtoupper(substr($words[0],0,1) . substr($words[1],0,1));
-        } else {
-            $initial = strtoupper(substr($name,0,2));
-        }
+        $name    = Auth::user()->name;
+        $words   = explode(' ', $name);
+        $initial = count($words) >= 2
+            ? strtoupper(substr($words[0],0,1) . substr($words[1],0,1))
+            : strtoupper(substr($name,0,2));
     @endphp
     <!-- Aksi Navbar Desktop (Auth) -->
     <div class="nav-user" id="navUserDesktop">
         <div class="nav-user-avatar" id="desktopAvatar">{{ $initial }}</div>
         <div class="nav-user-info">
-        <span class="nav-user-name">{{ Auth::user()->name }}</span>
-        <span class="nav-user-role">Pengguna Aktif</span>
+            <span class="nav-user-name">{{ Auth::user()->name }}</span>
+            <span class="nav-user-role">Pengguna Aktif</span>
         </div>
         <div class="nav-user-dropdown" id="desktopDropdown">
         <button class="dropdown-item">
@@ -59,7 +57,37 @@
         </form>
         </div>
     </div>
-  @endauth
+    @endauth
+
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+
+    <div class="nav-mobile-menu" id="mobileMenu">
+        @auth
+        <div class="nav-mobile-user">
+            <div class="nav-mobile-avatar">{{ $initial ?? '?' }}</div>
+            <div>
+                <div class="nav-mobile-name">{{ Auth::user()->name }}</div>
+                <div class="nav-mobile-role">Pengguna Aktif</div>
+            </div>
+        </div>
+        @endauth
+
+        <a href="{{ route('home') }}" class="nav-mobile-link {{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
+        <a href="{{ route('cari-laundry') }}" class="nav-mobile-link {{ request()->routeIs('cari-laundry') ? 'active' : '' }}">Cari Laundry</a>
+        <a href="{{ route('layanan') }}" class="nav-mobile-link {{ request()->routeIs('layanan') ? 'active' : '' }}">Layanan</a>
+
+        @auth
+        <div class="nav-mobile-divider"></div>
+        <a href="{{ route('user.profile') }}" class="nav-mobile-link">Profil Saya</a>
+        <a href="{{ route('user.pesanan') }}" class="nav-mobile-link">Pesanan Saya</a>
+        <div class="nav-mobile-divider"></div>
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="nav-mobile-logout">Keluar</button>
+        </form>
+        @endauth
 
   <!-- Menu Hamburger -->
   <button class="hamburger" id="hamburger" aria-label="Menu" onclick="toggleMobileNav()">
@@ -100,6 +128,12 @@
       </ul>
       @endauth
   </div>
+        @guest
+        <div class="nav-mobile-divider"></div>
+        <a href="/register" class="nav-mobile-link">Daftar</a>
+        <a href="/login" class="nav-mobile-link">Masuk</a>
+        @endguest
+    </div>
 </nav>
 
 <script>
