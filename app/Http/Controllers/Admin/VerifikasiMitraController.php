@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\MitraLaundry;
 use App\Models\User;
+use App\Models\Notifikasi;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -201,6 +202,21 @@ class VerifikasiMitraController extends Controller
     private function verificationUpdatePayload(array $data): array
     {
         if (! Schema::hasColumn('mitra_laundries', 'rejection_reason')) {
+            unset($data['rejection_reason']);
+        }
+
+        if (Schema::hasColumn('mitra_laundries', 'verified_at')) {
+            $data['verified_at'] = now();
+        }
+
+        if (Schema::hasColumn('mitra_laundries', 'verified_by')) {
+            $data['verified_by'] = auth()->id();
+        }
+
+        return $data;
+    }
+}
+) {
             unset($data['rejection_reason']);
         }
 

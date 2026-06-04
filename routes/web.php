@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MitraRegisterController;
 use App\Http\Controllers\Admin\VerifikasiMitraController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\Admin\ModerasiController;
+use App\Http\Controllers\Admin\NotifikasiController;
 
 
 
@@ -272,19 +274,13 @@ Route::middleware('auth')->prefix('admin')->group(function () {
 
 
     // MODERASI
-    Route::get('/review-rating', function () {
-        return view('admin.moderasi.review');
-    })->name('admin.review');
+    Route::get('/review-rating', [ModerasiController::class, 'indexReview'])
+        ->name('admin.review');
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])
+        ->name('admin.notifikasi');
 
     Route::get('/komplain', function () {
         return view('admin.moderasi.komplain');
     })->name('admin.komplain');
-
-
-    // PENGATURAN 
-    Route::get('/notifikasi', function () {
-        return view('admin.pengaturan.notifikasi');
-    })->name('admin.notifikasi');
-
 
 });
