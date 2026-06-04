@@ -10,7 +10,6 @@ class MitraLaundry extends Model
 
     protected $fillable = [
         'user_id',
-        // Step 1
         'owner_name',
         'store_name',
         'email',

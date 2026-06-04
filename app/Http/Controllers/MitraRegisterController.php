@@ -170,6 +170,7 @@ class MitraRegisterController extends Controller
                 'Pengajuan mitra berhasil dikirim!'
             );
     }
+    
     public function success()
     {
         return view(

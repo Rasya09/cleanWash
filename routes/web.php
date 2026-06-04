@@ -267,14 +267,15 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('admin.home');
-    })->name('admin.dashboard');
+    Route::get('/dashboard',
+        [AdminController::class, 'dashboard']
+    )->name('admin.dashboard');
 
     // MANAJEMEN
-    Route::get('/user', function () {
-        return view('admin.manajemen.user');
-    })->name('admin.user');
+   Route::get(
+        '/user',
+        [AdminController::class, 'userManagement']
+    )->name('admin.user');
 
     Route::get('/mitra-laundry', function () {
         return view('admin.manajemen.mitra_laundry');
@@ -283,11 +284,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/verifikasi-mitra',[AdminController::class, 'index']
     )->name('admin.verifikasi');
 
-    Route::put('/admin/mitra/{id}/approve',
+    Route::put('/mitra/{id}/approve',
         [AdminController::class, 'approve'])
         ->name('admin.mitra.approve');
 
-    Route::put('/admin/mitra/{id}/reject',
+    Route::put('/mitra/{id}/reject',
         [AdminController::class, 'reject'])
         ->name('admin.mitra.reject');
 

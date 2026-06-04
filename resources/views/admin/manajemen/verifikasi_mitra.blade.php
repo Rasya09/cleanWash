@@ -212,90 +212,115 @@
                               </div>
                           </div>
                           {{-- RIGHT --}}
-                          <div class="info-box">
-                              <h4>
-                                  Dokumen Pendukung
-                              </h4>
-                              <div class="doc-list">
+                            <div class="info-box">
+                                <h4>
+                                    Dokumen Pendukung
+                                </h4>
+                                <div class="doc-list">
                                   {{-- KTP --}}
-                                  <div class="doc-row">
-                                      <div class="doc-left">
-                                          <div class="doc-ico blue">
-                                              <i class="fa-solid fa-file-lines"></i>
-                                          </div>
-                                          <div>
-                                              <div class="doc-title">
-                                                  KTP
-                                              </div>
-                                              <div class="doc-sub"
-                                                  id="ktpName">
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <a id="ktpLink"
-                                        target="_blank"
-                                        class="eye-btn">
-                                          <i class="fa-regular fa-eye"></i>
-                                      </a>
-                                  </div>
-                                  {{-- NIB --}}
-                                  <div class="doc-row">
-                                      <div class="doc-left">
-                                          <div class="doc-ico gray">
-                                              <i class="fa-solid fa-file-lines"></i>
-                                          </div>
-                                          <div>
-                                              <div class="doc-title">
-                                                  NIB
-                                              </div>
-                                              <div class="doc-sub"
-                                                  id="nibName">
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <a id="nibLink"
-                                        target="_blank"
-                                        class="eye-btn">
-                                          <i class="fa-regular fa-eye"></i>
-                                      </a>
-                                  </div>
-                                  {{-- NPWP --}}
-                                  <div class="doc-row">
-                                      <div class="doc-left">
-                                          <div class="doc-ico mint">
-                                              <i class="fa-solid fa-file-lines"></i>
-                                          </div>
-                                          <div>
-                                              <div class="doc-title">
-                                                  NPWP
-                                              </div>
-                                              <div class="doc-sub"
-                                                  id="npwpName">
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <a id="npwpLink"
-                                        target="_blank"
-                                        class="eye-btn">
-                                          <i class="fa-regular fa-eye"></i>
-                                      </a>
-                                  </div>
+                                    <div class="doc-row">
+                                        <div class="doc-left">
+                                            <div class="doc-ico blue">
+                                                <i class="fa-solid fa-file-lines"></i>
+                                            </div>
+                                            <div>
+                                                <div class="doc-title">
+                                                    KTP
+                                                </div>
+                                                <div class="doc-sub"
+                                                    id="ktpName">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button id="ktpLink"
+                                                type="button"
+                                                class="eye-btn">
+                                            <i class="fa-regular fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    {{-- NIB --}}
+                                    <div class="doc-row">
+                                        <div class="doc-left">
+                                            <div class="doc-ico gray">
+                                                <i class="fa-solid fa-file-lines"></i>
+                                            </div>
+                                            <div>
+                                                <div class="doc-title">
+                                                    NIB
+                                                </div>
+                                                <div class="doc-sub"
+                                                    id="nibName">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button id="nibLink"
+                                                type="button"
+                                                class="eye-btn">
+                                            <i class="fa-regular fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    {{-- NPWP --}}
+                                    <div class="doc-row">
+                                        <div class="doc-left">
+                                            <div class="doc-ico mint">
+                                                <i class="fa-solid fa-file-lines"></i>
+                                            </div>
+                                            <div>
+                                                <div class="doc-title">
+                                                    NPWP
+                                                </div>
+                                                <div class="doc-sub"
+                                                    id="npwpName">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button id="npwpLink"
+                                                type="button"
+                                                class="eye-btn">
+                                            <i class="fa-regular fa-eye"></i>
+                                        </button>
+                                    </div>
                               </div>
                           </div>
                       </div>
-                      {{-- FOTO TOKO --}}
-                      <div class="photo-box">
-                          <h4>
+                        {{-- FOTO TOKO --}}
+                        <div class="photo-box">
+                            <h4>
                               Foto Tempat Laundry
-                          </h4>
-                          <div class="photo-list"
+                            </h4>
+                            <div class="photo-list"
                               id="photoList">
 
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="documentModal" class="document-modal">
+                    <div class="document-content">
+                        <div class="document-header">
+                            <h3 id="documentTitle">
+                                Preview Dokumen
+                            </h3>
+                            <button
+                                type="button"
+                                class="preview-close"
+                                onclick="closeDocument()">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div class="document-body">
+                            <img
+                                id="documentImage"
+                                style="display:none;"
+                            >
+                            <iframe
+                                id="documentFrame"
+                                style="display:none;">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
           <!-- Pagination Controls -->
           <div class="pagination-wrap">
@@ -349,7 +374,7 @@ function openDetail(id)
             .toLocaleString('id-ID');
 
     document.getElementById('detailStatus').innerText =
-        mitra.verification_status;
+        mitra.status;
 
     // =====================================
     // INFO
@@ -381,22 +406,33 @@ function openDetail(id)
     // =====================================
 
     document.getElementById('ktpName').innerText =
-        mitra.ktp_document;
+    mitra.ktp.split('/').pop();
 
     document.getElementById('nibName').innerText =
-        mitra.nib_document;
+        mitra.nib.split('/').pop();
 
     document.getElementById('npwpName').innerText =
-        mitra.npwp_document;
+        mitra.npwp
+            ? mitra.npwp.split('/').pop()
+            : '-';
 
-    document.getElementById('ktpLink').href =
-        `/storage/${mitra.ktp_document}`;
+    document.getElementById('ktpLink').onclick = () =>
+        openDocument(
+            `/storage/${mitra.ktp}`,
+            'KTP Pemilik'
+        );
 
-    document.getElementById('nibLink').href =
-        `/storage/${mitra.nib_document}`;
+    document.getElementById('nibLink').onclick = () =>
+        openDocument(
+            `/storage/${mitra.nib}`,
+            'NIB / Izin Usaha'
+        );
 
-    document.getElementById('npwpLink').href =
-        `/storage/${mitra.npwp_document}`;
+    document.getElementById('npwpLink').onclick = () =>
+        openDocument(
+            `/storage/${mitra.npwp}`,
+            'NPWP'
+        );
 
     // =====================================
     // PHOTO STORE
@@ -436,6 +472,80 @@ function closeDetail()
 {
     document.getElementById('detailOverlay')
         .classList.remove('show');
+}
+
+function openDocument(url, title)
+{
+    document
+        .getElementById('documentModal')
+        .classList.add('show');
+
+    document
+        .getElementById('documentTitle')
+        .innerText = title;
+
+    const image =
+        document.getElementById('documentImage');
+
+    const frame =
+        document.getElementById('documentFrame');
+
+    const ext =
+        url.split('.').pop().toLowerCase();
+
+    if(['jpg','jpeg','png','webp'].includes(ext))
+    {
+        image.style.display = 'block';
+        frame.style.display = 'none';
+
+        image.src = url;
+    }
+    else
+    {
+        frame.style.display = 'block';
+        image.style.display = 'none';
+
+        frame.src = url;
+    }
+}
+
+function closeDocument()
+{
+    document
+        .getElementById('documentModal')
+        .classList.remove('show');
+
+    document
+        .getElementById('documentFrame')
+        .src = '';
+
+    document
+        .getElementById('documentImage')
+        .src = '';
+}
+
+const documentModal =
+    document.getElementById('documentModal');
+
+documentModal.addEventListener('click', function(e){
+
+    if(e.target === documentModal)
+    {
+        closeDocument();
+    }
+
+});
+
+function closePreview()
+{
+    document.getElementById('previewModal')
+        .classList.remove('show');
+
+    document.getElementById('previewImage')
+        .style.display = 'none';
+
+    document.getElementById('previewPdf')
+        .style.display = 'none';
 }
 
 // CLOSE OUTSIDE

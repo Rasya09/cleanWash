@@ -1,7 +1,6 @@
 <style>
 /* ===== NAVBAR ===== */
     .nav {
-      /* position: fixed; */
       top: 0; left: 0; right: 0;
       height: var(--nav-h);
       background: rgba(255,255,255,0.90);
@@ -233,6 +232,9 @@
         <button class="dropdown-item">Obrolan</button>
         @if(Auth::user()->role == 'admin')
         <button class="dropdown-item"><a href="{{ route('admin.dashboard') }}">Dashboard admin</a></button>
+        @endif
+        @if(Auth::user()->role == 'mitra')
+        <button class="dropdown-item"><a href="{{ route('mitra.dashboard') }}">Dashboard mitra</a></button>
         @endif
         <div class="dropdown-divider"></div>
         <form action="{{ route('logout') }}" method="POST">

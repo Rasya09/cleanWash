@@ -8,16 +8,13 @@
     <!-- MAIN -->
     <main class="detail-page">
         <div class="container detail-wrapper">
-
             <!-- ── KOLOM KIRI ── -->
             <div class="detail-left">
-
                 <!-- Header -->
                 <div class="detail-header">
                     <h1 class="detail-header__title">Detail Pesanan</h1>
                     <p class="detail-header__desc">Lihat status dan rincian lengkap pesanan laundry Anda.</p>
                 </div>
-
                 <!-- Status Pesanan -->
                 <section class="detail-card">
                     <div class="card-title-row">
@@ -33,7 +30,6 @@
                         Sedang Diproses
                         <span class="status-chevron">›</span>
                     </div>
-
                     <!-- Progress Steps -->
                     <div class="progress-steps">
                         <div class="progress-step progress-step--done">
@@ -279,18 +275,8 @@
                             <span class="payment-info__key">Status Pembayaran</span>
                             <span class="payment-info__val payment-info__val--unpaid">Belum Dibayar</span>
                         </div>
-                        <!-- <div class="payment-info__row">
-                            <span class="payment-info__key">Metode</span>
-                            <span class="payment-info__val">Bayar Nanti</span>
-                        </div> -->
-                    </div>
-<!-- 
-                    <div class="va-box">
-                        <p class="va-box__label">Nomor Virtual Account</p>
-                        <p class="va-box__number">1315 2801 6244 1327</p>
-                        <p class="va-box__bank">Bank BRI</p>
-                    </div> -->
 
+                    </div>
                     <button class="btn-bayar"><a href="{{ route('user.pembayaran') }}">Bayar Sekarang</a></button>
                 </section>
 
@@ -327,3 +313,8 @@
         </div>
     </main>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('assets/js/user/navbar.js') }}"></script>
+    
+@endpush
