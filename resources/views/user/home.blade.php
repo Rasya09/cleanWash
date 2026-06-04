@@ -217,24 +217,38 @@
       <h3>Bagaimana Pengalaman Anda?</h3>
       <p>Silahkan berikan rating & ulasan untuk website kami</p>
     </div>
-    <div class="review-emoji-row">
-      <span class="review-emoji" title="Sangat Buruk">😞</span>
-      <span class="review-emoji" title="Buruk">😕</span>
-      <span class="review-emoji active" title="Biasa">😊</span>
-      <span class="review-emoji" title="Baik">😄</span>
-      <span class="review-emoji" title="Sangat Baik">🤩</span>
-    </div>
-    <div class="review-stars">
-      <button class="star-btn lit">★</button>
-      <button class="star-btn lit">★</button>
-      <button class="star-btn lit">★</button>
-      <button class="star-btn lit">★</button>
-      <button class="star-btn">★</button>
-    </div>
-    <div class="review-form">
-      <textarea class="review-textarea" placeholder="Tuliskan ulasan anda di sini...."></textarea>
-      <button class="review-submit">Kirim</button>
-    </div>
+
+    <form action="{{ route('rating.store') }}" method="POST">
+      @csrf
+
+      {{-- Input hidden diisi JS --}}
+      <input type="hidden" name="emoji" id="emojiInput" value="3">
+      <input type="hidden" name="star"  id="starInput"  value="4">
+
+      <div class="review-emoji-row">
+        <span class="review-emoji" data-value="1" title="Sangat Buruk">😞</span>
+        <span class="review-emoji" data-value="2" title="Buruk">😕</span>
+        <span class="review-emoji active" data-value="3" title="Biasa">😊</span>
+        <span class="review-emoji" data-value="4" title="Baik">😄</span>
+        <span class="review-emoji" data-value="5" title="Sangat Baik">🤩</span>
+      </div>
+
+      <div class="review-stars">
+        <button type="button" class="star-btn lit" data-value="1">★</button>
+        <button type="button" class="star-btn lit" data-value="2">★</button>
+        <button type="button" class="star-btn lit" data-value="3">★</button>
+        <button type="button" class="star-btn lit" data-value="4">★</button>
+        <button type="button" class="star-btn"     data-value="5">★</button>
+      </div>
+
+      <div class="review-form">
+        <textarea name="ulasan" class="review-textarea" 
+                  placeholder="Tuliskan ulasan anda di sini...."></textarea>
+        <button type="submit" class="review-submit">Kirim</button>
+      </div>
+
+    </form>
+
     <p class="review-note">Feedback anda sangat membantu kami menyempurnakan layanan website kami.</p>
   </div>
 </section>
@@ -249,32 +263,24 @@
 @push('scripts')
 <script>
  
-  /* =========================================================
-     STAR RATING
-  ========================================================= */
-  const stars = document.querySelectorAll('.star-btn');
-  stars.forEach((star, i) => {
-    star.addEventListener('click', () => {
-      stars.forEach((s, j) => s.classList.toggle('lit', j <= i));
-    });
-    star.addEventListener('mouseenter', () => {
-      stars.forEach((s, j) => s.style.color = j <= i ? '#f97316' : '#d0d0d0');
-    });
-    star.addEventListener('mouseleave', () => {
-      stars.forEach(s => s.style.color = '');
-    });
+// STAR RATING — update hidden input
+const stars = document.querySelectorAll('.star-btn');
+stars.forEach((star, i) => {
+  star.addEventListener('click', () => {
+    stars.forEach((s, j) => s.classList.toggle('lit', j <= i));
+    document.getElementById('starInput').value = i + 1; // simpan ke hidden
   });
+});
 
-  /* =========================================================
-     EMOJI SELECTOR
-  ========================================================= */
-  const emojis = document.querySelectorAll('.review-emoji');
-  emojis.forEach(e => {
-    e.addEventListener('click', () => {
-      emojis.forEach(x => x.classList.remove('active'));
-      e.classList.add('active');
-    });
+// EMOJI SELECTOR — update hidden input
+const emojis = document.querySelectorAll('.review-emoji');
+emojis.forEach(e => {
+  e.addEventListener('click', () => {
+    emojis.forEach(x => x.classList.remove('active'));
+    e.classList.add('active');
+    document.getElementById('emojiInput').value = e.dataset.value; // simpan ke hidden
   });
+});
 </script>
 @endpush
 

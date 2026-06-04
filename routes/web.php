@@ -7,6 +7,7 @@ use App\Models\UserAddress;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MitraRegisterController;
 use App\Http\Controllers\Admin\VerifikasiMitraController;
+use App\Http\Controllers\RatingController;
 
 
 
@@ -127,6 +128,9 @@ Route::middleware('auth')->prefix('user')->group(function () {
     Route::post('/alamat/store',
     [UserAddressController::class, 'store'])
     ->name('alamat.store');
+
+        // RATING
+    Route::middleware('auth')->post('/rating', [RatingController::class, 'store'])->name('rating.store');
 
 });
 
