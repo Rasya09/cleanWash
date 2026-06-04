@@ -29,5 +29,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserAddress::class);
     }
+
+    public function mitraLaundry()
+    {
+        return $this->hasOne(MitraLaundry::class);
+    }
 }
 

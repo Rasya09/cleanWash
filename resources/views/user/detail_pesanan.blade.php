@@ -5,325 +5,546 @@
 @endsection
 
 @section('content')
-    <!-- MAIN -->
-    <main class="detail-page">
-        <div class="container detail-wrapper">
 
-            <!-- ── KOLOM KIRI ── -->
-            <div class="detail-left">
+{{-- PAGE BAR --}}
+<div class="page-bar">
+    <div class="page-bar__inner">
+        <div class="page-bar__left">
+            <a href="{{ route('user.pesanan') }}" class="page-bar__back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+                Pesanan Saya
+            </a>
+            <p class="page-bar__id">
+                <span>ID Pesanan: </span>
+                <strong>{{ $pesanan->order_code }}</strong>
+            </p>
+        </div>
+        <div class="page-bar__date">Tanggal: {{ $pesanan->created_at->translatedFormat('d F Y') }}</div>
+    </div>
+</div>
 
-                <!-- Header -->
-                <div class="detail-header">
-                    <h1 class="detail-header__title">Detail Pesanan</h1>
-                    <p class="detail-header__desc">Lihat status dan rincian lengkap pesanan laundry Anda.</p>
+<main class="detail-page">
+    <div class="detail-page__header">
+        <h1>Detail Pesanan</h1>
+        <p>Lihat status dan rincian lengkap pesanan laundry Anda.</p>
+    </div>
+
+    @if(session('success'))
+    <div class="detail-alert">{{ session('success') }}</div>
+    @endif
+
+    <div class="detail-layout">
+
+        {{-- ══════════════════════════════════════
+             KOLOM KIRI
+        ══════════════════════════════════════ --}}
+        <div class="detail-left">
+
+            {{-- ── STATUS PESANAN ── --}}
+            <section class="detail-card">
+                <div class="card-title-row">
+                    <div class="card-title-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="20" viewBox="0 0 15 20" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M6.5 0C4.98122 0 3.75 1.23122 3.75 2.75V4.75C3.75 5.16421 4.08579 5.5 4.5 5.5H10.5C10.9142 5.5 11.25 5.16421 11.25 4.75V2.75C11.25 1.23122 10.0188 0 8.5 0H6.5ZM5.25 2.75C5.25 2.05964 5.80964 1.5 6.5 1.5H8.5C9.19036 1.5 9.75 2.05964 9.75 2.75V4H5.25V2.75Z" fill="currentColor"/>
+                            <path d="M2.25346 2.85483C2.25371 2.71463 2.11335 2.61816 1.98693 2.67877C0.801611 3.24701 0 4.45697 0 5.83545V16.3249C0 18.0357 1.27431 19.4785 2.97197 19.6899C5.97904 20.0644 9.02096 20.0644 12.028 19.6899C13.7257 19.4785 15 18.0357 15 16.3249V5.83546C15 4.45679 14.2016 3.24669 13.0165 2.67855C12.8903 2.618 12.75 2.71422 12.75 2.85426V4.75001C12.75 5.99265 11.7426 7.00001 10.5 7.00001H4.5C3.25736 7.00001 2.25 5.99265 2.25 4.75001L2.25346 2.85483Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <h2 class="card-title">Status Pesanan</h2>
                 </div>
 
-                <!-- Status Pesanan -->
-                <section class="detail-card">
-                    <div class="card-title-row">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="20" viewBox="0 0 15 20" fill="none">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M6.5 0C4.98122 0 3.75 1.23122 3.75 2.75V4.75C3.75 5.16421 4.08579 5.5 4.5 5.5H10.5C10.9142 5.5 11.25 5.16421 11.25 4.75V2.75C11.25 1.23122 10.0188 0 8.5 0H6.5ZM5.25 2.75C5.25 2.05964 5.80964 1.5 6.5 1.5H8.5C9.19036 1.5 9.75 2.05964 9.75 2.75V4H5.25V2.75Z" fill="black"/>
-                        <path d="M2.25346 2.85483C2.25371 2.71463 2.11335 2.61816 1.98693 2.67877C0.801611 3.24701 0 4.45697 0 5.83545V16.3249C0 18.0357 1.27431 19.4785 2.97197 19.6899C5.97904 20.0644 9.02096 20.0644 12.028 19.6899C13.7257 19.4785 15 18.0357 15 16.3249V5.83546C15 4.45679 14.2016 3.24669 13.0165 2.67855C12.8903 2.618 12.75 2.71422 12.75 2.85426V4.75001C12.75 5.99265 11.7426 7.00001 10.5 7.00001H4.5C3.25736 7.00001 2.25 5.99265 2.25 4.75001L2.25346 2.85483Z" fill="black"/>
+                @php
+                    $statusLabel = [
+                        'masuk'        => 'Menunggu Konfirmasi',
+                        'aktif'        => 'Pesanan Diterima',
+                        'pickup'       => 'Driver Menuju Lokasi',
+                        'diproses'     => 'Sedang Diproses',
+                        'pengantaran'  => 'Sedang Diantar',
+                        'selesai'      => 'Selesai',
+                        'gagal_pickup' => 'Gagal Pickup',
+                        'dibatalkan'   => 'Dibatalkan',
+                    ];
+
+                    /* Peta status → nomor step aktif */
+                    $stepMap = [
+                        'masuk'        => 0,
+                        'aktif'        => 1,
+                        'pickup'       => 2,
+                        'diproses'     => 3,
+                        'pengantaran'  => 4,
+                        'selesai'      => 5,
+                        'gagal_pickup' => 2,
+                        'dibatalkan'   => 0,
+                    ];
+                    $step = $stepMap[$pesanan->status] ?? 0;
+
+                    $steps = [
+                        ['label' => 'Pesanan Diterima', 'num' => 1],
+                        ['label' => 'Pickup',           'num' => 2],
+                        ['label' => 'Ditimbang',        'num' => 3],
+                        ['label' => 'Pengantaran',      'num' => 4],
+                        ['label' => 'Selesai',          'num' => 5],
+                    ];
+                @endphp
+
+                <div class="status-badge status-badge--{{ $pesanan->status }}">
+                    <span class="status-dot"></span>
+                    {{ $statusLabel[$pesanan->status] ?? ucfirst($pesanan->status) }}
+                </div>
+
+                {{-- Progress Steps --}}
+                <div class="progress-steps">
+                    @foreach($steps as $i => $s)
+                        @php
+                            $isDone   = $step > $s['num'];
+                            $isActive = $step === $s['num'];
+                            $dotClass = $isDone ? 'progress-step__dot--done' : ($isActive ? 'progress-step__dot--active' : '');
+                            $stepClass = $isDone ? 'progress-step--done' : ($isActive ? 'progress-step--active' : '');
+                        @endphp
+                        <div class="progress-step {{ $stepClass }}">
+                            <div class="progress-step__dot {{ $dotClass }}"></div>
+                            <span class="progress-step__label">{{ $s['label'] }}</span>
+                        </div>
+                        @if($i < count($steps) - 1)
+                            <div class="progress-line {{ $step > $s['num'] ? 'progress-line--done' : '' }}"></div>
+                        @endif
+                    @endforeach
+                </div>
+
+                <p class="estimasi-text">
+                    Jadwal Pickup:
+                    <strong>
+                        {{ $pesanan->tanggal_pickup->translatedFormat('d M Y') }}
+                        – {{ \Carbon\Carbon::parse($pesanan->waktu_pickup)->format('H:i') }} WIB
+                    </strong>
+                </p>
+            </section>
+
+            {{-- ── INFORMASI LAUNDRY ── --}}
+            <section class="detail-card">
+                <div class="card-title-row">
+                    <div class="card-title-icon card-title-icon--blue">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
                         </svg>
-                        <h2 class="card-title">Status Pesanan</h2>
                     </div>
-
-                    <div class="status-badge status-badge--process">
-                        <span class="status-dot"></span>
-                        Sedang Diproses
-                        <span class="status-chevron">›</span>
+                    <h2 class="card-title">Informasi Laundry</h2>
+                </div>
+                <div class="laundry-info">
+                    <div class="laundry-info__img-wrap">
+                        <img src="{{ $pesanan->mitraLaundry->logo
+                                        ? asset('storage/'.$pesanan->mitraLaundry->logo)
+                                        : asset('assets/images/laundry-placeholder.jpg') }}"
+                             alt="{{ $pesanan->mitraLaundry->store_name }}"
+                             class="laundry-info__img">
                     </div>
-
-                    <!-- Progress Steps -->
-                    <div class="progress-steps">
-                        <div class="progress-step progress-step--done">
-                            <div class="progress-step__dot progress-step__dot--done"></div>
-                            <span class="progress-step__label">Pesanan Dibuat</span>
+                    <div class="laundry-info__body">
+                        <span class="laundry-info__name">{{ $pesanan->mitraLaundry->store_name }}</span>
+                        <div class="laundry-info__rating">
+                            <span class="laundry-info__stars">★★★★★</span>
+                            <span class="laundry-info__score">5.0</span>
+                            <span class="laundry-info__review">(128 ulasan)</span>
                         </div>
-                        <div class="progress-line progress-line--done"></div>
-                        <div class="progress-step progress-step--done">
-                            <div class="progress-step__dot progress-step__dot--done"></div>
-                            <span class="progress-step__label">Pickup</span>
+                        <div class="laundry-info__meta">
+                            <span class="laundry-info__meta-item">
+                                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                                {{ $pesanan->mitraLaundry->address }}, {{ $pesanan->mitraLaundry->city }}
+                            </span>
+                            @if($pesanan->mitraLaundry->jam_buka && $pesanan->mitraLaundry->jam_tutup)
+                            <span class="laundry-info__meta-item">
+                                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                                {{ \Carbon\Carbon::parse($pesanan->mitraLaundry->jam_buka)->format('H:i') }}
+                                – {{ \Carbon\Carbon::parse($pesanan->mitraLaundry->jam_tutup)->format('H:i') }}
+                            </span>
+                            @endif
                         </div>
-                        <div class="progress-line progress-line--done"></div>
-                        <div class="progress-step progress-step--active">
-                            <div class="progress-step__dot progress-step__dot--active"></div>
-                            <span class="progress-step__label">Ditimbang</span>
-                        </div>
-                        <div class="progress-line"></div>
-                        <div class="progress-step">
-                            <div class="progress-step__dot"></div>
-                            <span class="progress-step__label">Dibayar</span>
-                        </div>
-                        <div class="progress-line"></div>
-                        <div class="progress-step">
-                            <div class="progress-step__dot"></div>
-                            <span class="progress-step__label">Selesai</span>
-                        </div>
-                    </div>
-
-                    <p class="estimasi-text">Estimasi selesai: <strong>18 Juni 2026 - 17.00 WIB</strong></p>
-                </section>
-
-                <!-- Informasi Laundry -->
-                <section class="detail-card">
-                    <div class="card-title-row">
-                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                        <h2 class="card-title">Informasi Laundry</h2>
-                    </div>
-
-                    <div class="laundry-info">
-                        <img src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/cJbMtcrhbu/vpjq3z1v_expires_30_days.png" alt="UBR Laundry" class="laundry-info__img" />
-                        <div class="laundry-info__body">
-                            <span class="laundry-info__name">UBR Laundry</span>
-                            <div class="laundry-info__rating">
-                                <span class="stars">★★★★★</span>
-                                <span class="laundry-info__score">5.0</span>
-                                <span class="laundry-info__reviews">(128 ulasan)</span>
-                            </div>
-                            <div class="laundry-info__meta">
-                                <span class="laundry-info__meta-item">
-                                    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                                    Jl. Soekarno Hatta No.45
-                                </span>
-                                <span class="laundry-info__meta-item">
-                                    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                                    08.00 - 20.00
-                                </span>
-                            </div>
-                            <button class="btn-lihat-detail">
-                                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <div class="laundry-info__actions">
+                            <button class="btn-outline-primary">
+                                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                </svg>
                                 Lihat Detail Laundry
                             </button>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <!-- Detail Layanan -->
-                <section class="detail-card">
-                    <div class="card-title-row">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="20" viewBox="0 0 15 20" fill="none">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M3.75 2.75C3.75 1.23122 4.98122 0 6.5 0H8.5C10.0188 0 11.25 1.23122 11.25 2.75V4.75C11.25 5.16421 10.9142 5.5 10.5 5.5H4.5C4.08579 5.5 3.75 5.16421 3.75 4.75V2.75ZM6.5 1.5C5.80964 1.5 5.25 2.05964 5.25 2.75V4H9.75V2.75C9.75 2.05964 9.19036 1.5 8.5 1.5H6.5Z" fill="black"/>
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M1.98693 2.67877C2.11335 2.61816 2.25371 2.71463 2.25346 2.85483L2.25 4.75001C2.25 5.99265 3.25736 7.00001 4.5 7.00001H10.5C11.7426 7.00001 12.75 5.99265 12.75 4.75001V2.85426C12.75 2.71422 12.8903 2.618 13.0165 2.67855C14.2016 3.24669 15 4.45679 15 5.83546V16.3249C15 18.0357 13.7257 19.4785 12.028 19.6899C9.02096 20.0644 5.97904 20.0644 2.97197 19.6899C1.27431 19.4785 0 18.0357 0 16.3249V5.83545C0 4.45697 0.801611 3.24701 1.98693 2.67877ZM10.5 9.75C10.9142 9.75 11.25 10.0858 11.25 10.5C11.25 10.9142 10.9142 11.25 10.5 11.25H4.5C4.08579 11.25 3.75 10.9142 3.75 10.5C3.75 10.0858 4.08579 9.75 4.5 9.75H10.5ZM9.5 12.75C9.91421 12.75 10.25 13.0858 10.25 13.5C10.25 13.9142 9.91421 14.25 9.5 14.25H4.5C4.08579 14.25 3.75 13.9142 3.75 13.5C3.75 13.0858 4.08579 12.75 4.5 12.75H9.5Z" fill="black"/>
+            {{-- ── DETAIL LAYANAN ── --}}
+            <section class="detail-card">
+                <div class="card-title-row">
+                    <div class="card-title-icon card-title-icon--blue">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                            <rect x="9" y="3" width="6" height="4" rx="1"/>
                         </svg>
-                        <h2 class="card-title">Detail Layanan</h2>
+                    </div>
+                    <h2 class="card-title">Detail Layanan</h2>
+                </div>
+                <div class="layanan-list">
+
+                    {{-- Layanan --}}
+                    <div class="layanan-row">
+                        <span class="layanan-row__key">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <polyline points="9 11 12 14 22 4"/>
+                                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+                            </svg>
+                            Layanan
+                        </span>
+                        <span class="layanan-row__val">
+                            {{ $pesanan->items->pluck('nama_layanan')->join(', ') ?: '-' }}
+                        </span>
                     </div>
 
-                    <table class="layanan-table">
-                        <tr>
-                            <td class="layanan-table__key">
-                                <!-- <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg> -->
-                                Layanan
-                            </td>
-                            <td class="layanan-table__val">Cuci Kiloan</td>
-                        </tr>
-                        <tr>
-                            <td class="layanan-table__key">
-                                <!-- <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> -->
-                                Paket
-                            </td>
-                            <td class="layanan-table__val">Express</td>
-                        </tr>
-                        <tr>
-                            <td class="layanan-table__key">
-                                <!-- <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> -->
-                                Estimasi Selesai
-                            </td>
-                            <td class="layanan-table__val">6 Jam</td>
-                        </tr>
-                        <tr>
-                            <td class="layanan-table__key">
-                                <!-- <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="1.5"/><circle cx="18.5" cy="18.5" r="1.5"/></svg> -->
-                                Metode Pengantaran
-                            </td>
-                            <td class="layanan-table__val">Antar Jemput</td>
-                        </tr>
-                        <tr>
-                            <td class="layanan-table__key">
-                                <!-- <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> -->
-                                Instruksi
-                            </td>
-                            <td class="layanan-table__val">Cuci dengan pewangi pakaian yang soft</td>
-                        </tr>
-                    </table>
-                </section>
-
-                <!-- Pickup -->
-                <section class="detail-card">
-                    <div class="card-title-row">
-                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#e04040"/></svg>
-                        <h2 class="card-title">Pickup</h2>
+                    {{-- Paket --}}
+                    <div class="layanan-row">
+                        <span class="layanan-row__key">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <polyline points="1 4 1 10 7 10"/>
+                                <path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
+                            </svg>
+                            Paket
+                        </span>
+                        <span class="layanan-row__val">
+                            <span class="layanan-row__val--badge">
+                                {{ ucfirst($pesanan->paket ?? 'Express') }}
+                            </span>
+                        </span>
                     </div>
 
-                    <div class="pickup-address">
-                        <div class="pickup-address__label">
-                            <svg width="13" height="13" fill="none" stroke="#e04040" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    {{-- Estimasi Selesai --}}
+                    @if($pesanan->estimasi_selesai)
+                    <div class="layanan-row">
+                        <span class="layanan-row__key">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            Estimasi Selesai
+                        </span>
+                        <span class="layanan-row__val">{{ $pesanan->estimasi_selesai }}</span>
+                    </div>
+                    @endif
+
+                    {{-- Metode Pembayaran --}}
+                    <div class="layanan-row">
+                        <span class="layanan-row__key">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <rect x="1" y="4" width="22" height="16" rx="2"/>
+                                <path d="M1 10h22"/>
+                            </svg>
+                            Metode Pembayaran
+                        </span>
+                        <span class="layanan-row__val">{{ strtoupper($pesanan->metode_bayar) }}</span>
+                    </div>
+
+                    {{-- Metode Pengantaran --}}
+                    <div class="layanan-row">
+                        <span class="layanan-row__key">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <rect x="1" y="3" width="15" height="13"/>
+                                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                                <circle cx="5.5" cy="18.5" r="2.5"/>
+                                <circle cx="18.5" cy="18.5" r="2.5"/>
+                            </svg>
+                            Metode Pengantaran
+                        </span>
+                        <span class="layanan-row__val">Antar Jemput</span>
+                    </div>
+
+                    {{-- Instruksi / Catatan --}}
+                    @if($pesanan->catatan)
+                    <div class="layanan-row layanan-row--full">
+                        <span class="layanan-row__key">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                            Instruksi
+                        </span>
+                        <span class="layanan-row__val">{{ $pesanan->catatan }}</span>
+                    </div>
+                    @endif
+                </div>
+            </section>
+
+            {{-- ── PICKUP ── --}}
+            <section class="detail-card">
+                <div class="card-title-row">
+                    <div class="card-title-icon card-title-icon--red">
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                    </div>
+                    <h2 class="card-title">Pickup</h2>
+                </div>
+                <div class="pickup-grid">
+
+                    {{-- Alamat Pickup --}}
+                    <div class="pickup-box pickup-box--full">
+                        <div class="pickup-box__label">
+                            <svg width="12" height="12" fill="none" stroke="var(--red-500)" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
                             Alamat Pickup
                         </div>
-                        <p class="pickup-address__detail">
-                            Perumahan Citra Land, Cluster Red Leaf, Blok C1 No. 10, Jl. Komodor Yos Sudarso, Kel. Sukamaju, Kec. Telukbetung Timur, Kota Bandar Lampung, Lampung 35226.
+                        <p class="pickup-box__val pickup-box__val--primary">{{ $pesanan->alamat_pickup }}</p>
+                    </div>
+
+                    {{-- Estimasi Tiba --}}
+                    <div class="pickup-box">
+                        <div class="pickup-box__label">
+                            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            Estimasi Tiba
+                        </div>
+                        <p class="pickup-box__val pickup-box__val--bold">
+                            {{ $pesanan->tanggal_pickup->translatedFormat('d M Y') }} – 14.00 WIB
                         </p>
                     </div>
 
-                    <div class="pickup-schedule">
-                        <div class="pickup-schedule__item">
-                            <div class="pickup-schedule__label">
-                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                                Estimasi Tiba
-                            </div>
-                            <strong class="pickup-schedule__val">17 Juni 2026 - 14.00 WIB</strong>
-                        </div>
-                        <div class="pickup-schedule__item">
-                            <div class="pickup-schedule__label">
-                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                                Jadwal Pickup
-                            </div>
-                            <strong class="pickup-schedule__val">17 Jun - 10.45</strong>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Riwayat Aktivitas -->
-                <section class="detail-card">
-                    <div class="card-title-row">
-                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                        <h2 class="card-title">Riwayat Aktivitas</h2>
-                    </div>
-
-                    <div class="timeline">
-                        <div class="timeline-item timeline-item--done">
-                            <div class="timeline-item__dot timeline-item__dot--done"></div>
-                            <div class="timeline-item__content">
-                                <span class="timeline-item__title">Pesanan Dibuat</span>
-                                <span class="timeline-item__time">17 Juni 2026 - 09.30 WIB</span>
-                            </div>
-                        </div>
-                        <div class="timeline-item timeline-item--done">
-                            <div class="timeline-item__dot timeline-item__dot--done"></div>
-                            <div class="timeline-item__content">
-                                <span class="timeline-item__title">Driver Menjemput</span>
-                                <span class="timeline-item__time">17 Juni 2026 - 10.45 WIB</span>
-                                <p class="timeline-item__desc">Driver sudah tiba di lokasi pickup dan mengambil pakaian Anda.</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item timeline-item--active">
-                            <div class="timeline-item__dot timeline-item__dot--active"></div>
-                            <div class="timeline-item__content">
-                                <span class="timeline-item__title">Sedang Dicuci</span>
-                                <span class="timeline-item__time">17 Juni 2026 - 11.30 WIB</span>
-                                <p class="timeline-item__desc">Pakaian Anda sedang dalam proses pencucian di UBR Laundry.</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item timeline-item--pending">
-                            <div class="timeline-item__dot"></div>
-                            <div class="timeline-item__content">
-                                <span class="timeline-item__title">Siap Diantar</span>
-                                <span class="timeline-item__time">Menunggu...</span>
-                            </div>
-                        </div>
-                        <div class="timeline-item timeline-item--pending">
-                            <div class="timeline-item__dot"></div>
-                            <div class="timeline-item__content">
-                                <span class="timeline-item__title">Pesanan Selesai</span>
-                                <span class="timeline-item__time">Menunggu...</span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-            </div>
-
-            <!-- ── KOLOM KANAN ── -->
-            <div class="detail-right">
-
-                <!-- Ringkasan Harga -->
-                <section class="side-card">
-                    <div class="card-title-row">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 20 18" fill="none">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M19.1854 6.89847L19.188 10.5213C19.1625 10.8665 19.1296 11.2112 19.0894 11.5553C19.0221 12.1307 18.5543 12.5949 17.9669 12.6605C16.1272 12.8661 14.2233 12.8661 12.3836 12.6605C11.7962 12.5949 11.3284 12.1307 11.2611 11.5553C11.0414 9.6763 11.0414 7.77807 11.2611 5.89907C11.3284 5.32366 11.7962 4.85951 12.3836 4.79386C14.2233 4.58824 16.1272 4.58824 17.9669 4.79386C18.5543 4.85951 19.0221 5.32366 19.0894 5.89907C19.1283 6.23167 19.1603 6.56487 19.1854 6.89847ZM15.1753 7.22718C14.3468 7.22718 13.6753 7.89876 13.6753 8.72718C13.6753 9.55561 14.3468 10.2272 15.1753 10.2272C16.0037 10.2272 16.6753 9.55561 16.6753 8.72718C16.6753 7.89876 16.0037 7.22718 15.1753 7.22718Z" fill="black"/>
-                        <path d="M18.5788 2.7669C18.7343 3.03617 18.4425 3.33768 18.1335 3.30314C16.183 3.08515 14.1675 3.08515 12.217 3.30314C10.9476 3.44501 9.92103 4.44455 9.77129 5.72481C9.53799 7.7196 9.53799 9.73477 9.77129 11.7296C9.92103 13.0098 10.9476 14.0094 12.217 14.1512C14.1675 14.3692 16.183 14.3692 18.1335 14.1512C18.4446 14.1165 18.7388 14.4201 18.5818 14.6908C17.8032 16.0337 16.4151 16.9709 14.8021 17.1406L14.1502 17.2092C10.8393 17.5576 7.49991 17.5346 4.19416 17.1407L3.76222 17.0892C1.98009 16.8769 0.568042 15.4845 0.330671 13.7055C-0.110224 10.4013 -0.110224 7.0531 0.330671 3.74884C0.568042 1.96987 1.98009 0.577515 3.76222 0.36515L4.19416 0.313679C7.49991 -0.080247 10.8393 -0.103222 14.1502 0.245182L14.8021 0.313778C16.4164 0.48366 17.8024 1.42227 18.5788 2.7669Z" fill="black"/>
-                        </svg>
-                        <h2 class="card-title">Ringkasan Harga & Pembayaran</h2>
-                    </div>
-
-                    <div class="price-breakdown">
-                        <div class="price-row">
-                            <span class="price-row__label">Cuci Kiloan</span>
-                            <span class="price-row__val">Rp 21.000</span>
-                        </div>
-                        <div class="price-row price-row--sub">
-                            <span class="price-row__label">3 kg x Rp 7.000/kg</span>
-                            <span class="price-row__val">Rp 21.000</span>
-                        </div>
-                        <div class="price-row">
-                            <span class="price-row__label">Berat laundry</span>
-                            <span class="price-row__val">3 kg</span>
-                        </div>
-                        <div class="price-row">
-                            <span class="price-row__label">Antar jemput</span>
-                            <span class="price-row__val">Rp 10.000</span>
-                        </div>
-                        <div class="price-row">
-                            <span class="price-row__label">Biaya express</span>
-                            <span class="price-row__val">Rp 5.000</span>
-                        </div>
-                    </div>
-
-                    <div class="price-total">
-                        <span class="price-total__label">Total</span>
-                        <span class="price-total__val">Rp 36.000</span>
-                    </div>
-
-                    <div class="payment-info">
-                        <div class="payment-info__row">
-                            <span class="payment-info__key">Status Pembayaran</span>
-                            <span class="payment-info__val payment-info__val--unpaid">Belum Dibayar</span>
-                        </div>
-                        <!-- <div class="payment-info__row">
-                            <span class="payment-info__key">Metode</span>
-                            <span class="payment-info__val">Bayar Nanti</span>
-                        </div> -->
-                    </div>
-<!-- 
-                    <div class="va-box">
-                        <p class="va-box__label">Nomor Virtual Account</p>
-                        <p class="va-box__number">1315 2801 6244 1327</p>
-                        <p class="va-box__bank">Bank BRI</p>
-                    </div> -->
-
-                    <button class="btn-bayar"><a href="{{ route('user.pembayaran') }}">Bayar Sekarang</a></button>
-                </section>
-
-                <!-- Aksi -->
-                <section class="side-card">
-                    <div class="card-title-row">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="19" viewBox="0 0 14 19" fill="none">
-                        <path d="M9.32 0.500013C9.32 0.299564 9.20029 0.11849 9.01586 0.0399706C8.83143 -0.0385493 8.61794 0.000663474 8.47345 0.139596L6.69549 1.84917C4.04827 4.39458 1.81144 7.33479 0.064606 10.5651C0.0234778 10.6378 0 10.7217 0 10.8112C0 11.0873 0.223858 11.3112 0.5 11.3112H4.81V18.5C4.81 18.698 4.92684 18.8774 5.10795 18.9574C5.28907 19.0374 5.50033 19.003 5.64671 18.8696L6.44222 18.145C9.22693 15.6083 11.5902 12.6446 13.4432 9.36502L13.9353 8.49417C14.0228 8.33937 14.0215 8.14976 13.9318 7.99619C13.8422 7.84262 13.6778 7.7482 13.5 7.7482H9.32V0.500013Z" fill="black"/>
-                        </svg>
-                        <h2 class="card-title">Aksi</h2>
-                    </div>
-
-                    <div class="aksi-list">
-                        <button class="btn-aksi">
-                            <!-- <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.22 2.18 2 2 0 012.18 0h3a2 2 0 012 1.72c.13 1 .37 1.97.72 2.9a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.18-1.18a2 2 0 012.11-.45c.93.35 1.9.59 2.9.72A2 2 0 0122 16.92z"/></svg> -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
-                            <path d="M0.833052 6.56C2.74945 10.7339 6.15946 14.0524 10.399 15.8514L11.0786 16.1542C12.6334 16.8469 14.4612 16.3206 15.4095 14.9071L16.2976 13.5834C16.5863 13.153 16.4984 12.5734 16.095 12.248L13.0832 9.81819C12.6408 9.4613 11.9903 9.54443 11.6519 10.0011L10.7202 11.2584C8.32935 10.079 6.3883 8.13795 5.20895 5.74714L6.4662 4.81542C6.92286 4.477 7.00599 3.82649 6.6491 3.3841L4.21923 0.372161C3.89389 -0.0311206 3.31438 -0.119088 2.88402 0.169481L1.55118 1.06318C0.128832 2.01689 -0.394548 3.85974 0.314183 5.41868L0.832272 6.5583L0.833052 6.56Z" fill="black"/>
+                    {{-- Jadwal Pickup --}}
+                    <div class="pickup-box">
+                        <div class="pickup-box__label">
+                            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
                             </svg>
-                            Hubungi Laundry
-                        </button>
-                        <button class="btn-aksi">
-                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                            Lihat Invoice
-                        </button>
-                        <button class="btn-aksi">
-                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
-                            <a href="pesanan.html">Pesan Lagi</a>
-                        </button>
+                            Jadwal Pickup
+                        </div>
+                        <p class="pickup-box__val pickup-box__val--bold">
+                            {{ $pesanan->tanggal_pickup->translatedFormat('d M') }}
+                            – {{ \Carbon\Carbon::parse($pesanan->waktu_pickup)->format('H:i') }}
+                        </p>
                     </div>
-                </section>
+                </div>
+            </section>
 
-            </div>
+            {{-- ── RIWAYAT AKTIVITAS ── --}}
+            <section class="detail-card">
+                <div class="card-title-row">
+                    <div class="card-title-icon card-title-icon--blue">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <h2 class="card-title">Riwayat Aktivitas</h2>
+                </div>
+                <div class="timeline">
+                    @forelse($pesanan->statusHistories as $history)
+                    @php
+                        $isLast   = $loop->last;
+                        $isActive = $loop->last && !in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']);
+                    @endphp
+                    <div class="timeline-item {{ !$isLast ? 'timeline-item--has-line' : '' }}">
+                        <div class="timeline-item__dot {{ $isActive ? 'timeline-item__dot--active' : 'timeline-item__dot--done' }}">
+                            @if($isActive)
+                                <svg width="8" height="8" viewBox="0 0 8 8" fill="white">
+                                    <circle cx="4" cy="4" r="3"/>
+                                </svg>
+                            @else
+                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2">
+                                    <polyline points="2,5 4,7.5 8,2.5"/>
+                                </svg>
+                            @endif
+                        </div>
+                        @if(!$isLast)
+                        <div class="timeline-item__line {{ $isActive ? 'timeline-item__line--gradient' : 'timeline-item__line--done' }}"></div>
+                        @endif
+                        <div class="timeline-item__content">
+                            <span class="timeline-item__title">
+                                {{ $statusLabel[$history->status_baru] ?? ucfirst($history->status_baru) }}
+                            </span>
+                            <span class="timeline-item__time">
+                                {{ \Carbon\Carbon::parse($history->created_at)->translatedFormat('d M Y') }}
+                                – {{ \Carbon\Carbon::parse($history->created_at)->format('H:i') }} WIB
+                            </span>
+                            @if($history->catatan)
+                            <div class="timeline-item__desc">{{ $history->catatan }}</div>
+                            @endif
+                        </div>
+                    </div>
+                    @empty
+                    <p style="font-size:13px;color:var(--neutral-400);padding:8px 0;">Belum ada aktivitas.</p>
+                    @endforelse
 
-        </div>
-    </main>
+                    {{-- Pending steps (hanya jika belum selesai/batal) --}}
+                    @if(!in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']))
+                    <div class="timeline-item timeline-item--has-line timeline-item--pending">
+                        <div class="timeline-item__dot timeline-item__dot--pending"></div>
+                        <div class="timeline-item__line timeline-item__line--pending"></div>
+                        <div class="timeline-item__content">
+                            <span class="timeline-item__title timeline-item__title--muted">Siap Diantar</span>
+                            <span class="timeline-item__time">Menunggu...</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item timeline-item--pending">
+                        <div class="timeline-item__dot timeline-item__dot--pending"></div>
+                        <div class="timeline-item__content">
+                            <span class="timeline-item__title timeline-item__title--muted">Pesanan Selesai</span>
+                            <span class="timeline-item__time">Menunggu...</span>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+            </section>
+
+        </div>{{-- /detail-left --}}
+
+        {{-- ══════════════════════════════════════
+             KOLOM KANAN (SIDEBAR)
+        ══════════════════════════════════════ --}}
+        <div class="detail-right">
+
+            {{-- ── RINGKASAN HARGA ── --}}
+            <section class="side-card">
+                <div class="card-title-row">
+                    <div class="card-title-icon card-title-icon--blue">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="1" y="4" width="22" height="16" rx="2"/>
+                            <path d="M1 10h22"/>
+                        </svg>
+                    </div>
+                    <h2 class="card-title">Ringkasan Harga & Pembayaran</h2>
+                </div>
+
+                <div class="price-breakdown">
+                    @forelse($pesanan->items as $item)
+                    <div class="price-row">
+                        <span class="price-row__label">{{ $item->nama_layanan }}</span>
+                        <span class="price-row__val {{ $item->subtotal > 0 ? '' : 'price-row__val--pending' }}">
+                            {{ $item->subtotal > 0 ? $item->subtotalFormatted() : 'Menunggu timbang' }}
+                        </span>
+                    </div>
+                    @if($item->harga_per_kg && $item->berat_aktual)
+                    <div class="price-row price-row--sub">
+                        <span class="price-row__label">
+                            {{ $item->berat_aktual }} kg × {{ $item->hargaFormatted() }}/kg
+                        </span>
+                        <span class="price-row__val">{{ $item->subtotalFormatted() }}</span>
+                    </div>
+                    @endif
+                    @empty
+                    <div class="price-row">
+                        <span class="price-row__label" style="color:var(--neutral-400);font-size:12.5px;">Menunggu konfirmasi layanan…</span>
+                    </div>
+                    @endforelse
+
+                    @if($pesanan->ongkir > 0)
+                    <div class="price-row">
+                        <span class="price-row__label">Antar jemput</span>
+                        <span class="price-row__val">Rp {{ number_format($pesanan->ongkir, 0, ',', '.') }}</span>
+                    </div>
+                    @endif
+
+                    @if($pesanan->diskon > 0)
+                    <div class="price-row price-row--discount">
+                        <span class="price-row__label">Diskon</span>
+                        <span class="price-row__val">- Rp {{ number_format($pesanan->diskon, 0, ',', '.') }}</span>
+                    </div>
+                    @endif
+                </div>
+
+                <div class="price-divider"></div>
+
+                <div class="price-total">
+                    <span class="price-total__label">Total</span>
+                    <span class="price-total__val {{ $pesanan->total_bayar > 0 ? '' : 'price-total__val--pending' }}">
+                        {{ $pesanan->total_bayar > 0 ? $pesanan->totalFormatted() : 'Menunggu konfirmasi' }}
+                    </span>
+                </div>
+
+                <div class="payment-status">
+                    <span class="payment-status__key">Status Pembayaran</span>
+                    <span class="payment-status__badge {{ $pesanan->status_bayar === 'lunas' ? 'payment-status__badge--paid' : 'payment-status__badge--unpaid' }}">
+                        {{ $pesanan->status_bayar === 'lunas' ? 'Sudah Dibayar' : 'Belum Dibayar' }}
+                    </span>
+                </div>
+
+                @if($pesanan->status_bayar !== 'lunas' && $pesanan->total_bayar > 0)
+                <a href="{{ route('user.pembayaran') }}" class="btn-bayar">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
+                    </svg>
+                    Bayar Sekarang
+                </a>
+                @endif
+            </section>
+
+            {{-- ── AKSI ── --}}
+            <section class="side-card">
+                <div class="card-title-row">
+                    <div class="card-title-icon card-title-icon--blue">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+                        </svg>
+                    </div>
+                    <h2 class="card-title">Aksi</h2>
+                </div>
+                <div class="aksi-list">
+
+                    <button class="btn-aksi">
+                        <div class="btn-aksi__icon">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.63A2 2 0 012.18 0h3a2 2 0 012 1.72c.13 1 .37 1.97.72 2.9a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.18-1.18a2 2 0 012.11-.45c.93.35 1.9.59 2.9.72A2 2 0 0122 16.92z"/>
+                            </svg>
+                        </div>
+                        Hubungi Laundry
+                    </button>
+
+                    <button class="btn-aksi">
+                        <div class="btn-aksi__icon">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                        Lihat Invoice
+                    </button>
+
+                    <a href="{{ route('user.buat-pesanan') }}" class="btn-aksi">
+                        <div class="btn-aksi__icon">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <polyline points="1 4 1 10 7 10"/>
+                                <path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
+                            </svg>
+                        </div>
+                        Pesan Lagi
+                    </a>
+
+                    @if($pesanan->isMasuk())
+                    <form method="POST"
+                          action="{{ route('user.pesanan.cancel', $pesanan->id) }}"
+                          onsubmit="return confirm('Yakin ingin membatalkan pesanan ini?')">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="alasan_batal" value="Dibatalkan oleh customer">
+                        <button type="submit" class="btn-aksi btn-aksi--danger">
+                            <div class="btn-aksi__icon btn-aksi__icon--danger">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="15" y1="9" x2="9" y2="15"/>
+                                    <line x1="9" y1="9" x2="15" y2="15"/>
+                                </svg>
+                            </div>
+                            Batalkan Pesanan
+                        </button>
+                    </form>
+                    @endif
+
+                </div>
+            </section>
+
+        </div>{{-- /detail-right --}}
+    </div>
+</main>
+
 @endsection
