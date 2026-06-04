@@ -160,16 +160,24 @@ class AdminController extends Controller
         );
     }
 
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
+        $request->validate([
+            'rejection_reason' => 'required'
+        ]);
+
         $mitra = MitraLaundry::findOrFail($id);
 
-        $mitra->status = 'rejected';
-        $mitra->save();
+        $mitra->update([
+            'status' => 'rejected',
+            'rejection_reason' =>
+                $request->rejection_reason
+        ]);
 
-        return back()->with(
-            'success',
-            'Mitra berhasil ditolak'
-        );
+        return back()
+            ->with(
+                'success',
+                'Mitra berhasil ditolak'
+            );
     }
 }

@@ -65,6 +65,94 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
 
+    Route::middleware('auth') ->prefix('register') ->group(function () {
+
+        Route::get('/step-1',
+            [MitraRegisterController::class, 'step1']
+        )->name('user.register.step1');
+
+        Route::post('/step-1/store', 
+            [MitraRegisterController::class, 'storeStep1'])
+            ->name('user.register.step1.store');
+
+        Route::post('/step-1/update/{id}',
+            [MitraRegisterController::class, 'updateStep1'])
+        ->name('user.register.step1.update');
+
+        Route::get('/step-2/{id}',
+            [MitraRegisterController::class, 'step2'])
+            ->name('user.register.step2');
+
+        Route::post('/step-2/{id}/store',
+            [MitraRegisterController::class, 'storeStep2'])
+            ->name('user.register.step2.store');
+
+        Route::get('/step-3/{id}', function ($id) {
+            return "STEP 3 ID : " . $id;
+        })->name('user.register.step3');
+
+        Route::get('/step-3/{id}',
+            [MitraRegisterController::class, 'step3'])
+            ->name('user.register.step3');
+
+        Route::post('/step-3/store/{id}',
+            [MitraRegisterController::class, 'storeStep3'])
+            ->name('user.register.step3.store');
+
+        Route::get('/step-4/{id}',
+            [MitraRegisterController::class, 'step4'])
+            ->name('user.register.step4');
+
+        Route::post('/step-4/store/{id}',
+            [MitraRegisterController::class, 'storeStep4'])
+            ->name('user.register.step4.store');
+
+        Route::get('/success',
+            [MitraRegisterController::class, 'success'])
+            ->name('user.register.success');
+
+        Route::get('/hasil',
+            [MitraRegisterController::class, 'hasil']
+        )->name('user.register.hasil');
+
+        Route::get('/register/reapply/{id}',
+            [MitraRegisterController::class, 'reapply'])
+            ->name('user.register.reapply');
+
+        Route::post('/register/reapply/{id}',
+            [MitraRegisterController::class, 'updateStep1'])
+            ->name('user.register.reapply.update');
+
+        Route::get('/register/reapply/step2/{id}',
+            [MitraRegisterController::class, 'reapplyStep2'])
+            ->name('user.register.reapply.step2');
+
+        Route::get('/register/reapply/step2/{id}',
+            [MitraRegisterController::class, 'reapplyStep2'])
+            ->name('user.register.reapply.step2');
+
+        Route::post('/register/reapply/step2/{id}',
+            [MitraRegisterController::class, 'updateStep2'])
+            ->name('user.register.reapply.step2.update');
+
+        Route::get('/register/reapply/step3/{id}',
+            [MitraRegisterController::class, 'reapplyStep3'])
+            ->name('user.register.reapply.step3');
+
+        Route::post('/register/reapply/step3/{id}',
+            [MitraRegisterController::class, 'updateStep3'])
+            ->name('user.register.reapply.step3.update');
+
+        Route::get('/register/reapply/step4/{id}',
+            [MitraRegisterController::class, 'reapplyStep4'])
+            ->name('user.register.reapply.step4');
+
+        Route::post('/register/reapply/step4/{id}',
+            [MitraRegisterController::class, 'updateStep4'])
+            ->name('user.register.reapply.step4.update');
+
+    });
+
     Route::get('/home', function () {
         return view('user.home');
     })->name('user.home');
@@ -86,7 +174,7 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     })->name('user.pesanan');
 
     Route::get('/detail-pesanan', function () {
-        return view('user.detail_pesanan');
+        return view('user.detailPesanan');
     })->name('user.detail-pesanan');
 
     Route::get('/pembayaran', function () {
@@ -128,50 +216,6 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     Route::post('/alamat/store',
     [UserAddressController::class, 'store'])
     ->name('alamat.store');
-
-    Route::middleware('auth') ->prefix('register') ->group(function () {
-
-        Route::get('/step-1', function () {
-            return view('auth.register_mitra.step1');
-        })->name('mitra.register.step1');
-
-        Route::post('/step-1/store', 
-            [MitraRegisterController::class, 'storeStep1'])
-            ->name('mitra.register.step1.store');
-
-        Route::get('/step-2/{id}',
-            [MitraRegisterController::class, 'step2'])
-            ->name('mitra.register.step2');
-
-        Route::post('/step-2/{id}/store',
-            [MitraRegisterController::class, 'storeStep2'])
-            ->name('mitra.register.step2.store');
-
-        Route::get('/step-3/{id}', function ($id) {
-            return "STEP 3 ID : " . $id;
-        })->name('mitra.register.step3');
-
-        Route::get('/step-3/{id}',
-            [MitraRegisterController::class, 'step3'])
-            ->name('mitra.register.step3');
-
-        Route::post('/step-3/store/{id}',
-            [MitraRegisterController::class, 'storeStep3'])
-            ->name('mitra.register.step3.store');
-
-        Route::get('/step-4/{id}',
-            [MitraRegisterController::class, 'step4'])
-            ->name('mitra.register.step4');
-
-        Route::post('/step-4/store/{id}',
-            [MitraRegisterController::class, 'storeStep4'])
-            ->name('mitra.register.step4.store');
-
-        Route::get('/success',
-            [MitraRegisterController::class, 'success'])
-            ->name('mitra.register.success');
-
-    });
 
 });
 
