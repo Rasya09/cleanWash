@@ -43,6 +43,12 @@ Route::middleware('guest')->group(function () {
 
 });
 
+// Chat Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/chat/messages', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.messages');
+    Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
+});
+
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
@@ -75,7 +81,8 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     })->name('user.pembayaran');
 
     Route::get('/chat', function () {
-        return view('user.chat');
+        $contact = \App\Models\User::where('role', 'mitra')->first();
+        return view('user.chat', compact('contact'));
     })->name('user.chat');
 
     Route::get('/profile', function () {
@@ -248,7 +255,8 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
     })->name('mitra.penilaian');
 
     Route::get('/manajemen-chat', function () {
-        return view('mitra.layanan_customer.manajemen_chat');
+        $contact = \App\Models\User::where('role', 'user')->first();
+        return view('mitra.layanan_customer.manajemen_chat', compact('contact'));
     })->name('mitra.chat');
 
     // KEUANGAN
