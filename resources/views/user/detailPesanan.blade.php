@@ -520,6 +520,17 @@
                         Pesan Lagi
                     </a>
 
+                    @if($pesanan->isSelesai() && !$pesanan->review)
+                    <button class="btn-aksi btn-aksi--primary" onclick="document.getElementById('reviewModal').classList.add('active')">
+                        <div class="btn-aksi__icon" style="background:#eef2ff; color:#4f46e5;">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </div>
+                        Beri Ulasan
+                    </button>
+                    @endif
+
                     @if($pesanan->isMasuk())
                     <form method="POST"
                           action="{{ route('user.pesanan.cancel', $pesanan->id) }}"
@@ -547,9 +558,55 @@
     </div>
 </main>
 
+{{-- MODAL ULASAN --}}
+<div class="dpx-modal-overlay" id="reviewModal">
+    <div class="dpx-modal">
+        <div class="dpx-modal-icon" style="background:#eef2ff; color:#4f46e5;">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+        </div>
+        <h3 class="dpx-modal-title">Beri Ulasan</h3>
+        <p class="dpx-modal-desc">Bagaimana pengalaman Anda dengan layanan laundry ini?</p>
+        
+        <form action="{{ route('user.review.store', $pesanan->id) }}" method="POST" id="reviewForm">
+            @csrf
+            <div class="star-rating" style="margin-bottom: 16px; font-size: 24px; color: #d1d5db; cursor: pointer;">
+                <span data-value="1">★</span><span data-value="2">★</span><span data-value="3">★</span><span data-value="4">★</span><span data-value="5">★</span>
+            </div>
+            <input type="hidden" name="rating" id="ratingInput" required>
+            
+            <textarea name="comment" class="dpx-modal-textarea" rows="3" placeholder="Tulis komentar Anda (opsional)..."></textarea>
+            
+            <div class="dpx-modal-actions">
+                <button type="button" class="dpx-modal-btn dpx-modal-btn--ghost" onclick="document.getElementById('reviewModal').classList.remove('active')">Batal</button>
+                <button type="submit" class="dpx-modal-btn" style="background:var(--blue-600); color:white;">Kirim Ulasan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('assets/js/user/navbar.js') }}"></script>
-    
+    <script>
+        // Star Rating Logic
+        const stars = document.querySelectorAll('.star-rating span');
+        const ratingInput = document.getElementById('ratingInput');
+        
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const value = star.getAttribute('data-value');
+                ratingInput.value = value;
+                
+                stars.forEach(s => {
+                    if(s.getAttribute('data-value') <= value) {
+                        s.style.color = '#F59E0B'; // Gold
+                    } else {
+                        s.style.color = '#d1d5db'; // Gray
+                    }
+                });
+            });
+        });
+    </script>
 @endpush

@@ -126,35 +126,34 @@
             <h2>Ulasan Customer</h2>
 
             <div class="dl-ulasan-list">
-                <div class="dl-ulasan-item">
-                    <div class="dl-ulasan-header">
-                        <div class="dl-ulasan-avatar">AD</div>
+                @forelse($reviews as $review)
+                <div class="dl-ulasan-item" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 16px; margin-bottom: 16px;">
+                    <div class="dl-ulasan-header" style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                        <div class="dl-ulasan-avatar" style="width:40px; height:40px; background:#e0e7ff; color:#4f46e5; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold;">
+                            {{ strtoupper(substr($review->user->name ?? 'User', 0, 2)) }}
+                        </div>
                         <div class="dl-ulasan-meta">
-                            <span class="dl-ulasan-name">Adzril</span>
-                            <span class="dl-ulasan-time">5 jam lalu</span>
+                            <span class="dl-ulasan-name" style="font-weight:600; display:block;">{{ $review->user->name ?? 'Customer' }}</span>
+                            <span class="dl-ulasan-time" style="font-size:12px; color:#6b7280;">{{ $review->created_at->diffForHumans() }}</span>
                         </div>
                     </div>
-                    <div class="dl-ulasan-stars">⭐⭐⭐⭐⭐</div>
-                    <p class="dl-ulasan-text">
-                        Pelayanan sangat baik, cucian bersih, wangi, barang lengkap dan pelayan sangat ramah,
-                        puas banget dengan Adzril Laundry!
-                    </p>
-                </div>
-
-                <div class="dl-ulasan-item">
-                    <div class="dl-ulasan-header">
-                        <div class="dl-ulasan-avatar">SK</div>
-                        <div class="dl-ulasan-meta">
-                            <span class="dl-ulasan-name">Sukir</span>
-                            <span class="dl-ulasan-time">2 hari lalu</span>
-                        </div>
+                    <div class="dl-ulasan-stars" style="color:#F59E0B; margin-bottom:8px;">
+                        {!! str_repeat('★', $review->rating) !!}{!! str_repeat('<span style="color:#d1d5db;">★</span>', 5 - $review->rating) !!}
                     </div>
-                    <div class="dl-ulasan-stars">⭐⭐⭐⭐⭐</div>
-                    <p class="dl-ulasan-text">
-                        Pelayanan sangat baik, cucian bersih, wangi, barang lengkap dan pelayan sangat ramah,
-                        puas banget dengan Adzril Laundry!
+                    <p class="dl-ulasan-text" style="font-size:14px; color:#374151; line-height:1.5;">
+                        {{ $review->comment ?? 'Tidak ada komentar.' }}
                     </p>
+                    
+                    @if($review->reply)
+                    <div style="margin-top:12px; padding:12px; background:#f9fafb; border-left:4px solid #3b82f6; border-radius:4px;">
+                        <p style="font-size:13px; font-weight:600; color:#1e3a8a; margin-bottom:4px;">Balasan Mitra:</p>
+                        <p style="font-size:13px; color:#4b5563; line-height:1.4;">{{ $review->reply }}</p>
+                    </div>
+                    @endif
                 </div>
+                @empty
+                <p style="color:#6b7280; font-size:14px; text-align:center; padding:20px;">Belum ada ulasan untuk laundry ini.</p>
+                @endforelse
             </div>
         </section>
 

@@ -47,7 +47,7 @@
     border-bottom: 1px solid var(--neutral-200);
     padding: 0 24px;
     position: sticky;
-    top: 0;
+    top: 72px;
     z-index: 100;
 }
 
@@ -656,6 +656,97 @@
     background: #fee2e2;
     color: var(--red-500);
 }
+
+/* ── MODAL ────────────────────────────────────────────────── */
+.dpx-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    backdrop-filter: blur(3px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s, visibility .25s;
+}
+.dpx-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+.dpx-modal {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 32px 28px 28px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.18);
+    transform: translateY(16px) scale(.97);
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+    text-align: center;
+}
+.dpx-modal-overlay.active .dpx-modal {
+    transform: translateY(0) scale(1);
+}
+.dpx-modal-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #fee2e2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+.dpx-modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--neutral-800);
+    margin-bottom: 8px;
+}
+.dpx-modal-desc {
+    font-size: 14px;
+    color: var(--neutral-500);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+.dpx-modal-textarea {
+    width: 100%;
+    border: 1.5px solid var(--neutral-200);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 14px;
+    resize: none;
+    outline: none;
+    margin-bottom: 16px;
+    text-align: left;
+    font-family: inherit;
+}
+.dpx-modal-textarea:focus { border-color: var(--blue-600); }
+
+.dpx-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+.dpx-modal-btn {
+    flex: 1;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all .2s;
+}
+.dpx-modal-btn--ghost {
+    background: var(--neutral-100);
+    color: var(--neutral-700);
+    border: 1px solid var(--neutral-200);
+}
+.dpx-modal-btn--ghost:hover { background: var(--neutral-200); }
 
 /* ── RESPONSIVE ───────────────────────────────────────────── */
 @media (max-width: 600px) {
