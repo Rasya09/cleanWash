@@ -23,10 +23,8 @@ Route::get('/', function () {
     return view('user.home');
 })->name('home');
 
-Route::get('/cari-laundry', function () {
-    return view('user.cari_laundry');
-})->name('cari-laundry');
-
+Route::get('/cari-laundry', [App\Http\Controllers\LaundryController::class, 'index'])->name('cari-laundry');
+Route::get('/detail-laundry/{id}', [App\Http\Controllers\LaundryController::class, 'show'])->name('user.detail-laundry');
 Route::get('/layanan', function () {
     return view('user.layanan');
 })->name('layanan');
@@ -44,6 +42,12 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
 
+});
+
+// Chat Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/chat/messages', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.messages');
+    Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])
@@ -78,10 +82,6 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
         Route::post('/step-2/{id}/store',
             [MitraRegisterController::class, 'storeStep2'])
             ->name('user.register.step2.store');
-
-        Route::get('/step-3/{id}', function ($id) {
-            return "STEP 3 ID : " . $id;
-        })->name('user.register.step3');
 
         Route::get('/step-3/{id}',
             [MitraRegisterController::class, 'step3'])
@@ -119,10 +119,6 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
             [MitraRegisterController::class, 'reapplyStep2'])
             ->name('user.register.reapply.step2');
 
-        Route::get('/register/reapply/step2/{id}',
-            [MitraRegisterController::class, 'reapplyStep2'])
-            ->name('user.register.reapply.step2');
-
         Route::post('/register/reapply/step2/{id}',
             [MitraRegisterController::class, 'updateStep2'])
             ->name('user.register.reapply.step2.update');
@@ -149,17 +145,13 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
         return view('user.home');
     })->name('user.home');
 
-    Route::get('/cari-laundry', function () {
-        return view('user.cari_laundry');
-    })->name('user.cari-laundry');
+    Route::get('/cari-laundry', [App\Http\Controllers\LaundryController::class, 'index'])->name('user.cari-laundry');
 
     Route::get('/layanan', function () {
         return view('user.layanan');
     })->name('user.layanan');
 
-    Route::get('/detail-laundry', function () {
-        return view('user.detail_laundry');
-    })->name('user.detail-laundry');
+    Route::get('/detail-laundry/{id}', [App\Http\Controllers\LaundryController::class, 'show'])->name('user.detail-laundry');
 
     Route::get('/pesanan', function () {
         return view('user.pesanan');
@@ -174,7 +166,8 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     })->name('user.pembayaran');
 
     Route::get('/chat', function () {
-        return view('user.chat');
+        $contact = \App\Models\User::where('role', 'mitra')->first();
+        return view('user.chat', compact('contact'));
     })->name('user.chat');
 
     Route::get('/profile', function () {
@@ -202,9 +195,18 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     Route::get('/pesanan',              [OrderController::class, 'index'])->name('user.pesanan');
     Route::get('/pesanan/{id}',         [OrderController::class, 'show'])->name('user.detail-pesanan');
     Route::put('/pesanan/{id}/cancel',  [OrderController::class, 'cancel'])->name('user.pesanan.cancel');
+    
+    // Ulasan
+    Route::post('/pesanan/{id}/review', [\App\Http\Controllers\ReviewController::class, 'store'])->name('user.review.store');
+
+    Route::post('/laundry/report', [App\Http\Controllers\User\KomplainController::class, 'reportStore'])->name('user.laundry.report');
 
         // RATING
     Route::middleware('auth')->post('/rating', [RatingController::class, 'store'])->name('rating.store');
+
+    // CHAT SYSTEM
+    Route::get('/chat/{contactId?}', [App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
+    Route::post('/chat/send', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
 
 });
 
@@ -232,10 +234,6 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
         Route::post('/step-2/{id}/store',
             [MitraRegisterController::class, 'storeStep2'])
             ->name('mitra.register.step2.store');
-
-        Route::get('/step-3/{id}', function ($id) {
-            return "STEP 3 ID : " . $id;
-        })->name('mitra.register.step3');
 
     });
 
@@ -281,13 +279,39 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
         return view('mitra.pusat_promosi.voucher_toko');
     })->name('mitra.voucher');
 
-    // CUSTOMER SERVICE
     Route::get('/penilaian-toko', function () {
-        return view('mitra.layanan_customer.penilaian_toko');
+        $mitra = Auth::user()->mitraLaundry;
+        $reviews = \App\Models\Review::with('user', 'order')
+            ->where('mitra_id', $mitra->id)
+            ->latest()
+            ->get();
+        
+        $totalUlasan = $reviews->count();
+        $rataRata = $totalUlasan > 0 ? $reviews->avg('rating') : 0;
+        
+        $ulasanPositif = $reviews->whereIn('rating', [4, 5])->count();
+        $ulasanNetral = $reviews->where('rating', 3)->count();
+        $ulasanNegatif = $reviews->whereIn('rating', [1, 2])->count();
+        
+        $totalPelanggan = $reviews->unique('user_id')->count();
+        
+        $rating5 = $reviews->where('rating', 5)->count();
+        $rating4 = $reviews->where('rating', 4)->count();
+        $rating3 = $reviews->where('rating', 3)->count();
+        $rating2 = $reviews->where('rating', 2)->count();
+        $rating1 = $reviews->where('rating', 1)->count();
+        
+        return view('mitra.layanan_customer.penilaian_toko', compact(
+            'reviews', 'totalUlasan', 'rataRata', 'ulasanPositif', 'ulasanNetral', 
+            'ulasanNegatif', 'totalPelanggan', 'rating5', 'rating4', 'rating3', 'rating2', 'rating1'
+        ));
     })->name('mitra.penilaian');
+    
+    Route::post('/review/{id}/reply', [\App\Http\Controllers\ReviewController::class, 'reply'])->name('mitra.review.reply');
 
     Route::get('/manajemen-chat', function () {
-        return view('mitra.layanan_customer.manajemen_chat');
+        $contact = \App\Models\User::where('role', 'user')->first();
+        return view('mitra.layanan_customer.manajemen_chat', compact('contact'));
     })->name('mitra.chat');
 
     // KEUANGAN
@@ -370,4 +394,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
         ->name('admin.notifikasi.destroy');
 
     Route::get('/komplain', [AdminController::class, 'komplainManagement'])->name('admin.komplain');
+    Route::post('/komplain/{id}/followup', [AdminController::class, 'followUp'])->name('admin.komplain.followup');
+    Route::post('/komplain/{id}/followup-reporter', [AdminController::class, 'followUpReporter'])->name('admin.komplain.followup.reporter');
 });

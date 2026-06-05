@@ -22,7 +22,7 @@ class VerifikasiMitraController extends Controller
         $stats = $this->buildStats();
 
         $pendingQuery = MitraLaundry::query()
-            ->with(['storePhotos', 'user'])
+            ->with(['user'])
             ->where('status', 'pending')
             ->orderByDesc('created_at');
 
@@ -119,7 +119,7 @@ class VerifikasiMitraController extends Controller
 
     private function resolveSelectedMitra(Request $request, $pendingList): ?MitraLaundry
     {
-        $with = ['storePhotos', 'businessPhotos', 'user'];
+        $with = ['user'];
 
         if ($request->filled('mitra')) {
             return MitraLaundry::query()

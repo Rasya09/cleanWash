@@ -339,15 +339,15 @@
           </div>
 
           @php
-            $photos = $selected->storePhotos->merge($selected->businessPhotos);
+            $photos = collect($selected->store_photos ?? []);
           @endphp
           @if($photos->isNotEmpty())
             <div class="photo-box">
               <h4>Foto Tempat Laundry</h4>
               <div class="photo-list">
-                @foreach($photos->take(3) as $photo)
-                  <a href="{{ $selected->fileUrl($photo->photo) }}" target="_blank" rel="noopener">
-                    <img src="{{ $selected->fileUrl($photo->photo) }}" alt="Foto toko" />
+                @foreach($photos->take(3) as $photoPath)
+                  <a href="{{ $selected->fileUrl($photoPath) }}" target="_blank" rel="noopener">
+                    <img src="{{ $selected->fileUrl($photoPath) }}" alt="Foto toko" />
                   </a>
                 @endforeach
                 @if($photos->count() > 3)

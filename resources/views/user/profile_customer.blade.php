@@ -6,17 +6,6 @@
 
 @section('konten')
 @auth
-    @php
-        $name = Auth::user()->name;
-
-        $words = explode(' ', $name);
-
-        if(count($words) >= 2){
-            $initial = strtoupper(substr($words[0],0,1) . substr($words[1],0,1));
-        } else {
-            $initial = strtoupper(substr($name,0,2));
-        }
-    @endphp
     <main class="main-content">
         <div class="content-header">
             <h1 class="page-title">Profil Saya</h1>
@@ -69,14 +58,6 @@
                                 <p class="address-detail">Jl. Melati No. 5, Kedaton, Bandar Lampung</p>
                             </div>
                         </div>
-
-                        {{-- <button class="btn-tambah">
-                            <svg class="icon-plus" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M5 12H19"/>
-                                <path d="M12 5V19"/>
-                            </svg>
-                            Tambah Alamat
-                        </button> --}}
                     </div>
                 </section>
 

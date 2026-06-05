@@ -35,6 +35,10 @@
            class="nav-item {{ request()->routeIs('user.profile') ? 'active' : '' }}">
             Profil Saya
         </a>
+        <a href="{{ route('user.pesanan') }}"
+           class="nav-item {{ request()->routeIs('user.pesanan') ? 'active' : '' }}">
+            Riwayat Pesanan
+        </a>
         <a href="{{ route('user.alamat-saya') }}"
            class="nav-item {{ request()->routeIs('user.alamat-saya') ? 'active' : '' }}">
             Alamat Saya

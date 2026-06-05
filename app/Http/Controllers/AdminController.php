@@ -144,8 +144,62 @@ class AdminController extends Controller
 
     public function komplainManagement()
     {
-        $komplains = \App\Models\Komplain::with(['reporter', 'reportedUser', 'review'])->orderByDesc('created_at')->get();
+        $komplains = \App\Models\Komplain::with(['reporter', 'reportedUser.mitraLaundry', 'review.order', 'mitraLaundry'])->orderByDesc('created_at')->get();
         return view('admin.moderasi.komplain', compact('komplains'));
+    }
+
+    public function followUp(Request $request, $id)
+    {
+        $komplain = \App\Models\Komplain::with(['mitraLaundry', 'reportedUser'])->findOrFail($id);
+        
+        $mitraUserId = $komplain->mitra_laundry_id ? $komplain->mitraLaundry->user_id : $komplain->reported_user_id;
+
+        // Pesan otomatis
+        $warningMessage = "HALO MITRA!\n\nKami menerima laporan mengenai layanan Anda.\n\n" . 
+                         "Alasan Laporan: " . $komplain->alasan . "\n\n" .
+                         "Mohon segera lakukan klarifikasi atau perbaikan layanan agar tidak terjadi penangguhan akun.";
+
+        // Kirim Pesan Chat
+        \App\Models\Message::create([
+            'sender_id' => auth()->id(),
+            'receiver_id' => $mitraUserId,
+            'message' => $warningMessage,
+        ]);
+
+        $komplain->update([
+            'status' => 'selesai',
+            'tanggapan_admin' => 'Telah diberikan peringatan via Chat.'
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil mengirimkan peringatan ke mitra.'
+        ]);
+    }
+
+    public function followUpReporter(Request $request, $id)
+    {
+        $komplain = \App\Models\Komplain::with(['reporter'])->findOrFail($id);
+
+        $msgText = "Halo " . $komplain->reporter->name . ",\n\n" .
+                  "Terima kasih telah melaporkan kendala Anda. Laporan Anda sedang kami proses dan kami telah menghubungi pihak terkait.\n\n" .
+                  "Mohon tunggu informasi selanjutnya. Salam, Admin CleanWash.";
+
+        \App\Models\Message::create([
+            'sender_id' => auth()->id(),
+            'receiver_id' => $komplain->reporter_id,
+            'message' => $msgText,
+        ]);
+
+        // Jika status masih pending, ubah ke sedang diproses
+        if($komplain->status === 'pending') {
+            $komplain->update(['status' => 'pending']); // Tetap pending tapi terkirim pesan
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil menghubungi pelapor.'
+        ]);
     }
 
     public function approve($id)

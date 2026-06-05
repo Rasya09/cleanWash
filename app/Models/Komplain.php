@@ -11,6 +11,7 @@ class Komplain extends Model
         'reporter_id',
         'reported_user_id',
         'review_id',
+        'mitra_laundry_id',
         'alasan',
         'status',
         'tanggapan_admin',
@@ -29,5 +30,10 @@ class Komplain extends Model
     public function review(): BelongsTo
     {
         return $this->belongsTo(Review::class);
+    }
+
+    public function mitraLaundry(): BelongsTo
+    {
+        return $this->belongsTo(MitraLaundry::class, 'mitra_laundry_id');
     }
 }

@@ -18,12 +18,12 @@
     Bandingkan harga, layanan, dan ulasan dari ratusan mitra laundry terdekat
   </p>
 
-  <div class="search-bar">
+  <form action="{{ route('cari-laundry') }}" method="GET" class="search-bar">
     <span class="search-icon">🔍</span>
-    <input class="search-input" type="text" placeholder="Cari laundry di sekitar kamu…" />
+    <input class="search-input" type="text" name="q" value="{{ request('q') }}" placeholder="Cari laundry di sekitar kamu…" />
     <div class="search-divider"></div>
-    <button class="search-btn">Cari</button>
-  </div>
+    <button type="submit" class="search-btn">Cari</button>
+  </form>
 
   <div class="location-info">
     <span>Lokasi terdeteksi:</span>
@@ -106,180 +106,78 @@
   <!-- ===== RESULTS ===== -->
   <section class="results-area">
     <div class="results-header">
-      Menampilkan <b>4 dari 12</b> mitra laundry ditemukan
+      Menampilkan <b>{{ $laundries->firstItem() ?? 0 }} - {{ $laundries->lastItem() ?? 0 }}</b> dari <b>{{ $laundries->total() }}</b> mitra laundry ditemukan
     </div>
 
-    <!-- Card 1 -->
+    @forelse($laundries as $laundry)
+    <!-- Laundry Card -->
     <article class="laundry-card">
       <div class="card-image-area">
-        <span class="card-image-emoji">🏬</span>
-        <span class="card-corner-badge">🏆 #1 Terbaik</span>
+        @if($laundry->logo)
+            <img src="{{ asset('storage/' . $laundry->logo) }}" alt="{{ $laundry->store_name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px 12px 0 0;">
+        @else
+            <span class="card-image-emoji">🏬</span>
+        @endif
+        @if($loop->first)
+            <span class="card-corner-badge">🏆 #1 Terbaik</span>
+        @endif
       </div>
       <div class="card-content">
         <div class="card-head">
-          <div class="card-name">UBR Laundry 1</div>
-          <span class="card-distance-badge">📍 1 – 2 km</span>
+          <div class="card-name">{{ $laundry->store_name }}</div>
+          <span class="card-distance-badge">📍 {{ $laundry->city ?? 'Kota Tidak Set' }}</span>
         </div>
         <div class="card-rating-row">
-          <span class="card-stars">★★★★★</span>
-          <span class="card-rating-num">5.0</span>
-          <span class="card-rating-count">(200 ulasan)</span>
+          @php
+            $avg = $laundry->averageRating();
+            $rcount = $laundry->reviews()->where('status', 'ok')->count();
+          @endphp
+          <span class="card-stars">
+            @for($i=1; $i<=5; $i++)
+                {{ $i <= round($avg) ? '★' : '☆' }}
+            @endfor
+          </span>
+          <span class="card-rating-num">{{ number_format($avg, 1) }}</span>
+          <span class="card-rating-count">({{ $rcount }} ulasan)</span>
         </div>
         <div class="card-address">
           <span>📍</span>
-          <span>Jl. Sukamulya IV, Sukamulya, Kec. Cinambo, Kota Bandung, Jawa Barat</span>
+          <span>{{ $laundry->address }}</span>
         </div>
         <div class="card-status">
           <span class="status-dot"></span>
-          <span class="span-time"><b>Buka</b> · 09:00 – 22:00</span>
+          <span class="span-time"><b>Buka</b> · {{ $laundry->operational_hours ?? '09:00 – 22:00' }}</span>
         </div>
         <div class="card-footer">
           <div class="card-tags-row">
-            <span class="service-tag tag-pickup">🛵 Antar Jemput</span>
-            <span class="service-tag tag-express">⚡ Cuci Express</span>
-            <span class="service-tag tag-shoes">👟 Cuci Sepatu</span>
+            @foreach($laundry->layanans->take(3) as $lay)
+                <span class="service-tag">{{ $lay->nama }}</span>
+            @endforeach
           </div>
           <div class="card-price-block">
             <div>
               <div class="price-label">Mulai dari</div>
-              <div class="price-amount">Rp 7.000<span class="unit">/kg</span></div>
+              @php
+                $minPrice = $laundry->layanans->min('harga') ?? 0;
+              @endphp
+              <div class="price-amount">Rp {{ number_format($minPrice, 0, ',', '.') }}<span class="unit">/{{ $laundry->layanans->first()?->satuan ?? 'kg' }}</span></div>
             </div>
-            <button class="btn-detail-card">Lihat Detail →</button>
+            <a href="{{ route('user.detail-laundry', $laundry->id) }}" class="btn-detail-card" style="text-decoration: none;">Lihat Detail →</a>
           </div>
         </div>
       </div>
     </article>
-
-    <!-- Card 2 -->
-    <article class="laundry-card">
-      <div class="card-image-area v2">
-        <span class="card-image-emoji">🧺</span>
-        <span class="card-corner-badge">⭐ Populer</span>
-      </div>
-      <div class="card-content">
-        <div class="card-head">
-          <div class="card-name">UBR Laundry 2</div>
-          <span class="card-distance-badge">📍 1 – 2 km</span>
-        </div>
-        <div class="card-rating-row">
-          <span class="card-stars">★★★★★</span>
-          <span class="card-rating-num">5.0</span>
-          <span class="card-rating-count">(200 ulasan)</span>
-        </div>
-        <div class="card-address">
-          <span>📍</span>
-          <span>Jl. Sukamulya IV, Sukamulya, Kec. Cinambo, Kota Bandung, Jawa Barat</span>
-        </div>
-        <div class="card-status">
-          <span class="status-dot"></span>
-          <span class="span-time"><b>Buka</b> · 09:00 – 22:00</span>
-        </div>
-        <div class="card-footer">
-          <div class="card-tags-row">
-            <span class="service-tag tag-pickup">🛵 Antar Jemput</span>
-            <span class="service-tag tag-express">⚡ Cuci Express</span>
-            <span class="service-tag tag-shoes">👟 Cuci Sepatu</span>
-          </div>
-          <div class="card-price-block">
-            <div>
-              <div class="price-label">Mulai dari</div>
-              <div class="price-amount">Rp 7.000<span class="unit">/kg</span></div>
-            </div>
-            <button class="btn-detail-card">Lihat Detail →</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <!-- Card 3 -->
-    <article class="laundry-card">
-      <div class="card-image-area v3">
-        <span class="card-image-emoji">🫧</span>
-        <span class="card-corner-badge">💨 Express</span>
-      </div>
-      <div class="card-content">
-        <div class="card-head">
-          <div class="card-name">UBR Laundry 3</div>
-          <span class="card-distance-badge">📍 1 – 2 km</span>
-        </div>
-        <div class="card-rating-row">
-          <span class="card-stars">★★★★★</span>
-          <span class="card-rating-num">5.0</span>
-          <span class="card-rating-count">(200 ulasan)</span>
-        </div>
-        <div class="card-address">
-          <span>📍</span>
-          <span>Jl. Sukamulya IV, Sukamulya, Kec. Cinambo, Kota Bandung, Jawa Barat</span>
-        </div>
-        <div class="card-status">
-          <span class="status-dot"></span>
-          <span class="span-time"><b>Buka</b> · 09:00 – 22:00</span>
-        </div>
-        <div class="card-footer">
-          <div class="card-tags-row">
-            <span class="service-tag tag-pickup">🛵 Antar Jemput</span>
-            <span class="service-tag tag-express">⚡ Cuci Express</span>
-            <span class="service-tag tag-shoes">👟 Cuci Sepatu</span>
-          </div>
-          <div class="card-price-block">
-            <div>
-              <div class="price-label">Mulai dari</div>
-              <div class="price-amount">Rp 7.000<span class="unit">/kg</span></div>
-            </div>
-            <button class="btn-detail-card">Lihat Detail →</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <!-- Card 4 -->
-    <article class="laundry-card">
-      <div class="card-image-area v4">
-        <span class="card-image-emoji">👕</span>
-        <span class="card-corner-badge">🆕 Baru</span>
-      </div>
-      <div class="card-content">
-        <div class="card-head">
-          <div class="card-name">UBR Laundry 4</div>
-          <span class="card-distance-badge">📍 1 – 2 km</span>
-        </div>
-        <div class="card-rating-row">
-          <span class="card-stars">★★★★★</span>
-          <span class="card-rating-num">5.0</span>
-          <span class="card-rating-count">(200 ulasan)</span>
-        </div>
-        <div class="card-address">
-          <span>📍</span>
-          <span>Jl. Sukamulya IV, Sukamulya, Kec. Cinambo, Kota Bandung, Jawa Barat</span>
-        </div>
-        <div class="card-status">
-          <span class="status-dot"></span>
-          <span class="span-time"><b>Buka</b> · 09:00 – 22:00</span>
-        </div>
-        <div class="card-footer">
-          <div class="card-tags-row">
-            <span class="service-tag tag-pickup">🛵 Antar Jemput</span>
-            <span class="service-tag tag-express">⚡ Cuci Express</span>
-            <span class="service-tag tag-iron">🧴 Setrika</span>
-          </div>
-          <div class="card-price-block">
-            <div>
-              <div class="price-label">Mulai dari</div>
-              <div class="price-amount">Rp 7.000<span class="unit">/kg</span></div>
-            </div>
-            <button class="btn-detail-card">Lihat Detail →</button>
-          </div>
-        </div>
-      </div>
-    </article>
+    @empty
+    <div class="empty-state" style="text-align: center; padding: 50px; grid-column: 1 / -1;">
+        <div style="font-size: 50px; margin-bottom: 20px;">🔍</div>
+        <h3>Tidak ada laundry ditemukan</h3>
+        <p>Coba gunakan kata kunci pencarian lain.</p>
+    </div>
+    @endforelse
 
     <!-- Pagination -->
     <div class="pagination">
-      <button class="page-btn disabled">‹</button>
-      <button class="page-btn active">1</button>
-      <button class="page-btn">2</button>
-      <button class="page-btn">3</button>
-      <button class="page-btn">›</button>
+        {{ $laundries->links() }}
     </div>
   </section>
 </div>

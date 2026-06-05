@@ -24,11 +24,14 @@
       <div class="pm-info-list" id="pmInfoList"></div>
     </div>
     <div class="pm-footer">
-      <button class="pm-btn-wa" id="pmWa">
+      <button class="pm-btn-wa" id="pmWa" style="background:#25D366; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600;">
         <i class="fa-brands fa-whatsapp"></i> WhatsApp
       </button>
-      <button class="pm-btn-email" id="pmEmail">
+      <button class="pm-btn-email" id="pmEmail" style="background:#64748b; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600;">
         <i class="fa-solid fa-envelope"></i> Email
+      </button>
+      <button class="pm-btn-chat" id="pmChat" style="background:#2563eb; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600;">
+        <i class="fa-solid fa-comment"></i> Open Chat
       </button>
     </div>
   </div>
@@ -42,12 +45,19 @@
   <div class="content" id="mainContent">
 
     {{-- STAT CARDS --}}
+    @php
+      $total = $komplains->count();
+      $wait = $komplains->where('status', 'pending')->count();
+      $proc = $komplains->where('status', 'proc')->count();
+      $done = $komplains->where('status', 'selesai')->count();
+      $rej = $komplains->where('status', 'ditolak')->count();
+    @endphp
     <div class="stat-row">
       <div class="scard">
         <div class="sico2 indigo">📋</div>
         <div>
           <div class="slabel">Total Laporan</div>
-          <div class="sval" id="stat-total">186</div>
+          <div class="sval" id="stat-total">{{ $total }}</div>
           <div class="ssub">Semua laporan</div>
         </div>
       </div>
@@ -55,43 +65,43 @@
         <div class="sico2 orange">⏳</div>
         <div>
           <div class="slabel">Menunggu Tindak Lanjut</div>
-          <div class="sval" id="stat-wait">32</div>
-          <div class="ssub">17,2% dari total</div>
+          <div class="sval" id="stat-wait">{{ $wait }}</div>
+          <div class="ssub">{{ $total > 0 ? round(($wait/$total)*100, 1) : 0 }}% dari total</div>
         </div>
       </div>
       <div class="scard">
         <div class="sico2 blue">⚙️</div>
         <div>
           <div class="slabel">Sedang Diproses</div>
-          <div class="sval" id="stat-proc">68</div>
-          <div class="ssub">36,6% dari total</div>
+          <div class="sval" id="stat-proc">{{ $proc }}</div>
+          <div class="ssub">{{ $total > 0 ? round(($proc/$total)*100, 1) : 0 }}% dari total</div>
         </div>
       </div>
       <div class="scard">
         <div class="sico2 green">✅</div>
         <div>
           <div class="slabel">Selesai</div>
-          <div class="sval" id="stat-done">78</div>
-          <div class="ssub">41,9% dari total</div>
+          <div class="sval" id="stat-done">{{ $done }}</div>
+          <div class="ssub">{{ $total > 0 ? round(($done/$total)*100, 1) : 0 }}% dari total</div>
         </div>
       </div>
       <div class="scard">
         <div class="sico2 red">❌</div>
         <div>
           <div class="slabel">Ditolak</div>
-          <div class="sval" id="stat-rej">8</div>
-          <div class="ssub">4,3% dari total</div>
+          <div class="sval" id="stat-rej">{{ $rej }}</div>
+          <div class="ssub">{{ $total > 0 ? round(($rej/$total)*100, 1) : 0 }}% dari total</div>
         </div>
       </div>
     </div>
 
     {{-- TABS --}}
     <div class="tabs" id="tabsBar">
-      <div class="tab active" data-tab="semua">Semua <span class="tc" id="tc-semua">186</span></div>
-      <div class="tab" data-tab="wait">Menunggu <span class="tc" id="tc-wait">32</span></div>
-      <div class="tab" data-tab="proc">Diproses <span class="tc" id="tc-proc">68</span></div>
-      <div class="tab" data-tab="done">Selesai <span class="tc" id="tc-done">78</span></div>
-      <div class="tab" data-tab="rej">Ditolak <span class="tc" id="tc-rej">8</span></div>
+      <div class="tab active" data-tab="semua">Semua <span class="tc" id="tc-semua">{{ $total }}</span></div>
+      <div class="tab" data-tab="wait">Menunggu <span class="tc" id="tc-wait">{{ $wait }}</span></div>
+      <div class="tab" data-tab="proc">Diproses <span class="tc" id="tc-proc">{{ $proc }}</span></div>
+      <div class="tab" data-tab="done">Selesai <span class="tc" id="tc-done">{{ $done }}</span></div>
+      <div class="tab" data-tab="rej">Ditolak <span class="tc" id="tc-rej">{{ $rej }}</span></div>
     </div>
 
     {{-- TOOLBAR --}}
@@ -188,17 +198,31 @@
     </div>
     <div class="detbody" id="detailBody"></div>
     <div class="detfoot" id="detailFoot" style="display:none">
-      <div class="foot-row">
-        <button class="btn-proc" id="btnProses">
-          <i class="fa-solid fa-play"></i> Proses Laporan
+      <div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-bottom:8px; padding-left:4px;">Tindak Lanjut</div>
+      <div class="foot-row" style="gap: 8px; margin-bottom: 8px;">
+        <button class="btn-proc" id="btnWa" style="background: #25D366; flex: 1; font-size: 11px; padding: 10px 4px;">
+          <i class="fa-brands fa-whatsapp"></i> WhatsApp
         </button>
-        <button class="btn-info" id="btnMintaInfo">
-          <i class="fa-solid fa-comment-dots"></i> Minta Info Tambahan
+        <button class="btn-proc" id="btnEmail" style="background: #64748b; flex: 1; font-size: 11px; padding: 10px 4px;">
+          <i class="fa-solid fa-envelope"></i> Email
         </button>
       </div>
-      <button class="btn-reject" id="btnTolak">
-        <i class="fa-solid fa-xmark"></i> Tolak Laporan
-      </button>
+      <div class="foot-row" style="gap: 8px;">
+        <button class="btn-proc" id="btnFollowUp" style="background: var(--primary); flex: 1; font-size: 11px; padding: 10px 4px;">
+          <i class="fa-solid fa-paper-plane"></i> Chat Mitra
+        </button>
+        <button class="btn-proc" id="btnFollowUpReporter" style="background: #14b8a6; flex: 1; font-size: 11px; padding: 10px 4px;">
+          <i class="fa-solid fa-user-clock"></i> Chat Pelapor
+        </button>
+      </div>
+      <div class="foot-row" style="margin-top: 12px; border-top: 1px solid #f1f5f9; pt: 12px; gap: 8px;">
+        <button class="btn-proc" id="btnProses" style="flex: 1; font-size: 11px; padding: 10px 4px;">
+          <i class="fa-solid fa-check"></i> Selesaikan
+        </button>
+        <button class="btn-reject" id="btnTolak" style="flex: 1; font-size: 11px; padding: 10px 4px;">
+          <i class="fa-solid fa-xmark"></i> Tolak
+        </button>
+      </div>
     </div>
   </div>
 
@@ -212,48 +236,59 @@
 'use strict';
 
 /* ─── DATA ─────────────────────────────────────────────── */
-const complaints = @json($komplains->map(function($c) {
+const complaints = {!! json_encode($komplains->map(function($c) {
+    $isStoreReport = $c->mitra_laundry_id !== null;
+    
     return [
         'id' => 'CMP-' . str_pad($c->id, 4, '0', STR_PAD_LEFT),
+        'realId' => $c->id,
+        'reporterId' => $c->reporter_id,
         'pelapor' => [
-            'nama' => $c->reporter->name ?? 'Mitra',
-            'inisial' => strtoupper(substr($c->reporter->name ?? 'M', 0, 2)),
-            'warna' => '#2563EB',
-            'hp' => $c->reporter->phone ?? '-',
-            'email' => $c->reporter->email ?? '-',
-            'alamat' => $c->reporter->mitraLaundry->address ?? '-',
+            'nama' => $c->reporter?->name ?? 'User',
+            'inisial' => strtoupper(substr($c->reporter?->name ?? 'U', 0, 2)),
+            'warna' => $isStoreReport ? '#EF4444' : '#2563EB',
+            'hp' => $c->reporter?->phone ?? '-',
+            'email' => $c->reporter?->email ?? '-',
+            'alamat' => $c->reporter?->mitraLaundry?->address ?? '-',
         ],
         'tipe' => [
-            'nama' => 'Laporan Ulasan',
-            'ico' => '🚩',
-            'cls' => 'red'
+            'nama' => $isStoreReport ? 'Laporan Toko' : 'Laporan Ulasan',
+            'ico' => $isStoreReport ? '🏬' : '🚩',
+            'cls' => $isStoreReport ? 'orange' : 'red'
         ],
         'mitra' => [
-            'nama' => $c->reporter->mitraLaundry->store_name ?? 'Mitra Toko',
-            'inisial' => strtoupper(substr($c->reporter->mitraLaundry->store_name ?? 'MT', 0, 2)),
+            'nama' => $c->mitraLaundry?->store_name ?? $c->reportedUser?->mitraLaundry?->store_name ?? 'Mitra Toko',
+            'inisial' => strtoupper(substr($c->mitraLaundry?->store_name ?? $c->reportedUser?->mitraLaundry?->store_name ?? 'MT', 0, 2)),
             'cls' => 'blue'
         ],
-        'orderId' => $c->review->order->order_code ?? '-',
-        'prioritas' => 'high',
-        'prioritasLabel' => 'Tinggi',
-        'status' => $c->status, // pending, selesai, ditolak
+        'orderId' => $c->review?->order?->order_code ?? '-',
+        'prioritas' => $isStoreReport ? 'high' : 'med',
+        'prioritasLabel' => $isStoreReport ? 'Tinggi' : 'Sedang',
+        'status' => match($c->status) {
+            'pending' => 'wait',
+            'proc'    => 'proc',
+            'selesai' => 'done',
+            'ditolak' => 'rej',
+            default   => 'wait'
+        },
         'statusLabel' => match($c->status) {
             'pending' => 'Menunggu',
+            'proc'    => 'Diproses',
             'selesai' => 'Selesai',
             'ditolak' => 'Ditolak',
-            default => 'Menunggu'
+            default   => 'Menunggu'
         },
         'tanggal' => $c->created_at->format('d M Y'),
         'jam' => $c->created_at->format('H:i'),
-        'orderTanggal' => $c->review->order->created_at->format('d M Y, H:i') ?? '-',
-        'orderSelesai' => $c->review->order->updated_at->format('d M Y, H:i') ?? '-',
-        'totalBayar' => 'Rp ' . number_format($c->review->order->total_bayar ?? 0, 0, ',', '.'),
-        'deskripsi' => '<b>Alasan Pelaporan:</b><br>' . $c->alasan . '<br><br><b>Isi Ulasan:</b><br>' . ($c->review->komentar ?? 'Tidak ada komentar.'),
+        'orderTanggal' => $c->review?->order?->created_at?->format('d M Y, H:i') ?? '-',
+        'orderSelesai' => $c->review?->order?->updated_at?->format('d M Y, H:i') ?? '-',
+        'totalBayar' => 'Rp ' . number_format($c->review?->order?->total_bayar ?? 0, 0, ',', '.'),
+        'deskripsi' => '<b>Alasan Pelaporan:</b><br>' . $c->alasan . ($isStoreReport ? '' : '<br><br><b>Isi Ulasan:</b><br>' . ($c->review?->komentar ?? '-')),
         'lampiran' => 0,
         'photos' => [],
         'dibuat' => $c->created_at->format('d M Y, H:i')
     ];
-}));
+})->values()->all()) !!};
 
 /* ─── STATE ─────────────────────────────────────────── */
 let activeTab      = 'semua';
@@ -336,9 +371,33 @@ function renderTable(){
       <td>${statusBadge(c.status,c.statusLabel)}</td>
       <td><div class="tdate">${c.tanggal}</div><div class="ttime">${c.jam}</div></td>
       <td>
-        <div class="acell">
-          <button class="abtn v btn-view" data-id="${c.id}" title="Lihat Detail"><i class="fa-solid fa-eye"></i></button>
-          <button class="abtn btn-more" data-id="${c.id}" title="Lainnya"><i class="fa-solid fa-ellipsis"></i></button>
+        <div class="acell action-menu-wrap">
+          <button class="abtn btn-more" data-id="${c.id}" title="Aksi" onclick="toggleActionDropdown(event, '${c.id}')">
+            <i class="fa-solid fa-ellipsis"></i>
+          </button>
+          <div class="action-dropdown" id="dropdown-${c.id}" style="display:none; position:absolute; right:0; top:100%; z-index:100; background:#fff; border:1px solid var(--border); border-radius:8px; box-shadow:var(--shadow-md); padding:6px; min-width:180px;">
+            <div style="font-size:10px; color:var(--text-muted); padding:4px 12px; font-weight:700; text-transform:uppercase;">Tindak Lanjut Mitra</div>
+            <button onclick="window.open('https://wa.me/${c.pelapor.hp.replace(/\D/g,'')}', '_blank')" style="width:100%; text-align:left; background:none; border:none; padding:8px 12px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--text-main);">
+                <i class="fa-brands fa-whatsapp" style="color:#25D366; width:16px;"></i> WhatsApp Mitra
+            </button>
+            <button onclick="triggerFollowUpM('${c.id}')" style="width:100%; text-align:left; background:none; border:none; padding:8px 12px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--text-main);">
+                <i class="fa-solid fa-comment" style="color:#2563eb; width:16px;"></i> Open Chat Mitra
+            </button>
+            
+            <hr style="border:none; border-top:1px solid #f1f5f9; margin:4px 0;">
+            <div style="font-size:10px; color:var(--text-muted); padding:4px 12px; font-weight:700; text-transform:uppercase;">Tindak Lanjut Pelapor</div>
+            <button onclick="window.open('https://wa.me/${c.pelapor.hp.replace(/\D/g,'')}', '_blank')" style="width:100%; text-align:left; background:none; border:none; padding:8px 12px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--text-main);">
+                <i class="fa-brands fa-whatsapp" style="color:#25D366; width:16px;"></i> WhatsApp Pelapor
+            </button>
+            <button onclick="triggerFollowUpP('${c.id}')" style="width:100%; text-align:left; background:none; border:none; padding:8px 12px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--text-main);">
+                <i class="fa-solid fa-comment" style="color:#14b8a6; width:16px;"></i> Open Chat Pelapor
+            </button>
+
+            <hr style="border:none; border-top:1px solid #f1f5f9; margin:4px 0;">
+            <button onclick="openDetail('${c.id}')" style="width:100%; text-align:left; background:none; border:none; padding:8px 12px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--text-main);">
+                <i class="fa-solid fa-eye" style="color:#64748b; width:16px;"></i> Lihat Detail
+            </button>
+          </div>
         </div>
       </td>
     </tr>
@@ -347,16 +406,11 @@ function renderTable(){
   /* events */
   tbody.querySelectorAll('tr[data-id]').forEach(tr=>{
     tr.addEventListener('click',e=>{
-      if(e.target.closest('.row-check,.abtn,.pl-clickable')) return;
+      if(e.target.closest('.row-check,.action-menu-wrap,.pl-clickable')) return;
       openDetail(tr.dataset.id);
     });
   });
-  tbody.querySelectorAll('.btn-view').forEach(btn=>{
-    btn.addEventListener('click',e=>{e.stopPropagation();openDetail(btn.dataset.id);});
-  });
-  tbody.querySelectorAll('.btn-more').forEach(btn=>{
-    btn.addEventListener('click',e=>e.stopPropagation());
-  });
+
   tbody.querySelectorAll('.pl-clickable').forEach(cell=>{
     cell.addEventListener('click',e=>{e.stopPropagation();openPelaporModal(cell.dataset.pelaporId);});
   });
@@ -364,6 +418,32 @@ function renderTable(){
   renderPagination(total);
   updateTabCounts();
 }
+
+/* ─── DROPDOWN ACTIONS ───────────────────────────────── */
+function toggleActionDropdown(e, id) {
+    e.stopPropagation();
+    // Close all other dropdowns
+    document.querySelectorAll('.action-dropdown').forEach(d => {
+        if(d.id !== 'dropdown-'+id) d.style.display = 'none';
+    });
+    const el = document.getElementById('dropdown-'+id);
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function triggerFollowUpM(id) {
+    selectedId = id;
+    document.getElementById('btnFollowUp').click();
+}
+
+function triggerFollowUpP(id) {
+    selectedId = id;
+    document.getElementById('btnFollowUpReporter').click();
+}
+
+// Close dropdowns on window click
+window.addEventListener('click', () => {
+    document.querySelectorAll('.action-dropdown').forEach(d => d.style.display = 'none');
+});
 
 /* ─── PAGINATION ─────────────────────────────────────── */
 function renderPagination(total){
@@ -430,8 +510,11 @@ function openPelaporModal(id){
       <div class="pm-info-icon orange"><i class="fa-solid fa-location-dot"></i></div>
       <div><div class="pm-info-label">Alamat</div><div class="pm-info-val">${p.alamat}</div></div>
     </div>`;
+  
   document.getElementById('pmWa').onclick=()=>window.open(`https://wa.me/${p.hp.replace(/\D/g,'')}`, '_blank');
   document.getElementById('pmEmail').onclick=()=>{window.location.href=`mailto:${p.email}`;};
+  document.getElementById('pmChat').onclick=()=>{window.location.href=`/admin/chat/${c.reporterId}`;};
+  
   document.getElementById('pelaporModal').classList.add('show');
   document.body.style.overflow='hidden';
 }
@@ -486,7 +569,15 @@ function openDetail(id){
     <div class="dsec">
       <div class="dsec-title"><span class="si blue"><i class="fa-solid fa-user"></i></span>Informasi Pelapor</div>
       <div class="drows">
-        <div class="drow"><span class="drow-l">Nama</span><span class="drow-r">${c.pelapor.nama}</span></div>
+        <div class="drow">
+            <span class="drow-l">Nama</span>
+            <span class="drow-r">
+                ${c.pelapor.nama} 
+                <a href="/admin/chat/${c.reporterId}" style="margin-left:8px; color:var(--primary); text-decoration:none; font-size:11px; font-weight:700;" title="Buka Chat Langsung">
+                    <i class="fa-solid fa-comment"></i> Chat
+                </a>
+            </span>
+        </div>
         <div class="drow"><span class="drow-l">No. WhatsApp</span>
           <span class="drow-r" style="display:flex;align-items:center;gap:6px">${c.pelapor.hp}<i class="fa-brands fa-whatsapp" style="color:#25D366;font-size:14px"></i></span></div>
         <div class="drow"><span class="drow-l">Email</span><span class="drow-r">${c.pelapor.email}</span></div>
@@ -568,8 +659,69 @@ document.getElementById('btnTolak').addEventListener('click',()=>{
   const c=complaints.find(x=>x.id===selectedId);if(!c)return;
   if(confirm(`Tolak laporan ${c.id}?`)){c.status='rej';c.statusLabel='Ditolak';closeDetail();renderTable();}
 });
-document.getElementById('btnMintaInfo').addEventListener('click',()=>{
-  alert('Fitur minta info tambahan akan segera tersedia.');
+
+document.getElementById('btnWa').addEventListener('click', function() {
+    if(!selectedId) return;
+    const c = complaints.find(x => x.id === selectedId);
+    if(c) window.open(`https://wa.me/${c.pelapor.hp.replace(/\D/g,'')}`, '_blank');
+});
+
+document.getElementById('btnEmail').addEventListener('click', function() {
+    if(!selectedId) return;
+    const c = complaints.find(x => x.id === selectedId);
+    if(c) window.location.href = `mailto:${c.pelapor.email}`;
+});
+
+document.getElementById('btnFollowUp').addEventListener('click', function() {
+    if(!selectedId) return;
+    const realId = selectedId.replace('CMP-', '').replace(/^0+/, ''); // Ambil ID asli
+    
+    if(confirm('Kirim peringatan otomatis ke mitra melalui Chat?')) {
+        fetch(`/admin/komplain/${realId}/followup`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                alert(data.message);
+                location.reload(); // Refresh untuk update status
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Gagal mengirim peringatan.');
+        });
+    }
+});
+
+document.getElementById('btnFollowUpReporter').addEventListener('click', function() {
+    if(!selectedId) return;
+    const realId = selectedId.replace('CMP-', '').replace(/^0+/, ''); // Ambil ID asli
+    
+    if(confirm('Kirim pesan konfirmasi ke Pelapor bahwa laporan sedang diproses?')) {
+        fetch(`/admin/komplain/${realId}/followup-reporter`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                alert(data.message);
+                location.reload(); // Refresh
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Gagal menghubungi pelapor.');
+        });
+    }
 });
 
 /* ─── INIT ───────────────────────────────────────────── */
