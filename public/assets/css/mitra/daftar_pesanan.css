@@ -1,0 +1,149 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.ps-page {
+    min-height: 100vh;
+    padding: calc(var(--nav-h) + 32px) 20px 80px;
+    background: var(--grey-96);
+}
+
+.ps-container {
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.ps-header { margin-bottom: 24px; }
+
+.ps-title {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--blue-dark);
+}
+
+/* Alert */
+.ps-alert {
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+.ps-alert-success {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+/* Empty */
+.ps-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+}
+.ps-empty p { margin: 16px 0 24px; font-size: 15px; }
+.ps-btn-buat {
+    display: inline-block;
+    padding: 12px 28px;
+    background: var(--blue-primary);
+    color: #fff;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* List */
+.ps-list { display: flex; flex-direction: column; gap: 16px; }
+
+/* Card */
+.ps-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+}
+
+.ps-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.ps-card-info { display: flex; flex-direction: column; gap: 2px; }
+
+.ps-order-code {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue-primary);
+    font-family: monospace;
+}
+
+.ps-laundry-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue-dark);
+}
+
+/* Badge */
+.ps-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+}
+.ps-badge-masuk        { background: #fef9c3; color: #854d0e; }
+.ps-badge-aktif        { background: #dbeafe; color: #1e40af; }
+.ps-badge-pickup       { background: #e0f2fe; color: #0369a1; }
+.ps-badge-diproses     { background: #ede9fe; color: #5b21b6; }
+.ps-badge-pengantaran  { background: #fce7f3; color: #9d174d; }
+.ps-badge-selesai      { background: #dcfce7; color: #166534; }
+.ps-badge-gagal_pickup { background: #fee2e2; color: #991b1b; }
+.ps-badge-dibatalkan   { background: #f1f5f9; color: #64748b; }
+
+/* Body */
+.ps-card-body {
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ps-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.ps-label { font-size: 13px; color: var(--text-secondary); white-space: nowrap; flex-shrink: 0; }
+.ps-value { font-size: 13px; color: var(--blue-dark); font-weight: 500; text-align: right; }
+.ps-total { color: var(--blue-primary); font-weight: 600; }
+
+/* Footer card */
+.ps-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--grey-96);
+}
+
+.ps-date { font-size: 12px; color: var(--text-secondary); }
+
+.ps-btn-detail {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue-primary);
+    text-decoration: none;
+}
+.ps-btn-detail:hover { text-decoration: underline; }
+
+/* Pagination */
+.ps-pagination { margin-top: 24px; display: flex; justify-content: center; }
+
+@media (max-width: 480px) {
+    .ps-card-row { flex-direction: column; gap: 2px; }
+    .ps-value { text-align: left; }
+}
