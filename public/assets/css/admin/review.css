@@ -199,10 +199,31 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--primary);cursor:p
 .badge::before{content:'';width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .badge.ok {background:var(--success-light);color:#065F46}
 .badge.ok::before{background:var(--success)}
-.badge.wait{background:var(--warning-light);color:#92400E}
-.badge.wait::before{background:var(--warning)}
-.badge.rej {background:var(--danger-light);color:#991B1B}
-.badge.rej::before{background:var(--danger)}
+.badge.spam{background:var(--warning-light);color:#92400E}
+.badge.spam::before{background:var(--warning)}
+.badge.deleted {background:var(--danger-light);color:#991B1B}
+.badge.deleted::before{background:var(--danger)}
+
+/* Action menu dropdown */
+.action-menu-wrap { position: relative; }
+.action-dropdown {
+  position: absolute; right: 0; top: 100%; z-index: 100;
+  min-width: 140px; background: #fff; border: 1px solid var(--g200);
+  border-radius: var(--rs); box-shadow: var(--shmd);
+  display: none; flex-direction: column; padding: 4px;
+}
+.action-dropdown.show { display: flex; }
+.action-dropdown button {
+  width: 100%; padding: 8px 12px; font-size: 12.5px; text-align: left;
+  background: none; border: none; color: var(--g700); cursor: pointer;
+  display: flex; align-items: center; gap: 8px; border-radius: 4px;
+}
+.action-dropdown button:hover { background: var(--g100); }
+.action-dropdown i { width: 14px; text-align: center; font-size: 12px; color: var(--g500); }
+.ad-divider { height: 1px; background: var(--g100); margin: 4px 0; }
+.action-dropdown button.ad-delete { color: var(--danger); }
+.action-dropdown button.ad-delete i { color: var(--danger); }
+.action-dropdown button.ad-delete:hover { background: var(--danger-light); }
 
 /* Actions */
 .acell{display:flex;align-items:center;gap:4px}

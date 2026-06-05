@@ -46,6 +46,7 @@ class NotifikasiController extends Controller
             }
 
             return [
+                'id_raw'     => $item->id,
                 'id'         => 'NTF-' . str_pad($item->id, 4, '0', STR_PAD_LEFT),
                 'judul'      => $item->judul,
                 'sub'        => $item->pesan,
@@ -73,6 +74,17 @@ class NotifikasiController extends Controller
         // 3. Kirim datanya ke Blade
         return view('admin.pengaturan.notifikasi', [
             'notificationsData' => $formattedNotifikasi
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $notif = Notifikasi::findOrFail($id);
+        $notif->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Notifikasi berhasil dihapus permanen.'
         ]);
     }
 }

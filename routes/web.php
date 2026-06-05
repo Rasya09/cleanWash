@@ -276,8 +276,13 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     // MODERASI
     Route::get('/review-rating', [ModerasiController::class, 'indexReview'])
         ->name('admin.review');
+    Route::post('/review-rating/{id}/status', [ModerasiController::class, 'updateStatus'])
+        ->name('admin.review.status');
+
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])
         ->name('admin.notifikasi');
+    Route::delete('/notifikasi/{id}', [NotifikasiController::class, 'destroy'])
+        ->name('admin.notifikasi.destroy');
 
     Route::get('/komplain', function () {
         return view('admin.moderasi.komplain');

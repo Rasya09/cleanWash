@@ -442,12 +442,20 @@ function renderPagination(total){
   html+=`<button class="pgb nav" id="pgNext" ${currentPage===totalPages?'disabled':''}>›</button>`;
   container.innerHTML=html;
   container.querySelectorAll('.pgb[data-pg]').forEach(btn=>{
-    btn.addEventListener('click',()=>{currentPage=parseInt(btn.dataset.pg);renderTable();});
+    btn.addEventListener('click',()=>{
+        goPage(parseInt(btn.dataset.pg));
+    });
   });
   const prev=document.getElementById('pgPrev');
   const next=document.getElementById('pgNext');
-  if(prev)prev.addEventListener('click',()=>{if(currentPage>1){currentPage--;renderTable();}});
-  if(next)next.addEventListener('click',()=>{if(currentPage<totalPages){currentPage++;renderTable();}});
+  if(prev)prev.addEventListener('click',()=>{if(currentPage>1){goPage(currentPage-1);}});
+  if(next)next.addEventListener('click',()=>{if(currentPage<totalPages){goPage(currentPage+1);}});
+}
+
+function goPage(p){
+    currentPage = p;
+    renderTable();
+    window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 /* ─── TAB COUNTS ─────────────────────────────────────── */

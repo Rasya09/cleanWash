@@ -225,20 +225,22 @@
       <input type="hidden" name="emoji" id="emojiInput" value="3">
       <input type="hidden" name="star"  id="starInput"  value="4">
 
-      <div class="review-emoji-row">
-        <span class="review-emoji" data-value="1" title="Sangat Buruk">😞</span>
-        <span class="review-emoji" data-value="2" title="Buruk">😕</span>
-        <span class="review-emoji active" data-value="3" title="Biasa">😊</span>
-        <span class="review-emoji" data-value="4" title="Baik">😄</span>
-        <span class="review-emoji" data-value="5" title="Sangat Baik">🤩</span>
-      </div>
+      <div class="review-rating-container">
+        <div class="review-emoji-row">
+          <span class="review-emoji" data-value="1" title="Sangat Buruk">😞</span>
+          <span class="review-emoji" data-value="2" title="Buruk">😕</span>
+          <span class="review-emoji active" data-value="3" title="Biasa">😊</span>
+          <span class="review-emoji" data-value="4" title="Baik">😄</span>
+          <span class="review-emoji" data-value="5" title="Sangat Baik">🤩</span>
+        </div>
 
-      <div class="review-stars">
-        <button type="button" class="star-btn lit" data-value="1">★</button>
-        <button type="button" class="star-btn lit" data-value="2">★</button>
-        <button type="button" class="star-btn lit" data-value="3">★</button>
-        <button type="button" class="star-btn lit" data-value="4">★</button>
-        <button type="button" class="star-btn"     data-value="5">★</button>
+        <div class="review-stars">
+          <button type="button" class="star-btn" data-value="1">★</button>
+          <button type="button" class="star-btn" data-value="2">★</button>
+          <button type="button" class="star-btn" data-value="3">★</button>
+          <button type="button" class="star-btn" data-value="4">★</button>
+          <button type="button" class="star-btn" data-value="5">★</button>
+        </div>
       </div>
 
       <div class="review-form">
@@ -263,24 +265,36 @@
 @push('scripts')
 <script>
  
-// STAR RATING — update hidden input
+// Sinkronisasi Star dan Emoji
 const stars = document.querySelectorAll('.star-btn');
+const emojis = document.querySelectorAll('.review-emoji');
+const starInput = document.getElementById('starInput');
+const emojiInput = document.getElementById('emojiInput');
+
+function updateRating(value) {
+  // Update Stars
+  stars.forEach((s, j) => s.classList.toggle('lit', j < value));
+  starInput.value = value;
+
+  // Update Emoji
+  emojis.forEach(x => x.classList.remove('active'));
+  const activeEmoji = document.querySelector(`.review-emoji[data-value="${value}"]`);
+  if (activeEmoji) activeEmoji.classList.add('active');
+  emojiInput.value = value;
+}
+
+// Event Listeners for Stars
 stars.forEach((star, i) => {
-  star.addEventListener('click', () => {
-    stars.forEach((s, j) => s.classList.toggle('lit', j <= i));
-    document.getElementById('starInput').value = i + 1; // simpan ke hidden
-  });
+  star.addEventListener('click', () => updateRating(i + 1));
 });
 
-// EMOJI SELECTOR — update hidden input
-const emojis = document.querySelectorAll('.review-emoji');
-emojis.forEach(e => {
-  e.addEventListener('click', () => {
-    emojis.forEach(x => x.classList.remove('active'));
-    e.classList.add('active');
-    document.getElementById('emojiInput').value = e.dataset.value; // simpan ke hidden
-  });
+// Event Listeners for Emojis
+emojis.forEach(emoji => {
+  emoji.addEventListener('click', () => updateRating(emoji.dataset.value));
 });
+
+// Set Initial State (Misal 5 Bintang)
+updateRating(5);
 </script>
 @endpush
 
