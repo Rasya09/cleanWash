@@ -10,6 +10,7 @@ use App\Models\UserAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
@@ -44,7 +45,7 @@ class OrderController extends Controller
             'catatan'            => 'nullable|string|max:500',
             'metode_bayar'       => 'nullable|in:cod,transfer,ewallet',
         ]);
-        \Log::info('Order store dipanggil', $request->all());
+        Log::info('Order store dipanggil', $request->all());
 
         // ── Validasi mitra harus approved ─────────────────────
         $mitra = MitraLaundry::where('id', $request->mitra_laundry_id)
@@ -72,8 +73,10 @@ class OrderController extends Controller
         $alamatPengantaran = $request->alamat_pengantaran;
 
         if (!$alamatPickup) {
-            $alamat            = Auth::user()->addresses()->where('is_primary', true)->first()
-                              ?? Auth::user()->addresses()->first();
+            $alamat            = UserAddress::where('user_id', Auth::id())
+                                ->where('is_primary', true)
+                                ->first()
+                              ?? UserAddress::where('user_id', Auth::id())->first();
             $alamatPickup      = $alamat?->alamat_lengkap ?? '-';
             $alamatPengantaran = $alamat?->alamat_lengkap ?? '-';
         }
@@ -144,7 +147,7 @@ class OrderController extends Controller
             ->where('user_id', Auth::id())
             ->findOrFail($id);
 
-        return view('user.detail_pesanan', compact('pesanan'));
+        return view('user.detailPesanan', compact('pesanan'));
     }
 
     // =========================================================

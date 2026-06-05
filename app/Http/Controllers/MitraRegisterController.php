@@ -411,5 +411,14 @@ class MitraRegisterController extends Controller
                 'Pengajuan berhasil dikirim ulang'
             );
     }
+
+    public function profil()
+    {
+        $mitra = MitraLaundry::where('user_id', Auth::id())
+                    ->where('status', 'approved')
+                    ->first();
+
+        return view('mitra.profil.index', compact('mitra'));
+    }
     
 }

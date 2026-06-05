@@ -40,9 +40,11 @@
         <button class="dropdown-item">
             <a href="{{ route('user.profile') }}">Profil Saya</a>
         </button>
+        @if(Auth::user()->role == 'user')
         <button class="dropdown-item">
             <a href="{{ route('user.register.step1') }}">Registrasi Mitra</a>
         </button>
+        @endif
         <button class="dropdown-item">Obrolan</button>
         @if(Auth::user()->role == 'admin')
         <button class="dropdown-item"><a href="{{ route('admin.dashboard') }}">Dashboard admin</a></button>

@@ -18,7 +18,7 @@ class MitraOrderController extends Controller
         $mitra = Auth::user()->mitraLaundry;
 
         if (!$mitra) {
-            return redirect()->route('mitra.pesanan') // sesuaikan dengan route dashboard kamu
+            return redirect()->route('mitra.dashboard') // sesuaikan dengan route dashboard kamu
                              ->with('error', 'Akun Anda belum terdaftar sebagai Mitra Laundry atau data profil belum lengkap.');
         }
 

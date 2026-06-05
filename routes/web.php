@@ -9,8 +9,7 @@ use App\Models\UserAddress;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MitraRegisterController;
 use App\Http\Controllers\AdminController;
-
-
+use App\Http\Controllers\Mitra\MitraController;
 
 // ======================================================
 // PUBLIC / GUEST
@@ -162,9 +161,9 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
         return view('user.pesanan');
     })->name('user.pesanan');
 
-    Route::get('/detail-pesanan', function () {
-        return view('user.detailPesanan');
-    })->name('user.detail-pesanan');
+    // Route::get('/detail-pesanan', function () {
+    //     return view('user.detailPesanan');
+    // })->name('user.detail-pesanan');
 
     Route::get('/pembayaran', function () {
         return view('user.pembayaran');
@@ -305,6 +304,19 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
     Route::get('/kesehatan-toko', function () {
         return view('mitra.data.kesehatan_toko');
     })->name('mitra.kesehatan');
+
+    Route::get(
+        '/profil-toko',
+        [MitraController::class, 'profil']
+    )->name('mitra.profil');
+
+    Route::get('/profil-toko/edit',
+        [MitraController::class, 'edit'])
+        ->name('mitra.edit.profil');
+
+    Route::post('/profil-toko/update',
+        [MitraController::class, 'update'])
+        ->name('mitra.update.profil');
 
 });
 
