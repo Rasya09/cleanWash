@@ -5,7 +5,7 @@
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0">
 
-<title>Register Mitra - Step 4</title>
+<title>Register Mitra - Step 3</title>
 
 <style>
 
@@ -88,7 +88,8 @@ label{
 .upload-box{
     border:2px dashed #cdd6f4;
     border-radius:20px;
-    padding:30px;
+    padding:40px;
+    text-align:center;
     background:#f8f9ff;
 }
 
@@ -134,83 +135,99 @@ input[type=file]{
 <body>
 
 <div class="container">
-
     <div class="header">
         <h1>Daftarkan Toko Laundry Anda</h1>
-        <p>Lengkapi dokumen usaha Anda.</p>
+        <p>Upload foto dan logo toko laundry Anda.</p>
     </div>
-
     <div class="steps">
-
         <div class="step">
             <div class="step-circle">1</div>
             <span>Identitas</span>
         </div>
-
         <div class="step">
             <div class="step-circle">2</div>
             <span>Lokasi</span>
         </div>
-
-        <div class="step">
+        <div class="step active">
             <div class="step-circle">3</div>
             <span>Foto</span>
         </div>
-
-        <div class="step active">
+        <div class="step">
             <div class="step-circle">4</div>
             <span>Dokumen</span>
         </div>
-
     </div>
-
     <div class="card">
-
         <div class="card-header">
-            <h2>Dokumen Usaha</h2>
-            <p>Upload dokumen untuk verifikasi mitra laundry.</p>
+            <h2>Foto Toko</h2>
+            <p>Upload logo dan foto toko laundry Anda.</p>
         </div>
-        <form action="{{ route('user.register.step4.store', $mitra->id) }}"
+        @if ($errors->any())
+            <div style="
+                background:#ffdede;
+                color:#a70000;
+                padding:15px;
+                border-radius:10px;
+                margin-bottom:20px;
+            ">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <form action="{{ route('user.register.reapply.step3.update', $mitra->id) }}"
               method="POST"
               enctype="multipart/form-data">
             @csrf
             <div class="card-body">
-                <!-- KTP -->
+                <!-- LOGO -->
                 <div class="form-group">
-                    <label>KTP *</label>
+                    <label>Logo Toko</label>
                     <div class="upload-box">
+                        <p>Upload logo toko (maks 1)</p>
                         <input type="file"
-                               name="ktp"
-                               accept="image/*"
-                               required>
+                               name="logo"
+                               id="logoInput"
+                               accept="image/*">
+                        <div class="preview" id="logoPreview">
+                            @if($mitra->logo)
+                                <img src="{{ asset('storage/' . $mitra->logo) }}"
+                                    alt="Logo">
+                            @endif
+                        </div>
                     </div>
                 </div>
-                <!-- NIB -->
+                <!-- STORE PHOTO -->
                 <div class="form-group">
-                    <label>NIB *</label>
+                    <label>Foto Toko</label>
                     <div class="upload-box">
+                        <p>
+                            Upload minimal 2 foto,
+                            maksimal 3 foto
+                        </p>
                         <input type="file"
-                               name="nib"
-                               accept="image/*"
-                               required>
-                    </div>
-                </div>
-                <!-- NPWP -->
-                <div class="form-group">
-                    <label>NPWP *</label>
-                    <div class="upload-box">
-                        <input type="file"
-                               name="npwp"
-                               accept="image/*"
-                               required>
+                               name="store_photos[]"
+                               id="storeInput"
+                               multiple
+                               accept="image/*">
+                        <div class="preview" id="storePreview">
+                            @if($mitra->store_photos)
+                                @foreach(json_decode($mitra->store_photos, true) as $photo)
+                                    <img src="{{ asset('storage/' . $photo) }}"
+                                        alt="Foto Toko">
+                                @endforeach
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="footer">
-                <span>Langkah 4 dari 4</span>
+                <span>Langkah 3 dari 4</span>
                 <button type="submit"
                         class="btn">
-                    Kirim Pengajuan
+                    Lanjut
                 </button>
             </div>
         </form>
@@ -218,45 +235,53 @@ input[type=file]{
 </div>
 
 <script>
-
+// =========================
+// LOGO PREVIEW
+// =========================
 document
-.getElementById('businessInput')
+.getElementById('logoInput')
 .addEventListener('change', function(e){
-
     const preview =
-        document.getElementById('businessPreview');
-
+        document.getElementById('logoPreview');
     preview.innerHTML = '';
-
+    const file = e.target.files[0];
+    if(file)
+    {
+        const img =
+            document.createElement('img');
+        img.src =
+            URL.createObjectURL(file);
+        preview.appendChild(img);
+    }
+});
+// =========================
+// STORE PREVIEW
+// =========================
+document
+.getElementById('storeInput')
+.addEventListener('change', function(e){
+    const preview =
+        document.getElementById('storePreview');
+    preview.innerHTML = '';
     const files = e.target.files;
-
     if(files.length < 2)
     {
         alert('Minimal upload 2 foto');
         return;
     }
-
     if(files.length > 5)
     {
         alert('Maksimal 5 foto');
         return;
     }
-
     Array.from(files).forEach(file => {
-
         const img =
             document.createElement('img');
-
         img.src =
             URL.createObjectURL(file);
-
         preview.appendChild(img);
-
     });
-
 });
-
 </script>
-
 </body>
 </html>

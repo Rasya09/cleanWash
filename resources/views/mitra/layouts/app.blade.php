@@ -7,7 +7,8 @@
     <meta name="user-id" content="{{ Auth::check() ? Auth::id() : '' }}">
     <title>Mitra Laundry - Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    @vite(['resources/js/app.js'])
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     @yield('css')
 </head>
 <body>
@@ -22,7 +23,7 @@
 
   <!-- CONTENT -->
   @yield('content')
-  
+
 </div><!-- /main-wrapper -->
 
     @stack('scripts')

@@ -26,7 +26,11 @@ class MitraLaundry extends Model
         'ktp',
         'nib',
         'npwp',
-        'status'
+        'status',
+        'rejection_reason',
+        'operational_hours',
+        'service_radius',
+        'pickup_fee',
     ];
 
     public function user()

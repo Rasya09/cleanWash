@@ -10,13 +10,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Instrument+Sans:wght@400;500;600&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0&display=swap" rel="stylesheet">
-    @vite(['resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('assets/css/navbar.css') }}">
     @yield('css')
 </head>
 <body>
 
     @include('user.layouts.partials.navbar')
-    
+
     @yield('content')
 
     @include('user.layouts.partials.footer')
@@ -25,7 +25,7 @@
     <script src="{{ asset('assets/js/user/navbar.js') }}"></script>
 
     @stack('scripts')
-    
+
     @yield('js')
 
 </body>

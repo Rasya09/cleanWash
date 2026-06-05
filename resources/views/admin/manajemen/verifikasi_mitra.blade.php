@@ -112,106 +112,130 @@
               </div>
               @endforeach
           </div>
-          {{-- ========================================= --}}
-          {{-- POPUP DETAIL --}}
-          {{-- ========================================= --}}
-          <div class="detail-overlay"
-              id="detailOverlay">
-              <div class="detail-modal">
-                  {{-- CLOSE --}}
-                  <button class="close-detail"
+            {{-- ========================================= --}}
+            {{-- POPUP DETAIL --}}
+            {{-- ========================================= --}}
+            <div class="detail-overlay"
+                id="detailOverlay">
+                <div class="detail-modal">
+                    {{-- CLOSE --}}
+                    <button class="close-detail"
                           onclick="closeDetail()">
                       ✕
-                  </button>
-                  {{-- RIGHT PANEL --}}
-                  <div class="panel detail-panel">
-                      {{-- HEADER --}}
-                      <div class="panel-head detail-head">
-                          <h2>
+                    </button>
+                    {{-- RIGHT PANEL --}}
+                    <div class="panel detail-panel">
+                        {{-- HEADER --}}
+                        <div class="panel-head detail-head">
+                            <h2>
                               Detail Pendaftaran Mitra
-                          </h2>
-                          <div class="action-group">
-                              {{-- TOLAK --}}
-                              <form id="rejectForm"
-                                    method="POST">
-                                  @csrf
-                                  @method('PUT')
-                                  <button class="btn secondary">
-                                      <i class="fa-solid fa-xmark"></i>
-                                      Tolak
-                                  </button>
-                              </form>
-                              {{-- ACC --}}
-                              <form id="approveForm"
-                                    method="POST">
-                                  @csrf
-                                  @method('PUT')
-                                  <button class="btn primary">
-                                      <i class="fa-solid fa-check"></i>
-                                      Setujui
-                                  </button>
-                              </form>
-                          </div>
-                      </div>
-                      {{-- PROFILE --}}
-                      <div class="partner-card">
-                          <div class="partner-avatar">
-                              <img id="detailLogo"
-                                  src=""
-                                  alt="">
-                          </div>
-                          <div class="partner-info">
-                              <h3 id="detailStoreName">
+                            </h2>
+                            <div class="action-group">
+                                {{-- APPROVE --}}
+                                <form id="approveForm" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit" class="btn primary">
+                                        <i class="fa-solid fa-check"></i>
+                                        Setujui
+                                    </button>
+                                </form>
+                                {{-- BUTTON TOLAK --}}
+                                <button
+                                    type="button"
+                                    class="btn secondary"
+                                    onclick="openRejectModal()">
+                                    <i class="fa-solid fa-xmark"></i>
+                                    Tolak
+                                </button>
+                            </div>
+                            {{-- FORM PENOLAKAN --}}
+                            <div id="rejectModal" class="reject-overlay">
+                                <div class="reject-box">
+                                    <h3>Alasan Penolakan</h3>
+                                    <form id="rejectForm" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <textarea
+                                            name="rejection_reason"
+                                            required
+                                            placeholder="Masukkan alasan penolakan..."></textarea>
+                                        <div class="reject-actions">
+                                            <button
+                                                type="button"
+                                                class="btn-cancel"
+                                                onclick="closeRejectModal()">
+                                                Batal
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                class="btn-danger">
+                                                Kirim Penolakan
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- PROFILE --}}
+                        <div class="partner-card">
+                            <div class="partner-avatar">
+                                <img id="detailLogo"
+                                    src=""
+                                    alt="">
+                            </div>
+                            <div class="partner-info">
+                                <h3 id="detailStoreName">
                                   -
-                              </h3>
-                              <div class="meta-line">
-                                  <span>
-                                      <i class="fa-solid fa-location-dot"></i>
-                                      <span id="detailCity"></span>
-                                  </span>
-                                  <span>
-                                      <i class="fa-regular fa-calendar"></i>
-                                      <span id="detailDate"></span>
-                                  </span>
-                              </div>
-                              <div class="tags">
-                                  <span class="tag yellow"
+                                </h3>
+                                <div class="meta-line">
+                                    <span>
+                                        <i class="fa-solid fa-location-dot"></i>
+                                        <span id="detailCity"></span>
+                                    </span>
+                                    <span>
+                                        <i class="fa-regular fa-calendar"></i>
+                                        <span id="detailDate"></span>
+                                    </span>
+                                </div>
+                                <div class="tags">
+                                    <span class="tag yellow"
                                         id="detailStatus">
-                                  </span>
-                              </div>
-                          </div>
-                      </div>
-                      {{-- INFO --}}
-                      <div class="info-grid">
-                          {{-- LEFT --}}
-                          <div class="info-box">
-                              <h4>
-                                  Informasi Laundry
-                              </h4>
-                              <div class="info-list">
-                                  <div class="info-row">
-                                      <span>Nama Pemilik</span>
-                                      <b id="detailOwner"></b>
-                                  </div>
-                                  <div class="info-row">
-                                      <span>Email</span>
-                                      <b id="detailEmail"></b>
-                                  </div>
-                                  <div class="info-row">
-                                      <span>No Telepon</span>
-                                      <b id="detailPhone"></b>
-                                  </div>
-                                  <div class="info-row">
-                                      <span>Alamat</span>
-                                      <b id="detailAddress"></b>
-                                  </div>
-                                  <div class="info-row">
-                                      <span>Deskripsi</span>
-                                      <b id="detailDescription"></b>
-                                  </div>
-                              </div>
-                          </div>
-                          {{-- RIGHT --}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- INFO --}}
+                        <div class="info-grid">
+                            {{-- LEFT --}}
+                            <div class="info-box">
+                                <h4>
+                                    Informasi Laundry
+                                </h4>
+                                <div class="info-list">
+                                    <div class="info-row">
+                                        <span>Nama Pemilik</span>
+                                        <b id="detailOwner"></b>
+                                    </div>
+                                    <div class="info-row">
+                                        <span>Email</span>
+                                        <b id="detailEmail"></b>
+                                    </div>
+                                    <div class="info-row">
+                                        <span>No Telepon</span>
+                                        <b id="detailPhone"></b>
+                                    </div>
+                                    <div class="info-row">
+                                        <span>Alamat</span>
+                                        <b id="detailAddress"></b>
+                                    </div>
+                                    <div class="info-row">
+                                        <span>Deskripsi</span>
+                                        <b id="detailDescription"></b>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- RIGHT --}}
                             <div class="info-box">
                                 <h4>
                                     Dokumen Pendukung
@@ -546,6 +570,20 @@ function closePreview()
 
     document.getElementById('previewPdf')
         .style.display = 'none';
+}
+
+function openRejectModal()
+{
+    document
+        .getElementById('rejectModal')
+        .classList.add('show');
+}
+
+function closeRejectModal()
+{
+    document
+        .getElementById('rejectModal')
+        .classList.remove('show');
 }
 
 // CLOSE OUTSIDE

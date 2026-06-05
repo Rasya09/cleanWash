@@ -551,5 +551,5 @@
 
 @push('scripts')
     <script src="{{ asset('assets/js/user/navbar.js') }}"></script>
-
+    
 @endpush

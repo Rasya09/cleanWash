@@ -177,7 +177,7 @@ input[type=file]{
                 </ul>
             </div>
         @endif
-        <form action="{{ route('mitra.register.step3.store', $mitra->id) }}"
+        <form action="{{ route('user.register.step3.store', $mitra->id) }}"
               method="POST"
               enctype="multipart/form-data">
             @csrf
@@ -212,7 +212,7 @@ input[type=file]{
 
                         <p>
                             Upload minimal 2 foto,
-                            maksimal 5 foto
+                            maksimal 3 foto
                         </p>
 
                         <input type="file"

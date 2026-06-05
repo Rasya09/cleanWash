@@ -79,18 +79,15 @@
 /* ---------- Main Layout ---------- */
 .tl-layout {
     display: grid;
-    grid-template-columns: 220px 1fr 280px;
     gap: 18px;
     align-items: flex-start;
 }
 
 @media (max-width: 1100px) {
-    .tl-layout { grid-template-columns: 200px 1fr; }
     .tl-sidebar { grid-column: 2; }
 }
 
 @media (max-width: 700px) {
-    .tl-layout { grid-template-columns: 1fr; }
     .tl-sidebar { grid-column: 1; }
 }
 
@@ -454,8 +451,8 @@
 .tl-actions {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding-top: 4px;
+    justify-content: flex-end;
+    padding-top: 20px;
 }
 
 .tl-btn-batal {

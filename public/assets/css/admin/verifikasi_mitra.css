@@ -260,6 +260,7 @@ body{
 }
 
 .action-group{
+    margin-right: 40px;
     display: flex;
     gap: 10px;
 }
@@ -527,6 +528,65 @@ body{
 
 .preview-close:hover{
     color:#e74c3c;
+}
+
+.reject-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:99999;
+}
+
+.reject-overlay.show{
+    display:flex;
+}
+
+.reject-box{
+    width:450px;
+    background:#fff;
+    border-radius:18px;
+    padding:24px;
+    box-shadow:0 10px 30px rgba(0,0,0,.15);
+}
+
+.reject-box h3{
+    margin:0 0 15px;
+}
+
+.reject-box textarea{
+    width:100%;
+    height:120px;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    resize:none;
+}
+
+.reject-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:15px;
+}
+
+.btn-cancel{
+    border:none;
+    background:#eee;
+    padding:10px 18px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.btn-danger{
+    border:none;
+    background:#dc2626;
+    color:white;
+    padding:10px 18px;
+    border-radius:10px;
+    cursor:pointer;
 }
 
 /* =========================

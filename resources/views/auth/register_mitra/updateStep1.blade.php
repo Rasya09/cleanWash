@@ -221,7 +221,7 @@
                 Informasi dasar toko dan pemilik usaha laundry
             </p>
         </div>
-        <form action="{{ route('user.register.step1.store') }}"
+        <form action="{{ route('user.register.reapply.update', $mitra->id) }}"
               method="POST">
             @csrf
             <div class="card-body">
@@ -233,7 +233,8 @@
                         </label>
                         <input type="text"
                                name="store_name"
-                               placeholder="Contoh: Laundry Bersih Jaya">
+                               placeholder="Contoh: Laundry Bersih Jaya"
+                               value="{{ old('store_name', $mitra->store_name) }}">
                     </div>
                     <!-- OWNER -->
                     <div class="form-group">
@@ -242,7 +243,8 @@
                         </label>
                         <input type="text"
                                name="owner_name"
-                               placeholder="Nama pemilik">
+                               placeholder="Nama pemilik"
+                               value="{{ old('owner_name', $mitra->owner_name) }}">
                     </div>
                     <!-- PHONE -->
                     <div class="form-group">
@@ -251,7 +253,8 @@
                         </label>
                         <input type="text"
                                name="phone"
-                               placeholder="08xxxxxxxxxx">
+                               placeholder="08xxxxxxxxxx"
+                               value="{{ old('phone', $mitra->phone) }}">
                     </div>
                     <!-- EMAIL -->
                     <div class="form-group">
@@ -260,7 +263,8 @@
                         </label>
                         <input type="email"
                                name="email"
-                               placeholder="email@toko.com">
+                               placeholder="email@toko.com"
+                               value="{{ old('email', $mitra->email) }}">
                     </div>
                     <!-- DESCRIPTION -->
                     <div class="form-group full">
@@ -268,7 +272,7 @@
                             Deskripsi Toko
                         </label>
                         <textarea name="description"
-                                  placeholder="Ceritakan tentang usaha laundry Anda..."></textarea>
+                                  placeholder="Ceritakan tentang usaha laundry Anda...">{{ old('description', $mitra->description) }}</textarea>
                     </div>
                 </div>
             </div>
