@@ -1,0 +1,511 @@
+/* ==================== SUPER LAYOUT ENVIRONMENT CONTAINER ==================== */
+.super-container-promosi {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;
+    width: 100%;
+    padding: 30px;
+    background-color: #f8fafc;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    box-sizing: border-box;
+}
+
+/* KUNCI SISI KIRI: AMAN & FLEKSIBEL */
+.sisi-galeri-kiri {
+    flex: 1;
+    min-width: 0;
+}
+
+/* KUNCI SISI KANAN: MOCKUP HP FIXED AS FIGMA */
+.sisi-preview-kanan {
+    width: 340px;
+    flex-shrink: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 24px 20px;
+}
+
+/* ==================== DETAIL STYLING SEKSI KIRI ==================== */
+.kembali-link {
+    font-size: 14px;
+    color: #4b5563;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.header-promosi-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+}
+
+.header-promosi-top h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.sub-judul-app {
+    font-size: 14px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.tombol-upload-biru {
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+/* CARD PUTIH WINDOWS GALERI */
+.card-putih-galeri {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.pembungkus-judul-section h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.deskripsi-section {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 4px;
+    margin-bottom: 20px;
+}
+
+/* GRID FOTO STRUKTUR (4 Kolom Sempurna) */
+.grid-foto-laundry {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.kotak-foto-item {
+    position: relative;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.badge-silang-hapus {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(17, 24, 39, 0.6);
+    color: #ffffff;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.area-gambar-file {
+    height: 125px;
+    background-size: cover;
+    background-position: center;
+    background-color: #f3f4f6;
+}
+
+.footer-kartu-foto {
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.grup-detail-kiri {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 80%;
+}
+
+.nama-file-foto {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tag-label-aktif {
+    align-self: flex-start;
+    background: #f0fdf4;
+    color: #16a34a;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.titik-tiga-opsi {
+    font-size: 16px;
+    color: #9ca3af;
+    cursor: pointer;
+}
+
+/* PLACEHOLDER SLOT TAMBAH FOTO */
+.kotak-tambah-placeholder {
+    border: 1px dashed #d1d5db;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 180px;
+    cursor: pointer;
+    background: #ffffff;
+}
+
+.lingkaran-plus-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f0f4ff;
+    color: #2563eb;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.label-tambah-foto {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2563eb;
+}
+
+.sub-label-tambah {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 2px;
+}
+
+.notifikasi-alert-biru {
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.teks-alert-info {
+    font-size: 13px;
+    color: #1e40af;
+    font-weight: 500;
+}
+
+/* CARD BANNER TIPS SISI BAWAH */
+.card-putih-tips {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.card-putih-tips h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 16px;
+}
+
+.grid-layout-tips {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.item-tips-konten {
+    display: flex;
+    gap: 12px;
+}
+
+.box-ikon-wrapper {
+    font-size: 20px;
+}
+
+.teks-tips-wrapper h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.teks-tips-wrapper p {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+/* ==================== MOCKUP HP PREVIEW SISI KANAN ==================== */
+.deskripsi-preview-top {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 16px;
+}
+
+.bingkai-hp-mockup {
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.kontainer-slider-banner {
+    position: relative;
+    height: 155px;
+    background-color: #f3f4f6;
+}
+
+.view-slider-gambar {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+}
+
+.panah-slider {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 2;
+}
+.slider-kiri { left: 8px; }
+.slider-kanan { right: 8px; }
+
+.angka-indikator-slider {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(17, 24, 39, 0.6);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.detail-badan-hp {
+    padding: 16px 14px;
+}
+
+.nama-laundry-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.centang-verifikasi {
+    background: #2563eb;
+    color: #ffffff;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    font-size: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.baris-ulasan-rating {
+    font-size: 12px;
+    color: #4b5563;
+    margin-top: 4px;
+}
+.bintang-emas { color: #f59e0b; }
+.nilai-skor { font-weight: 600; color: #111827; }
+.jumlah-ulasan { color: #6b7280; }
+.titik-pemisah { margin: 0 4px; color: #d1d5db; }
+
+.baris-layanan-badge {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.badge-biru-layanan {
+    background: #f0f4ff;
+    color: #2563eb;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.tab-menu-hp {
+    display: flex;
+    border-bottom: 1px solid #e5e7eb;
+    margin-top: 14px;
+}
+
+.item-tab-hp {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 0;
+    color: #6b7280;
+    cursor: pointer;
+}
+
+.item-tab-hp.active {
+    color: #2563eb;
+    border-bottom: 2px solid #2563eb;
+    font-weight: 600;
+}
+
+.konten-tab-hp-wrapper {
+    margin-top: 12px;
+}
+
+.isi-panel-hp { display: none; }
+.isi-panel-hp.active { display: block; }
+
+.baris-info-hp-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.detail-teks-hp h5 {
+    font-size: 11px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.detail-teks-hp p {
+    font-size: 11px;
+    color: #6b7280;
+    line-height: 1.3;
+}
+
+.jarak-posisi-kanan {
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* SEKSI MINI GALERI HP */
+.seksi-galeri-mini-hp h6 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 6px;
+}
+
+.grid-galeri-mini {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.kotak-mini-img {
+    height: 42px;
+    border-radius: 4px;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+}
+
+.tombol-aplikasi-footer {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #2563eb;
+    color: #2563eb;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* ==================== STYLING LINE ICONS SVG ENVIRONMENT ==================== */
+.pin-lokasi-svg {
+    color: #9ca3af;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 6px;
+    margin-right: 3px;
+    vertical-align: middle;
+}
+
+.ikon-info-hp-svg {
+    color: #9ca3af;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.ikon-info-svg {
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.box-ikon-wrapper svg {
+    display: block;
+}
+
+/* RESPONSIVE LAYOUT UNTUK LAYAR PC SEDANG */
+@media (max-width: 1150px) {
+    .grid-foto-laundry { grid-template-columns: repeat(2, 1fr); }
+}

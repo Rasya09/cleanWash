@@ -45,18 +45,11 @@
         {{-- ===================== BODY: DETAIL + SIDEBAR ===================== --}}
         <div class="dl-body">
 
-            {{-- Card Detail --}}
+            {{-- Card Detail: Hanya berisi Daftar Layanan --}}
             <div class="dl-card">
-                <h2>Tentang Laundry</h2>
+                <h2>Daftar Layanan</h2>
                 <div class="dl-divider"></div>
 
-                <p class="dl-card-desc">
-                    Adzril Laundry hadir untuk memberikan layanan cuci pakaian yang bersih, rapi, dan wangi.
-                    Dengan proses pencucian yang higienis serta tenaga kerja yang berpengalaman, kami siap
-                    membantu menjaga pakaian Anda tetap dalam kondisi terbaik setiap hari.
-                </p>
-
-                <p class="dl-layanan-title">Daftar Layanan</p>
                 <div class="dl-layanan-list">
                     <div class="dl-layanan-item">
                         <span class="dl-layanan-name">Cuci Kiloan</span>
@@ -90,30 +83,7 @@
                     </div>
                 </div>
 
-                <div class="dl-sidebar-row">
-                    <span class="dl-sidebar-label">Estimasi Waktu</span>
-                    <div class="dl-estimasi-grid">
-                        <div class="dl-estimasi-item">
-                            <span class="label">Regular</span>
-                            <span class="value">2–3 hari</span>
-                        </div>
-                        <div class="dl-estimasi-item express">
-                            <span class="label">Express</span>
-                            <span class="value">6 jam</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dl-sidebar-row">
-                    <span class="dl-sidebar-label">Layanan Tambahan</span>
-                    <div class="dl-info-box">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                        Antar Jemput Tersedia
-                    </div>
-                </div>
-
+                
                 <a href="{{ route('user.buat-pesanan') }}" class="dl-btn-pesan">
                     Pesan Sekarang
                 </a>
