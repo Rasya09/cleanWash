@@ -172,7 +172,7 @@
             <h2>Lokasi Toko</h2>
             <p>Masukkan alamat lengkap toko laundry Anda.</p>
         </div>
-        <form action="{{ route('mitra.register.step2.store', $mitra->id) }}"
+        <form action="{{ route('user.register.step2.store', $mitra->id) }}"
               method="POST">
             @csrf
             <div class="card-body">
@@ -226,15 +226,6 @@
                     <div class="form-group full">
                         <label>Alamat Lengkap *</label>
                         <textarea name="address"></textarea>
-                    </div>
-                    <!-- BUTTON GPS -->
-                    <div class="form-group">
-                        <label>&nbsp;</label>
-                        <button type="button"
-                                class="btn-location"
-                                onclick="getLocation()">
-                            Gunakan Lokasi Saya
-                        </button>
                     </div>
                 </div>
             </div>

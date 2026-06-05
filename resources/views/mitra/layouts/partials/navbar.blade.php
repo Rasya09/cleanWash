@@ -35,8 +35,8 @@
         <div class="dropdown-header">
           <p>Mitra Laundry</p>
         </div>
-        <a href="#" class="dropdown-item">Profil Toko</a>
-        <a href="#" class="dropdown-item">Pengaturan Akun</a>
+        <a href="{{ route('mitra.profil') }}" class="dropdown-item">Profil Toko</a>
+        <a href="{{ route('home') }}" class="dropdown-item">Beranda</a>
         <div class="dropdown-divider"></div>
         <form action="{{ route('logout') }}" method="POST">
             @csrf
@@ -44,9 +44,7 @@
         </form>
       </div>
     </div>
-
   </div>
-
 </header>
 
 <script>

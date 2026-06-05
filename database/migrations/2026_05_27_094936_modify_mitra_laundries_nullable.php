@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('mitra_laundries', function (Blueprint $table) {
-            $table->string('email')->change();
-            $table->text('address')->nullable()->change();
-            $table->string('village')->nullable()->change();
-            $table->string('district')->nullable()->change();
-            $table->string('city')->nullable()->change();
-            $table->string('province')->nullable()->change();
-            $table->string('postal_code')->nullable()->change();
+            // $table->string('email')->change();
+            // $table->text('address')->nullable()->change();
+            // $table->string('village')->nullable()->change();
+            // $table->string('district')->nullable()->change();
+            // $table->string('city')->nullable()->change();
+            // $table->string('province')->nullable()->change();
+            // $table->string('postal_code')->nullable()->change();
         });
     }
 

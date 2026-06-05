@@ -221,7 +221,7 @@
                 Informasi dasar toko dan pemilik usaha laundry
             </p>
         </div>
-        <form action="{{ route('mitra.register.step1.store') }}"
+        <form action="{{ route('user.register.step1.store') }}"
               method="POST">
             @csrf
             <div class="card-body">

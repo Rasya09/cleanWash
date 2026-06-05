@@ -18,13 +18,14 @@ class MitraLaundry extends Model
         'email',
         'phone',
         'description',
-        'address',
-        'village',
-        'district',
-        'city',
         'province',
+        'city',
+        'district',
+        'village',
         'postal_code',
+        'address',
         'logo',
+        'store_photos',
         'ktp',
         'nib',
         'npwp',
@@ -32,6 +33,9 @@ class MitraLaundry extends Model
         'rejection_reason',
         'verified_at',
         'verified_by',
+        'operational_hours',
+        'service_radius',
+        'pickup_fee',
     ];
 
     protected $casts = [
@@ -46,16 +50,6 @@ class MitraLaundry extends Model
     public function verifier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verified_by');
-    }
-
-    public function storePhotos(): HasMany
-    {
-        return $this->hasMany(MitraStorePhoto::class);
-    }
-
-    public function businessPhotos(): HasMany
-    {
-        return $this->hasMany(MitraBusinessPhoto::class);
     }
 
     public function fileUrl(?string $path): ?string

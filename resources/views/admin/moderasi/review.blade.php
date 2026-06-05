@@ -123,7 +123,7 @@
 
     {{-- PAGINATION --}}
     <div class="pagibar">
-      <span class="pginfo" id="pgInfo">Menampilkan 1 – 8 dari 1.248 data</span>
+      <span class="pginfo" id="pgInfo">Menampilkan 0 data</span>
       <div class="pgright">
         <div class="pps">
           <span>Tampilkan</span>
@@ -168,6 +168,7 @@
 @endsection
 
 @push('scripts')
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
 <script>
 /* ═══════════════════════════════════════════════════════════════
    DATA
@@ -175,7 +176,7 @@
 const reviews = @json($reviewsData);
 
 /* ─── STATE ─── */
-let activeTab='semua', searchQ='', filterRating='', filterStatus='', filterMitra='';
+let activeTab='semua', searchQ='', filterRating='', filterStatus='';
 let currentPage=1, pageSize=8;
 let selectedId=null;
 let selectedIdRaw=null;

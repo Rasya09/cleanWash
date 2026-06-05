@@ -24,14 +24,15 @@ return new class extends Migration
             $table->string('phone');
             $table->text('description')->nullable();
             // STEP 2
-            $table->text('address');
-            $table->string('village');
-            $table->string('district');
-            $table->string('city');
-            $table->string('province');
-            $table->string('postal_code');
+            $table->string('province')->nullable();
+            $table->string('village')->nullable();
+            $table->string('district')->nullable();
+            $table->string('city')->nullable();
+            $table->string('postal_code')->nullable();
+            $table->text('address')->nullable();
             // STEP 3
             $table->string('logo')->nullable();
+            $table->json('store_photos')->nullable();
             // STEP 4
             $table->string('ktp')->nullable();
             $table->string('nib')->nullable();

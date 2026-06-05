@@ -1,7 +1,7 @@
 @extends('mitra.layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/css/mitra/penilaian_toko.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/mitra/penilaian_toko.css') }}?v={{ time() }}">
 @endsection
 
 @section('content')
@@ -250,7 +250,13 @@
                 <div class="review-img">👔</div>
               </div>
             </div>
-            <button class="review-more">⋮</button>
+            <div class="review-actions" style="display: flex; align-items: flex-start; gap: 8px; margin-left: auto;">
+              <button class="btn-balas" onclick="openReplyModal('Andi Setiawan')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                Balas
+              </button>
+              <button class="review-more" style="margin-left: 0;">⋮</button>
+            </div>
           </div>
 
           <!-- Review 2 -->
@@ -276,7 +282,13 @@
               </div>
               <div class="review-text">Hasil cucian bagus, rapi dan wangi. Cuma sedikit lebih lama dari estimasi.</div>
             </div>
-            <button class="review-more">⋮</button>
+            <div class="review-actions" style="display: flex; align-items: flex-start; gap: 8px; margin-left: auto;">
+              <button class="btn-balas" onclick="openReplyModal('Dewi Nur')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                Balas
+              </button>
+              <button class="review-more" style="margin-left: 0;">⋮</button>
+            </div>
           </div>
 
           <!-- Review 3 -->
@@ -305,7 +317,13 @@
                 <div class="review-img">🧺</div>
               </div>
             </div>
-            <button class="review-more">⋮</button>
+            <div class="review-actions" style="display: flex; align-items: flex-start; gap: 8px; margin-left: auto;">
+              <button class="btn-balas" onclick="openReplyModal('Rizky Maulana')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                Balas
+              </button>
+              <button class="review-more" style="margin-left: 0;">⋮</button>
+            </div>
           </div>
 
           <!-- Review 4 -->
@@ -331,7 +349,13 @@
               </div>
               <div class="review-text">Setrikanya kurang rapi di bagian kerah baju.</div>
             </div>
-            <button class="review-more">⋮</button>
+            <div class="review-actions" style="display: flex; align-items: flex-start; gap: 8px; margin-left: auto;">
+              <button class="btn-balas" onclick="openReplyModal('Siti Fatimah')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                Balas
+              </button>
+              <button class="review-more" style="margin-left: 0;">⋮</button>
+            </div>
           </div>
 
         </div>
@@ -383,6 +407,24 @@
 
   </main>
 </div>
+
+<!-- Modal Balas Ulasan -->
+<div class="modal-overlay" id="replyModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title">Balas Ulasan</h3>
+      <button class="modal-close" onclick="closeReplyModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-subtitle">Membalas ulasan dari <strong id="replyCustomerName">Pelanggan</strong></p>
+      <textarea class="reply-textarea" id="replyText" placeholder="Tulis balasan Anda di sini... (Misal: Terima kasih atas ulasannya...)"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeReplyModal()">Batal</button>
+      <button class="btn-submit" onclick="submitReply()">Kirim Balasan</button>
+    </div>
+  </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -394,5 +436,31 @@
         btn.classList.add('active');
         });
     });
+
+    // Modal Balas Ulasan
+    const replyModal = document.getElementById('replyModal');
+    const replyCustomerName = document.getElementById('replyCustomerName');
+    const replyText = document.getElementById('replyText');
+
+    window.openReplyModal = function(customerName) {
+        replyCustomerName.textContent = customerName;
+        replyText.value = '';
+        replyModal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // prevent scroll
+    }
+
+    window.closeReplyModal = function() {
+        replyModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    window.submitReply = function() {
+        if(!replyText.value.trim()) {
+            alert('Balasan tidak boleh kosong!');
+            return;
+        }
+        alert('Balasan untuk ' + replyCustomerName.textContent + ' berhasil dikirim!');
+        closeReplyModal();
+    }
     </script>
 @endpush

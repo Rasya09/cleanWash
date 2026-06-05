@@ -4,6 +4,9 @@ footer.site-footer {
     background: var(--blue-primary);
     padding: 64px 40px 28px;
     color: #fff;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 .footer-top {
     display: grid;
@@ -22,6 +25,7 @@ footer.site-footer {
     background: rgba(255,255,255,0.15);
     display: flex; align-items: center; justify-content: center;
     font-size: 16px;
+    flex-shrink: 0;
 }
 .footer-brand-name {
     font-family: 'Bricolage Grotesque', sans-serif;
@@ -45,7 +49,7 @@ footer.site-footer {
     color: rgba(255,255,255,0.7);
     margin-bottom: 8px;
 }
-.footer-socials { display: flex; gap: 8px; margin-top: 4px; }
+.footer-socials { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
 .social-btn {
     width: 36px; height: 36px;
     border-radius: 9px;
@@ -65,8 +69,56 @@ footer.site-footer {
     padding-top: 28px;
     font-size: 13px; color: rgba(255,255,255,0.5);
 }
-.footer-links { display: flex; gap: 24px; }
+.footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+
+/* ===== FOOTER RESPONSIVE ===== */
+@media (max-width: 768px) {
+    footer.site-footer {
+        padding: 40px 24px 24px;
+    }
+    .footer-top {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+        padding-bottom: 32px;
+    }
+    .footer-brand {
+        grid-column: 1 / -1; /* brand span full width */
+    }
+    .footer-brand-desc {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    footer.site-footer {
+        padding: 32px 16px 20px;
+    }
+    .footer-top {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding-bottom: 24px;
+    }
+    .footer-brand {
+        grid-column: auto;
+    }
+    .footer-brand-desc {
+        font-size: 13px;
+    }
+    .footer-link-row {
+        font-size: 13px;
+    }
+    .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding-top: 20px;
+    }
+    .footer-links {
+        gap: 16px;
+    }
+}
 </style>
+
 <!-- ===== FOOTER ===== -->
 <footer class="site-footer">
   <div class="footer-top">

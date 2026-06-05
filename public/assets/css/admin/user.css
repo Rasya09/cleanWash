@@ -180,10 +180,20 @@ body{
 .status::before{
   content:"";width:6px;height:6px;border-radius:50%;
 }
-.status.active{background:#ecfdf3;color:#16a34a;}
-.status.active::before{background:#22c55e;}
-.status.blocked{background:#fef2f2;color:#ef4444;}
-.status.blocked::before{background:#ef4444;}
+.status.active{
+  background:#ecfdf3;
+  color:#16a34a;
+}
+.status.active::before{
+  background:#22c55e;
+}
+.status.blocked{
+  background:#fef2f2;
+  color:#ef4444;
+}
+.status.blocked::before{
+  background:#ef4444;
+}
 
 /* Tombol Aksi Baris */
 .row-actions{

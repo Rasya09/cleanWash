@@ -216,18 +216,3 @@ class VerifikasiMitraController extends Controller
         return $data;
     }
 }
-) {
-            unset($data['rejection_reason']);
-        }
-
-        if (Schema::hasColumn('mitra_laundries', 'verified_at')) {
-            $data['verified_at'] = now();
-        }
-
-        if (Schema::hasColumn('mitra_laundries', 'verified_by')) {
-            $data['verified_by'] = auth()->id();
-        }
-
-        return $data;
-    }
-}

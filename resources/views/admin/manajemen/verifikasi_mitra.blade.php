@@ -373,7 +373,7 @@
 <div class="reject-modal" id="rejectModal">
   <div class="reject-modal-box">
     <h3>Tolak Pendaftaran</h3>
-    <p>Berikan alasan penolakan untuk <strong>{{ $selected->store_name }}</strong> (opsional).</p>
+    <p>Berikan alasan penolakan untuk <strong>{{ $selected->store_name }}</b> (opsional).</p>
     <form method="POST" action="{{ route('admin.verifikasi.reject', $selected) }}" id="rejectForm">
       @csrf
       <input type="hidden" name="q" value="{{ $filters['q'] }}">

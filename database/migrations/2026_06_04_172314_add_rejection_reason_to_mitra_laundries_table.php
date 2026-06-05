@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mitra_business_photos', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('mitra_laundry_id')
-                ->constrained()
-                ->onDelete('cascade');
-            $table->string('photo');
-            $table->timestamps();
+        Schema::table('mitra_laundries', function ($table) {
+            $table->text('rejection_reason')
+                ->nullable()
+                ->after('status');
         });
     }
 
@@ -26,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mitra_business_photos');
+        Schema::table('mitra_laundries', function (Blueprint $table) {
+            //
+        });
     }
 };
