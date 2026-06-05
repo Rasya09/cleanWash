@@ -212,112 +212,48 @@
 'use strict';
 
 /* ─── DATA ─────────────────────────────────────────────── */
-const complaints = [
-  {
-    id:'CMP-2024-0508-0001',
-    pelapor:{nama:'Andi Pratama',inisial:'AP',warna:'#2563EB',hp:'0812-3456-7890',email:'andi.pratama@email.com',alamat:'Jl. Melati No. 12, Cipete Jakarta Selatan'},
-    tipe:{nama:'Pakaian Rusak',ico:'👕',cls:'red'},
-    mitra:{nama:'Laundry Bersih Sejahtera',inisial:'LB',cls:'blue'},
-    orderId:'#ORD-2024-0508-0001',prioritas:'high',prioritasLabel:'Tinggi',
-    status:'wait',statusLabel:'Menunggu',
-    tanggal:'8 Mei 2024',jam:'09:20',
-    orderTanggal:'7 Mei 2024, 14:10',orderSelesai:'8 Mei 2024, 09:20',
-    totalBayar:'Rp85.000',
-    deskripsi:'Pakaian saya (kemeja putih) rusak pada bagian lengan setelah dicuci. Mohon ganti rugi atau perbaikan.',
-    lampiran:3,photos:['🧥','👔','📸'],dibuat:'8 Mei 2024, 09:20'
-  },
-  {
-    id:'CMP-2024-0508-0002',
-    pelapor:{nama:'Siti Aisyah',inisial:'SA',warna:'#10B981',hp:'0821-9876-5432',email:'siti.aisyah@email.com',alamat:'Jl. Kenanga No. 5, Tebet Jakarta Selatan'},
-    tipe:{nama:'Terlambat Diambil',ico:'⏰',cls:'orange'},
-    mitra:{nama:'Quick Wash Laundry',inisial:'QW',cls:'teal'},
-    orderId:'#ORD-2024-0508-0002',prioritas:'med',prioritasLabel:'Sedang',
-    status:'proc',statusLabel:'Diproses',
-    tanggal:'8 Mei 2024',jam:'08:45',
-    orderTanggal:'6 Mei 2024, 10:00',orderSelesai:'8 Mei 2024, 08:00',
-    totalBayar:'Rp60.000',
-    deskripsi:'Pakaian sudah seharusnya selesai kemarin tapi baru bisa diambil hari ini. Mohon penjelasan.',
-    lampiran:1,photos:['📦'],dibuat:'8 Mei 2024, 08:45'
-  },
-  {
-    id:'CMP-2024-0507-0015',
-    pelapor:{nama:'Budi Santoso',inisial:'BS',warna:'#F59E0B',hp:'0813-2345-6789',email:'budi.santoso@email.com',alamat:'Jl. Anggrek No. 8, Kebayoran Jakarta Selatan'},
-    tipe:{nama:'Hasil Cucian Buruk',ico:'✅',cls:'blue'},
-    mitra:{nama:'Fresh & Clean Laundry',inisial:'FC',cls:'green'},
-    orderId:'#ORD-2024-0507-0015',prioritas:'high',prioritasLabel:'Tinggi',
-    status:'proc',statusLabel:'Diproses',
-    tanggal:'7 Mei 2024',jam:'15:35',
-    orderTanggal:'5 Mei 2024, 09:30',orderSelesai:'7 Mei 2024, 14:00',
-    totalBayar:'Rp120.000',
-    deskripsi:'Pakaian masih kotor setelah dicuci. Ada noda yang tidak hilang pada bagian kerah.',
-    lampiran:2,photos:['👗','🔍'],dibuat:'7 Mei 2024, 15:35'
-  },
-  {
-    id:'CMP-2024-0507-0014',
-    pelapor:{nama:'Dewi Lestari',inisial:'DL',warna:'#7C3AED',hp:'0822-1122-3344',email:'dewi.lestari@email.com',alamat:'Jl. Dahlia No. 3, Pancoran Jakarta Selatan'},
-    tipe:{nama:'Kehilangan Barang',ico:'🎒',cls:'orange'},
-    mitra:{nama:'LaundryKita',inisial:'LK',cls:'orange'},
-    orderId:'#ORD-2024-0507-0014',prioritas:'high',prioritasLabel:'Tinggi',
-    status:'wait',statusLabel:'Menunggu',
-    tanggal:'7 Mei 2024',jam:'14:25',
-    orderTanggal:'4 Mei 2024, 11:00',orderSelesai:'7 Mei 2024, 13:00',
-    totalBayar:'Rp95.000',
-    deskripsi:'Jaket kulit saya hilang setelah proses laundry. Nilainya cukup besar, mohon segera ditangani.',
-    lampiran:1,photos:['🧥'],dibuat:'7 Mei 2024, 14:25'
-  },
-  {
-    id:'CMP-2024-0507-0013',
-    pelapor:{nama:'Fahmi Hidayat',inisial:'FH',warna:'#EF4444',hp:'0838-7766-5544',email:'fahmi.hidayat@email.com',alamat:'Jl. Mawar No. 17, Mampang Jakarta Selatan'},
-    tipe:{nama:'Pelayanan Buruk',ico:'⭐',cls:'purple'},
-    mitra:{nama:'CleanPro Laundry',inisial:'CP',cls:'purple'},
-    orderId:'#ORD-2024-0507-0013',prioritas:'med',prioritasLabel:'Sedang',
-    status:'done',statusLabel:'Selesai',
-    tanggal:'7 Mei 2024',jam:'11:15',
-    orderTanggal:'3 Mei 2024, 08:00',orderSelesai:'7 Mei 2024, 10:00',
-    totalBayar:'Rp45.000',
-    deskripsi:'Staff tidak ramah dan tidak informatif terkait status cucian. Pengalaman yang sangat buruk.',
-    lampiran:0,photos:[],dibuat:'7 Mei 2024, 11:15'
-  },
-  {
-    id:'CMP-2024-0506-0010',
-    pelapor:{nama:'Rini Wulandari',inisial:'RW',warna:'#06B6D4',hp:'0815-5566-7788',email:'rini.wulandari@email.com',alamat:'Jl. Cempaka No. 22, Cilandak Jakarta Selatan'},
-    tipe:{nama:'Tagihan Salah',ico:'💰',cls:'green'},
-    mitra:{nama:'Bersih Kilat',inisial:'BK',cls:'cyan'},
-    orderId:'#ORD-2024-0506-0010',prioritas:'low',prioritasLabel:'Rendah',
-    status:'done',statusLabel:'Selesai',
-    tanggal:'6 Mei 2024',jam:'16:00',
-    orderTanggal:'2 Mei 2024, 13:00',orderSelesai:'6 Mei 2024, 15:00',
-    totalBayar:'Rp75.000',
-    deskripsi:'Tagihan yang diterima lebih besar dari yang seharusnya. Ada biaya tambahan yang tidak jelas.',
-    lampiran:2,photos:['📄','💳'],dibuat:'6 Mei 2024, 16:00'
-  },
-  {
-    id:'CMP-2024-0506-0009',
-    pelapor:{nama:'Ahmad Fauzi',inisial:'AF',warna:'#4F46E5',hp:'0819-2233-4455',email:'ahmad.fauzi@email.com',alamat:'Jl. Seruni No. 9, Jagakarsa Jakarta Selatan'},
-    tipe:{nama:'Pakaian Rusak',ico:'👕',cls:'red'},
-    mitra:{nama:'Laundry Express',inisial:'LE',cls:'indigo'},
-    orderId:'#ORD-2024-0506-0009',prioritas:'med',prioritasLabel:'Sedang',
-    status:'rej',statusLabel:'Ditolak',
-    tanggal:'6 Mei 2024',jam:'10:30',
-    orderTanggal:'1 Mei 2024, 09:00',orderSelesai:'6 Mei 2024, 09:00',
-    totalBayar:'Rp55.000',
-    deskripsi:'Warna celana berubah setelah dicuci. Awalnya biru tua, sekarang menjadi pucat.',
-    lampiran:1,photos:['👖'],dibuat:'6 Mei 2024, 10:30'
-  },
-  {
-    id:'CMP-2024-0505-0005',
-    pelapor:{nama:'Lina Marlina',inisial:'LM',warna:'#0D9488',hp:'0823-6677-8899',email:'lina.marlina@email.com',alamat:'Jl. Tulip No. 14, Pesanggrahan Jakarta Selatan'},
-    tipe:{nama:'Kehilangan Barang',ico:'🎒',cls:'orange'},
-    mitra:{nama:'Sparkle Laundry',inisial:'SL',cls:'red'},
-    orderId:'#ORD-2024-0505-0005',prioritas:'high',prioritasLabel:'Tinggi',
-    status:'proc',statusLabel:'Diproses',
-    tanggal:'5 Mei 2024',jam:'09:10',
-    orderTanggal:'29 Apr 2024, 10:00',orderSelesai:'5 Mei 2024, 08:00',
-    totalBayar:'Rp110.000',
-    deskripsi:'Sepasang kaus kaki dan satu baju anak tidak ada dalam hasil laundry yang dikembalikan.',
-    lampiran:0,photos:[],dibuat:'5 Mei 2024, 09:10'
-  }
-];
+const complaints = @json($komplains->map(function($c) {
+    return [
+        'id' => 'CMP-' . str_pad($c->id, 4, '0', STR_PAD_LEFT),
+        'pelapor' => [
+            'nama' => $c->reporter->name ?? 'Mitra',
+            'inisial' => strtoupper(substr($c->reporter->name ?? 'M', 0, 2)),
+            'warna' => '#2563EB',
+            'hp' => $c->reporter->phone ?? '-',
+            'email' => $c->reporter->email ?? '-',
+            'alamat' => $c->reporter->mitraLaundry->address ?? '-',
+        ],
+        'tipe' => [
+            'nama' => 'Laporan Ulasan',
+            'ico' => '🚩',
+            'cls' => 'red'
+        ],
+        'mitra' => [
+            'nama' => $c->reporter->mitraLaundry->store_name ?? 'Mitra Toko',
+            'inisial' => strtoupper(substr($c->reporter->mitraLaundry->store_name ?? 'MT', 0, 2)),
+            'cls' => 'blue'
+        ],
+        'orderId' => $c->review->order->order_code ?? '-',
+        'prioritas' => 'high',
+        'prioritasLabel' => 'Tinggi',
+        'status' => $c->status, // pending, selesai, ditolak
+        'statusLabel' => match($c->status) {
+            'pending' => 'Menunggu',
+            'selesai' => 'Selesai',
+            'ditolak' => 'Ditolak',
+            default => 'Menunggu'
+        },
+        'tanggal' => $c->created_at->format('d M Y'),
+        'jam' => $c->created_at->format('H:i'),
+        'orderTanggal' => $c->review->order->created_at->format('d M Y, H:i') ?? '-',
+        'orderSelesai' => $c->review->order->updated_at->format('d M Y, H:i') ?? '-',
+        'totalBayar' => 'Rp ' . number_format($c->review->order->total_bayar ?? 0, 0, ',', '.'),
+        'deskripsi' => '<b>Alasan Pelaporan:</b><br>' . $c->alasan . '<br><br><b>Isi Ulasan:</b><br>' . ($c->review->komentar ?? 'Tidak ada komentar.'),
+        'lampiran' => 0,
+        'photos' => [],
+        'dibuat' => $c->created_at->format('d M Y, H:i')
+    ];
+}));
 
 /* ─── STATE ─────────────────────────────────────────── */
 let activeTab      = 'semua';
@@ -330,7 +266,12 @@ let filterKategori = '';
 let filterPrioritas= '';
 
 /* ─── HELPERS ────────────────────────────────────────── */
-const statusBadge = (s,l) => `<span class="badge ${s}">${l}</span>`;
+const statusBadge = (s,l) => {
+    let cls = 'wait';
+    if(s === 'selesai') cls = 'done';
+    if(s === 'ditolak') cls = 'rej';
+    return `<span class="badge ${cls}">${l}</span>`;
+};
 const prioBadge   = (p,l) => `<span class="prio ${p}">${l}</span>`;
 const avatarStyle = c     => `background:${c}`;
 

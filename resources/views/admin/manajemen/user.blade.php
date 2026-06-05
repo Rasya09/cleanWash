@@ -8,6 +8,13 @@
     <div class="app">
     <!-- BAGIAN KONTEN UTAMA (Kanan) -->
     <main class="main">
+      <!-- Header Halaman -->
+      <div class="page-head">
+        <div>
+          <h1>Manajemen User</h1>
+          <p>Kelola data customer terdaftar di platform.</p>
+        </div>
+      </div>
       <!-- Area Isi Halaman -->
       <section class="content">
         <!-- Barisan Kartu KPI (Key Performance Indicator) -->
@@ -49,6 +56,7 @@
             </div>
           </div>
         </div>
+
         <!-- Bagian Tabel Data Customer -->
         <div class="card table-card">
           <!-- Header Tabel (Judul, Tab, & Filter) -->
@@ -87,53 +95,36 @@
             <tbody>
               @forelse($customers as $customer)
               <tr>
+                  <td><input type="checkbox"></td>
                   <td>
-                      <input type="checkbox">
-                  </td>
-                  <td>
-                      <div class="customer">
-                          <img
-                              src="https://ui-avatars.com/api/?name={{ urlencode($customer->name) }}"
-                              alt=""
-                          >
-                          <span>
-                              {{ $customer->name }}
-                          </span>
-
+                      <div class="customer" onclick="openCustomerDetail('{{ $customer->id }}')" style="cursor:pointer">
+                          <img src="https://ui-avatars.com/api/?name={{ urlencode($customer->name) }}&background=random" alt="">
+                          <span>{{ $customer->name }}</span>
                       </div>
                   </td>
+                  <td>{{ $customer->phone ?? '-' }}</td>
+                  <td>{{ $customer->email }}</td>
+                  <td>0</td>
                   <td>
-                      {{ $customer->phone ?? '-' }}
-                  </td>
-                  <td>
-                      {{ $customer->email }}
-                  </td>
-                  <td>
-                      0
-                  </td>
-                  <td>
-                      {{ $customer->created_at->format('d M Y') }}
-                      <br>
-                      <span>
-                          {{ $customer->created_at->format('H:i') }} WIB
-                      </span>
+                      {{ $customer->created_at->translatedFormat('d M Y') }}<br>
+                      <span style="color:#94a3b8; font-size:11px">{{ $customer->created_at->format('H:i') }} WIB</span>
                   </td>
                   <td>
                       <span class="status {{ $customer->status }}">
-                          {{ $customer->status == 'active'
-                              ? 'Aktif'
-                              : 'Diblokir' }}
+                          {{ $customer->status == 'active' ? 'Aktif' : 'Diblokir' }}
                       </span>
                   </td>
                   <td>
-                      <button>
-                          <i class="fa-solid fa-ellipsis-vertical"></i>
-                      </button>
+                      <div class="row-actions">
+                        <button type="button" onclick="openCustomerDetail('{{ $customer->id }}')" title="Lihat Detail">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                      </div>
                   </td>
               </tr>
               @empty
               <tr>
-                  <td colspan="8" style="text-align:center">
+                  <td colspan="8" style="text-align:center; padding: 40px; color: #94a3b8;">
                       Belum ada customer terdaftar
                   </td>
               </tr>
@@ -145,28 +136,15 @@
           <div class="table-footer">
             <div class="footer-left">
                 Menampilkan
-                {{ $customers->firstItem() }}
+                {{ $customers->firstItem() ?? 0 }}
                 -
-                {{ $customers->lastItem() }}
+                {{ $customers->lastItem() ?? 0 }}
                 dari
                 {{ $customers->total() }}
                 data
             </div>
             <div class="footer-right">
-              <select>
-                <option>10 / halaman</option>
-              </select>
-              <div class="pager">
-                <button class="nav"><i class="fa-solid fa-chevron-left"></i></button>
-                <button class="page active">1</button>
-                <button class="page">2</button>
-                <button class="page">3</button>
-                <button class="page">4</button>
-                <button class="page">5</button>
-                <span>...</span>
-                <button class="page">1246</button>
-                <button class="nav"><i class="fa-solid fa-chevron-right"></i></button>
-              </div>
+              {{ $customers->links() }}
             </div>
           </div>
         </div>
@@ -304,6 +282,7 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+  const customers = @json($customers->items());
 
   // ── 1. TABLE HORIZONTAL SCROLL WRAPPER ───────────────────
   const table = document.querySelector('.data-table');
@@ -314,30 +293,27 @@ document.addEventListener('DOMContentLoaded', function () {
     wrap.appendChild(table);
   }
 
-  // ── 3. MODAL DETAIL CUSTOMER ──────────────────────────────
+  // ── 2. MODAL DETAIL CUSTOMER ──────────────────────────────
   const modal     = document.getElementById('customerModal');
   const modalClose = document.getElementById('modalClose');
 
-  // Data per baris tabel (index sesuai urutan <tr>)
-  const customerData = [
-    { name:'Andi Pratama',   id:'#CUST-0001', phone:'0812-3456-7890', email:'andi.pratama@email.com',   join:'6 Mei 2024',  status:'active', orders:18, avatar:'https://i.pravatar.cc/100?img=32', rating:'4.7' },
-    { name:'Budi Santoso',   id:'#CUST-0002', phone:'0813-2345-6789', email:'budi.santoso@email.com',   join:'5 Mei 2024',  status:'active', orders:25, avatar:'https://i.pravatar.cc/100?img=13', rating:'4.9' },
-    { name:'Citra Lestari',  id:'#CUST-0003', phone:'0821-9876-5432', email:'citra.lestari@email.com',  join:'4 Mei 2024',  status:'active', orders:3,  avatar:'https://i.pravatar.cc/100?img=47', rating:'4.5' },
-    { name:'Dewi Anggraini', id:'#CUST-0004', phone:'0822-1122-3344', email:'dewi.anggraini@email.com', join:'2 Mei 2024',  status:'active', orders:12, avatar:'https://i.pravatar.cc/100?img=15', rating:'4.8' },
-    { name:'Fahmi Hidayat',  id:'#CUST-0005', phone:'0838-7766-5544', email:'fahmi.hidayat@email.com',  join:'1 Mei 2024',  status:'blocked',orders:7,  avatar:'https://i.pravatar.cc/100?img=5',  rating:'3.2' },
-    { name:'Gita Putri',     id:'#CUST-0006', phone:'0856-9988-7766', email:'gita.putri@email.com',     join:'30 Apr 2024', status:'active', orders:9,  avatar:'https://i.pravatar.cc/100?img=44', rating:'4.6' },
-    { name:'Hendra Wijaya',  id:'#CUST-0007', phone:'0811-2233-4455', email:'hendra.wijaya@email.com',  join:'29 Apr 2024', status:'active', orders:15, avatar:'https://i.pravatar.cc/100?img=21', rating:'4.7' },
-    { name:'Ika Nurhaliza',  id:'#CUST-0008', phone:'0823-6677-8899', email:'ika.nurhaliza@email.com',  join:'28 Apr 2024', status:'blocked',orders:6,  avatar:'https://i.pravatar.cc/100?img=41', rating:'2.8' },
-  ];
+  window.openCustomerDetail = function(id) {
+    const data = customers.find(c => c.id == id);
+    if (!data) return;
 
-  function openModal(data) {
     // Isi profil
-    document.getElementById('modalAvatar').src   = data.avatar;
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=random`;
+    document.getElementById('modalAvatar').src   = avatarUrl;
     document.getElementById('modalName').textContent = data.name;
-    document.getElementById('modalId').textContent   = data.id;
-    document.getElementById('modalJoin').textContent = data.join;
-    document.getElementById('modalRating').textContent = data.rating + ' (32 ulasan)';
-    document.getElementById('modalPerfRating').textContent = data.rating;
+    document.getElementById('modalId').textContent   = '#CUST-' + String(data.id).padStart(4, '0');
+    
+    // Format tanggal join
+    const joinDate = new Date(data.created_at);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('modalJoin').textContent = joinDate.toLocaleDateString('id-ID', options);
+    
+    document.getElementById('modalRating').textContent = '4.8 (32 ulasan)'; // Placeholder
+    document.getElementById('modalPerfRating').textContent = '4.8';
 
     // Badge status
     const badge = document.getElementById('modalBadge');
@@ -350,10 +326,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Info akun
-    document.getElementById('modalPhone').textContent  = data.phone;
+    document.getElementById('modalPhone').textContent  = data.phone || '-';
     document.getElementById('modalEmail').textContent  = data.email;
-    document.getElementById('modalOrders').textContent = data.orders + ' pesanan';
-    document.getElementById('modalOrdersPerf').textContent = data.orders;
+    document.getElementById('modalOrders').textContent = '0 pesanan';
+    document.getElementById('modalOrdersPerf').textContent = '0';
 
     const statusEl = document.getElementById('modalStatus');
     if (data.status === 'blocked') {
@@ -369,9 +345,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
-  }
+  };
 
-  function closeModal() {
+  window.closeModal = function() {
     modal.classList.remove('open');
     document.body.style.overflow = '';
   }
@@ -390,23 +366,6 @@ document.addEventListener('DOMContentLoaded', function () {
   modalClose.addEventListener('click', closeModal);
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-  // Pasang event ke setiap baris tabel — klik eye button atau nama customer
-  document.querySelectorAll('.data-table tbody tr').forEach((row, i) => {
-    const data = customerData[i];
-    if (!data) return;
-
-    // Klik tombol eye
-    const eyeBtn = row.querySelector('.row-actions button:first-child');
-    if (eyeBtn) eyeBtn.addEventListener('click', () => openModal(data));
-
-    // Klik nama/avatar customer
-    const customerCell = row.querySelector('.customer');
-    if (customerCell) {
-      customerCell.style.cursor = 'pointer';
-      customerCell.addEventListener('click', () => openModal(data));
-    }
-  });
 
 });
 </script>

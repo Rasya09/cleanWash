@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\MitraLaundry;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Notifikasi;
 
 class MitraRegisterController extends Controller
 {
@@ -140,8 +141,7 @@ class MitraRegisterController extends Controller
         }
         $mitra->update([
             'logo' => $logoPath,
-            'store_photos' =>
-                json_encode($photos)
+            'store_photos' => $photos
         ]);
         return redirect()->route('user.register.step4',$mitra->id);
     }
@@ -355,7 +355,7 @@ class MitraRegisterController extends Controller
                 );
             }
 
-            $mitra->store_photos = json_encode($photos);
+            $mitra->store_photos = $photos;
         }
 
         $mitra->save();

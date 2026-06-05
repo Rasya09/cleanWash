@@ -5,37 +5,9 @@
 @endsection
 
 @section('content')
-<main class="main-wrapper">
-  <!-- TOPBAR -->
-  <header class="topbar">
-    <button class="topbar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
-    <div class="topbar-title header-title-block">
-      <h2>Notifikasi</h2>
-      <p>Kelola dan pantau semua notifikasi yang dikirimkan melalui platform.</p>
-    </div>
-    <div class="topbar-right">
-      <div class="search-box">
-        <i class="fa-solid fa-search"></i>
-        <input type="text" placeholder="Cari notifikasi..." />
-      </div>
-      <button class="topbar-icon-btn notif-btn">
-        <i class="fa-solid fa-bell"></i>
-        <span class="dot-badge">1</span>
-      </button>
-      <div class="topbar-user-wrap">
-        <div class="topbar-user" id="notifProfileToggle">
-          <div class="user-avatar">SA</div>
-          <div class="user-info">
-            <span class="user-name">Super Admin</span>
-            <span class="user-role">Administrator</span>
-          </div>
-          <i class="fa-solid fa-chevron-down notif-profile-chevron"></i>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <div class="content-area">
+<div class="app">
+  <main class="main">
+    <div class="content-area">
 
     <!-- STATS CARDS -->
     <div class="stats-grid">
@@ -140,6 +112,7 @@
     </div>
   </div>
 </main>
+</div>
 
 <!-- Modal Overlay for Mobile Detail -->
 <div class="detail-popup-overlay" id="detailPopupOverlay">

@@ -32,18 +32,18 @@ body {
 }
 
 /* ═══ MAIN LAYOUT ═══ */
-.main-wrapper {
-  margin-left: var(--sidebar-w);
-  padding-top: var(--topbar-h);
-  min-height: 100vh;
+.app {
   display: flex;
-  flex-direction: column;
+  min-height: 100vh;
 }
 
-.topbar {
-  position: fixed; top: 0; left: var(--sidebar-w); right: 0;
-  height: var(--topbar-h); background: #fff; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; padding: 0 24px; z-index: 100;
+.main {
+  margin-left: var(--sidebar-w);
+  margin-top: var(--topbar-h);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--topbar-h));
 }
 
 .content-area {
@@ -166,3 +166,21 @@ body {
     background: #fff; width: 90%; max-width: 500px; border-radius: 12px;
     display: flex; flex-direction: column; max-height: 80vh; overflow: hidden;
 }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0;
+    margin-top: 54px; /* match header height in dashboard.css */
+    padding: 10px;
+  }
+  .content-area {
+    padding: 10px;
+    height: auto;
+    overflow: visible;
+  }
+  .stats-grid {
+    flex-direction: column;
+  }
+}
+

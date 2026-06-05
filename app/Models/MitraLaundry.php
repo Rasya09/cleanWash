@@ -40,6 +40,7 @@ class MitraLaundry extends Model
 
     protected $casts = [
         'verified_at' => 'datetime',
+        'store_photos' => 'array',
     ];
 
     public function user(): BelongsTo
@@ -103,5 +104,20 @@ class MitraLaundry extends Model
             'draft' => 'Draft',
             default => ucfirst($this->status),
         };
+    }
+
+    public function layanans(): HasMany
+    {
+        return $this->hasMany(Layanan::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class, 'mitra_id');
+    }
+
+    public function averageRating(): float
+    {
+        return (float) $this->reviews()->where('status', 'ok')->avg('rating') ?: 0;
     }
 }

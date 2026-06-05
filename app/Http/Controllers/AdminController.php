@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\MitraLaundry;
-use App\Models\user;
+use App\Models\User;
 use Carbon\Carbon;
 
 
@@ -140,6 +140,12 @@ class AdminController extends Controller
                 'rejected'
             )
         );
+    }
+
+    public function komplainManagement()
+    {
+        $komplains = \App\Models\Komplain::with(['reporter', 'reportedUser', 'review'])->orderByDesc('created_at')->get();
+        return view('admin.moderasi.komplain', compact('komplains'));
     }
 
     public function approve($id)

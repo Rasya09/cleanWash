@@ -26,7 +26,7 @@ return [
         'subtitle' => 'Tangani laporan dan keluhan dari pelanggan.',
     ],
     'admin.notifikasi' => [
-        'title' => 'Pengaturan Notifikasi',
-        'subtitle' => 'Kelola template dan pengiriman notifikasi sistem.',
+        'title' => 'Notifikasi',
+        'subtitle' => 'Kelola dan pantau semua notifikasi yang dikirimkan melalui platform.',
     ],
 ];

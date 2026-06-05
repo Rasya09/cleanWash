@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasColumn('mitra_laundries', 'rejection_reason')) {
-            Schema::table('mitra_laundries', function ($table) {
-                $table->text('rejection_reason')
-                    ->nullable()
-                    ->after('status');
+        if (!Schema::hasColumn('mitra_laundries', 'store_photos')) {
+            Schema::table('mitra_laundries', function (Blueprint $table) {
+                $table->json('store_photos')->nullable()->after('logo');
             });
         }
     }
@@ -26,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('mitra_laundries', function (Blueprint $table) {
-            //
+            $table->dropColumn('store_photos');
         });
     }
 };

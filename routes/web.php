@@ -325,6 +325,8 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
         [MitraController::class, 'update'])
         ->name('mitra.update.profil');
 
+    Route::post('/review/report', [App\Http\Controllers\Mitra\KomplainController::class, 'store'])->name('mitra.review.report');
+
 });
 
 
@@ -367,7 +369,5 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::delete('/notifikasi/{id}', [NotifikasiController::class, 'destroy'])
         ->name('admin.notifikasi.destroy');
 
-    Route::get('/komplain', function () {
-        return view('admin.moderasi.komplain');
-    })->name('admin.komplain');
+    Route::get('/komplain', [AdminController::class, 'komplainManagement'])->name('admin.komplain');
 });
