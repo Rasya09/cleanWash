@@ -133,6 +133,10 @@ Route::middleware('auth')->prefix('mitra')->group(function () {
             return "STEP 3 ID : " . $id;
         })->name('mitra.register.step3');
 
+        Route::get('/toko/buat', function () {
+            return view('toko.buat');
+        })->name('toko.buat');
+
     });
 
     Route::get('/dashboard', function () {
