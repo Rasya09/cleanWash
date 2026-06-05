@@ -287,89 +287,87 @@
 
 @push('scripts')
     <script>
-        /* ===== STATE ===== */
-        let isLoggedIn = false;
-
-        /* ===== HAMBURGER ===== */
-        const hamburger = document.getElementById('hamburger');
-        const mobileNav = document.getElementById('mobileNav');
-
-        hamburger.addEventListener('click', () => {
-            const isOpen = hamburger.classList.toggle('open');
-            if (isOpen) {
-            mobileNav.style.display = 'flex';
-            requestAnimationFrame(() => mobileNav.classList.add('open'));
-            } else {
-            mobileNav.classList.remove('open');
-            setTimeout(() => { mobileNav.style.display = 'none'; }, 250);
-            }
-        });
-
-        function closeMobileNav() {
-            hamburger.classList.remove('open');
-            mobileNav.classList.remove('open');
-            setTimeout(() => { mobileNav.style.display = 'none'; }, 250);
-        }
-
-        document.addEventListener('click', (e) => {
-            if (!mobileNav.contains(e.target) && !hamburger.contains(e.target)) {
-            if (mobileNav.classList.contains('open')) closeMobileNav();
-            }
-        });
-
-        /* ===== DESKTOP DROPDOWN ===== */
-        const desktopDropdown = document.getElementById('desktopDropdown');
-        function toggleDropdown() {
-            desktopDropdown.classList.toggle('open');
-        }
-        document.addEventListener('click', (e) => {
-            const navUser = document.getElementById('navUserDesktop');
-            if (navUser && !navUser.contains(e.target)) {
-            desktopDropdown.classList.remove('open');
-            }
-        });
-
-        /* ===== LOGIN / LOGOUT ===== */
-        function updateUI() {
-            const isMobile = window.innerWidth <= 1024;
-            const navActionsDesktop    = document.getElementById('navActionsDesktop');
-            const navUserDesktop       = document.getElementById('navUserDesktop');
-            const mobileNavActions     = document.getElementById('mobileNavActions');
-            const mobileUserProfile    = document.getElementById('mobileUserProfile');
-            const mobileUserLinks      = document.getElementById('mobileUserLinks');
-            const mobileProfileDivider = document.getElementById('mobileProfileDivider');
-
-            if (isLoggedIn) {
-            navActionsDesktop.style.display = 'none';
-            navUserDesktop.style.display = isMobile ? 'none' : 'flex';
-            mobileNavActions.classList.add('hidden');
-            mobileUserProfile.classList.add('visible');
-            mobileUserLinks.style.display = 'flex';
-            mobileProfileDivider.style.display = 'block';
-            } else {
-            navActionsDesktop.style.display = isMobile ? 'none' : 'flex';
-            navUserDesktop.style.display = 'none';
-            mobileNavActions.classList.remove('hidden');
-            mobileUserProfile.classList.remove('visible');
-            mobileUserLinks.style.display = 'none';
-            mobileProfileDivider.style.display = 'none';
-            }
-        }
-
-        function simulateLogin() { isLoggedIn = true; updateUI(); }
-        function simulateLogout() {
-            isLoggedIn = false;
-            desktopDropdown.classList.remove('open');
-            updateUI();
-        }
-        window.addEventListener('resize', () => { if (isLoggedIn) updateUI(); });
 
         /* ===== FILTER TOGGLE (mobile) ===== */
         const filterToggle = document.getElementById('filterToggle');
         const sidebar = document.getElementById('sidebar');
-        filterToggle.addEventListener('click', () => {
-            const open = sidebar.classList.toggle('open');
-            filterToggle.innerHTML = open ? '✕ Sembunyikan Filter' : '🔧 Tampilkan Filter Pencarian';
-        });
+        if (filterToggle && sidebar) {
+            filterToggle.addEventListener('click', () => {
+                const open = sidebar.classList.toggle('open');
+                filterToggle.innerHTML = open ? '✕ Sembunyikan Filter' : '🔧 Tampilkan Filter Pencarian';
+            });
+        }
+
+        // Interaksi filter layanan
+        const filterChips = document.querySelectorAll('.filter-chip');
+        if (filterChips.length > 0) {
+            const btnSemuaLayanan = filterChips[0];
+            const otherChips = Array.from(filterChips).slice(1);
+
+            btnSemuaLayanan.addEventListener('click', () => {
+                btnSemuaLayanan.classList.add('active');
+                otherChips.forEach(chip => chip.classList.remove('active'));
+            });
+
+            otherChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    chip.classList.toggle('active');
+                    const anyActive = otherChips.some(c => c.classList.contains('active'));
+                    if (anyActive) {
+                        btnSemuaLayanan.classList.remove('active');
+                    } else {
+                        btnSemuaLayanan.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        // Interaksi filter status
+        const btnStatuses = document.querySelectorAll('.btn-status');
+        if (btnStatuses.length > 0) {
+            btnStatuses.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    btnStatuses.forEach(b => {
+                        b.classList.remove('primary');
+                        b.classList.add('outline');
+                    });
+                    btn.classList.remove('outline');
+                    btn.classList.add('primary');
+                });
+            });
+        }
+
+        // Tombol reset filter
+        const btnReset = document.querySelector('.btn-reset');
+        const priceSlider = document.querySelector('.price-slider');
+        const filterSelect = document.querySelector('.filter-select');
+
+        if (btnReset) {
+            btnReset.addEventListener('click', () => {
+                if (filterChips.length > 0) {
+                    filterChips[0].classList.add('active');
+                    for (let i = 1; i < filterChips.length; i++) {
+                        filterChips[i].classList.remove('active');
+                    }
+                }
+                
+                if (btnStatuses.length > 0) {
+                    btnStatuses[0].classList.add('primary');
+                    btnStatuses[0].classList.remove('outline');
+                    if (btnStatuses[1]) {
+                        btnStatuses[1].classList.remove('primary');
+                        btnStatuses[1].classList.add('outline');
+                    }
+                }
+
+                if (priceSlider) {
+                    priceSlider.value = priceSlider.max;
+                }
+
+                if (filterSelect) {
+                    filterSelect.selectedIndex = 0;
+                }
+            });
+        }
     </script>
 @endpush

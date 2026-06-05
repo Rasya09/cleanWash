@@ -172,7 +172,7 @@
             <h2>Lokasi Toko</h2>
             <p>Masukkan alamat lengkap toko laundry Anda.</p>
         </div>
-        <form action="{{ route('user.register.step2.store', $mitra->id) }}"
+        <form action="{{ route('user.register.reapply.step2.update', $mitra->id) }}"
               method="POST">
             @csrf
             <div class="card-body">
@@ -183,7 +183,7 @@
                         <select id="province"
                                 name="province"
                                 required>
-                            <option value="">Pilih Provinsi</option>
+                            <option value="{{ old('province', $mitra->province) }}">Pilih Provinsi</option>
                         </select>
                     </div>
                     <!-- KOTA -->
@@ -193,7 +193,7 @@
                                 name="city"
                                 disabled
                                 required>
-                            <option value="">Pilih Kota</option>
+                            <option value="{{ old('city', $mitra->city) }}">Pilih Kota</option>
                         </select>
                     </div>
                     <!-- KECAMATAN -->
@@ -203,7 +203,7 @@
                                 name="district"
                                 disabled
                                 required>
-                            <option value="">Pilih Kecamatan</option>
+                            <option value="{{ old('district', $mitra->district) }}">Pilih Kecamatan</option>
                         </select>
                     </div>
                     <!-- KELURAHAN -->
@@ -213,19 +213,20 @@
                                 name="village"
                                 disabled
                                 required>
-                            <option value="">Pilih Kelurahan</option>
+                            <option value="{{ old('village', $mitra->village) }}">Pilih Kelurahan</option>
                         </select>
                     </div>
                     <!-- KODE POS -->
                     <div class="form-group">
                         <label>Kode Pos *</label>
                         <input type="text"
-                            name="postal_code">
+                            name="postal_code"
+                            value="{{ old('postal_code', $mitra->postal_code) }}">
                     </div>
                     <!-- ALAMAT -->
                     <div class="form-group full">
                         <label>Alamat Lengkap *</label>
-                        <textarea name="address"></textarea>
+                        <textarea name="address" required>{{ old('address', $mitra->address) }}</textarea>
                     </div>
                 </div>
             </div>
@@ -241,16 +242,21 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 
     const province = document.getElementById('province');
     const city = document.getElementById('city');
     const district = document.getElementById('district');
     const village = document.getElementById('village');
 
-    // =====================================
+    const selectedProvince = @json($mitra->province);
+    const selectedCity = @json($mitra->city);
+    const selectedDistrict = @json($mitra->district);
+    const selectedVillage = @json($mitra->village);
+
+    // ===============================
     // HELPER
-    // =====================================
+    // ===============================
 
     function normalize(text)
     {
@@ -263,14 +269,29 @@ document.addEventListener('DOMContentLoaded', () => {
             .trim();
     }
 
-    function wait(ms)
+    function selectOption(select, target)
     {
-        return new Promise(resolve => setTimeout(resolve, ms));
+        const targetNormalized = normalize(target);
+
+        for(let option of select.options)
+        {
+            if(
+                normalize(option.value) === targetNormalized
+                ||
+                normalize(option.text) === targetNormalized
+            )
+            {
+                select.value = option.value;
+                return option.dataset.id;
+            }
+        }
+
+        return null;
     }
 
-    // =====================================
+    // ===============================
     // LOAD PROVINCES
-    // =====================================
+    // ===============================
 
     async function loadProvinces()
     {
@@ -279,6 +300,9 @@ document.addEventListener('DOMContentLoaded', () => {
         );
 
         const provinces = await response.json();
+
+        province.innerHTML =
+            '<option value="">Pilih Provinsi</option>';
 
         provinces.forEach(item => {
 
@@ -290,38 +314,26 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
         });
+
+        return provinces;
     }
 
-    loadProvinces();
+    // ===============================
+    // LOAD CITIES
+    // ===============================
 
-    // =====================================
-    // LOAD CITY
-    // =====================================
-
-    province.addEventListener('change', async function(){
-
+    async function loadCities(provinceId)
+    {
         city.disabled = false;
-
-        city.innerHTML =
-            `<option value="">Pilih Kota</option>`;
-
-        district.innerHTML =
-            `<option value="">Pilih Kecamatan</option>`;
-
-        village.innerHTML =
-            `<option value="">Pilih Kelurahan</option>`;
-
-        district.disabled = true;
-        village.disabled = true;
-
-        const provinceId =
-            this.options[this.selectedIndex].dataset.id;
 
         const response = await fetch(
             `https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${provinceId}.json`
         );
 
         const cities = await response.json();
+
+        city.innerHTML =
+            '<option value="">Pilih Kota</option>';
 
         cities.forEach(item => {
 
@@ -334,32 +346,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         });
 
-    });
+        return cities;
+    }
 
-    // =====================================
-    // LOAD DISTRICT
-    // =====================================
+    // ===============================
+    // LOAD DISTRICTS
+    // ===============================
 
-    city.addEventListener('change', async function(){
-
+    async function loadDistricts(cityId)
+    {
         district.disabled = false;
-
-        district.innerHTML =
-            `<option value="">Pilih Kecamatan</option>`;
-
-        village.innerHTML =
-            `<option value="">Pilih Kelurahan</option>`;
-
-        village.disabled = true;
-
-        const cityId =
-            this.options[this.selectedIndex].dataset.id;
 
         const response = await fetch(
             `https://www.emsifa.com/api-wilayah-indonesia/api/districts/${cityId}.json`
         );
 
         const districts = await response.json();
+
+        district.innerHTML =
+            '<option value="">Pilih Kecamatan</option>';
 
         districts.forEach(item => {
 
@@ -372,27 +377,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         });
 
-    });
+        return districts;
+    }
 
-    // =====================================
-    // LOAD VILLAGE
-    // =====================================
+    // ===============================
+    // LOAD VILLAGES
+    // ===============================
 
-    district.addEventListener('change', async function(){
-
+    async function loadVillages(districtId)
+    {
         village.disabled = false;
-
-        village.innerHTML =
-            `<option value="">Pilih Kelurahan</option>`;
-
-        const districtId =
-            this.options[this.selectedIndex].dataset.id;
 
         const response = await fetch(
             `https://www.emsifa.com/api-wilayah-indonesia/api/villages/${districtId}.json`
         );
 
         const villages = await response.json();
+
+        village.innerHTML =
+            '<option value="">Pilih Kelurahan</option>';
 
         villages.forEach(item => {
 
@@ -404,166 +407,97 @@ document.addEventListener('DOMContentLoaded', () => {
 
         });
 
+        return villages;
+    }
+
+    // ===============================
+    // MANUAL CHANGE
+    // ===============================
+
+    province.addEventListener('change', async function(){
+
+        const provinceId =
+            this.options[this.selectedIndex].dataset.id;
+
+        if(!provinceId) return;
+
+        await loadCities(provinceId);
+
+        district.innerHTML =
+            '<option>Pilih Kecamatan</option>';
+
+        village.innerHTML =
+            '<option>Pilih Kelurahan</option>';
+
+        district.disabled = true;
+        village.disabled = true;
     });
 
-    // =====================================
-    // AUTO SELECT OPTION
-    // =====================================
+    city.addEventListener('change', async function(){
 
-    function selectOption(selectElement, target)
+        const cityId =
+            this.options[this.selectedIndex].dataset.id;
+
+        if(!cityId) return;
+
+        await loadDistricts(cityId);
+
+        village.innerHTML =
+            '<option>Pilih Kelurahan</option>';
+
+        village.disabled = true;
+    });
+
+    district.addEventListener('change', async function(){
+
+        const districtId =
+            this.options[this.selectedIndex].dataset.id;
+
+        if(!districtId) return;
+
+        await loadVillages(districtId);
+    });
+
+    // ===============================
+    // AUTO FILL DATA LAMA
+    // ===============================
+
+    await loadProvinces();
+
+    if(selectedProvince)
     {
-        const targetNormalized = normalize(target);
+        const provinceId =
+            selectOption(province, selectedProvince);
 
-        for(let option of selectElement.options)
+        if(provinceId)
         {
-            const optionNormalized =
-                normalize(option.value);
+            await loadCities(provinceId);
 
-            if(
-                optionNormalized.includes(targetNormalized)
-                ||
-                targetNormalized.includes(optionNormalized)
-            )
+            const cityId =
+                selectOption(city, selectedCity);
+
+            if(cityId)
             {
-                selectElement.value = option.value;
-                return true;
-            }
-        }
+                await loadDistricts(cityId);
 
-        return false;
-    }
-
-    // =====================================
-    // GPS LOCATION
-    // =====================================
-
-    async function getLocation()
-    {
-        if (!navigator.geolocation)
-        {
-            alert('Browser tidak support GPS');
-            return;
-        }
-
-        navigator.geolocation.getCurrentPosition(
-
-            async function(position)
-            {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-
-                try {
-
-                    const response = await fetch(
-                        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
+                const districtId =
+                    selectOption(
+                        district,
+                        selectedDistrict
                     );
 
-                    const data = await response.json();
-
-                    console.log(data);
-
-                    // =====================================
-                    // GET DATA
-                    // =====================================
-
-                    const provinceName =
-                        data.address.state || '';
-
-                    const cityName =
-                        data.address.city ||
-                        data.address.county ||
-                        data.address.city_district ||
-                        '';
-
-                    const districtName =
-                        data.address.suburb ||
-                        data.address.city_district ||
-                        data.address.municipality ||
-                        '';
-
-                    const villageName =
-                        data.address.village ||
-                        data.address.hamlet ||
-                        '';
-
-                    // =====================================
-                    // ADDRESS
-                    // =====================================
-
-                    document.querySelector('[name="address"]').value =
-                        data.display_name || '';
-
-                    document.querySelector('[name="postal_code"]').value =
-                        data.address.postcode || '';
-
-                    // =====================================
-                    // PROVINCE
-                    // =====================================
-
-                    const provinceFound =
-                        selectOption(province, provinceName);
-
-                    if(provinceFound)
-                    {
-                        province.dispatchEvent(
-                            new Event('change')
-                        );
-
-                        await wait(1000);
-                    }
-
-                    // =====================================
-                    // CITY
-                    // =====================================
-
-                    const cityFound =
-                        selectOption(city, cityName);
-
-                    if(cityFound)
-                    {
-                        city.dispatchEvent(
-                            new Event('change')
-                        );
-
-                        await wait(1000);
-                    }
-
-                    // =====================================
-                    // DISTRICT
-                    // =====================================
-
-                    const districtFound =
-                        selectOption(district, districtName);
-
-                    if(districtFound)
-                    {
-                        district.dispatchEvent(
-                            new Event('change')
-                        );
-
-                        await wait(1000);
-                    }
-
-                    // =====================================
-                    // VILLAGE
-                    // =====================================
-
-                    selectOption(village, villageName);
-
-                    alert('Lokasi berhasil diisi otomatis');
-
-                }
-                catch(error)
+                if(districtId)
                 {
-                    console.log(error);
-                    alert('Gagal mengambil lokasi');
+                    await loadVillages(districtId);
+
+                    selectOption(
+                        village,
+                        selectedVillage
+                    );
                 }
             }
-
-        );
+        }
     }
-
-    window.getLocation = getLocation;
 
 });
 </script>

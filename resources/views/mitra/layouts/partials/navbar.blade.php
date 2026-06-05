@@ -295,69 +295,45 @@
 
   <!-- RIGHT -->
   <div class="header-right">
-
-    <!-- NOTIFICATION -->
-    <div class="notif-btn">
-      🔔
-      <div class="notif-badge">3</div>
-    </div>
-
     <!-- STORE DROPDOWN -->
     <div class="store-dropdown">
-
       <div class="store-info" id="dropdownToggle">
-
         <div class="store-avatar">
           🏪
         </div>
-
         <div>
           <div class="store-name">
             Laundry Bersih Jaya
           </div>
-
           <div class="store-role">
             Mitra
           </div>
         </div>
-
         <span class="chevron" id="chevron">
           ▾
         </span>
-
       </div>
-
       <!-- DROPDOWN MENU -->
       <div class="dropdown-menu" id="dropdownMenu">
-
         <div class="dropdown-header">
           <p>Mitra Laundry</p>
         </div>
-
-        <a href="#" class="dropdown-item">
+        <a href="{{ route('mitra.profil') }}" class="dropdown-item">
           Profil Toko
         </a>
-
-        <a href="#" class="dropdown-item">
-          Pengaturan Akun
+        <a href="{{ route('home') }}" class="dropdown-item">
+          Beranda
         </a>
-
         <div class="dropdown-divider"></div>
-
         <form action="{{ route('logout') }}" method="POST">
             @csrf
-
             <button type="submit" class="dropdown-item logout-item logout-btn">
                 Logout
             </button>
         </form>
-
       </div>
-
     </div>
-
   </div>
-
 </header>
 
 <script>

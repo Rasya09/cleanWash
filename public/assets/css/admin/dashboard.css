@@ -396,6 +396,7 @@ img { display: block; max-width: 100%; }
   display: grid;
   grid-template-columns: 1.4fr 1fr;
   gap: 16px;
+  margin-top: 20px;
   margin-bottom: 20px;
 }
 
@@ -968,4 +969,26 @@ img { display: block; max-width: 100%; }
   white-space: nowrap;
   opacity: 0;
   transition: opacity 0.1s;
+}
+
+.empty-state{
+    padding:40px 20px;
+    text-align:center;
+    color:#6b7280;
+}
+
+.empty-state i{
+    font-size:40px;
+    color:#22c55e;
+    margin-bottom:12px;
+}
+
+.empty-state h4{
+    margin:0 0 8px;
+    color:#111827;
+}
+
+.empty-state p{
+    margin:0;
+    font-size:14px;
 }

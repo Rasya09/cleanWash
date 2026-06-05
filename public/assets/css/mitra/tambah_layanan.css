@@ -79,18 +79,15 @@
 /* ---------- Main Layout ---------- */
 .tl-layout {
     display: grid;
-    grid-template-columns: 220px 1fr 280px;
     gap: 18px;
     align-items: flex-start;
 }
 
 @media (max-width: 1100px) {
-    .tl-layout { grid-template-columns: 200px 1fr; }
     .tl-sidebar { grid-column: 2; }
 }
 
 @media (max-width: 700px) {
-    .tl-layout { grid-template-columns: 1fr; }
     .tl-sidebar { grid-column: 1; }
 }
 
@@ -454,8 +451,8 @@
 .tl-actions {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding-top: 4px;
+    justify-content: flex-end;
+    padding-top: 20px;
 }
 
 .tl-btn-batal {
@@ -490,3 +487,206 @@
 }
 
 .tl-btn-next:hover { background: #1d4ed8; }
+
+.tl-btn-next:hover { background: #1d4ed8; }
+
+/* Inisialisasi style pendukung formulir tambah layanan */
+.tl-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .tl-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Penyelarasan input group dengan addon */
+.tl-input-group {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+}
+
+.tl-input-group .tl-input {
+    border-radius: 0 !important;
+    flex: 1;
+    margin: 0;
+}
+
+.tl-input-group > *:first-child {
+    border-top-left-radius: 9px !important;
+    border-bottom-left-radius: 9px !important;
+}
+
+.tl-input-group > *:last-child {
+    border-top-right-radius: 9px !important;
+    border-bottom-right-radius: 9px !important;
+}
+
+.tl-addon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 54px;
+    border: 1px solid #e5e7eb;
+    background: #f8fafc;
+    color: #6b7280;
+    font-weight: 700;
+    padding: 0 14px;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+
+.tl-addon + .tl-input,
+.tl-input + .tl-addon {
+    margin-left: -1px;
+}
+
+/* Modul input jam buka dan tutup */
+input[type="time"].tl-input {
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 13.5px;
+    height: 42px;
+    box-sizing: border-box;
+}
+
+/* Modul kustomisasi chip hari operasional */
+.tl-days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.tl-day-chip {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+}
+
+.tl-day-chip input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.tl-day-chip span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 52px;
+    height: 38px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #4b5563;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tl-day-chip:hover span {
+    border-color: #3b82f6;
+    color: #2563eb;
+    background: #f8fafc;
+}
+
+.tl-day-chip input:checked + span {
+    border-color: #2563eb;
+    background: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+/* Modul kustomisasi baris toggle/checklist premium */
+.tl-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #ffffff;
+    margin-bottom: 12px;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.tl-toggle-row:hover {
+    border-color: #3b82f6;
+    background: #f9fafb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.05);
+}
+
+.tl-toggle-row:has(input:checked) {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.tl-toggle-copy strong {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.tl-toggle-copy span {
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.tl-switch {
+    position: relative;
+    width: 48px;
+    height: 28px;
+    flex: 0 0 auto;
+}
+
+.tl-switch input {
+    position: absolute;
+    opacity: 0;
+}
+
+.tl-switch span {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: #d1d5db;
+    transition: background 0.2s;
+}
+
+.tl-switch span::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.15);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tl-switch input:checked + span {
+    background: #2563eb;
+}
+
+.tl-switch input:checked + span::after {
+    transform: translateX(20px);
+}
+
+/* Modul ringkasan akhir tinjau & publikasi */
+.tl-review-summary {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}

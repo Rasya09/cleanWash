@@ -8,7 +8,8 @@ use App\Http\Controllers\Mitra\MitraOrderController;
 use App\Models\UserAddress;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MitraRegisterController;
-
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Mitra\MitraController;
 
 // ======================================================
 // PUBLIC / GUEST
@@ -50,7 +51,95 @@ Route::post('/logout', [AuthController::class, 'logout'])
 // USER
 // ======================================================
 
-Route::middleware('auth')->prefix('user')->group(function () {
+Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
+
+    Route::middleware('auth') ->prefix('register') ->group(function () {
+
+        Route::get('/step-1',
+            [MitraRegisterController::class, 'step1']
+        )->name('user.register.step1');
+
+        Route::post('/step-1/store', 
+            [MitraRegisterController::class, 'storeStep1'])
+            ->name('user.register.step1.store');
+
+        Route::post('/step-1/update/{id}',
+            [MitraRegisterController::class, 'updateStep1'])
+        ->name('user.register.step1.update');
+
+        Route::get('/step-2/{id}',
+            [MitraRegisterController::class, 'step2'])
+            ->name('user.register.step2');
+
+        Route::post('/step-2/{id}/store',
+            [MitraRegisterController::class, 'storeStep2'])
+            ->name('user.register.step2.store');
+
+        Route::get('/step-3/{id}', function ($id) {
+            return "STEP 3 ID : " . $id;
+        })->name('user.register.step3');
+
+        Route::get('/step-3/{id}',
+            [MitraRegisterController::class, 'step3'])
+            ->name('user.register.step3');
+
+        Route::post('/step-3/store/{id}',
+            [MitraRegisterController::class, 'storeStep3'])
+            ->name('user.register.step3.store');
+
+        Route::get('/step-4/{id}',
+            [MitraRegisterController::class, 'step4'])
+            ->name('user.register.step4');
+
+        Route::post('/step-4/store/{id}',
+            [MitraRegisterController::class, 'storeStep4'])
+            ->name('user.register.step4.store');
+
+        Route::get('/success',
+            [MitraRegisterController::class, 'success'])
+            ->name('user.register.success');
+
+        Route::get('/hasil',
+            [MitraRegisterController::class, 'hasil']
+        )->name('user.register.hasil');
+
+        Route::get('/register/reapply/{id}',
+            [MitraRegisterController::class, 'reapply'])
+            ->name('user.register.reapply');
+
+        Route::post('/register/reapply/{id}',
+            [MitraRegisterController::class, 'updateStep1'])
+            ->name('user.register.reapply.update');
+
+        Route::get('/register/reapply/step2/{id}',
+            [MitraRegisterController::class, 'reapplyStep2'])
+            ->name('user.register.reapply.step2');
+
+        Route::get('/register/reapply/step2/{id}',
+            [MitraRegisterController::class, 'reapplyStep2'])
+            ->name('user.register.reapply.step2');
+
+        Route::post('/register/reapply/step2/{id}',
+            [MitraRegisterController::class, 'updateStep2'])
+            ->name('user.register.reapply.step2.update');
+
+        Route::get('/register/reapply/step3/{id}',
+            [MitraRegisterController::class, 'reapplyStep3'])
+            ->name('user.register.reapply.step3');
+
+        Route::post('/register/reapply/step3/{id}',
+            [MitraRegisterController::class, 'updateStep3'])
+            ->name('user.register.reapply.step3.update');
+
+        Route::get('/register/reapply/step4/{id}',
+            [MitraRegisterController::class, 'reapplyStep4'])
+            ->name('user.register.reapply.step4');
+
+        Route::post('/register/reapply/step4/{id}',
+            [MitraRegisterController::class, 'updateStep4'])
+            ->name('user.register.reapply.step4.update');
+
+    });
 
     Route::get('/home', function () {
         return view('user.home');
@@ -67,6 +156,14 @@ Route::middleware('auth')->prefix('user')->group(function () {
     Route::get('/detail-laundry', function () {
         return view('user.detail_laundry');
     })->name('user.detail-laundry');
+
+    Route::get('/pesanan', function () {
+        return view('user.pesanan');
+    })->name('user.pesanan');
+
+    // Route::get('/detail-pesanan', function () {
+    //     return view('user.detailPesanan');
+    // })->name('user.detail-pesanan');
 
     Route::get('/pembayaran', function () {
         return view('user.pembayaran');
@@ -109,7 +206,7 @@ Route::middleware('auth')->prefix('user')->group(function () {
 // MITRA
 // ======================================================
 
-Route::middleware('auth')->prefix('mitra')->group(function () {
+Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
 
     Route::prefix('register')->group(function () {
 
@@ -138,6 +235,7 @@ Route::middleware('auth')->prefix('mitra')->group(function () {
         })->name('toko.buat');
 
     });
+
 
     Route::get('/dashboard', function () {
         return view('mitra.home');
@@ -211,6 +309,19 @@ Route::middleware('auth')->prefix('mitra')->group(function () {
         return view('mitra.data.kesehatan_toko');
     })->name('mitra.kesehatan');
 
+    Route::get(
+        '/profil-toko',
+        [MitraController::class, 'profil']
+    )->name('mitra.profil');
+
+    Route::get('/profil-toko/edit',
+        [MitraController::class, 'edit'])
+        ->name('mitra.edit.profil');
+
+    Route::post('/profil-toko/update',
+        [MitraController::class, 'update'])
+        ->name('mitra.update.profil');
+
 });
 
 
@@ -218,24 +329,33 @@ Route::middleware('auth')->prefix('mitra')->group(function () {
 // ADMIN
 // ======================================================
 
-Route::middleware('auth')->prefix('admin')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('admin.home');
-    })->name('admin.dashboard');
+    Route::get('/dashboard',
+        [AdminController::class, 'dashboard']
+    )->name('admin.dashboard');
 
     // MANAJEMEN
-    Route::get('/user', function () {
-        return view('admin.manajemen.user');
-    })->name('admin.user');
+   Route::get(
+        '/user',
+        [AdminController::class, 'userManagement']
+    )->name('admin.user');
 
     Route::get('/mitra-laundry', function () {
         return view('admin.manajemen.mitra_laundry');
     })->name('admin.mitra');
 
-    Route::get('/verifikasi-mitra', function () {
-        return view('admin.manajemen.verifikasi_mitra');
-    })->name('admin.verifikasi');
+    Route::get('/verifikasi-mitra',[AdminController::class, 'index']
+    )->name('admin.verifikasi');
+
+    Route::put('/mitra/{id}/approve',
+        [AdminController::class, 'approve'])
+        ->name('admin.mitra.approve');
+
+    Route::put('/mitra/{id}/reject',
+        [AdminController::class, 'reject'])
+        ->name('admin.mitra.reject');
+
 
     // MODERASI
     Route::get('/review-rating', function () {
