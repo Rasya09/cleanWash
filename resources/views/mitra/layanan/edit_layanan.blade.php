@@ -167,59 +167,12 @@
                         </div>
                     </div>
 
-                    {{-- STEP 2 --}}
-                    <div class="tl-step-content" id="step2" style="display:none;">
 
-                        <div class="tl-review-summary">
-
-                            <h4>Ringkasan Layanan</h4>
-
-                            <ul>
-
-                                <li>
-                                    Nama :
-                                    <strong id="summaryName"></strong>
-                                </li>
-
-                                <li>
-                                    Hari :
-                                    <strong id="summaryDays"></strong>
-                                </li>
-
-                                <li>
-                                    Harga :
-                                    <strong id="summaryPrice"></strong>
-                                </li>
-
-                                <li>
-                                    Estimasi :
-                                    <strong id="summaryDuration"></strong>
-                                </li>
-
-                                <li>
-                                    Minimal Order :
-                                    <strong id="summaryMin"></strong>
-                                </li>
-
-                                <li>
-                                    Maksimal Order :
-                                    <strong id="summaryMax"></strong>
-                                </li>
-
-                            </ul>
-
-                        </div>
-
-                    </div>
                 </form>
 
                 <div class="tl-actions">
                     <button type="button" class="tl-btn-next" id="btnNext">
-                        Selanjutnya
-                    </button>
-                    <button type="submit" form="multiStepForm" class="tl-btn-next" id="btnSubmit"
-                        style="display:none;">
-                        Publikasikan Layanan
+                        Simpan Perubahan
                     </button>
                 </div>
             </div>
@@ -235,8 +188,7 @@
 const btnNext =
     document.getElementById('btnNext');
 
-const btnSubmit =
-    document.getElementById('btnSubmit');
+
 
 btnNext.addEventListener('click', () => {
 
@@ -269,44 +221,62 @@ btnNext.addEventListener('click', () => {
         return;
     }
 
-    document.getElementById('summaryName')
-        .textContent = nama;
+    const minOrderVal = document.querySelector('[name="minimal_order"]').value;
+    const maxOrderVal = document.querySelector('[name="maksimal_order"]').value;
 
-    document.getElementById('summaryPrice')
-        .textContent =
-            'Rp ' +
-            Number(harga).toLocaleString('id-ID');
+    if (minOrderVal !== '' && maxOrderVal !== '' && parseInt(minOrderVal) > parseInt(maxOrderVal)) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Kesalahan Batas Order',
+            text: 'Maksimal order tidak boleh lebih kecil dari minimal order.'
+        });
+        return;
+    }
 
-    document.getElementById('summaryDuration')
-        .textContent =
-            estimasi + ' Hari';
+    const hariStr = [...hari].map(x => x.value).join(', ');
+    const minOrder = minOrderVal || '-';
+    const maxOrder = maxOrderVal || '-';
 
-    document.getElementById('summaryDays')
-        .textContent =
-            [...hari]
-            .map(x => x.value)
-            .join(', ');
+    const htmlContent = `
+        <div style="text-align:left; font-family:inherit;">
+            <div style="padding:15px; background:#eff6ff; border-radius:12px; margin-bottom:15px; border:1px solid #bfdbfe;">
+                <h4 style="margin:0; font-size:16px; color:#1e3a8a; font-weight:700;">${nama}</h4>
+                <span style="font-size:13px; color:#3b82f6; font-weight:500;">Estimasi: ${estimasi} Hari</span>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
+                    <div style="font-size:11px; color:#64748b; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Harga Dasar</div>
+                    <div style="font-size:14px; font-weight:700; color:#0f172a;">Rp ${Number(harga).toLocaleString('id-ID')} <span style="font-size:11px; color:#64748b; font-weight:400;">/ kg</span></div>
+                </div>
+                <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
+                    <div style="font-size:11px; color:#64748b; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Batas Order</div>
+                    <div style="font-size:14px; font-weight:700; color:#0f172a;"><span style="font-size:12px; font-weight:500; color:#64748b;">Min:</span> ${minOrder} kg <br> <span style="font-size:12px; font-weight:500; color:#64748b;">Max:</span> ${maxOrder} kg</div>
+                </div>
+                <div style="grid-column: span 2; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
+                    <div style="font-size:11px; color:#64748b; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Hari Operasional</div>
+                    <div style="font-size:14px; font-weight:600; color:#0f172a;">${hariStr}</div>
+                </div>
+            </div>
+        </div>
+    `;
 
-    document.getElementById('summaryMin')
-        .textContent =
-            document.querySelector(
-                '[name="minimal_order"]'
-            ).value || '-';
-
-    document.getElementById('summaryMax')
-        .textContent =
-            document.querySelector(
-                '[name="maksimal_order"]'
-            ).value || '-';
-
-    document.getElementById('step1')
-        .style.display = 'none';
-
-    document.getElementById('step2')
-        .style.display = 'block';
-
-    btnNext.style.display = 'none';
-    btnSubmit.style.display = 'inline-flex';
+    Swal.fire({
+        title: '<strong>Ringkasan Perubahan</strong>',
+        html: htmlContent,
+        showCancelButton: true,
+        confirmButtonColor: '#2563eb',
+        cancelButtonColor: '#ef4444',
+        confirmButtonText: 'Simpan Perubahan',
+        cancelButtonText: 'Batal',
+        customClass: {
+            popup: 'rounded-xl',
+            title: 'text-xl font-bold text-gray-800'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('multiStepForm').submit();
+        }
+    });
 });
 
 document

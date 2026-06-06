@@ -102,15 +102,11 @@
 
 <!-- ═══ SIDEBAR ═══ -->
 <aside class="sidebar">
-    <a href="{{ route('mitra.dashboard') }}">
-        <div class="sidebar-logo">
-            <div class="logo-icon">🧺</div>
-            <div class="logo-text">
-            <div class="name">Mitra Laundry</div>
-            <div class="sub">Dashboard</div>
-        </div>
+    <div class="sidebar-logo">
+        <a href="{{ route('mitra.dashboard') }}" class="nav-brand" style="display: flex; align-items: center; text-decoration: none;">
+            <img class="nav-logo-icon" src="{{ asset('assets/images/CW.png') }}" alt="Clean Wash Logo" style="height: 40px; width: auto;" />
+        </a>
     </div>
-    </a>
 
   <nav class="sidebar-nav">
     <div class="nav-section-label">Pesanan</div>
