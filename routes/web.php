@@ -179,7 +179,7 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
         }
         $laundry = \App\Models\MitraLaundry::findOrFail($id);
         $reviews = \App\Models\Review::with('user')->where('mitra_id', $laundry->user_id)->latest()->get();
-        
+
         return view('user.detail_laundry', compact('laundry', 'reviews'));
     })->name('user.detail-laundry');
 
@@ -286,7 +286,10 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
     })->name('mitra.gagal-pickup');
 
     // LAYANAN
-    Route::get('/layanan-saya', [\App\Http\Controllers\Mitra\MitraController::class, 'layananSaya'])->name('mitra.layanan');
+    Route::get(
+        '/layanan-saya',
+        [MitraController::class, 'layanan']
+    )->name('mitra.layanan');
 
     Route::get(
         '/tambah-layanan',
