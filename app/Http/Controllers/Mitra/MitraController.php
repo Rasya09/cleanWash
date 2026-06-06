@@ -258,4 +258,94 @@ class MitraController extends Controller
         );
     }
 
+    public function editLayanan($id)
+    {
+        $mitra = MitraLaundry::where(
+            'user_id',
+            Auth::id()
+        )->firstOrFail();
+
+        $service = LaundryService::where(
+            'id',
+            $id
+        )
+        ->where(
+            'mitra_laundry_id',
+            $mitra->id
+        )
+        ->firstOrFail();
+
+        return view(
+            'mitra.layanan.edit_layanan',
+            compact('service')
+        );
+    }
+
+    public function updateLayanan(Request $request,$id)
+    {
+        $mitra = MitraLaundry::where(
+            'user_id',
+            Auth::id()
+        )->firstOrFail();
+
+        $service = LaundryService::where(
+            'id',
+            $id
+        )
+        ->where(
+            'mitra_laundry_id',
+            $mitra->id
+        )
+        ->firstOrFail();
+
+        $request->validate([
+            'nama_layanan' => 'required|max:100',
+            'harga_dasar' => 'required|numeric',
+            'estimasi' => 'required|integer',
+            'hari' => 'required|array'
+        ]);
+
+        $service->update([
+            'service_name' => $request->nama_layanan,
+            'operational_days' => $request->hari,
+            'base_price' => $request->harga_dasar,
+            'estimated_days' => $request->estimasi,
+            'minimum_order' => $request->minimal_order,
+            'maximum_order' => $request->maksimal_order,
+            'is_active' => $request->has('is_active')
+        ]);
+
+        return redirect()
+            ->route('mitra.layanan')
+            ->with(
+                'success',
+                'Layanan berhasil diperbarui'
+            );
+    }
+
+    public function destroyLayanan($id)
+    {
+        $mitra = MitraLaundry::where(
+            'user_id',
+            Auth::id()
+        )->firstOrFail();
+
+        $service = LaundryService::where(
+            'id',
+            $id
+        )
+        ->where(
+            'mitra_laundry_id',
+            $mitra->id
+        )
+        ->firstOrFail();
+
+        $service->delete();
+
+        return back()->with(
+            'success',
+            'Layanan berhasil dihapus'
+        );
+    }
+
 }
