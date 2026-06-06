@@ -134,28 +134,37 @@
                                     <span class="tl-addon">
                                         Kg
                                     </span>
-
                                 </div>
                             </div>
-
                             <div class="tl-field">
                                 <label class="tl-label">
                                     Maksimal Order
                                 </label>
-
                                 <div class="tl-input-group">
-
                                     <input type="number" name="maksimal_order" class="tl-input" min="1" value="{{ old('maksimal_order', $service->maximum_order) }}">
-
                                     <span class="tl-addon">
                                         Kg
                                     </span>
-
                                 </div>
                             </div>
-
                         </div>
-
+                        <div class="tl-field">
+                            <label class="tl-toggle-row">
+                                <span class="tl-toggle-copy">
+                                    <strong>Status Layanan</strong>
+                                    <span>
+                                        Aktifkan atau nonaktifkan layanan.
+                                    </span>
+                                </span>
+                                <span class="tl-switch">
+                                    <input
+                                        type="checkbox"
+                                        name="is_active"
+                                        {{ $service->is_active ? 'checked' : '' }}>
+                                    <span></span>
+                                </span>
+                            </label>
+                        </div>
                     </div>
 
                     {{-- STEP 2 --}}
@@ -202,55 +211,17 @@
                         </div>
 
                     </div>
-
                 </form>
 
-                <div class="tl-field">
-
-                    <label class="tl-toggle-row">
-
-                        <span class="tl-toggle-copy">
-
-                            <strong>Status Layanan</strong>
-
-                            <span>
-                                Aktifkan atau nonaktifkan layanan.
-                            </span>
-
-                        </span>
-
-                        <span class="tl-switch">
-
-                            <input
-                                type="checkbox"
-                                name="is_active"
-                                {{ $service->is_active ? 'checked' : '' }}>
-
-                            <span></span>
-
-                        </span>
-
-                    </label>
-
-                </div>
-
                 <div class="tl-actions">
-
                     <button type="button" class="tl-btn-next" id="btnNext">
-
                         Selanjutnya
-
                     </button>
-
                     <button type="submit" form="multiStepForm" class="tl-btn-next" id="btnSubmit"
                         style="display:none;">
-
                         Publikasikan Layanan
-
                     </button>
-
                 </div>
-
             </div>
         </div>{{-- end layout --}}
     </div>{{-- end tl-page --}}
