@@ -249,9 +249,10 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
     })->name('mitra.gagal-pickup');
 
     // LAYANAN
-    Route::get('/layanan-saya', function () {
-        return view('mitra.layanan.layanan_saya');
-    })->name('mitra.layanan');
+    Route::get(
+        '/layanan-saya',
+        [MitraController::class, 'layanan']
+    )->name('mitra.layanan');
 
     Route::get(
         '/tambah-layanan',

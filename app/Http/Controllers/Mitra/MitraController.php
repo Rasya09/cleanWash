@@ -183,4 +183,38 @@ class MitraController extends Controller
             );
     }
 
+    public function layanan()
+    {
+        $mitra = MitraLaundry::where(
+            'user_id',
+            Auth::id()
+        )->firstOrFail();
+
+        $services = LaundryService::where(
+            'mitra_laundry_id',
+            $mitra->id
+        )->latest()
+        ->get();
+
+        $totalServices = $services->count();
+
+        $activeServices = $services
+            ->where('is_active', true)
+            ->count();
+
+        $inactiveServices = $services
+            ->where('is_active', false)
+            ->count();
+
+        return view(
+            'mitra.layanan.layanan_saya',
+            compact(
+                'services',
+                'totalServices',
+                'activeServices',
+                'inactiveServices'
+            )
+        );
+    }
+
 }
