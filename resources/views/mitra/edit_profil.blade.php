@@ -5,6 +5,19 @@
 @endsection
 
 @section('content')
+
+@if(session('success'))
+
+<script>
+Swal.fire({
+    icon:'success',
+    title:'Berhasil',
+    text:'{{ session("success") }}'
+});
+</script>
+
+@endif
+
 <div class="main-edit">
     <!-- Page Header -->
     <div class="page-header">
@@ -17,7 +30,7 @@
         </div>
     </div>
 
-    <form action="{{ route('mitra.update.profil') }}" method="POST" enctype="multipart/form-data">
+    <form id="form-profil" action="{{ route('mitra.update.profil') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <!-- Card 1: Foto Toko -->
         <div class="card">
@@ -27,14 +40,27 @@
             </div>
             <div class="photo-section">
                 <div class="photo-preview" id="photo-preview">
-                    <span id="photo-initials">LBJ</span>
-                    <img id="photo-img" src="" alt="Foto Toko"/>
-                </div>  
+                    @if($mitra->logo)
+                        <img
+                            id="photo-img"
+                            src="{{ asset('storage/' . $mitra->logo) }}"
+                            alt="Foto Toko">
+                    @else
+                        <span id="photo-initials">
+                            {{ strtoupper(substr($mitra->store_name,0,2)) }}
+                        </span>
+                        <img
+                            id="photo-img"
+                            src=""
+                            alt="Foto Toko"
+                            style="display:none;">
+                    @endif
+                </div>
                 <div class="photo-actions">
                     <p><span>Upload foto toko Anda</span> Format JPG, PNG atau WEBP. Ukuran maksimal 2MB.</p>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                        <input type="file" id="file-input" accept="image/*" onchange="handlePhoto(this)"/>
-                        <button class="btn-upload" onclick="document.getElementById('file-input').click()">
+                        <input type="file" id="file-input" name="logo" accept="image/*"/>
+                        <button type="button" class="btn-upload" onclick="document.getElementById('file-input').click()">
                             <i class="fas fa-upload"></i> Ganti Foto
                         </button>
                     </div>
@@ -81,7 +107,7 @@
             <div class="form-group">
                 <label class="form-label">Kota / Kabupaten <span class="required">*</span></label>
                 <div class="select-wrap">
-                <select class="form-select" id="sel-kota" onchange="loadKecamatan(this.value)" disabled>
+                <select class="form-select" id="sel-kota" name="city" disabled>
                     <option value="">Pilih Kota</option>
                 </select>
                 <i class="fas fa-chevron-down select-icon"></i>
@@ -92,7 +118,7 @@
             <div class="form-group">
                 <label class="form-label">Kecamatan <span class="required">*</span></label>
                 <div class="select-wrap">
-                <select class="form-select" id="sel-kecamatan" onchange="loadKelurahan(this.value)" disabled>
+                <select class="form-select" id="sel-kecamatan" name="district" onchange="loadKelurahan(this.value)" disabled>
                     <option value="">Pilih Kecamatan</option>
                 </select>
                 <i class="fas fa-chevron-down select-icon"></i>
@@ -101,7 +127,7 @@
             <div class="form-group">
                 <label class="form-label">Kelurahan / Desa <span class="required">*</span></label>
                 <div class="select-wrap">
-                <select class="form-select" id="sel-kelurahan" disabled>
+                <select class="form-select" id="sel-kelurahan" name="village" disabled>
                     <option value="">Pilih Kelurahan</option>
                 </select>
                 <i class="fas fa-chevron-down select-icon"></i>
@@ -123,7 +149,7 @@
                 <label class="form-label">
                 Alamat Lengkap <span class="required">*</span>
                 </label>
-                <textarea class="form-textarea" style="min-height:76px;" placeholder="Contoh: Jl. Melati No.12, RT 03/RW 05">{{ old('address', $mitra->address) }}</textarea>
+                <textarea class="form-textarea" style="min-height:76px;" name="address" placeholder="Contoh: Jl. Melati No.12, RT 03/RW 05">{{ old('address', $mitra->address) }}</textarea>
             </div>
 
             <!-- No Telepon -->
@@ -152,31 +178,31 @@
                 <label class="form-label">Hari Operasional <span class="required">*</span></label>
                 <div class="hari-grid">
                 <div class="hari-chip">
-                    <input type="checkbox" id="sen"/>
+                    <input type="checkbox" id="sen" name="operational_days[]" value="Senin" {{ in_array('Senin', $mitra->operational_days ?? []) ? 'checked' : '' }}/>
                     <label for="sen">Senin</label>
                 </div>
                 <div class="hari-chip">
-                    <input type="checkbox" id="sel"/>
+                    <input type="checkbox" id="sel" name="operational_days[]" value="Selasa" {{ in_array('Selasa', $mitra->operational_days ?? []) ? 'checked' : '' }}/>
                     <label for="sel">Selasa</label>
                 </div>
                 <div class="hari-chip">
-                    <input type="checkbox" id="rab"/>
+                    <input type="checkbox" id="rab" name="operational_days[]" value="Rabu" {{ in_array('Rabu', $mitra->operational_days ?? []) ? 'checked' : '' }}/>
                     <label for="rab">Rabu</label>
                 </div>
                 <div class="hari-chip">
-                    <input type="checkbox" id="kam"/>
+                    <input type="checkbox" id="kam" name="operational_days[]" value="Kamis" {{ in_array('Kamis', $mitra->operational_days ?? []) ? 'checked' : '' }}/>
                     <label for="kam">Kamis</label>
                 </div>
                 <div class="hari-chip">
-                    <input type="checkbox" id="jum"/>
+                    <input type="checkbox" id="jum" name="operational_days[]" value="Jumat" {{ in_array('Jumat', $mitra->operational_days ?? []) ? 'checked' : '' }}/>
                     <label for="jum">Jumat</label>
                 </div>
                 <div class="hari-chip">
-                    <input type="checkbox" id="sab"/>
+                    <input type="checkbox" id="sab" name="operational_days[]" value="Sabtu" {{ in_array('Sabtu', $mitra->operational_days ?? []) ? 'checked' : '' }}/>
                     <label for="sab">Sabtu</label>
                 </div>
                 <div class="hari-chip">
-                    <input type="checkbox" id="min"/>
+                    <input type="checkbox" id="min" name="operational_days[]" value="Minggu" {{ in_array('Minggu', $mitra->operational_days ?? []) ? 'checked' : '' }}/>
                     <label for="min">Minggu</label>
                 </div>
                 </div>
@@ -184,11 +210,11 @@
 
             <!-- Jam Buka & Tutup -->
             <div class="form-group full">
-                <label class="form-label">Jam Buka – Tutup <span class="required">*</span></label>
+                <label class="form-label">Jam Buka - Tutup <span class="required">*</span></label>
                 <div class="jam-row">
-                <input type="time" class="form-input"/>
-                <span class="jam-sep">–</span>
-                <input type="time" class="form-input"/>
+                <input type="time" class="form-input" name="open_time" value="{{ old('open_time', $mitra->open_time) }}"/>
+                <span class="jam-sep">-</span>
+                <input type="time" class="form-input" name="close_time" value="{{ old('close_time', $mitra->close_time) }}"/>
                 </div>
             </div>
 
@@ -197,128 +223,248 @@
 
         <!-- Action Buttons -->
         <div class="action-bar">
-            <button class="btn-cancel">
+            <button class="btn-cancel " onclick="history.back()">
                 <i class="fas fa-times" style="margin-right:6px;"></i>Batalkan
             </button>
             <button class="btn-save" type="submit">
                 <i class="fas fa-save"></i> Simpan Perubahan
             </button>
         </div>
+
     </form>
 </div>
 @endsection
 
 @push('scripts')
 <script>
-// ─── Character counter ───
-function countChar(inputId, countId, max) {
-    const val = document.getElementById(inputId).value.length;
-    document.getElementById(countId).textContent = val;
-}
+document.addEventListener('DOMContentLoaded', async function () {
+    const BASE =
+        'https://www.emsifa.com/api-wilayah-indonesia/api';
+    const provinceSelect =
+        document.getElementById('sel-provinsi');
+    const citySelect =
+        document.getElementById('sel-kota');
+    const districtSelect =
+        document.getElementById('sel-kecamatan');
+    const villageSelect =
+        document.getElementById('sel-kelurahan');
+    // =========================
+    // DATA DARI DATABASE
+    // =========================
+    const selectedProvince =
+        @json($mitra->province);
+    const selectedCity =
+        @json($mitra->city);
+    const selectedDistrict =
+        @json($mitra->district);
+    const selectedVillage =
+        @json($mitra->village);
+    // =========================
+    // LOAD PROVINSI
+    // =========================
+    async function loadProvinsi()
+    {
+        const response =
+            await fetch(
+                `${BASE}/provinces.json`
+            );
+        const provinces =
+            await response.json();
+        provinceSelect.innerHTML =
+            '<option value="">Pilih Provinsi</option>';
+        let selectedProvinceId = null;
+        provinces.forEach(item => {
+            const isSelected =
+                item.name.trim().toUpperCase() ===
+                selectedProvince.trim().toUpperCase();
+            if(isSelected)
+            {
+                selectedProvinceId = item.id;
+            }
+            provinceSelect.innerHTML += `
+                <option
+                    value="${item.name}"
+                    data-id="${item.id}"
+                    ${isSelected ? 'selected' : ''}>
+                    ${item.name}
+                </option>
+            `;
+        });
+        if(selectedProvinceId)
+        {
+            await loadKota(selectedProvinceId);
+        }
+    }
+    // =========================
+    // LOAD KOTA
+    // =========================
+    async function loadKota(provinceId)
+    {
+        citySelect.disabled = false;
+        const response =
+            await fetch(
+                `${BASE}/regencies/${provinceId}.json`
+            );
+        const cities =
+            await response.json();
+        citySelect.innerHTML =
+            '<option value="">Pilih Kota</option>';
+        let selectedCityId = null;
+        cities.forEach(item => {
+            const isSelected =
+                item.name.trim().toUpperCase() ===
+                selectedCity.trim().toUpperCase();
+            if(isSelected)
+            {
+                selectedCityId = item.id;
+            }
+            citySelect.innerHTML += `
+                <option
+                    value="${item.name}"
+                    data-id="${item.id}"
+                    ${isSelected ? 'selected' : ''}>
+                    ${item.name}
+                </option>
+            `;
+        });
+        if(selectedCityId)
+        {
+            await loadKecamatan(selectedCityId);
+        }
+    }
+    // =========================
+    // LOAD KECAMATAN
+    // =========================
+    async function loadKecamatan(cityId)
+    {
+        districtSelect.disabled = false;
+        const response =
+            await fetch(
+                `${BASE}/districts/${cityId}.json`
+            );
+        const districts =
+            await response.json();
+        districtSelect.innerHTML =
+            '<option value="">Pilih Kecamatan</option>';
+        let selectedDistrictId = null;
+        districts.forEach(item => {
+            const isSelected =
+                item.name.trim().toUpperCase() ===
+                selectedDistrict.trim().toUpperCase();
+            if(isSelected)
+            {
+                selectedDistrictId = item.id;
+            }
+            districtSelect.innerHTML += `
+                <option
+                    value="${item.name}"
+                    data-id="${item.id}"
+                    ${isSelected ? 'selected' : ''}>
+                    ${item.name}
+                </option>
+            `;
+        });
+        if(selectedDistrictId)
+        {
+            await loadKelurahan(selectedDistrictId);
+        }
+    }
+    // =========================
+    // LOAD KELURAHAN
+    // =========================
+    async function loadKelurahan(districtId)
+    {
+        villageSelect.disabled = false;
+        const response =
+            await fetch(
+                `${BASE}/villages/${districtId}.json`
+            );
+        const villages =
+            await response.json();
+        villageSelect.innerHTML =
+            '<option value="">Pilih Kelurahan</option>';
+        villages.forEach(item => {
+            const isSelected =
+                item.name.trim().toUpperCase() ===
+                selectedVillage.trim().toUpperCase();
+            villageSelect.innerHTML += `
+                <option
+                    value="${item.name}"
+                    ${isSelected ? 'selected' : ''}>
+                    ${item.name}
+                </option>
+            `;
+        });
+    }
+    // =========================
+    // CHANGE PROVINSI
+    // =========================
+    provinceSelect.addEventListener(
+        'change',
+        async function(){
+            const provinceId =
+                this.options[
+                    this.selectedIndex
+                ].dataset.id;
+            districtSelect.innerHTML =
+                '<option value="">Pilih Kecamatan</option>';
+            villageSelect.innerHTML =
+                '<option value="">Pilih Kelurahan</option>';
+            await loadKota(provinceId);
+        }
+    );
+    // =========================
+    // CHANGE KOTA
+    // =========================
+    citySelect.addEventListener(
+        'change',
+        async function(){
+            const cityId =
+                this.options[
+                    this.selectedIndex
+                ].dataset.id;
+            villageSelect.innerHTML =
+                '<option value="">Pilih Kelurahan</option>';
+            await loadKecamatan(cityId);
+        }
+    );
+    // =========================
+    // CHANGE KECAMATAN
+    // =========================
+    districtSelect.addEventListener(
+        'change',
+        async function(){
+            const districtId =
+                this.options[
+                    this.selectedIndex
+                ].dataset.id;
+            await loadKelurahan(districtId);
+        }
+    );
+    // =========================
+    // START
+    // =========================
+    await loadProvinsi();
+});
 
-// ─── Photo preview ───
-function handlePhoto(input) {
-    const file = input.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-    const img = document.getElementById('photo-img');
-    const initials = document.getElementById('photo-initials');
-    img.src = e.target.result;
-    img.style.display = 'block';
-    initials.style.display = 'none';
-    };
-    reader.readAsDataURL(file);
-}
-function removePhoto() {
-    const img = document.getElementById('photo-img');
-    const initials = document.getElementById('photo-initials');
-    img.src = ''; img.style.display = 'none';
-    initials.style.display = 'block';
-    document.getElementById('file-input').value = '';
-}
+document
+.getElementById('file-input')
+.addEventListener('change', function(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    const photoImg =
+        document.getElementById('photo-img');
+    const photoInitials =
+        document.getElementById('photo-initials');
+    if(photoInitials)
+    {
+        photoInitials.style.display = 'none';
+    }
+    photoImg.src =
+        URL.createObjectURL(file);
+    photoImg.style.display =
+        'block';
+});
 
-// ─── Wilayah API (emsifa) ───
-const BASE = 'https://www.emsifa.com/api-wilayah-indonesia/api';
-
-function setLoading(el, loading) {
-    el.disabled = loading;
-    if (loading) el.innerHTML = '<option value="">Memuat...</option>';
-}
-
-function resetSelect(el, placeholder) {
-    el.innerHTML = `<option value="">${placeholder}</option>`;
-    el.disabled = true;
-}
-
-async function loadProvinsi() {
-    const sel = document.getElementById('sel-provinsi');
-    setLoading(sel, true);
-    try {
-    const res = await fetch(`${BASE}/provinces.json`);
-    const data = await res.json();
-    sel.innerHTML = '<option value="">Pilih Provinsi</option>';
-    data.forEach(p => {
-        sel.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-    });
-    sel.disabled = false;
-    } catch(e) { sel.innerHTML = '<option value="">Gagal memuat</option>'; }
-}
-
-async function loadKota(provId) {
-    resetSelect(document.getElementById('sel-kota'), 'Pilih Kota');
-    resetSelect(document.getElementById('sel-kecamatan'), 'Pilih Kecamatan');
-    resetSelect(document.getElementById('sel-kelurahan'), 'Pilih Kelurahan');
-    if (!provId) return;
-    const sel = document.getElementById('sel-kota');
-    setLoading(sel, true);
-    try {
-    const res = await fetch(`${BASE}/regencies/${provId}.json`);
-    const data = await res.json();
-    sel.innerHTML = '<option value="">Pilih Kota</option>';
-    data.forEach(k => {
-        sel.innerHTML += `<option value="${k.id}">${k.name}</option>`;
-    });
-    sel.disabled = false;
-    } catch(e) { sel.innerHTML = '<option value="">Gagal memuat</option>'; }
-}
-
-async function loadKecamatan(kotaId) {
-    resetSelect(document.getElementById('sel-kecamatan'), 'Pilih Kecamatan');
-    resetSelect(document.getElementById('sel-kelurahan'), 'Pilih Kelurahan');
-    if (!kotaId) return;
-    const sel = document.getElementById('sel-kecamatan');
-    setLoading(sel, true);
-    try {
-    const res = await fetch(`${BASE}/districts/${kotaId}.json`);
-    const data = await res.json();
-    sel.innerHTML = '<option value="">Pilih Kecamatan</option>';
-    data.forEach(k => {
-        sel.innerHTML += `<option value="${k.id}">${k.name}</option>`;
-    });
-    sel.disabled = false;
-    } catch(e) { sel.innerHTML = '<option value="">Gagal memuat</option>'; }
-}
-
-async function loadKelurahan(kecId) {
-    resetSelect(document.getElementById('sel-kelurahan'), 'Pilih Kelurahan');
-    if (!kecId) return;
-    const sel = document.getElementById('sel-kelurahan');
-    setLoading(sel, true);
-    try {
-    const res = await fetch(`${BASE}/villages/${kecId}.json`);
-    const data = await res.json();
-    sel.innerHTML = '<option value="">Pilih Kelurahan</option>';
-    data.forEach(k => {
-        sel.innerHTML += `<option value="${k.id}">${k.name}</option>`;
-    });
-    sel.disabled = false;
-    } catch(e) { sel.innerHTML = '<option value="">Gagal memuat</option>'; }
-}
-
-// Init
-countChar('nama-toko', 'count-nama', 60);
-countChar('deskripsi', 'count-desc', 200);
-loadProvinsi();
 </script>
 @endpush

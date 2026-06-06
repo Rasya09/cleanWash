@@ -2,6 +2,32 @@
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('assets/css/chat.css') }}?v={{ time() }}">
+<style>
+  .contact-action-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: none;
+  }
+  .chat-contact-item:hover .contact-action-btn {
+    display: block;
+  }
+  .chat-contact-item.active {
+    background-color: #f3f4f6;
+  }
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #6b7280;
+    text-align: center;
+  }
+</style>
 @endsection
 
 @section('content')
@@ -25,10 +51,10 @@
     </div>
 
       <!-- Contact List -->
-      <div class="chat-contact-list">
+      <div class="chat-contact-list" id="contactList">
         
-        <!-- Active Contact -->
-        <div class="chat-contact-item active">
+        @forelse($contacts as $contact)
+        <div class="chat-contact-item" id="contact-{{ $contact->id }}" onclick="selectContact({{ $contact->id }}, '{{ $contact->name }}')">
           <div class="contact-avatar-wrapper">
             <div class="contact-avatar">
               <span class="material-symbols-outlined" style="font-size: 24px; color: #9CA3AF;">store</span>
@@ -37,14 +63,20 @@
           </div>
           <div class="contact-info">
             <div class="contact-name-row">
-              <span class="contact-name">{{ $contact->name ?? 'Mitra Laundry' }}</span>
-              <span class="contact-time">Aktif</span>
+              <span class="contact-name">{{ $contact->name }}</span>
+              <span class="contact-time" id="time-{{ $contact->id }}">{{ $contact->latest_message ? \Carbon\Carbon::parse($contact->latest_message->created_at)->format('H:i') : '' }}</span>
             </div>
             <div class="contact-msg-row">
-              <span class="contact-preview">Klik untuk mulai obrolan</span>
+              <span class="contact-preview" id="preview-{{ $contact->id }}">{{ $contact->latest_message ? $contact->latest_message->message : 'Mulai obrolan baru' }}</span>
+              <button class="contact-action-btn" onclick="deleteChat(event, {{ $contact->id }})" title="Hapus Percakapan">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
             </div>
           </div>
         </div>
+        @empty
+        <div style="padding: 20px; text-align: center; color: #9ca3af; font-size: 14px;">Belum ada percakapan.</div>
+        @endforelse
 
       </div>
   </div>
@@ -63,107 +95,23 @@
           <span class="material-symbols-outlined" style="font-size: 24px; color: #9CA3AF;">store</span>
         </div>
         <div class="chat-header-title">
-            <div class="chat-header-name">{{ $contact->name ?? 'Mitra Laundry' }}</div>
+            <div class="chat-header-name" id="activeContactName">Pilih kontak</div>
             <div class="chat-header-status">Online</div>
         </div>
-      </div>
-      <div class="chat-header-actions">
-        <!-- Phone -->
-        <button class="header-action-btn">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-        </button>
-        <!-- Video -->
-        <button class="header-action-btn">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-        </button>
-        <!-- Info -->
-        <button class="header-action-btn">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </button>
-        <!-- More -->
-        <button class="header-action-btn">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
-        </button>
       </div>
     </div>
 
     <!-- Messages -->
     <div class="chat-messages" id="chatMessagesArea">
-      
-      <div class="chat-date-separator"><span>Hari ini</span></div>
-
-      <!-- Received -->
-      <div class="msg-wrapper received">
-        <div class="msg-avatar"></div>
-        <div class="msg-content">
-          <div class="msg-bubble received">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to m
-          </div>
-          <div class="msg-meta">10:38</div>
-        </div>
-      </div>
-
-      <!-- Received -->
-      <div class="msg-wrapper received">
-        <div class="msg-avatar"></div>
-        <div class="msg-content">
-          <div class="msg-bubble received">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the i
-          </div>
-          <div class="msg-meta">10:39</div>
-        </div>
-      </div>
-
-      <!-- Sent -->
-      <div class="msg-wrapper sent">
-        <div class="msg-content">
-          <div class="msg-bubble sent">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to m
-          </div>
-          <div class="msg-meta">10:41 <span class="msg-check">✓✓</span></div>
-        </div>
-        <div class="msg-avatar"></div>
-      </div>
-
-      <!-- Received -->
-      <div class="msg-wrapper received">
-        <div class="msg-avatar"></div>
-        <div class="msg-content">
-          <div class="msg-bubble received">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the i
-          </div>
-          <div class="msg-meta">10:42</div>
-        </div>
-      </div>
-
-      <!-- Sent -->
-      <div class="msg-wrapper sent">
-        <div class="msg-content">
-          <div class="msg-bubble sent">
-            Lorem Ipsum is simply dummy text of the printing and
-          </div>
-          <div class="msg-meta">10:43 <span class="msg-check">✓✓</span></div>
-        </div>
-        <div class="msg-avatar"></div>
-      </div>
-      
-
-
+      <div class="empty-state">Silakan pilih kontak di sidebar untuk mulai mengobrol.</div>
     </div>
 
     <!-- Input Area -->
     <div class="chat-input-container">
       <div class="chat-input-wrapper">
-        <button class="input-action">
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </button>
-        <button class="input-action">
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
-        </button>
+        <input type="text" class="chat-input-field" placeholder="Ketik pesan di sini..." id="chatInputField" disabled>
         
-        <input type="text" class="chat-input-field" placeholder="Ketik pesan di sini..." id="chatInputField">
-        
-        <button class="chat-send-btn" onclick="sendUserMessage()">
+        <button class="chat-send-btn" onclick="sendUserMessage()" id="chatSendBtn" disabled>
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
         </button>
       </div>
@@ -178,6 +126,11 @@
   const currentUserId = document.querySelector('meta[name="user-id"]').content;
   const messagesArea = document.getElementById('chatMessagesArea');
   const input = document.getElementById('chatInputField');
+  const sendBtn = document.getElementById('chatSendBtn');
+  const activeContactNameEl = document.getElementById('activeContactName');
+  
+  let activeContactId = null;
+  const initialContactId = "{{ $explicitContactId ?? '' }}";
 
   // Format time HH:MM
   function formatTime(dateStr) {
@@ -213,26 +166,70 @@
     }
     
     div.innerHTML = innerHTML;
-    
-    // Check if typing indicator exists
-    const typingIndicator = messagesArea.querySelector('.typing-indicator');
-    if (typingIndicator) {
-      messagesArea.insertBefore(div, typingIndicator);
-    } else {
-      messagesArea.appendChild(div);
-    }
+    messagesArea.appendChild(div);
     messagesArea.scrollTop = messagesArea.scrollHeight;
+  }
+
+  // Select Contact
+  function selectContact(contactId, contactName) {
+    activeContactId = contactId;
+    activeContactNameEl.innerText = contactName;
+    
+    // Enable inputs
+    input.disabled = false;
+    sendBtn.disabled = false;
+    
+    // Update active class on sidebar
+    document.querySelectorAll('.chat-contact-item').forEach(el => el.classList.remove('active'));
+    const contactEl = document.getElementById('contact-' + contactId);
+    if(contactEl) contactEl.classList.add('active');
+
+    if(window.innerWidth <= 768) {
+      toggleUserSidebar(); // Close sidebar on mobile after selecting
+    }
+
+    loadMessages();
+  }
+
+  // Delete Chat
+  async function deleteChat(e, contactId) {
+    e.stopPropagation(); // Prevent opening the chat
+    if(!confirm("Apakah Anda yakin ingin menghapus seluruh riwayat percakapan ini?")) return;
+
+    try {
+      const token = document.querySelector('meta[name="csrf-token"]').content;
+      await fetch(`/chat/thread/${contactId}`, {
+        method: 'DELETE',
+        headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' }
+      });
+      
+      // Remove from sidebar
+      const contactEl = document.getElementById('contact-' + contactId);
+      if(contactEl) contactEl.remove();
+
+      // If deleted is active, clear main area
+      if(activeContactId == contactId) {
+        activeContactId = null;
+        activeContactNameEl.innerText = 'Pilih kontak';
+        input.disabled = true;
+        sendBtn.disabled = true;
+        messagesArea.innerHTML = '<div class="empty-state">Silakan pilih kontak di sidebar untuk mulai mengobrol.</div>';
+      }
+    } catch (error) {
+      console.error('Error deleting chat', error);
+      alert('Gagal menghapus percakapan.');
+    }
   }
 
   // Fetch past messages
   async function loadMessages() {
+    if(!activeContactId) return;
+    
     try {
-      const res = await fetch('/chat/messages');
+      const res = await fetch(`/chat/messages/${activeContactId}`);
       const data = await res.json();
       
-      // Clear dummy messages (keep the date separator if you want, but here we just clear all)
       messagesArea.innerHTML = '<div class="chat-date-separator"><span>Hari ini</span></div>';
-      
       data.messages.forEach(msg => renderMessage(msg));
     } catch (e) {
       console.error('Error loading messages', e);
@@ -241,11 +238,11 @@
 
   // Send message
   async function sendUserMessage() {
+    if(!activeContactId) return;
+
     const text = input.value.trim();
     if (!text) return;
     
-    // Optimistic UI update could go here, but since we want to be sure it's saved, 
-    // we just send it to backend. Or we render it immediately with a "sending" state.
     const tempMsg = {
       sender_id: currentUserId,
       message: text,
@@ -254,9 +251,12 @@
     renderMessage(tempMsg);
     input.value = '';
 
+    // Update sidebar preview instantly
+    updateSidebarPreview(activeContactId, text, tempMsg.created_at);
+
     try {
       const token = document.querySelector('meta[name="csrf-token"]').content;
-      await fetch('/chat/send', {
+      const res = await fetch(`/chat/send/${activeContactId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -265,9 +265,17 @@
         },
         body: JSON.stringify({ message: text })
       });
+      // Optionally handle failure and remove tempMsg
     } catch (e) {
       console.error('Error sending message', e);
     }
+  }
+
+  function updateSidebarPreview(contactId, message, timestamp) {
+    const previewEl = document.getElementById('preview-' + contactId);
+    const timeEl = document.getElementById('time-' + contactId);
+    if(previewEl) previewEl.innerText = message;
+    if(timeEl && timestamp) timeEl.innerText = formatTime(timestamp);
   }
 
   input.addEventListener('keydown', function(e) {
@@ -277,19 +285,32 @@
     }
   });
 
-  // Init
-  loadMessages();
-
   // Listen to Reverb Websocket
   document.addEventListener("DOMContentLoaded", () => {
+      // Auto-select if URL has explicit contact
+      if(initialContactId) {
+          const contactEl = document.getElementById('contact-' + initialContactId);
+          if(contactEl) {
+              contactEl.click();
+          }
+      }
+
       setTimeout(() => {
           if (window.Echo) {
               window.Echo.private(`chat.${currentUserId}`)
                   .listen('.message.sent', (e) => {
-                      renderMessage(e.message);
+                      const msg = e.message;
+                      
+                      // If message is from active contact, render it
+                      if (msg.sender_id == activeContactId) {
+                          renderMessage(msg);
+                      }
+                      
+                      // Always update sidebar preview
+                      updateSidebarPreview(msg.sender_id, msg.message, msg.created_at);
                   });
           }
-      }, 1000); // Wait for Echo to initialize via Vite app.js
+      }, 1000); // Wait for Echo
   });
 
   // Mobile sidebar toggle logic

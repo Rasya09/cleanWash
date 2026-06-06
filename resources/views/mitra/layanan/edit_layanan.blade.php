@@ -16,10 +16,9 @@
                     <p class="tl-form-desc" id="formDesc">Lengkapi informasi dasar layanan Anda.</p>
                 </div>
 
-                <form id="multiStepForm" action="{{ route('mitra.store-layanan') }}" method="POST">
-
+                <form id="multiStepForm" action="{{ route('mitra.update-layanan',$service->id) }}" method="POST">
                     @csrf
-
+                    @method('PUT')
                     {{-- STEP 1 --}}
                     <div class="tl-step-content" id="step1">
 
@@ -29,12 +28,12 @@
                             </label>
                             <div class="tl-input-wrap">
                                 <select name="nama_layanan" class="tl-input" id="namaLayanan" required style="appearance: auto; padding-right: 15px;">
-                                    <option value="" disabled selected>Pilih Layanan</option>
-                                    <option value="Cuci Kering">Cuci Kering</option>
-                                    <option value="Cuci Satuan">Cuci Satuan</option>
-                                    <option value="Cuci Sepatu">Cuci Sepatu</option>
-                                    <option value="Cuci Karpet">Cuci Karpet</option>
-                                    <option value="Setrika Aja">Setrika Aja</option>
+                                    <option value="" disabled>Pilih Layanan</option>
+                                    <option value="Cuci Kering" {{ old('nama_layanan', $service->getRawOriginal('service_name')) == 'Cuci Kering' ? 'selected' : '' }}>Cuci Kering</option>
+                                    <option value="Cuci Satuan" {{ old('nama_layanan', $service->getRawOriginal('service_name')) == 'Cuci Satuan' ? 'selected' : '' }}>Cuci Satuan</option>
+                                    <option value="Cuci Sepatu" {{ old('nama_layanan', $service->getRawOriginal('service_name')) == 'Cuci Sepatu' ? 'selected' : '' }}>Cuci Sepatu</option>
+                                    <option value="Cuci Karpet" {{ old('nama_layanan', $service->getRawOriginal('service_name')) == 'Cuci Karpet' ? 'selected' : '' }}>Cuci Karpet</option>
+                                    <option value="Setrika Aja" {{ old('nama_layanan', $service->getRawOriginal('service_name')) == 'Setrika Aja' ? 'selected' : '' }}>Setrika Aja</option>
                                 </select>
                             </div>
                         </div>
@@ -57,37 +56,37 @@
                             <div class="tl-days">
 
                                 <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Senin">
+                                    <input type="checkbox" name="hari[]" value="Senin" {{ in_array('Senin', old('hari', $service->operational_days ?? [])) ? 'checked' : '' }}>
                                     <span>Sen</span>
                                 </label>
 
                                 <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Selasa">
+                                    <input type="checkbox" name="hari[]" value="Selasa" {{ in_array('Selasa', old('hari', $service->operational_days ?? [])) ? 'checked' : '' }}>
                                     <span>Sel</span>
                                 </label>
 
                                 <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Rabu">
+                                    <input type="checkbox" name="hari[]" value="Rabu" {{ in_array('Rabu', old('hari', $service->operational_days ?? [])) ? 'checked' : '' }}>
                                     <span>Rab</span>
                                 </label>
 
                                 <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Kamis">
+                                    <input type="checkbox" name="hari[]" value="Kamis" {{ in_array('Kamis', old('hari', $service->operational_days ?? [])) ? 'checked' : '' }}>
                                     <span>Kam</span>
                                 </label>
 
                                 <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Jumat">
+                                    <input type="checkbox" name="hari[]" value="Jumat" {{ in_array('Jumat', old('hari', $service->operational_days ?? [])) ? 'checked' : '' }}>
                                     <span>Jum</span>
                                 </label>
 
                                 <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Sabtu">
+                                    <input type="checkbox" name="hari[]" value="Sabtu" {{ in_array('Sabtu', old('hari', $service->operational_days ?? [])) ? 'checked' : '' }}>
                                     <span>Sab</span>
                                 </label>
 
                                 <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Minggu">
+                                    <input type="checkbox" name="hari[]" value="Minggu" {{ in_array('Minggu', old('hari', $service->operational_days ?? [])) ? 'checked' : '' }}>
                                     <span>Min</span>
                                 </label>
 
@@ -106,7 +105,7 @@
                                     <span class="tl-addon">Rp</span>
 
                                     <input type="number" name="harga_dasar" class="tl-input" id="basePrice" min="0"
-                                        required>
+                                        required value="{{ old('harga_dasar', $service->base_price) }}">
 
                                     <span class="tl-addon unit-addon">/ Kg</span>
                                 </div>
@@ -121,7 +120,7 @@
                                 <div class="tl-input-group">
 
                                     <input type="number" name="estimasi" class="tl-input" id="duration" min="1"
-                                        required>
+                                        required value="{{ old('estimasi', $service->estimated_days) }}">
 
                                     <span class="tl-addon">
                                         Hari
@@ -142,7 +141,7 @@
                                     <p style="font-size: 12px; color: #64748b; margin: 0;">Layanan ini otomatis mendapatkan opsi setrika</p>
                                 </div>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" name="is_setrika" value="1" id="isSetrika">
+                                    <input type="checkbox" name="is_setrika" value="1" id="isSetrika" {{ $service->is_setrika ? 'checked' : '' }}>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -154,7 +153,7 @@
                                     <p style="font-size: 12px; color: #64748b; margin: 0;">Tetapkan minimal atau maksimal pemesanan</p>
                                 </div>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="toggleBatasOrder">
+                                    <input type="checkbox" id="toggleBatasOrder" {{ ($service->minimum_order || $service->maximum_order) ? 'checked' : '' }}>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -166,32 +165,45 @@
                             <div class="tl-field">
                                 <label class="tl-label" id="labelMinOrder">Minimal Order</label>
                                 <div class="tl-input-group">
-                                    <input type="number" name="minimal_order" class="tl-input" id="minimal_order" min="1">
+                                    <input type="number" name="minimal_order" class="tl-input" id="minimal_order" min="1" value="{{ old('minimal_order', $service->minimum_order) }}">
                                     <span class="tl-addon unit-addon">Kg</span>
                                 </div>
                             </div>
-
                             <div class="tl-field" id="wrapMaxOrder">
                                 <label class="tl-label">Maksimal Order</label>
                                 <div class="tl-input-group">
-                                    <input type="number" name="maksimal_order" class="tl-input" id="maksimal_order" min="1">
+                                    <input type="number" name="maksimal_order" class="tl-input" id="maksimal_order" min="1" value="{{ old('maksimal_order', $service->maximum_order) }}">
                                     <span class="tl-addon unit-addon">Kg</span>
                                 </div>
                             </div>
                         </div>
-
+                        <div class="tl-field">
+                            <label class="tl-toggle-row">
+                                <span class="tl-toggle-copy">
+                                    <strong>Status Layanan</strong>
+                                    <span>
+                                        Aktifkan atau nonaktifkan layanan.
+                                    </span>
+                                </span>
+                                <span class="tl-switch">
+                                    <input
+                                        type="checkbox"
+                                        name="is_active"
+                                        {{ $service->is_active ? 'checked' : '' }}>
+                                    <span></span>
+                                </span>
+                            </label>
+                        </div>
                     </div>
-
 
 
                 </form>
 
                 <div class="tl-actions">
                     <button type="button" class="tl-btn-next" id="btnNext">
-                        Selanjutnya
+                        Simpan Perubahan
                     </button>
                 </div>
-
             </div>
         </div>{{-- end layout --}}
     </div>{{-- end tl-page --}}
@@ -216,20 +228,16 @@ const isSetrika = document.getElementById('isSetrika');
 const minOrderInput = document.getElementById('minimal_order');
 const maxOrderInput = document.getElementById('maksimal_order');
 
-selectLayanan.addEventListener('change', function() {
-    const val = this.value;
+function updateUI() {
+    const val = selectLayanan.value;
     
-    // Reset state
+    // Reset state initially
     togglesWrapper.style.display = 'block';
     wrapSetrika.style.display = 'none';
     wrapBatasOrderToggle.style.display = 'none';
     wrapBatasOrderFields.style.display = 'none';
     wrapMaxOrder.style.display = 'block';
     labelMinOrder.textContent = 'Minimal Order';
-    toggleBatasOrder.checked = false;
-    isSetrika.checked = false;
-    minOrderInput.value = '';
-    maxOrderInput.value = '';
     
     // Default unit
     let unit = 'Kg';
@@ -242,10 +250,9 @@ selectLayanan.addEventListener('change', function() {
         wrapBatasOrderToggle.style.display = 'flex';
         unit = 'Satuan';
     } else if (val === 'Cuci Sepatu') {
-        togglesWrapper.style.display = 'none'; // tidak ada setrika, tidak ada batas order
+        togglesWrapper.style.display = 'none'; 
         unit = 'Pasang';
     } else if (val === 'Cuci Karpet') {
-        // Karpet: Wajib minimal order (ukuran meter), tidak ada maksimal
         togglesWrapper.style.display = 'none'; 
         wrapBatasOrderFields.style.display = 'grid';
         wrapMaxOrder.style.display = 'none';
@@ -256,6 +263,16 @@ selectLayanan.addEventListener('change', function() {
         unit = 'Kg';
     }
 
+    // Apply Batas Order state
+    if (val !== 'Cuci Karpet' && val !== 'Cuci Sepatu') {
+        if (toggleBatasOrder.checked) {
+            wrapBatasOrderFields.style.display = 'grid';
+        } else {
+            wrapBatasOrderFields.style.display = 'none';
+            // Don't clear values on initial load if they exist, but clear if unchecked later
+        }
+    }
+
     // Update units
     unitAddons.forEach(el => {
         if (el.textContent.includes('/')) {
@@ -264,6 +281,20 @@ selectLayanan.addEventListener('change', function() {
             el.textContent = unit;
         }
     });
+}
+
+// Initial Call
+if (selectLayanan.value) {
+    updateUI();
+}
+
+selectLayanan.addEventListener('change', function() {
+    // When manually changed, reset the toggles and values
+    toggleBatasOrder.checked = false;
+    isSetrika.checked = false;
+    minOrderInput.value = '';
+    maxOrderInput.value = '';
+    updateUI();
 });
 
 toggleBatasOrder.addEventListener('change', function() {
@@ -277,7 +308,6 @@ toggleBatasOrder.addEventListener('change', function() {
 });
 
 btnNext.addEventListener('click', () => {
-
     const nama = selectLayanan.value;
     const harga = document.getElementById('basePrice').value;
     const estimasi = document.getElementById('duration').value;
@@ -304,7 +334,6 @@ btnNext.addEventListener('click', () => {
         return;
     }
 
-    // Untuk karpet wajib isi minimal ukuran
     if (nama === 'Cuci Karpet' && minOrderVal === '') {
         Swal.fire({
             icon: 'warning',
@@ -355,12 +384,12 @@ btnNext.addEventListener('click', () => {
     `;
 
     Swal.fire({
-        title: '<strong>Ringkasan Layanan</strong>',
+        title: '<strong>Ringkasan Perubahan</strong>',
         html: htmlContent,
         showCancelButton: true,
         confirmButtonColor: '#2563eb',
         cancelButtonColor: '#ef4444',
-        confirmButtonText: 'Simpan Layanan',
+        confirmButtonText: 'Simpan Perubahan',
         cancelButtonText: 'Batal',
         customClass: {
             popup: 'rounded-xl',
@@ -372,6 +401,5 @@ btnNext.addEventListener('click', () => {
         }
     });
 });
-
 </script>
 @endpush

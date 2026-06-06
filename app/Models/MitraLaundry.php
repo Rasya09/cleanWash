@@ -31,93 +31,72 @@ class MitraLaundry extends Model
         'npwp',
         'status',
         'rejection_reason',
-        'verified_at',
-        'verified_by',
-        'operational_hours',
+        'operational_days',
+        'open_time',
+        'close_time',
         'service_radius',
         'pickup_fee',
     ];
 
     protected $casts = [
-        'verified_at' => 'datetime',
-        'store_photos' => 'array',
+        'store_photos'     => 'array',
+        'operational_days' => 'array',
     ];
 
-    public function user(): BelongsTo
+    // ── RELASI ───────────────────────────────────────────
+
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function verifier(): BelongsTo
+    public function services()
     {
-        return $this->belongsTo(User::class, 'verified_by');
+        return $this->hasMany(LaundryService::class, 'mitra_laundry_id');
     }
 
-    public function fileUrl(?string $path): ?string
+    public function activeServices()
     {
-        if (! $path) {
-            return null;
+        return $this->hasMany(LaundryService::class, 'mitra_laundry_id')
+            ->where('is_active', true);
+    }
+
+    /**
+     * Review memakai mitra_id → foreign key ke users.id
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'mitra_id', 'user_id');
+    }
+
+    // ── ACCESSOR ─────────────────────────────────────────
+
+    public function getAverageRatingAttribute(): float
+    {
+        return round($this->reviews()->avg('rating') ?? 0, 1);
+    }
+
+    public function getStartingPriceAttribute(): ?int
+    {
+        return $this->activeServices()->min('base_price');
+    }
+
+    public function getLogoUrlAttribute(): ?string
+    {
+        return $this->logo
+            ? asset('storage/' . $this->logo)
+            : null;
+    }
+
+    public function getStorePhotoUrlsAttribute(): array
+    {
+        if (empty($this->store_photos)) {
+            return [];
         }
 
-        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
-            return $path;
-        }
-
-        if (Storage::disk('public')->exists($path)) {
-            return Storage::disk('public')->url($path);
-        }
-
-        return asset('storage/' . ltrim($path, '/'));
-    }
-
-    public function avatarUrl(): string
-    {
-        if ($logoUrl = $this->fileUrl($this->logo)) {
-            return $logoUrl;
-        }
-
-        $name = urlencode($this->store_name ?: 'Mitra');
-
-        return "https://ui-avatars.com/api/?name={$name}&background=2563eb&color=fff&size=160";
-    }
-
-    public function fullAddress(): string
-    {
-        $parts = array_filter([
-            $this->address,
-            $this->village,
-            $this->district,
-            $this->city,
-            $this->province,
-            $this->postal_code,
-        ]);
-
-        return $parts ? implode(', ', $parts) : '—';
-    }
-
-    public function statusLabel(): string
-    {
-        return match ($this->status) {
-            'pending' => 'Menunggu Verifikasi',
-            'approved' => 'Disetujui',
-            'rejected' => 'Ditolak',
-            'draft' => 'Draft',
-            default => ucfirst($this->status),
-        };
-    }
-
-    public function layanans(): HasMany
-    {
-        return $this->hasMany(Layanan::class);
-    }
-
-    public function reviews(): HasMany
-    {
-        return $this->hasMany(Review::class, 'mitra_id');
-    }
-
-    public function averageRating(): float
-    {
-        return (float) $this->reviews()->where('status', 'ok')->avg('rating') ?: 0;
+        return array_map(
+            fn($photo) => asset('storage/' . $photo),
+            $this->store_photos
+        );
     }
 }

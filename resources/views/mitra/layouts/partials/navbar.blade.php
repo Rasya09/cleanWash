@@ -25,8 +25,12 @@
       <div class="store-info" id="dropdownToggle">
         <div class="store-avatar">🏪</div>
         <div>
-          <div class="store-name">Laundry Bersih Jaya</div>
-          <div class="store-role">Mitra</div>
+          <div class="store-name">
+            {{ Auth::user()->mitraLaundry->store_name ?? Auth::user()->name }}
+          </div>
+          <div class="store-role">
+            Mitra
+          </div>
         </div>
         <span class="chevron" id="chevron">▾</span>
       </div>

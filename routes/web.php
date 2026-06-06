@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\ModerasiController;
 use App\Http\Controllers\Admin\NotifikasiController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Mitra\MitraController;
+use App\Http\Controllers\LaundryController;
 
 // ======================================================
 // PUBLIC / GUEST
@@ -23,8 +24,15 @@ Route::get('/', function () {
     return view('user.home');
 })->name('home');
 
-Route::get('/cari-laundry', [App\Http\Controllers\LaundryController::class, 'index'])->name('cari-laundry');
-Route::get('/detail-laundry/{id}', [App\Http\Controllers\LaundryController::class, 'show'])->name('user.detail-laundry');
+Route::get('/cari-laundry', function (\Illuminate\Http\Request $request) {
+    $query = \App\Models\MitraLaundry::where('status', 'approved');
+    if ($search = $request->query('search')) {
+        $query->where('store_name', 'like', "%{$search}%");
+    }
+    $laundries = $query->get();
+    return view('user.cari_laundry', compact('laundries'));
+})->name('cari-laundry');
+
 Route::get('/layanan', function () {
     return view('user.layanan');
 })->name('layanan');
@@ -46,13 +54,21 @@ Route::middleware('guest')->group(function () {
 
 // Chat Routes
 Route::middleware(['auth'])->group(function () {
-    Route::get('/chat/messages', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.messages');
-    Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat/messages/{contactId}', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.messages');
+    Route::get('/chat/user-details/{userId}', [\App\Http\Controllers\ChatController::class, 'getUserDetails'])->name('chat.user_details');
+    Route::post('/chat/send/{contactId}', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::delete('/chat/thread/{contactId}', [\App\Http\Controllers\ChatController::class, 'deleteChat'])->name('chat.delete');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
+
+
+// ======================================================
+// MIDTRANS WEBHOOK (NO CSRF, NO AUTH)
+// ======================================================
+Route::post('/payment/notification', [\App\Http\Controllers\User\PaymentController::class, 'notificationCallback'])->name('payment.notification');
 
 
 // ======================================================
@@ -67,7 +83,7 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
             [MitraRegisterController::class, 'step1']
         )->name('user.register.step1');
 
-        Route::post('/step-1/store', 
+        Route::post('/step-1/store',
             [MitraRegisterController::class, 'storeStep1'])
             ->name('user.register.step1.store');
 
@@ -145,13 +161,29 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
         return view('user.home');
     })->name('user.home');
 
-    Route::get('/cari-laundry', [App\Http\Controllers\LaundryController::class, 'index'])->name('user.cari-laundry');
+    Route::get('/cari-laundry', function (\Illuminate\Http\Request $request) {
+        $query = \App\Models\MitraLaundry::where('status', 'approved');
+        if ($search = $request->query('search')) {
+            $query->where('store_name', 'like', "%{$search}%");
+        }
+        $laundries = $query->get();
+        return view('user.cari_laundry', compact('laundries'));
+    })->name('user.cari-laundry');
 
     Route::get('/layanan', function () {
         return view('user.layanan');
     })->name('user.layanan');
 
-    Route::get('/detail-laundry/{id}', [App\Http\Controllers\LaundryController::class, 'show'])->name('user.detail-laundry');
+    Route::get('/detail-laundry', function (\Illuminate\Http\Request $request) {
+        $id = $request->query('id');
+        if (!$id) {
+            return redirect()->route('user.cari-laundry');
+        }
+        $laundry = \App\Models\MitraLaundry::findOrFail($id);
+        $reviews = \App\Models\Review::with('user')->where('mitra_id', $laundry->user_id)->latest()->get();
+
+        return view('user.detail_laundry', compact('laundry', 'reviews'));
+    })->name('user.detail-laundry');
 
     Route::get('/pesanan', function () {
         return view('user.pesanan');
@@ -165,10 +197,7 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
         return view('user.pembayaran');
     })->name('user.pembayaran');
 
-    Route::get('/chat', function () {
-        $contact = \App\Models\User::where('role', 'mitra')->first();
-        return view('user.chat', compact('contact'));
-    })->name('user.chat');
+    Route::get('/chat', [\App\Http\Controllers\ChatController::class, 'index'])->name('user.chat');
 
     Route::get('/profile', function () {
         $addresses = UserAddress::where('user_id', Auth::id())->get();
@@ -186,8 +215,18 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     Route::post('/alamat/store',        [UserAddressController::class, 'store'])->name('alamat.store');
 
     // ── PESANAN ──────────────────────────────────────────
-    Route::get('/buat-pesanan', function () {
-        $laundry = App\Models\MitraLaundry::findOrFail(1);
+    Route::get('/buat-pesanan', function (\Illuminate\Http\Request $request) {
+        $laundryId = $request->query('laundry_id');
+        if (!$laundryId) {
+            return redirect()->route('user.cari-laundry')->with('error', 'Silakan pilih mitra laundry terlebih dahulu.');
+        }
+        $laundry = App\Models\MitraLaundry::with('services')->findOrFail($laundryId);
+
+        // Cek jika toko belum memiliki layanan, redirect kembali
+        if ($laundry->services->count() == 0) {
+            return redirect()->route('user.detail-laundry', ['id' => $laundryId])->with('error', 'Mitra ini belum memiliki layanan yang dapat dipesan.');
+        }
+
         return view('user.buat_pesanan', compact('laundry'));
     })->name('user.buat-pesanan');
 
@@ -195,18 +234,15 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     Route::get('/pesanan',              [OrderController::class, 'index'])->name('user.pesanan');
     Route::get('/pesanan/{id}',         [OrderController::class, 'show'])->name('user.detail-pesanan');
     Route::put('/pesanan/{id}/cancel',  [OrderController::class, 'cancel'])->name('user.pesanan.cancel');
-    
+
+    // Pembayaran Midtrans
+    Route::post('/pesanan/{id}/bayar',  [\App\Http\Controllers\User\PaymentController::class, 'pay'])->name('user.pesanan.bayar');
+    Route::get('/pesanan/{id}/cek-pembayaran', [\App\Http\Controllers\User\PaymentController::class, 'checkStatus'])->name('user.pesanan.cek_pembayaran');
+    Route::post('/pesanan/{id}/success', [\App\Http\Controllers\User\PaymentController::class, 'successCallback'])->name('user.pesanan.success_callback');
     // Ulasan
     Route::post('/pesanan/{id}/review', [\App\Http\Controllers\ReviewController::class, 'store'])->name('user.review.store');
-
-    Route::post('/laundry/report', [App\Http\Controllers\User\KomplainController::class, 'reportStore'])->name('user.laundry.report');
-
-        // RATING
+    // RATING
     Route::middleware('auth')->post('/rating', [RatingController::class, 'store'])->name('rating.store');
-
-    // CHAT SYSTEM
-    Route::get('/chat/{contactId?}', [App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
-    Route::post('/chat/send', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
 
 });
 
@@ -238,9 +274,7 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
     });
 
 
-    Route::get('/dashboard', function () {
-        return view('mitra.home');
-    })->name('mitra.dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\Mitra\MitraController::class, 'dashboard'])->name('mitra.dashboard');
 
     // ── PESANAN ──────────────────────────────────────────
     Route::get('/pesanan-saya',             [MitraOrderController::class, 'index'])->name('mitra.pesanan');
@@ -249,27 +283,43 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
     Route::put('/pesanan/{id}/tolak',       [MitraOrderController::class, 'tolak'])->name('mitra.pesanan.tolak');
     Route::put('/pesanan/{id}/update',      [MitraOrderController::class, 'updateStatus'])->name('mitra.pesanan.update');
 
-    Route::get('/gagal-pickup', function () {
-        return view('mitra.pesanan.gagal_pickup');
-    })->name('mitra.gagal-pickup');
-
-    Route::get('/pengaturan-pengiriman', function () {
-        return view('mitra.pesanan.pengaturan_pengiriman');
-    })->name('mitra.pengiriman');
+    Route::get('/gagal-pickup',            [MitraOrderController::class, 'gagalPickup'])->name('mitra.gagal-pickup');
 
     // LAYANAN
-    Route::get('/layanan-saya', function () {
-        return view('mitra.layanan.layanan_saya');
-    })->name('mitra.layanan');
+    Route::get(
+        '/layanan-saya',
+        [MitraController::class, 'layanan']
+    )->name('mitra.layanan');
 
-    Route::get('/tambah-layanan', function () {
-        return view('mitra.layanan.tambah_layanan');
-    })->name('mitra.tambah-layanan');
+    Route::get(
+        '/tambah-layanan',
+        [MitraController::class, 'createService']
+    )->name('mitra.tambah-layanan');
+
+    Route::post(
+        '/tambah-layanan',
+        [MitraController::class, 'storeService']
+    )->name('mitra.store-layanan');
+
+    Route::get(
+        '/layanan/{id}/edit',
+        [MitraController::class, 'editLayanan']
+    )->name('mitra.edit-layanan');
+
+    Route::put(
+        '/layanan/{id}',
+        [MitraController::class, 'updateLayanan']
+    )->name('mitra.update-layanan');
+
+    Route::delete(
+        '/layanan/{id}',
+        [MitraController::class, 'destroyLayanan']
+    )->name('mitra.delete-layanan');
 
     // PROMOSI
-    Route::get('/gambar-toko', function () {
-        return view('mitra.pusat_promosi.gambar');
-    })->name('mitra.gambar');
+    Route::get('/gambar-toko',          [MitraController::class, 'gambar'])->name('mitra.gambar');
+    Route::post('/gambar-toko/upload',  [MitraController::class, 'uploadFoto'])->name('mitra.gambar.upload');
+    Route::delete('/gambar-toko/hapus', [MitraController::class, 'hapusFoto'])->name('mitra.gambar.hapus');
 
     Route::get('/diskon', function () {
         return view('mitra.pusat_promosi.diskon');
@@ -280,39 +330,32 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
     })->name('mitra.voucher');
 
     Route::get('/penilaian-toko', function () {
-        $mitra = Auth::user()->mitraLaundry;
-        $reviews = \App\Models\Review::with('user', 'order')
-            ->where('mitra_id', $mitra->id)
-            ->latest()
-            ->get();
-        
+        $reviews = \App\Models\Review::with('user', 'order')->where('mitra_id', Auth::id())->latest()->get();
+
         $totalUlasan = $reviews->count();
         $rataRata = $totalUlasan > 0 ? $reviews->avg('rating') : 0;
-        
+
         $ulasanPositif = $reviews->whereIn('rating', [4, 5])->count();
         $ulasanNetral = $reviews->where('rating', 3)->count();
         $ulasanNegatif = $reviews->whereIn('rating', [1, 2])->count();
-        
+
         $totalPelanggan = $reviews->unique('user_id')->count();
-        
+
         $rating5 = $reviews->where('rating', 5)->count();
         $rating4 = $reviews->where('rating', 4)->count();
         $rating3 = $reviews->where('rating', 3)->count();
         $rating2 = $reviews->where('rating', 2)->count();
         $rating1 = $reviews->where('rating', 1)->count();
-        
+
         return view('mitra.layanan_customer.penilaian_toko', compact(
-            'reviews', 'totalUlasan', 'rataRata', 'ulasanPositif', 'ulasanNetral', 
+            'reviews', 'totalUlasan', 'rataRata', 'ulasanPositif', 'ulasanNetral',
             'ulasanNegatif', 'totalPelanggan', 'rating5', 'rating4', 'rating3', 'rating2', 'rating1'
         ));
     })->name('mitra.penilaian');
-    
+
     Route::post('/review/{id}/reply', [\App\Http\Controllers\ReviewController::class, 'reply'])->name('mitra.review.reply');
 
-    Route::get('/manajemen-chat', function () {
-        $contact = \App\Models\User::where('role', 'user')->first();
-        return view('mitra.layanan_customer.manajemen_chat', compact('contact'));
-    })->name('mitra.chat');
+    Route::get('/manajemen-chat', [\App\Http\Controllers\ChatController::class, 'indexMitra'])->name('mitra.chat');
 
     // KEUANGAN
     Route::get('/penghasilan-saya', function () {
@@ -327,14 +370,15 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
         return view('mitra.keuangan.rekening_bank');
     })->name('mitra.rekening');
 
-    // DATA TOKO
-    Route::get('/performa-toko', function () {
-        return view('mitra.data.perfoma_toko');
-    })->name('mitra.performa');
+    Route::get(
+        '/pengaturan-pengiriman',
+        [MitraController::class, 'pengiriman']
+    )->name('mitra.pengiriman');
 
-    Route::get('/kesehatan-toko', function () {
-        return view('mitra.data.kesehatan_toko');
-    })->name('mitra.kesehatan');
+    Route::post(
+        '/pengaturan-pengiriman/update',
+        [MitraController::class, 'updatePengiriman']
+    )->name('mitra.pengiriman.update');
 
     Route::get(
         '/profil-toko',

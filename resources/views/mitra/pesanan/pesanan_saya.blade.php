@@ -23,7 +23,7 @@
             </div>
             <div class="ps-stat-body">
                 <p class="ps-stat-label">TOTAL PESANAN</p>
-                <p class="ps-stat-value" id="statTotal">1,284</p>
+                <p class="ps-stat-value" id="statTotal">{{ number_format($stats['total'], 0, ',', '.') }}</p>
             </div>
         </div>
         <div class="ps-stat-card">
@@ -35,7 +35,7 @@
             </div>
             <div class="ps-stat-body">
                 <p class="ps-stat-label">PERLU DIPROSES</p>
-                <p class="ps-stat-value" id="statProses">42</p>
+                <p class="ps-stat-value" id="statProses">{{ number_format($stats['proses'], 0, ',', '.') }}</p>
             </div>
         </div>
         <div class="ps-stat-card">
@@ -46,7 +46,7 @@
             </div>
             <div class="ps-stat-body">
                 <p class="ps-stat-label">SELESAI</p>
-                <p class="ps-stat-value" id="statSelesai">1,120</p>
+                <p class="ps-stat-value" id="statSelesai">{{ number_format($stats['selesai'], 0, ',', '.') }}</p>
             </div>
         </div>
     </div>
@@ -55,20 +55,22 @@
     <div class="ps-table-card">
 
         {{-- Search --}}
-        <div class="ps-search-wrap">
+        <form method="GET" action="{{ route('mitra.pesanan') }}" class="ps-search-wrap" style="display: flex; flex: 1;">
+            <input type="hidden" name="tab" value="{{ request('tab', 'semua') }}">
             <svg class="ps-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input type="text" class="ps-search-input" id="psSearch" placeholder="Cari nomor pesanan atau nama pelanggan...">
-        </div>
+            <input type="text" name="search" class="ps-search-input" id="psSearch" placeholder="Cari nomor pesanan atau nama pelanggan..." value="{{ request('search') }}">
+            <button type="submit" style="display: none;"></button>
+        </form>
 
         {{-- Tabs + Actions --}}
         <div class="ps-toolbar">
             <div class="ps-tabs">
-                <button class="ps-tab ps-tab--active" data-tab="semua">Semua</button>
-                <button class="ps-tab" data-tab="dibatalkan">Dibatalkan</button>
-                <button class="ps-tab" data-tab="proses">Proses</button>
-                <button class="ps-tab" data-tab="selesai">Selesai</button>
+                <a href="{{ route('mitra.pesanan', ['tab' => 'semua', 'search' => request('search')]) }}" class="ps-tab {{ request('tab', 'semua') == 'semua' ? 'ps-tab--active' : '' }}">Semua</a>
+                <a href="{{ route('mitra.pesanan', ['tab' => 'dibatalkan', 'search' => request('search')]) }}" class="ps-tab {{ request('tab') == 'dibatalkan' ? 'ps-tab--active' : '' }}">Dibatalkan</a>
+                <a href="{{ route('mitra.pesanan', ['tab' => 'proses', 'search' => request('search')]) }}" class="ps-tab {{ request('tab') == 'proses' ? 'ps-tab--active' : '' }}">Proses</a>
+                <a href="{{ route('mitra.pesanan', ['tab' => 'selesai', 'search' => request('search')]) }}" class="ps-tab {{ request('tab') == 'selesai' ? 'ps-tab--active' : '' }}">Selesai</a>
             </div>
             <div class="ps-actions">
                 <button class="ps-btn-action" id="btnFilter">
@@ -100,25 +102,66 @@
                     </tr>
                 </thead>
                 <tbody id="psTableBody">
-                    {{-- Data akan diisi JS (sementara hardcoded, nanti ganti fetch API) --}}
+                    @forelse($orders as $order)
+                        @php
+                            $badgeClass = match($order->status) {
+                                'selesai' => 'ps-badge--selesai',
+                                'dibatalkan', 'gagal_pickup' => 'ps-badge--batal',
+                                default => 'ps-badge--proses',
+                            };
+                            $badgeLabel = match($order->status) {
+                                'selesai' => 'SELESAI',
+                                'dibatalkan' => 'DIBATALKAN',
+                                'gagal_pickup' => 'GAGAL PICKUP',
+                                'masuk' => 'MASUK',
+                                'aktif' => 'AKTIF',
+                                'pickup' => 'PICKUP',
+                                'menunggu_pembayaran' => 'BAYAR',
+                                'diproses' => 'DIPROSES',
+                                'pengantaran' => 'DIANTAR',
+                                default => strtoupper($order->status)
+                            };
+                            $initial = strtoupper(substr($order->user->name ?? '?', 0, 2));
+                            $avatarClasses = ['ps-avatar--blue', 'ps-avatar--green', 'ps-avatar--orange', 'ps-avatar--gray'];
+                            $avatarClass = $avatarClasses[$order->user_id % 4] ?? 'ps-avatar--gray';
+                        @endphp
+                        <tr>
+                            <td>
+                                <p class="ps-order-id">{{ $order->order_code }}</p>
+                                <p class="ps-order-time">{{ $order->created_at->format('d M Y, H:i') }}</p>
+                            </td>
+                            <td>
+                                <div class="ps-customer">
+                                    <div class="ps-avatar {{ $avatarClass }}">{{ $initial }}</div>
+                                    <span class="ps-customer-name">{{ $order->user->name ?? 'User' }}</span>
+                                </div>
+                            </td>
+                            <td>{{ $order->items->pluck('nama_layanan')->join(', ') }}</td>
+                            <td><span class="ps-total">{{ $order->total_bayar > 0 ? $order->totalFormatted() : '-' }}</span></td>
+                            <td><span class="ps-badge {{ $badgeClass }}">{{ $badgeLabel }}</span></td>
+                            <td><a href="{{ route('mitra.pesanan.detail', $order->id) }}" class="ps-link-detail">Detail &rsaquo;</a></td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center" style="padding: 40px 0;">
+                                <div class="ps-empty" style="display:flex; flex-direction:column; align-items:center;">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+                                        <rect x="9" y="3" width="6" height="4" rx="1"/>
+                                    </svg>
+                                    <p style="margin-top:10px; color:#9ca3af;">Tidak ada pesanan ditemukan</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
-        {{-- Empty State --}}
-        <div class="ps-empty" id="psEmpty" style="display:none;">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
-                <rect x="9" y="3" width="6" height="4" rx="1"/>
-            </svg>
-            <p>Tidak ada pesanan ditemukan</p>
-        </div>
-
         {{-- Pagination --}}
-        <div class="ps-pagination-wrap" id="psPagination">
-            <p class="ps-pagination-info" id="psPaginationInfo">HALAMAN 1 DARI 1</p>
-            <div class="ps-pagination" id="psPaginationBtns"></div>
-        </div>
+        @if($orders->hasPages())
+        {{ $orders->appends(request()->query())->links('mitra.layouts.pagination', ['prefix' => 'ps-']) }}
+        @endif
 
     </div>
 </div>
@@ -126,158 +169,12 @@
 
 @push('scripts')
 <script>
-// =============================================
-// DATA DUMMY — ganti dengan fetch API nanti
-// =============================================
-const psOrders = [
-    { id: '#ORD-98210', time: 'Hari ini, 09:12',   name: 'Andi Saputra',   initial: 'AS', avatarClass: 'ps-avatar--blue',   layanan: 'Cuci Kering (3kg)',   total: 'Rp 45.000',  status: 'proses' },
-    { id: '#ORD-98209', time: 'Kemarin, 16:45',    name: 'Bella Nathania', initial: 'BN', avatarClass: 'ps-avatar--green',  layanan: 'Cuci Setrika (5kg)',  total: 'Rp 75.000',  status: 'selesai' },
-    { id: '#ORD-98208', time: 'Kemarin, 14:20',    name: 'Citra Dewi',     initial: 'CD', avatarClass: 'ps-avatar--blue',   layanan: 'Cuci Kiloan (7kg)',   total: 'Rp 98.000',  status: 'proses' },
-    { id: '#ORD-98207', time: '11 Mei, 11:30',     name: 'Doni Kusuma',    initial: 'DK', avatarClass: 'ps-avatar--gray',   layanan: 'Dry Cleaning (2pcs)', total: 'Rp 130.000', status: 'selesai' },
-    { id: '#ORD-98206', time: '11 Mei, 10:05',     name: 'Farhan Fauzi',   initial: 'FF', avatarClass: 'ps-avatar--gray',   layanan: 'Cuci Kering (10kg)',  total: 'Rp 120.000', status: 'dibatalkan' },
-    { id: '#ORD-98205', time: '10 Mei, 08:45',     name: 'Gita Lestari',   initial: 'GL', avatarClass: 'ps-avatar--green',  layanan: 'Cuci Setrika (4kg)',  total: 'Rp 60.000',  status: 'selesai' },
-    { id: '#ORD-98204', time: '10 Mei, 07:30',     name: 'Hendra Wijaya',  initial: 'HW', avatarClass: 'ps-avatar--blue',   layanan: 'Cuci Kiloan (6kg)',   total: 'Rp 84.000',  status: 'proses' },
-    { id: '#ORD-98203', time: '9 Mei, 15:10',      name: 'Indra Permana',  initial: 'IP', avatarClass: 'ps-avatar--gray',   layanan: 'Dry Cleaning (3pcs)', total: 'Rp 195.000', status: 'dibatalkan' },
-    { id: '#ORD-98202', time: '9 Mei, 13:00',      name: 'Julia Sari',     initial: 'JS', avatarClass: 'ps-avatar--green',  layanan: 'Cuci Kering (5kg)',   total: 'Rp 70.000',  status: 'selesai' },
-    { id: '#ORD-98201', time: '8 Mei, 10:22',      name: 'Kevin Pratama',  initial: 'KP', avatarClass: 'ps-avatar--blue',   layanan: 'Cuci Setrika (8kg)',  total: 'Rp 112.000', status: 'selesai' },
-];
-
-// =============================================
-// CONFIG
-// =============================================
-const ROWS_PER_PAGE = 5;
-let currentTab     = 'semua';
-let currentPage    = 1;
-let currentSearch  = '';
-
-// =============================================
-// BADGE CONFIG
-// =============================================
-const badgeMap = {
-    proses:     { class: 'ps-badge--proses',    label: 'DIPROSES' },
-    selesai:    { class: 'ps-badge--selesai',   label: 'SELESAI' },
-    dibatalkan: { class: 'ps-badge--batal',     label: 'DIBATALKAN' },
-};
-
-// =============================================
-// FILTER + RENDER
-// =============================================
-function getFiltered() {
-    return psOrders.filter(o => {
-        const matchTab    = currentTab === 'semua' || o.status === currentTab;
-        const matchSearch = o.id.toLowerCase().includes(currentSearch) ||
-                            o.name.toLowerCase().includes(currentSearch);
-        return matchTab && matchSearch;
-    });
-}
-
-function renderTable() {
-    const filtered = getFiltered();
-    const total    = filtered.length;
-    const pages    = Math.max(1, Math.ceil(total / ROWS_PER_PAGE));
-
-    if (currentPage > pages) currentPage = 1;
-
-    const start  = (currentPage - 1) * ROWS_PER_PAGE;
-    const paged  = filtered.slice(start, start + ROWS_PER_PAGE);
-
-    const tbody  = document.getElementById('psTableBody');
-    const empty  = document.getElementById('psEmpty');
-    const pgInfo = document.getElementById('psPaginationInfo');
-    const pgBtns = document.getElementById('psPaginationBtns');
-
-    // Empty state
-    if (paged.length === 0) {
-        tbody.innerHTML = '';
-        empty.style.display = 'flex';
-    } else {
-        empty.style.display = 'none';
-        tbody.innerHTML = paged.map(o => {
-            const badge = badgeMap[o.status] || { class: '', label: o.status };
-            return `
-            <tr data-status="${o.status}">
-                <td>
-                    <p class="ps-order-id">${o.id}</p>
-                    <p class="ps-order-time">${o.time}</p>
-                </td>
-                <td>
-                    <div class="ps-customer">
-                        <div class="ps-avatar ${o.avatarClass}">${o.initial}</div>
-                        <span class="ps-customer-name">${o.name}</span>
-                    </div>
-                </td>
-                <td>${o.layanan}</td>
-                <td><span class="ps-total">${o.total}</span></td>
-                <td><span class="ps-badge ${badge.class}">${badge.label}</span></td>
-                <td><a href="/mitra/pesanan/1?status=${o.status}" class="ps-link-detail">Detail &rsaquo;</a></td>
-            </tr>`;
-        }).join('');
+// Logic pencarian otomatis submit ketika enter
+document.getElementById('psSearch').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        this.closest('form').submit();
     }
-
-    // Pagination info
-    pgInfo.textContent = `HALAMAN ${currentPage} DARI ${pages}`;
-
-    // Pagination buttons
-    pgBtns.innerHTML = '';
-
-    // Prev button
-    if (currentPage > 1) {
-        const prev = document.createElement('button');
-        prev.className = 'ps-page-btn ps-page-btn--nav';
-        prev.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>`;
-        prev.addEventListener('click', () => { currentPage--; renderTable(); });
-        pgBtns.appendChild(prev);
-    }
-
-    // Page number buttons (max 3 shown)
-    const startPage = Math.max(1, currentPage - 1);
-    const endPage   = Math.min(pages, startPage + 2);
-
-    for (let i = startPage; i <= endPage; i++) {
-        const btn = document.createElement('button');
-        btn.className = 'ps-page-btn' + (i === currentPage ? ' ps-page-btn--active' : '');
-        btn.textContent = i;
-        btn.addEventListener('click', (function(page) {
-            return function() { currentPage = page; renderTable(); };
-        })(i));
-        pgBtns.appendChild(btn);
-    }
-
-    // Next button
-    if (currentPage < pages) {
-        const next = document.createElement('button');
-        next.className = 'ps-page-btn ps-page-btn--nav';
-        next.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`;
-        next.addEventListener('click', () => { currentPage++; renderTable(); });
-        pgBtns.appendChild(next);
-    }
-}
-
-// =============================================
-// EVENT LISTENERS
-// =============================================
-document.addEventListener('DOMContentLoaded', () => {
-
-    // Tab click
-    document.querySelectorAll('.ps-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.ps-tab').forEach(t => t.classList.remove('ps-tab--active'));
-            tab.classList.add('ps-tab--active');
-            currentTab  = tab.dataset.tab;
-            currentPage = 1;
-            renderTable();
-        });
-    });
-
-    // Search
-    document.getElementById('psSearch').addEventListener('input', (e) => {
-        currentSearch = e.target.value.toLowerCase().trim();
-        currentPage   = 1;
-        renderTable();
-    });
-
-    // Initial render
-    renderTable();
 });
 </script>
 @endpush

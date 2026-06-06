@@ -177,21 +177,7 @@ h1, h2, h3, h4, h5, h6 {
     margin: 16px 0;
 }
 
-.dl-card-desc {
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--text-secondary);
-    margin-bottom: 20px;
-}
-
-/* Layanan badges */
-.dl-layanan-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--blue-dark);
-    margin-bottom: 12px;
-}
-
+/* Layanan list */
 .dl-layanan-list {
     display: flex;
     flex-direction: column;

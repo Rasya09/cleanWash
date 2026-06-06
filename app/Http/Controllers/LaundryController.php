@@ -3,37 +3,56 @@
 namespace App\Http\Controllers;
 
 use App\Models\MitraLaundry;
-use Illuminate\Http\Request;
+use App\Models\Review;
 
 class LaundryController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * Tampilkan halaman detail laundry.
+     * GET /user/detail-laundry/{id}
+     */
+    public function show(int $id)
     {
-        $query = MitraLaundry::with(['layanans', 'reviews'])
-            ->where('status', 'approved');
+        $laundry = MitraLaundry::with(['activeServices'])
+            ->where('status', 'approved')
+            ->findOrFail($id);
 
-        if ($search = $request->query('q')) {
-            $query->where(function($q) use ($search) {
-                $q->where('store_name', 'like', "%{$search}%")
-                  ->orWhere('city', 'like', "%{$search}%")
-                  ->orWhere('address', 'like', "%{$search}%");
-            });
-        }
+        // Review pakai mitra_id → user_id milik mitra
+        $reviews = Review::with('user')
+            ->where('mitra_id', $laundry->user_id)
+            ->latest()
+            ->get();
 
-        $laundries = $query->latest()->paginate(12);
-        $totalCount = MitraLaundry::where('status', 'approved')->count();
+        $averageRating  = $reviews->count() > 0
+            ? round($reviews->avg('rating'), 1)
+            : 0;
 
-        return view('user.cari_laundry', compact('laundries', 'totalCount'));
-    }
+        $startingPrice  = $laundry->activeServices->min('base_price');
 
-    public function show($id)
-    {
-        $laundry = MitraLaundry::with(['layanans' => function($q) {
-            $q->where('is_active', true);
-        }, 'reviews.user'])
-        ->where('status', 'approved')
-        ->findOrFail($id);
+        // Store photos: sudah di-cast array di model
+        $storePhotoUrls = collect($laundry->store_photos ?? [])
+            ->map(fn($photo) => asset('storage/' . $photo))
+            ->values();
 
-        return view('user.detail_laundry', compact('laundry'));
+        $logoUrl = $laundry->logo
+            ? asset('storage/' . $laundry->logo)
+            : null;
+
+        $fullAddress = implode(', ', array_filter([
+            $laundry->address,
+            $laundry->district,
+            $laundry->city,
+            $laundry->province,
+        ]));
+
+        return view('user.detail_laundry', compact(
+            'laundry',
+            'reviews',
+            'averageRating',
+            'startingPrice',
+            'storePhotoUrls',
+            'logoUrl',
+            'fullAddress',
+        ));
     }
 }

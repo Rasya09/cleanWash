@@ -56,35 +56,41 @@
 
                 @php
                     $statusLabel = [
-                        'masuk'        => 'Menunggu Konfirmasi',
-                        'aktif'        => 'Pesanan Diterima',
-                        'pickup'       => 'Driver Menuju Lokasi',
-                        'diproses'     => 'Sedang Diproses',
-                        'pengantaran'  => 'Sedang Diantar',
-                        'selesai'      => 'Selesai',
-                        'gagal_pickup' => 'Gagal Pickup',
-                        'dibatalkan'   => 'Dibatalkan',
+                        'masuk'               => 'Menunggu Konfirmasi',
+                        'aktif'               => 'Pesanan Diterima',
+                        'pickup'              => 'Pickup Berhasil',
+                        'ditimbang'           => 'Ditimbang',
+                        'menunggu_pembayaran' => 'Menunggu Pembayaran',
+                        'diproses'            => 'Sedang Diproses',
+                        'pengantaran'         => 'Sedang Diantar',
+                        'selesai'             => 'Selesai',
+                        'gagal_pickup'        => 'Gagal Pickup',
+                        'dibatalkan'          => 'Dibatalkan',
                     ];
 
                     /* Peta status → nomor step aktif */
                     $stepMap = [
-                        'masuk'        => 0,
-                        'aktif'        => 1,
-                        'pickup'       => 2,
-                        'diproses'     => 3,
-                        'pengantaran'  => 4,
-                        'selesai'      => 5,
-                        'gagal_pickup' => 2,
-                        'dibatalkan'   => 0,
+                        'masuk'               => 0,
+                        'aktif'               => 1,
+                        'pickup'              => 2,
+                        'ditimbang'           => 3,
+                        'menunggu_pembayaran' => 4,
+                        'diproses'            => 5,
+                        'pengantaran'         => 6,
+                        'selesai'             => 7,
+                        'gagal_pickup'        => 2,
+                        'dibatalkan'          => 0,
                     ];
                     $step = $stepMap[$pesanan->status] ?? 0;
 
                     $steps = [
-                        ['label' => 'Pesanan Diterima', 'num' => 1],
-                        ['label' => 'Pickup',           'num' => 2],
-                        ['label' => 'Ditimbang',        'num' => 3],
-                        ['label' => 'Pengantaran',      'num' => 4],
-                        ['label' => 'Selesai',          'num' => 5],
+                        ['label' => 'Diterima',    'num' => 1],
+                        ['label' => 'Pickup',      'num' => 2],
+                        ['label' => 'Ditimbang',   'num' => 3],
+                        ['label' => 'Pembayaran',  'num' => 4],
+                        ['label' => 'Diproses',    'num' => 5],
+                        ['label' => 'Diantar',     'num' => 6],
+                        ['label' => 'Selesai',     'num' => 7],
                     ];
                 @endphp
 
@@ -204,22 +210,6 @@
                         </span>
                     </div>
 
-                    {{-- Paket --}}
-                    <div class="layanan-row">
-                        <span class="layanan-row__key">
-                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <polyline points="1 4 1 10 7 10"/>
-                                <path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
-                            </svg>
-                            Paket
-                        </span>
-                        <span class="layanan-row__val">
-                            <span class="layanan-row__val--badge">
-                                {{ ucfirst($pesanan->paket ?? 'Express') }}
-                            </span>
-                        </span>
-                    </div>
-
                     {{-- Estimasi Selesai --}}
                     @if($pesanan->estimasi_selesai)
                     <div class="layanan-row">
@@ -242,7 +232,7 @@
                             </svg>
                             Metode Pembayaran
                         </span>
-                        <span class="layanan-row__val">{{ strtoupper($pesanan->metode_bayar) }}</span>
+                        <span class="layanan-row__val">Midtrans PaymentGateway</span>
                     </div>
 
                     {{-- Metode Pengantaran --}}
@@ -339,12 +329,22 @@
                     <h2 class="card-title">Riwayat Aktivitas</h2>
                 </div>
                 <div class="timeline">
-                    @forelse($pesanan->statusHistories as $history)
+                    {{-- 1. History steps (diurutkan descending, proses yang sedang dijalankan di paling atas) --}}
                     @php
-                        $isLast   = $loop->last;
-                        $isActive = $loop->last && !in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']);
+                        // Urutkan riwayat dari yang terbaru ke terlama berdasarkan ID
+                        $sortedHistories = $pesanan->statusHistories->sortByDesc('id')->values();
                     @endphp
-                    <div class="timeline-item {{ !$isLast ? 'timeline-item--has-line' : '' }}">
+                    @forelse($sortedHistories as $history)
+                    @php
+                        $isFirst  = $loop->first;
+                        $isLast   = $loop->last;
+                        // Status aktif berada di paling atas daftar riwayat (jika belum selesai/batal/gagal)
+                        $isActive = $loop->first && !in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']);
+                        
+                        // Cek apakah ada pending step setelah ini
+                        $hasPending = !in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']);
+                    @endphp
+                    <div class="timeline-item {{ (!$isLast || $hasPending) ? 'timeline-item--has-line' : '' }}">
                         <div class="timeline-item__dot {{ $isActive ? 'timeline-item__dot--active' : 'timeline-item__dot--done' }}">
                             @if($isActive)
                                 <svg width="8" height="8" viewBox="0 0 8 8" fill="white">
@@ -356,8 +356,8 @@
                                 </svg>
                             @endif
                         </div>
-                        @if(!$isLast)
-                        <div class="timeline-item__line {{ $isActive ? 'timeline-item__line--gradient' : 'timeline-item__line--done' }}"></div>
+                        @if(!$isLast || $hasPending)
+                        <div class="timeline-item__line timeline-item__line--done"></div>
                         @endif
                         <div class="timeline-item__content">
                             <span class="timeline-item__title">
@@ -370,29 +370,48 @@
                             @if($history->catatan)
                             <div class="timeline-item__desc">{{ $history->catatan }}</div>
                             @endif
+                            @if($history->status_baru === 'pickup' && $pesanan->foto_pickup)
+                            <div class="timeline-item__desc" style="margin-top: 5px;">
+                                <a href="{{ asset('storage/' . $pesanan->foto_pickup) }}" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                    Foto Bukti PickUp
+                                </a>
+                            </div>
+                            @endif
+                            @if($history->status_baru === 'selesai' && $pesanan->foto_pengantaran)
+                            <div class="timeline-item__desc" style="margin-top: 5px;">
+                                <a href="{{ asset('storage/' . $pesanan->foto_pengantaran) }}" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                    Foto Bukti Pengantaran
+                                </a>
+                            </div>
+                            @endif
                         </div>
                     </div>
                     @empty
                     <p style="font-size:13px;color:var(--neutral-400);padding:8px 0;">Belum ada aktivitas.</p>
                     @endforelse
 
-                    {{-- Pending steps (hanya jika belum selesai/batal) --}}
+                    {{-- 2. Pending steps (data yang akan datang disimpan di bawah urutan) --}}
                     @if(!in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']))
-                    <div class="timeline-item timeline-item--has-line timeline-item--pending">
-                        <div class="timeline-item__dot timeline-item__dot--pending"></div>
-                        <div class="timeline-item__line timeline-item__line--pending"></div>
-                        <div class="timeline-item__content">
-                            <span class="timeline-item__title timeline-item__title--muted">Siap Diantar</span>
-                            <span class="timeline-item__time">Menunggu...</span>
+                        @php
+                            // Ambil step-step yang belum dilalui, ASC normal (dari yang terdekat ke terjauh)
+                            $pendingSteps = collect($steps)->filter(function($s) use ($step) {
+                                return $s['num'] > $step;
+                            })->values();
+                        @endphp
+                        @foreach($pendingSteps as $idx => $pStep)
+                        <div class="timeline-item {{ !$loop->last ? 'timeline-item--has-line' : '' }} timeline-item--pending">
+                            <div class="timeline-item__dot timeline-item__dot--pending"></div>
+                            @if(!$loop->last)
+                            <div class="timeline-item__line timeline-item__line--pending"></div>
+                            @endif
+                            <div class="timeline-item__content">
+                                <span class="timeline-item__title timeline-item__title--muted">{{ $pStep['label'] }}</span>
+                                <span class="timeline-item__time">Menunggu...</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="timeline-item timeline-item--pending">
-                        <div class="timeline-item__dot timeline-item__dot--pending"></div>
-                        <div class="timeline-item__content">
-                            <span class="timeline-item__title timeline-item__title--muted">Pesanan Selesai</span>
-                            <span class="timeline-item__time">Menunggu...</span>
-                        </div>
-                    </div>
+                        @endforeach
                     @endif
                 </div>
             </section>
@@ -418,16 +437,30 @@
 
                 <div class="price-breakdown">
                     @forelse($pesanan->items as $item)
+                    @php
+                        $isMenungguTimbang = in_array($pesanan->status, ['masuk', 'pickup', 'aktif']);
+                    @endphp
                     <div class="price-row">
                         <span class="price-row__label">{{ $item->nama_layanan }}</span>
-                        <span class="price-row__val {{ $item->subtotal > 0 ? '' : 'price-row__val--pending' }}">
-                            {{ $item->subtotal > 0 ? $item->subtotalFormatted() : 'Menunggu timbang' }}
+                        <span class="price-row__val {{ !$isMenungguTimbang ? '' : 'price-row__val--pending' }}">
+                            {{ !$isMenungguTimbang ? $item->subtotalFormatted() : 'Menunggu timbang' }}
                         </span>
                     </div>
-                    @if($item->harga_per_kg && $item->berat_aktual)
+                    @php
+                        $namaLayananLower = strtolower($item->nama_layanan);
+                        $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
+                        $unit = $isKiloan ? 'Kg' : (str_contains($namaLayananLower, 'sepatu') ? 'Pasang' : (str_contains($namaLayananLower, 'karpet') ? 'Meter' : 'Pcs'));
+                        $qty = $isKiloan ? $item->berat_aktual : $item->qty;
+                        $price = $isKiloan ? $item->harga_per_kg : $item->harga_satuan;
+                        if (is_null($price) || $price == 0) {
+                            $laundryService = \App\Models\LaundryService::find($item->jenis_layanan);
+                            $price = $laundryService ? $laundryService->base_price : $item->subtotal;
+                        }
+                    @endphp
+                    @if(!$isMenungguTimbang && $qty)
                     <div class="price-row price-row--sub">
                         <span class="price-row__label">
-                            {{ $item->berat_aktual }} kg × {{ $item->hargaFormatted() }}/kg
+                            {{ $qty }} {{ $unit }} × Rp {{ number_format($price, 0, ',', '.') }}/{{ $unit }}
                         </span>
                         <span class="price-row__val">{{ $item->subtotalFormatted() }}</span>
                     </div>
@@ -457,8 +490,11 @@
 
                 <div class="price-total">
                     <span class="price-total__label">Total</span>
-                    <span class="price-total__val {{ $pesanan->total_bayar > 0 ? '' : 'price-total__val--pending' }}">
-                        {{ $pesanan->total_bayar > 0 ? $pesanan->totalFormatted() : 'Menunggu konfirmasi' }}
+                    @php
+                        $isMenungguTimbang = in_array($pesanan->status, ['masuk', 'pickup', 'aktif']);
+                    @endphp
+                    <span class="price-total__val {{ !$isMenungguTimbang ? '' : 'price-total__val--pending' }}">
+                        {{ !$isMenungguTimbang ? $pesanan->totalFormatted() : 'Menunggu konfirmasi' }}
                     </span>
                 </div>
 
@@ -469,13 +505,28 @@
                     </span>
                 </div>
 
-                @if($pesanan->status_bayar !== 'lunas' && $pesanan->total_bayar > 0)
-                <a href="{{ route('user.pembayaran') }}" class="btn-bayar">
+                @if($pesanan->status_bayar !== 'lunas' && $pesanan->total_bayar > 0 && $pesanan->status === 'menunggu_pembayaran')
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button type="button" class="btn-bayar" id="pay-button" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
+                        </svg>
+                        Bayar Sekarang via Midtrans
+                    </button>
+                    <a href="{{ route('user.pesanan.cek_pembayaran', $pesanan->id) }}" class="btn-bayar" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--primary-color); background-color: transparent; color: var(--primary-color); cursor: pointer; text-decoration: none;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                        </svg>
+                        Cek Status Pembayaran
+                    </a>
+                </div>
+                @elseif($pesanan->status_bayar !== 'lunas' && $pesanan->total_bayar > 0)
+                <button type="button" class="btn-bayar" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; background-color: var(--neutral-400); cursor: not-allowed;" disabled>
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
                     </svg>
-                    Bayar Sekarang
-                </a>
+                    Bayar Sekarang (Menunggu Timbangan)
+                </button>
                 @endif
             </section>
 
@@ -568,16 +619,16 @@
         </div>
         <h3 class="dpx-modal-title">Beri Ulasan</h3>
         <p class="dpx-modal-desc">Bagaimana pengalaman Anda dengan layanan laundry ini?</p>
-        
+
         <form action="{{ route('user.review.store', $pesanan->id) }}" method="POST" id="reviewForm">
             @csrf
             <div class="star-rating" style="margin-bottom: 16px; font-size: 24px; color: #d1d5db; cursor: pointer;">
                 <span data-value="1">★</span><span data-value="2">★</span><span data-value="3">★</span><span data-value="4">★</span><span data-value="5">★</span>
             </div>
             <input type="hidden" name="rating" id="ratingInput" required>
-            
+
             <textarea name="comment" class="dpx-modal-textarea" rows="3" placeholder="Tulis komentar Anda (opsional)..."></textarea>
-            
+
             <div class="dpx-modal-actions">
                 <button type="button" class="dpx-modal-btn dpx-modal-btn--ghost" onclick="document.getElementById('reviewModal').classList.remove('active')">Batal</button>
                 <button type="submit" class="dpx-modal-btn" style="background:var(--blue-600); color:white;">Kirim Ulasan</button>
@@ -593,12 +644,12 @@
         // Star Rating Logic
         const stars = document.querySelectorAll('.star-rating span');
         const ratingInput = document.getElementById('ratingInput');
-        
+
         stars.forEach(star => {
             star.addEventListener('click', () => {
                 const value = star.getAttribute('data-value');
                 ratingInput.value = value;
-                
+
                 stars.forEach(s => {
                     if(s.getAttribute('data-value') <= value) {
                         s.style.color = '#F59E0B'; // Gold
@@ -609,4 +660,70 @@
             });
         });
     </script>
+
+    @if($pesanan->status_bayar !== 'lunas' && $pesanan->total_bayar > 0 && $pesanan->status === 'menunggu_pembayaran')
+    <script src="{{ config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+    <script>
+        document.getElementById('pay-button').onclick = function(){
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Memproses...';
+            btn.disabled = true;
+
+            // Dapatkan token lewat Ajax
+            fetch('{{ route("user.pesanan.bayar", $pesanan->id) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                
+                if (data.snap_token) {
+                    // Trigger Snap popup
+                    snap.pay(data.snap_token, {
+                        onSuccess: function(result){
+                            // Lakukan POST ke success callback lokal jika berhasil
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = '{{ route("user.pesanan.success_callback", $pesanan->id) }}';
+                            
+                            const csrfInput = document.createElement('input');
+                            csrfInput.type = 'hidden';
+                            csrfInput.name = '_token';
+                            csrfInput.value = '{{ csrf_token() }}';
+                            
+                            form.appendChild(csrfInput);
+                            document.body.appendChild(form);
+                            form.submit();
+                        },
+                        onPending: function(result){
+                            alert("Menunggu pembayaran Anda!");
+                            window.location.reload();
+                        },
+                        onError: function(result){
+                            alert("Pembayaran gagal!");
+                            window.location.reload();
+                        },
+                        onClose: function(){
+                            // alert('Anda menutup popup sebelum menyelesaikan pembayaran');
+                        }
+                    });
+                } else {
+                    alert('Gagal mendapatkan token: ' + (data.error || 'Terjadi kesalahan'));
+                }
+            })
+            .catch(error => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                alert('Terjadi kesalahan koneksi');
+                console.error(error);
+            });
+        };
+    </script>
+    @endif
 @endpush

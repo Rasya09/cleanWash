@@ -9,7 +9,7 @@
 <section class="section-hero">
   <div class="hero-grid-bg"></div>
   <div class="hero-glow"></div>
-  <span class="hero-badge">12 mitra tersedia di sekitar kamu</span>
+  <span class="hero-badge">{{ $laundries->count() }} mitra tersedia di sekitar kamu</span>
   <h1 class="hero-title">
     Temukan laundry terpercaya<br>
     sesuai lokasi &amp; kebutuhan Anda
@@ -18,18 +18,12 @@
     Bandingkan harga, layanan, dan ulasan dari ratusan mitra laundry terdekat
   </p>
 
-  <form action="{{ route('cari-laundry') }}" method="GET" class="search-bar">
+  <form class="search-bar" method="GET" action="">
     <span class="search-icon">🔍</span>
-    <input class="search-input" type="text" name="q" value="{{ request('q') }}" placeholder="Cari laundry di sekitar kamu…" />
+    <input class="search-input" name="search" type="text" placeholder="Cari laundry di sekitar kamu…" value="{{ request('search') }}" />
     <div class="search-divider"></div>
     <button type="submit" class="search-btn">Cari</button>
   </form>
-
-  <div class="location-info">
-    <span>Lokasi terdeteksi:</span>
-    <strong>Sukamulya, Kec. Cinambo, Kota Bandung</strong>
-    <span>· Menampilkan dalam radius 5 km</span>
-  </div>
 </section>
 
 <!-- ===== MAIN BODY ===== -->
@@ -55,27 +49,7 @@
 
     <div class="filter-divider"></div>
 
-    <div class="filter-section">
-      <div class="filter-label">Layanan</div>
-      <button class="filter-chip active">
-        <span>Semua Layanan</span>
-        <span class="filter-chip-count">12</span>
-      </button>
-      <button class="filter-chip">
-        <span>Antar Jemput</span>
-        <span class="filter-chip-count">8</span>
-      </button>
-      <button class="filter-chip">
-        <span>Cuci Express</span>
-        <span class="filter-chip-count">10</span>
-      </button>
-      <button class="filter-chip">
-        <span>Cuci Sepatu</span>
-        <span class="filter-chip-count">6</span>
-      </button>
-    </div>
 
-    <div class="filter-divider"></div>
 
     <div class="filter-section">
       <div class="filter-label">Status</div>
@@ -106,53 +80,40 @@
   <!-- ===== RESULTS ===== -->
   <section class="results-area">
     <div class="results-header">
-      Menampilkan <b>{{ $laundries->firstItem() ?? 0 }} - {{ $laundries->lastItem() ?? 0 }}</b> dari <b>{{ $laundries->total() }}</b> mitra laundry ditemukan
+      Menampilkan <b>{{ $laundries->count() }}</b> mitra laundry ditemukan
     </div>
 
     @forelse($laundries as $laundry)
-    <!-- Laundry Card -->
     <article class="laundry-card">
-      <div class="card-image-area">
-        @if($laundry->logo)
-            <img src="{{ asset('storage/' . $laundry->logo) }}" alt="{{ $laundry->store_name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px 12px 0 0;">
-        @else
-            <span class="card-image-emoji">🏬</span>
-        @endif
+      <div class="card-image-area" style="background-image: url('{{ asset('storage/' . $laundry->logo) }}'); background-size: cover; background-position: center; border-right: 1px solid #eee;">
         @if($loop->first)
-            <span class="card-corner-badge">🏆 #1 Terbaik</span>
+        <span class="card-corner-badge">🏆 #1 Terbaik</span>
+        @elseif($loop->iteration == 2)
+        <span class="card-corner-badge" style="background-color: var(--blue-subtle); color: var(--primary);">⭐ Populer</span>
         @endif
       </div>
       <div class="card-content">
         <div class="card-head">
           <div class="card-name">{{ $laundry->store_name }}</div>
-          <span class="card-distance-badge">📍 {{ $laundry->city ?? 'Kota Tidak Set' }}</span>
+          <span class="card-distance-badge">📍 1 – 2 km</span>
         </div>
         <div class="card-rating-row">
-          @php
-            $avg = $laundry->averageRating();
-            $rcount = $laundry->reviews()->where('status', 'ok')->count();
-          @endphp
-          <span class="card-stars">
-            @for($i=1; $i<=5; $i++)
-                {{ $i <= round($avg) ? '★' : '☆' }}
-            @endfor
-          </span>
-          <span class="card-rating-num">{{ number_format($avg, 1) }}</span>
-          <span class="card-rating-count">({{ $rcount }} ulasan)</span>
+          <span class="card-stars">★★★★★</span>
+          <span class="card-rating-num">5.0</span>
+          <span class="card-rating-count">(Belum ada ulasan)</span>
         </div>
         <div class="card-address">
           <span>📍</span>
-          <span>{{ $laundry->address }}</span>
+          <span>{{ $laundry->address }}, {{ $laundry->village }}, {{ $laundry->district }}, {{ $laundry->city }}, {{ $laundry->province }}</span>
         </div>
         <div class="card-status">
           <span class="status-dot"></span>
-          <span class="span-time"><b>Buka</b> · {{ $laundry->operational_hours ?? '09:00 – 22:00' }}</span>
+          <span class="span-time"><b>Buka</b> · {{ $laundry->open_time ?? '08:00' }} – {{ $laundry->close_time ?? '20:00' }}</span>
         </div>
         <div class="card-footer">
           <div class="card-tags-row">
-            @foreach($laundry->layanans->take(3) as $lay)
-                <span class="service-tag">{{ $lay->nama }}</span>
-            @endforeach
+            <span class="service-tag tag-pickup">🛵 Antar Jemput</span>
+            <span class="service-tag tag-express">⚡ Cuci Express</span>
           </div>
           <div class="card-price-block">
             <div>
@@ -162,23 +123,27 @@
               @endphp
               <div class="price-amount">Rp {{ number_format($minPrice, 0, ',', '.') }}<span class="unit">/{{ $laundry->layanans->first()?->satuan ?? 'kg' }}</span></div>
             </div>
-            <a href="{{ route('user.detail-laundry', $laundry->id) }}" class="btn-detail-card" style="text-decoration: none;">Lihat Detail →</a>
+            <a href="{{ route('user.detail-laundry') }}?id={{ $laundry->id }}" style="text-decoration: none;">
+              <button class="btn-detail-card">Lihat Detail →</button>
+            </a>
           </div>
         </div>
       </div>
     </article>
     @empty
-    <div class="empty-state" style="text-align: center; padding: 50px; grid-column: 1 / -1;">
-        <div style="font-size: 50px; margin-bottom: 20px;">🔍</div>
-        <h3>Tidak ada laundry ditemukan</h3>
-        <p>Coba gunakan kata kunci pencarian lain.</p>
+    <div style="text-align: center; padding: 40px; color: #666;">
+        Belum ada mitra laundry yang tersedia.
     </div>
     @endforelse
 
     <!-- Pagination -->
+    @if($laundries->count() > 0)
     <div class="pagination">
-        {{ $laundries->links() }}
+      <button class="page-btn disabled">‹</button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn disabled">›</button>
     </div>
+    @endif
   </section>
 </div>
 @endsection
@@ -265,6 +230,28 @@
                 if (filterSelect) {
                     filterSelect.selectedIndex = 0;
                 }
+            });
+        }
+
+        // Live search filter
+        const searchInput = document.querySelector('.search-input');
+        const laundryCards = document.querySelectorAll('.laundry-card');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                const keyword = e.target.value.toLowerCase();
+                let visibleCount = 0;
+                
+                laundryCards.forEach(card => {
+                    const name = card.querySelector('.card-name').innerText.toLowerCase();
+                    if (name.includes(keyword)) {
+                        card.style.display = 'block'; // Or flex/grid depending on original layout, usually block or flex. Let's use '' to reset to default.
+                        card.style.display = '';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
             });
         }
     </script>

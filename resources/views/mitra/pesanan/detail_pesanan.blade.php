@@ -13,14 +13,16 @@
      */
 
     $statusMap = [
-        'masuk'        => ['label' => 'Masuk',           'class' => 'badge--masuk',       'dot' => '#faad14'],
-        'aktif'        => ['label' => 'Dikonfirmasi',    'class' => 'badge--aktif',       'dot' => '#1677ff'],
-        'pickup'       => ['label' => 'Pickup',          'class' => 'badge--pickup',      'dot' => '#1677ff'],
-        'diproses'     => ['label' => 'Diproses',        'class' => 'badge--diproses',    'dot' => '#faad14'],
-        'pengantaran'  => ['label' => 'Pengantaran',     'class' => 'badge--pengantaran', 'dot' => '#1677ff'],
-        'selesai'      => ['label' => 'Selesai',         'class' => 'badge--selesai',     'dot' => '#52c41a'],
-        'gagal_pickup' => ['label' => 'Gagal Pickup',    'class' => 'badge--gagal',       'dot' => '#ff4d4f'],
-        'dibatalkan'   => ['label' => 'Dibatalkan',      'class' => 'badge--batal',       'dot' => '#8c8c8c'],
+        'masuk'               => ['label' => 'Masuk',               'class' => 'badge--masuk',       'dot' => '#faad14'],
+        'aktif'               => ['label' => 'Dikonfirmasi',        'class' => 'badge--aktif',       'dot' => '#1677ff'],
+        'pickup'              => ['label' => 'Pickup',              'class' => 'badge--pickup',      'dot' => '#1677ff'],
+        'ditimbang'           => ['label' => 'Ditimbang',           'class' => 'badge--aktif',       'dot' => '#1677ff'],
+        'menunggu_pembayaran' => ['label' => 'Menunggu Pembayaran', 'class' => 'badge--masuk',       'dot' => '#faad14'],
+        'diproses'            => ['label' => 'Diproses',            'class' => 'badge--diproses',    'dot' => '#faad14'],
+        'pengantaran'         => ['label' => 'Pengantaran',         'class' => 'badge--pengantaran', 'dot' => '#1677ff'],
+        'selesai'             => ['label' => 'Selesai',             'class' => 'badge--selesai',     'dot' => '#52c41a'],
+        'gagal_pickup'        => ['label' => 'Gagal Pickup',        'class' => 'badge--gagal',       'dot' => '#ff4d4f'],
+        'dibatalkan'          => ['label' => 'Dibatalkan',          'class' => 'badge--batal',       'dot' => '#8c8c8c'],
     ];
     $si = $statusMap[$pesanan->status] ?? ['label' => $pesanan->status, 'class' => 'badge--masuk', 'dot' => '#faad14'];
 
@@ -48,7 +50,7 @@
         ],
     ];
 
-    $stepOrder  = ['masuk', 'aktif', 'pickup', 'diproses', 'pengantaran', 'selesai'];
+    $stepOrder  = ['masuk', 'aktif', 'pickup', 'ditimbang', 'menunggu_pembayaran', 'diproses', 'pengantaran', 'selesai'];
     $currentIdx = array_search($pesanan->status, $stepOrder);
 
     /* Harga */
@@ -74,13 +76,23 @@
 
 <div class="mdp-page">
 
-    {{-- ── TOP NAV ── --}}
     <div class="mdp-topnav">
         <a href="{{ route('mitra.pesanan') }}" class="mdp-back">
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
             Kembali
         </a>
     </div>
+
+    @if($errors->any())
+    <div style="background-color: #fef2f2; border-left: 4px solid #ef4444; color: #b91c1c; padding: 12px 16px; margin: 16px 24px; border-radius: 4px; font-size: 14px;">
+        <strong style="display: block; margin-bottom: 4px;">Terjadi kesalahan:</strong>
+        <ul style="margin: 0; padding-left: 20px;">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
 
     {{-- ── HERO HEADER ── --}}
     <div class="mdp-hero mdp-hero--{{ $pesanan->status }}">
@@ -144,11 +156,13 @@
                     @php
                         $histories = $pesanan->statusHistories->keyBy('status_baru');
                         $tlSteps = [
-                            ['key' => 'masuk',       'label' => 'Pesanan Diterima',    'desc' => 'Pesanan berhasil diterima oleh toko'],
-                            ['key' => 'pickup',      'label' => 'Pickup Berhasil',     'desc' => 'Kurir berhasil mengambil pakaian dari alamat pelanggan'],
-                            ['key' => 'diproses',    'label' => 'Sedang Diproses',     'desc' => 'Pakaian sedang dalam proses pencucian dan pengeringan'],
-                            ['key' => 'pengantaran', 'label' => 'Dalam Pengantaran',   'desc' => 'Kurir akan mengantar pakaian ke alamat pelanggan'],
-                            ['key' => 'selesai',     'label' => 'Selesai',             'desc' => 'Pesanan telah diterima pelanggan'],
+                            ['key' => 'masuk',               'label' => 'Pesanan Diterima',    'desc' => 'Pesanan berhasil diterima oleh toko'],
+                            ['key' => 'pickup',              'label' => 'Pickup Berhasil',     'desc' => 'Kurir berhasil mengambil pakaian dari pelanggan'],
+                            ['key' => 'ditimbang',           'label' => 'Ditimbang',           'desc' => 'Barang ditimbang untuk menentukan total biaya'],
+                            ['key' => 'menunggu_pembayaran', 'label' => 'Menunggu Pembayaran', 'desc' => 'Menunggu pembayaran dari pelanggan'],
+                            ['key' => 'diproses',            'label' => 'Sedang Diproses',     'desc' => 'Pakaian sedang dalam proses pencucian dan pengeringan'],
+                            ['key' => 'pengantaran',         'label' => 'Dalam Pengantaran',   'desc' => 'Kurir akan mengantar pakaian ke alamat pelanggan'],
+                            ['key' => 'selesai',             'label' => 'Selesai',             'desc' => 'Pesanan telah diterima pelanggan'],
                         ];
                         $stepKeys   = array_column($tlSteps, 'key');
                         $curTlIdx   = array_search($pesanan->status, $stepKeys);
@@ -183,6 +197,22 @@
                                 @if($isActive && $hist->catatan)
                                 &nbsp;·&nbsp;<strong class="mdp-tl-badge">{{ $hist->catatan }}</strong>
                                 @endif
+                                @if($hist->status_baru === 'pickup' && $pesanan->foto_pickup)
+                                <div style="margin-top: 5px;">
+                                    <a href="{{ asset('storage/' . $pesanan->foto_pickup) }}" target="_blank" style="color: #1a56e8; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; font-size: 12px;">
+                                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        Lihat Foto PickUp
+                                    </a>
+                                </div>
+                                @endif
+                                @if($hist->status_baru === 'selesai' && $pesanan->foto_pengantaran)
+                                <div style="margin-top: 5px;">
+                                    <a href="{{ asset('storage/' . $pesanan->foto_pengantaran) }}" target="_blank" style="color: #1a56e8; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; font-size: 12px;">
+                                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        Lihat Foto Pengantaran
+                                    </a>
+                                </div>
+                                @endif
                             </div>
                             @elseif(!$isDone && !$isActive)
                             <div class="mdp-tl-time mdp-tl-time--est">
@@ -213,6 +243,16 @@
                         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                         Tolak
                     </button>
+                    @elseif($pesanan->status === 'pickup')
+                    <button class="mdp-btn mdp-btn--update" onclick="document.getElementById('modalTimbang').classList.add('active')" style="background-color: #1677ff; color: white;">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 10h16v11a1 1 0 01-1 1H5a1 1 0 01-1-1V10z"/><path d="M7 6h10M9 6V4a2 2 0 012-2h2a2 2 0 012 2v2M8 14h8"/></svg>
+                        Input Timbangan
+                    </button>
+                    @elseif($pesanan->status === 'menunggu_pembayaran')
+                    <button class="mdp-btn mdp-btn--update" disabled style="background-color: var(--neutral-400); cursor: not-allowed; color: white; opacity: 0.8;">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+                        Menunggu Pembayaran
+                    </button>
                     @else
                     <button class="mdp-btn mdp-btn--update" onclick="document.getElementById('modalUpdate').classList.add('active')">
                         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
@@ -241,16 +281,27 @@
                         <div class="mdp-layanan-icon">
                             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M18.36 5.64l1.41-1.41"/></svg>
                         </div>
+                        @php
+                            $namaLayananLower = strtolower($item->nama_layanan);
+                            $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
+                            $unit = $isKiloan ? 'Kg' : (str_contains($namaLayananLower, 'sepatu') ? 'Pasang' : (str_contains($namaLayananLower, 'karpet') ? 'Meter' : 'Pcs'));
+                            $qty = $isKiloan ? $item->berat_aktual : $item->qty;
+                            $price = $isKiloan ? $item->harga_per_kg : $item->harga_satuan;
+                            if (is_null($price) || $price == 0) {
+                                $laundryService = \App\Models\LaundryService::find($item->jenis_layanan);
+                                $price = $laundryService ? $laundryService->base_price : $item->subtotal;
+                            }
+                        @endphp
                         <div class="mdp-layanan-info">
                             <div class="mdp-layanan-name">{{ $item->nama_layanan }}</div>
                             <div class="mdp-layanan-qty">
-                                {{ $item->estimasi_berat ?? '-' }} kg
-                                × Rp {{ number_format($item->harga_per_kg ?? $item->harga_satuan ?? 0, 0, ',', '.') }}/kg
+                                {{ $qty ?? '0' }} {{ $unit }}
+                                × Rp {{ number_format($price, 0, ',', '.') }}/{{ $unit }}
                             </div>
                         </div>
                         <div class="mdp-layanan-right">
                             <div class="mdp-layanan-harga">Rp {{ number_format($item->subtotal ?? 0, 0, ',', '.') }}</div>
-                            <div class="mdp-layanan-berat">{{ $item->estimasi_berat ?? '-' }} kg</div>
+                            <div class="mdp-layanan-berat">{{ $qty ?? '0' }} {{ $unit }}</div>
                         </div>
                     </div>
                     @endforeach
@@ -443,7 +494,7 @@
         <form action="{{ route('mitra.pesanan.tolak', $pesanan->id) }}" method="POST">
             @csrf
             @method('PUT')
-            <textarea name="alasan_batal" class="mdp-modal-textarea" placeholder="Alasan penolakan..." rows="3" required></textarea>
+            <textarea name="alasan" class="mdp-modal-textarea" placeholder="Alasan penolakan..." rows="3" required></textarea>
             <div class="mdp-modal-actions">
                 <button type="button" class="mdp-modal-btn mdp-modal-btn--ghost" onclick="document.getElementById('modalTolak').classList.remove('active')">Batal</button>
                 <button type="submit" class="mdp-modal-btn mdp-modal-btn--red">Ya, Tolak</button>
@@ -454,36 +505,94 @@
 
 {{-- ═══ MODAL: Update Status ═══ --}}
 <div class="mdp-modal-overlay" id="modalUpdate">
-    <div class="mdp-modal">
+    <div class="mdp-modal" style="position: relative;">
+        <!-- Tombol X Close -->
+        <button type="button" onclick="document.getElementById('modalUpdate').classList.remove('active')" style="position: absolute; top: 15px; left: 15px; background: transparent; border: none; font-size: 24px; cursor: pointer; color: #9ca3af; line-height: 1; padding: 0;">
+            &times;
+        </button>
+
         <div class="mdp-modal-icon mdp-modal-icon--blue">
             <svg width="22" height="22" fill="none" stroke="#1a56e8" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
         </div>
         <h3 class="mdp-modal-title">Update Status Pesanan</h3>
         <p class="mdp-modal-desc">Pilih status baru untuk pesanan ini.</p>
+        <form action="{{ route('mitra.pesanan.update', $pesanan->id) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+            
+            @if($pesanan->status === 'aktif')
+                <div style="margin-top: 15px;">
+                    <label style="display: block; font-size: 13px; margin-bottom: 6px; color: var(--neutral-600);">Foto Bukti PickUp <span style="color: red">*</span></label>
+                    <input type="file" name="foto_pickup" accept="image/*" class="mdp-modal-textarea" style="padding: 8px;" required>
+                </div>
+            @elseif($pesanan->status === 'pengantaran')
+                <div style="margin-top: 15px;">
+                    <label style="display: block; font-size: 13px; margin-bottom: 6px; color: var(--neutral-600);">Foto Bukti Pengantaran <span style="color: red">*</span></label>
+                    <input type="file" name="foto_pengantaran" accept="image/*" class="mdp-modal-textarea" style="padding: 8px;" required>
+                </div>
+            @else
+                <textarea name="catatan" class="mdp-modal-textarea" placeholder="Catatan (opsional)..." rows="2" style="margin-top: 15px;"></textarea>
+            @endif
+            
+            <div class="mdp-modal-actions" style="margin-top: 15px;">
+                @if($pesanan->status === 'aktif')
+                    <button type="submit" name="status_baru" value="gagal_pickup" class="mdp-modal-btn mdp-modal-btn--red">Pickup Gagal</button>
+                    <button type="submit" name="status_baru" value="pickup" class="mdp-modal-btn mdp-modal-btn--blue">Pickup Berhasil</button>
+                @elseif($pesanan->status === 'diproses')
+                    <button type="submit" name="status_baru" value="pengantaran" class="mdp-modal-btn mdp-modal-btn--blue" style="width: 100%;">Mulai Pengantaran</button>
+                @elseif($pesanan->status === 'pengantaran')
+                    <button type="submit" name="status_baru" value="selesai" class="mdp-modal-btn mdp-modal-btn--green" style="width: 100%;">Tandai Selesai</button>
+                @endif
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- ═══ MODAL: Input Timbangan ═══ --}}
+<div class="mdp-modal-overlay" id="modalTimbang">
+    <div class="mdp-modal">
+        <div class="mdp-modal-icon mdp-modal-icon--blue">
+            <svg width="22" height="22" fill="none" stroke="#1a56e8" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 10h16v11a1 1 0 01-1 1H5a1 1 0 01-1-1V10z"/><path d="M7 6h10M9 6V4a2 2 0 012-2h2a2 2 0 012 2v2M8 14h8"/></svg>
+        </div>
+        <h3 class="mdp-modal-title">Input Timbangan</h3>
+        <p class="mdp-modal-desc">Masukkan berat aktual barang. Status akan diperbarui ke <strong>Menunggu Pembayaran</strong>.</p>
         <form action="{{ route('mitra.pesanan.update', $pesanan->id) }}" method="POST">
             @csrf
             @method('PUT')
-            <div class="mdp-status-options">
-                @php
-                    $nextStatuses = [
-                        'aktif'       => [['val' => 'pickup',      'label' => 'Pickup Berhasil']],
-                        'pickup'      => [['val' => 'diproses',    'label' => 'Mulai Diproses']],
-                        'diproses'    => [['val' => 'pengantaran', 'label' => 'Mulai Pengantaran'], ['val' => 'gagal_pickup', 'label' => 'Gagal Pickup']],
-                        'pengantaran' => [['val' => 'selesai',     'label' => 'Tandai Selesai']],
-                    ];
-                    $opts = $nextStatuses[$pesanan->status] ?? [];
-                @endphp
-                @foreach($opts as $opt)
-                <label class="mdp-status-option">
-                    <input type="radio" name="status" value="{{ $opt['val'] }}" {{ $loop->first ? 'checked' : '' }}>
-                    <span>{{ $opt['label'] }}</span>
+            <input type="hidden" name="status_baru" value="menunggu_pembayaran">
+            
+            @foreach($pesanan->items as $item)
+            @php
+                $namaLayananLower = strtolower($item->nama_layanan);
+                $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
+                $unit = $isKiloan ? 'Kg' : (str_contains($namaLayananLower, 'sepatu') ? 'Pasang' : (str_contains($namaLayananLower, 'karpet') ? 'Meter' : 'Pcs'));
+                $price = $isKiloan ? $item->harga_per_kg : $item->harga_satuan;
+                if (is_null($price) || $price == 0) {
+                    $laundryService = \App\Models\LaundryService::find($item->jenis_layanan);
+                    $price = $laundryService ? $laundryService->base_price : $item->subtotal;
+                }
+            @endphp
+            <div style="margin-bottom: 15px; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <label style="display: block; font-size: 13px; margin-bottom: 8px; font-weight: 600; color: #1e293b;">
+                    {{ $item->nama_layanan }}
                 </label>
-                @endforeach
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div style="flex: 1; position: relative;">
+                        <input type="number" name="timbangan[{{ $item->id }}]" step="0.1" min="0.1" class="mdp-modal-textarea input-timbangan" style="height: 38px; padding-right: 50px; margin: 0;" data-price="{{ $price }}" placeholder="0" required>
+                        <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 500; color: #64748b;">{{ $unit }}</span>
+                    </div>
+                    <div style="font-size: 14px; font-weight: 700; color: #0f172a; width: 120px; text-align: right;">
+                        <span class="timbangan-subtotal" data-price="{{ $price }}">Rp 0</span>
+                    </div>
+                </div>
+                <div style="font-size: 11px; color: #64748b; margin-top: 6px;">Harga: Rp {{ number_format($price, 0, ',', '.') }} / {{ $unit }}</div>
             </div>
+            @endforeach
+
             <textarea name="catatan" class="mdp-modal-textarea" placeholder="Catatan (opsional)..." rows="2"></textarea>
             <div class="mdp-modal-actions">
-                <button type="button" class="mdp-modal-btn mdp-modal-btn--ghost" onclick="document.getElementById('modalUpdate').classList.remove('active')">Batal</button>
-                <button type="submit" class="mdp-modal-btn mdp-modal-btn--blue">Simpan</button>
+                <button type="button" class="mdp-modal-btn mdp-modal-btn--ghost" onclick="document.getElementById('modalTimbang').classList.remove('active')">Batal</button>
+                <button type="submit" class="mdp-modal-btn mdp-modal-btn--blue">Simpan & Lanjut</button>
             </div>
         </form>
     </div>
@@ -496,6 +605,18 @@
 document.querySelectorAll('.mdp-modal-overlay').forEach(function(overlay) {
     overlay.addEventListener('click', function(e) {
         if (e.target === this) this.classList.remove('active');
+    });
+});
+
+document.querySelectorAll('.input-timbangan').forEach(function(input) {
+    input.addEventListener('input', function() {
+        let val = parseFloat(this.value) || 0;
+        let price = parseFloat(this.getAttribute('data-price')) || 0;
+        let subtotal = val * price;
+        let subtotalEl = this.closest('div').nextElementSibling.querySelector('.timbangan-subtotal');
+        if (subtotalEl) {
+            subtotalEl.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(subtotal);
+        }
     });
 });
 </script>

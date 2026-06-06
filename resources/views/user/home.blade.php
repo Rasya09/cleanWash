@@ -39,65 +39,6 @@
   </div>
 </section>
 
-<!-- ===== LAUNDRY TERDEKAT ===== -->
-<section class="section section-alt" id="laundry">
-  <div class="section-header">
-    <span class="section-tag">Pilihan Terbaik</span>
-    <h2 class="section-title">Laundry Terdekat</h2>
-    <p class="section-desc">Temukan mitra laundry terpercaya dengan harga transparan dan layanan terverifikasi.</p>
-  </div>
-  <div class="cards-grid">
-    <div class="laundry-card">
-      <div class="card-img c1">
-        <div class="card-img-inner">🧺</div>
-        <div class="card-badge">★ 5.0</div>
-      </div>
-      <div class="card-body">
-        <div class="card-name">UBR Laundry</div>
-        <div class="card-dist">📍 1–2 km</div>
-        <div class="card-price">Mulai <strong>Rp 7.500/kg</strong></div>
-        <button class="btn-detail">Lihat Detail</button>
-      </div>
-    </div>
-    <div class="laundry-card">
-      <div class="card-img c2">
-        <div class="card-img-inner">👕</div>
-        <div class="card-badge">★ 5.0</div>
-      </div>
-      <div class="card-body">
-        <div class="card-name">Sorcha Laundry Arcamanik</div>
-        <div class="card-dist">📍 1–2 km</div>
-        <div class="card-price">Mulai <strong>Rp 5.000/kg</strong></div>
-        <button class="btn-detail">Lihat Detail</button>
-      </div>
-    </div>
-    <div class="laundry-card">
-      <div class="card-img c3">
-        <div class="card-img-inner">✨</div>
-        <div class="card-badge">★ 5.0</div>
-      </div>
-      <div class="card-body">
-        <div class="card-name">Laundry Express Bandung</div>
-        <div class="card-dist">📍 1–2 km</div>
-        <div class="card-price">Mulai <strong>Rp 7.600/kg</strong></div>
-        <button class="btn-detail">Lihat Detail</button>
-      </div>
-    </div>
-    <div class="laundry-card">
-      <div class="card-img c4">
-        <div class="card-img-inner">🌸</div>
-        <div class="card-badge">★ 5.0</div>
-      </div>
-      <div class="card-body">
-        <div class="card-name">Molaundry</div>
-        <div class="card-dist">📍 1–2 km</div>
-        <div class="card-price">Mulai <strong>Rp 5.000/kg</strong></div>
-        <button class="btn-detail">Lihat Detail</button>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ===== PICKUP BANNER ===== -->
 <div style="padding: 0 0 80px;" id="layanan">
   <div class="pickup-banner">
@@ -244,7 +185,7 @@
       </div>
 
       <div class="review-form">
-        <textarea name="ulasan" class="review-textarea" 
+        <textarea name="ulasan" class="review-textarea"
                   placeholder="Tuliskan ulasan anda di sini...."></textarea>
         <button type="submit" class="review-submit">Kirim</button>
       </div>
@@ -255,16 +196,11 @@
   </div>
 </section>
 
-<!-- Demo toggle button -->
-<button class="demo-toggle" id="demoToggle" onclick="simulateLogin()">
-  🔐 Simulasi Masuk
-</button>
-
 @endsection
 
 @push('scripts')
 <script>
- 
+
 // Sinkronisasi Star dan Emoji
 const stars = document.querySelectorAll('.star-btn');
 const emojis = document.querySelectorAll('.review-emoji');
@@ -297,4 +233,3 @@ emojis.forEach(emoji => {
 updateRating(5);
 </script>
 @endpush
-

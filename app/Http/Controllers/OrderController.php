@@ -95,8 +95,8 @@ class OrderController extends Controller
                 'alamat_pengantaran' => $alamatPengantaran,
                 'foto_barang'        => $fotoPath,
                 'catatan'            => $request->catatan,
-                'metode_bayar' => $request->metode_bayar ?? 'cod',
-                'status_bayar'       => 'belum',
+                'metode_bayar'       => $request->metode_bayar ?? 'transfer',
+                'status_bayar'       => 'menunggu_timbangan',
                 'subtotal'           => 0,
                 'ongkir'             => 0,
                 'diskon'             => 0,
@@ -105,12 +105,19 @@ class OrderController extends Controller
 
             // Simpan setiap item layanan
             foreach ($request->layanan as $jenis) {
+                $laundryService = \App\Models\LaundryService::find($jenis);
+                $namaLayanan = $laundryService ? $laundryService->service_name : $this->labelLayanan($jenis);
+
+                $isKiloan = $laundryService && in_array($laundryService->getRawOriginal('service_name'), ['Cuci Kering', 'Setrika Aja']);
+
                 OrderItem::create([
                     'order_id'      => $order->id,
-                    'nama_layanan'  => $this->labelLayanan($jenis),
+                    'nama_layanan'  => $namaLayanan,
                     'jenis_layanan' => $jenis,
                     'qty'           => 1,
-                    'subtotal'      => 0,
+                    'harga_per_kg'  => $isKiloan && $laundryService ? $laundryService->base_price : null,
+                    'harga_satuan'  => !$isKiloan && $laundryService ? $laundryService->base_price : null,
+                    'subtotal'      => $laundryService ? $laundryService->base_price : 0,
                 ]);
             }
 
@@ -189,6 +196,37 @@ class OrderController extends Controller
         return redirect()
             ->route('user.pesanan')
             ->with('success', 'Pesanan berhasil dibatalkan.');
+    }
+
+    // =========================================================
+    // BAYAR PESANAN (USER)
+    // =========================================================
+    public function bayar(Request $request, $id)
+    {
+        $order = Order::where('user_id', Auth::id())->findOrFail($id);
+
+        if ($order->status !== 'menunggu_pembayaran') {
+            return back()->withErrors(['error' => 'Pesanan belum menunggu pembayaran.']);
+        }
+
+        $statusLama = $order->status;
+
+        DB::transaction(function () use ($order, $statusLama) {
+            $order->update([
+                'status_bayar' => 'lunas',
+                'status'       => 'diproses',
+            ]);
+
+            $this->catatHistory(
+                $order,
+                $statusLama,
+                'diproses',
+                'user',
+                'Pembayaran lunas, pesanan mulai diproses'
+            );
+        });
+
+        return back()->with('success', 'Pembayaran berhasil, pesanan sedang diproses!');
     }
 
     // =========================================================

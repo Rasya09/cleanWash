@@ -1,12 +1,10 @@
 <!-- ═══ SIDEBAR ═══ -->
-<aside class="sidebar" id="mitraSidebar">
-    <a href="{{ route('mitra.dashboard') }}" class="sidebar-logo">
-        <div class="logo-icon">🧺</div>
-        <div class="logo-text">
-            <div class="name">Mitra Laundry</div>
-            <div class="sub">Dashboard</div>
-        </div>
-    </a>
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <a href="{{ route('mitra.dashboard') }}" class="nav-brand" style="display: flex; align-items: center; text-decoration: none;">
+            <img class="nav-logo-icon" src="{{ asset('assets/images/CW.png') }}" alt="Clean Wash Logo" style="height: 40px; width: auto;" />
+        </a>
+    </div>
 
   <nav class="sidebar-nav">
     <div class="nav-section-label">Pesanan</div>
@@ -17,10 +15,6 @@
     <a class="nav-item {{ request()->routeIs('mitra.gagal-pickup') ? 'active' : '' }}" href="{{ route('mitra.gagal-pickup') }}">
       <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
       Gagal Pickup/Pembatalan
-    </a>
-    <a class="nav-item {{ request()->routeIs('mitra.pengiriman') ? 'active' : '' }}" href="{{ route('mitra.pengiriman') }}">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-      Pengaturan Pengiriman
     </a>
 
     <div class="nav-section-label">Layanan</div>
@@ -38,10 +32,6 @@
       <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
       Gambar Toko
     </a>
-    <a class="nav-item {{ request()->routeIs('mitra.diskon') ? 'active' : '' }}" href="{{ route('mitra.diskon') }}">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7 7h10M7 12h6"/><rect x="2" y="3" width="20" height="18" rx="2"/></svg>
-      Diskon
-    </a>
 
     <div class="nav-section-label">Layanan Customer</div>
     <a class="nav-item {{ request()->routeIs('mitra.penilaian') ? 'active' : '' }}" href="{{ route('mitra.penilaian') }}">
@@ -54,10 +44,7 @@
     </a>
 
     <div class="nav-section-label">Keuangan</div>
-    <a class="nav-item {{ request()->routeIs('mitra.penghasilan') ? 'active' : '' }}" href="{{ route('mitra.penghasilan') }}">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-      Penghasilan Saya
-    </a>
+
     <a class="nav-item {{ request()->routeIs('mitra.saldo') ? 'active' : '' }}" href="{{ route('mitra.saldo') }}">
       <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
       Saldo Saya
@@ -67,15 +54,6 @@
       Rekening Bank
     </a>
 
-    <div class="nav-section-label">Data</div>
-    <a class="nav-item {{ request()->routeIs('mitra.performa') ? 'active' : '' }}" href="{{ route('mitra.performa') }}">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      Performa Toko
-    </a>
-    <a class="nav-item {{ request()->routeIs('mitra.kesehatan') ? 'active' : '' }}" href="{{ route('mitra.kesehatan') }}">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-      Kesehatan Toko
-    </a>
   </nav>
 
   <div class="sidebar-help">

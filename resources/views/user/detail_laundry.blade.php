@@ -12,48 +12,33 @@
         <section class="dl-hero">
             {{-- Kiri: Info --}}
             <div class="dl-hero-left">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <h1>{{ $laundry->store_name }}</h1>
-                    <button type="button" onclick="openReportStoreModal()" style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-flag"></i> Laporkan Toko
-                    </button>
-                </div>
+                <h1>{{ $laundry->store_name }}</h1>
 
                 <div class="dl-rating">
-                    @php
-                        $avg = $laundry->averageRating();
-                        $rcount = $laundry->reviews()->where('status', 'ok')->count();
-                    @endphp
-                    @for($i=1; $i<=5; $i++)
-                        {{ $i <= round($avg) ? '★' : '☆' }}
-                    @endfor
-                    {{ number_format($avg, 1) }}
-                    <span class="dl-rating-count">({{ $rcount }} ulasan)</span>
+                    ⭐⭐⭐⭐⭐ {{ number_format($reviews->avg('rating') ?? 0, 1) }}
+                    <span class="dl-rating-count">({{ $reviews->count() }} ulasan)</span>
                 </div>
 
                 <div class="dl-alamat">
                     <svg width="13" height="15" viewBox="0 0 24 24" fill="#EF4444"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                    {{ $laundry->address }}
+                    {{ $laundry->address }}, {{ $laundry->village }}, {{ $laundry->district }}, {{ $laundry->city }}, {{ $laundry->province }}
                 </div>
 
                 <p class="dl-deskripsi">
-                    {{ $laundry->description ?? 'Belum ada deskripsi untuk toko ini.' }}
+                    {{ $laundry->description ?? 'Laundry profesional siap melayani kebutuhan Anda dengan sepenuh hati.' }}
                 </p>
             </div>
 
             {{-- Kanan: Gambar --}}
             <div class="dl-hero-right">
-                @if($laundry->logo)
-                    <img src="{{ asset('storage/' . $laundry->logo) }}" class="dl-main-img" alt="Foto utama laundry">
-                @else
-                    <img src="https://picsum.photos/600/400" class="dl-main-img" alt="Foto utama laundry">
-                @endif
+                @php
+                    $photos = is_array($laundry->store_photos) ? $laundry->store_photos : (json_decode($laundry->store_photos, true) ?? []);
+                    $mainPhoto = count($photos) > 0 ? asset('storage/' . $photos[0]) : asset('storage/' . $laundry->logo);
+                @endphp
+                <img src="{{ $mainPhoto }}" class="dl-main-img" alt="Foto utama laundry" style="object-fit: cover; height: 100%;">
                 <div class="dl-thumbnails">
-                    @php
-                        $photos = collect($laundry->store_photos ?? []);
-                    @endphp
-                    @foreach($photos as $photo)
-                        <img src="{{ asset('storage/' . $photo) }}" alt="Foto Toko">
+                    @foreach(array_slice($photos, 1, 3) as $photo)
+                        <img src="{{ asset('storage/' . $photo) }}" alt="Foto toko" style="object-fit: cover;">
                     @endforeach
                 </div>
             </div>
@@ -61,72 +46,85 @@
 
         {{-- ===================== BODY: DETAIL + SIDEBAR ===================== --}}
         <div class="dl-body">
-            {{-- Card Detail --}}
+
+            {{-- Card Detail: Daftar Layanan --}}
             <div class="dl-card">
-                <h2>Tentang Laundry</h2>
+                <h2>Daftar Layanan</h2>
                 <div class="dl-divider"></div>
 
                 <p class="dl-card-desc">
-                    {{ $laundry->description ?? 'Belum ada informasi tambahan.' }}
+                    {{ $laundry->description ?? 'Tidak ada deskripsi tambahan untuk laundry ini.' }}
                 </p>
 
                 <p class="dl-layanan-title">Daftar Layanan</p>
                 <div class="dl-layanan-list">
-                    @forelse($laundry->layanans as $layanan)
-                        <div class="dl-layanan-item">
-                            <span class="dl-layanan-name">{{ $layanan->nama }}</span>
-                            <span class="dl-layanan-price">{{ $layanan->hargaFormatted() }}/{{ $layanan->satuan }}</span>
+                    @if(isset($laundry->services) && $laundry->services->count() > 0)
+                        @foreach($laundry->services as $service)
+                            @php
+                                $namaLayananLower = strtolower($service->service_name);
+                                $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
+                                $unit = $isKiloan ? 'kg' : (str_contains($namaLayananLower, 'sepatu') ? 'pasang' : (str_contains($namaLayananLower, 'karpet') ? 'meter' : 'pcs'));
+                            @endphp
+                            <div class="dl-layanan-item">
+                                <span class="dl-layanan-name">{{ $service->service_name }}</span>
+                                <span class="dl-layanan-price">Rp {{ number_format($service->base_price, 0, ',', '.') }}/{{ $unit }}</span>
+                            </div>
+                        @endforeach
+                    @else
+                        <div class="dl-layanan-item" style="color:#6b7280; font-size:14px; border:none;">
+                            Belum ada layanan yang ditambahkan oleh mitra.
                         </div>
-                    @empty
-                        <p style="color:#6b7280; font-size:14px;">Belum ada layanan tersedia.</p>
-                    @endforelse
+                    @endif
                 </div>
             </div>
 
             {{-- Sidebar Pesan --}}
             <div class="dl-sidebar">
                 <p class="dl-sidebar-harga-label">Mulai dari</p>
-                <p class="dl-sidebar-harga">Rp {{ number_format($laundry->layanans->min('harga') ?? 0, 0, ',', '.') }} <span>/{{ $laundry->layanans->first()?->satuan ?? 'kg' }}</span></p>
+                @php
+                    $cheapestService = isset($laundry->services) && $laundry->services->count() > 0 ? $laundry->services->sortBy('base_price')->first() : null;
+                    if ($cheapestService) {
+                        $namaLayananLower = strtolower($cheapestService->service_name);
+                        $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
+                        $unit = $isKiloan ? 'kg' : (str_contains($namaLayananLower, 'sepatu') ? 'pasang' : (str_contains($namaLayananLower, 'karpet') ? 'meter' : 'pcs'));
+                        $minPrice = $cheapestService->base_price;
+                    } else {
+                        $minPrice = 0;
+                        $unit = 'kg';
+                    }
+                @endphp
+                <p class="dl-sidebar-harga">Rp {{ number_format($minPrice, 0, ',', '.') }} <span>/{{ $unit }}</span></p>
 
                 <div class="dl-sidebar-divider"></div>
 
                 <div class="dl-sidebar-row">
-                    <span class="dl-sidebar-label">Jam Operasional</span>
+                    <span class="dl-sidebar-label">JAM OPERASIONAL</span>
                     <div class="dl-info-box">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
                         </svg>
-                        {{ $laundry->operational_hours ?? '09:00 – 21:00' }}
+                        @if($laundry->open_time && $laundry->close_time)
+                            {{ \Carbon\Carbon::parse($laundry->open_time)->format('H:i') }} –
+                            {{ \Carbon\Carbon::parse($laundry->close_time)->format('H:i') }}
+                        @else
+                            -
+                        @endif
                     </div>
                 </div>
 
-                <div class="dl-sidebar-row">
-                    <span class="dl-sidebar-label">Estimasi Waktu</span>
-                    <div class="dl-estimasi-grid">
-                        <div class="dl-estimasi-item">
-                            <span class="label">Regular</span>
-                            <span class="value">{{ $laundry->layanans->where('subkategori', 'reguler')->first()?->estimasi_hari ?? '2-3' }} hari</span>
-                        </div>
-                        <div class="dl-estimasi-item express">
-                            <span class="label">Express</span>
-                            <span class="value">{{ $laundry->layanans->where('subkategori', 'express')->first()?->estimasi_hari ?? '-' }} hari</span>
-                        </div>
-                    </div>
-                </div>
+                <a href="{{ route('user.chat', ['contact_id' => $laundry->user_id]) }}" class="dl-btn-chat" style="display: flex; justify-content: center; align-items: center; gap: 8px; background-color: #10B981; color: white; padding: 14px; border-radius: 12px; font-weight: 600; font-size: 15px; text-decoration: none; margin-bottom: 12px; transition: all 0.2s; border: 1px solid #059669;">
+                    Chat Mitra
+                </a>
 
-                <div class="dl-sidebar-row">
-                    <span class="dl-sidebar-label">Layanan Tambahan</span>
-                    <div class="dl-info-box">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                        Radius Layanan: {{ $laundry->service_radius ?? '-' }} km
-                    </div>
-                </div>
-
-                <a href="{{ route('user.buat-pesanan', $laundry->id) }}" class="dl-btn-pesan">
+                @if(isset($laundry->services) && $laundry->services->count() > 0)
+                <a href="{{ route('user.buat-pesanan', ['laundry_id' => $laundry->id]) }}" class="dl-btn-pesan">
                     Pesan Sekarang
                 </a>
+                @else
+                <button class="dl-btn-pesan" style="background-color: #9CA3AF; cursor: not-allowed;" disabled>
+                    Belum Ada Layanan
+                </button>
+                @endif
             </div>
 
         </div>{{-- /dl-body --}}
@@ -146,8 +144,12 @@
                             {{ strtoupper(substr($review->user->name ?? 'U', 0, 2)) }}
                         </div>
                         <div class="dl-ulasan-meta">
-                            <span class="dl-ulasan-name" style="font-weight:600; display:block;">{{ $review->user->name ?? 'Customer' }}</span>
-                            <span class="dl-ulasan-time" style="font-size:12px; color:#6b7280;">{{ $review->created_at->diffForHumans() }}</span>
+                            <span class="dl-ulasan-name" style="font-weight:600; display:block;">
+                                {{ $review->user->name ?? 'Customer' }}
+                            </span>
+                            <span class="dl-ulasan-time" style="font-size:12px; color:#6b7280;">
+                                {{ $review->created_at->diffForHumans() }}
+                            </span>
                         </div>
                     </div>
                     <div class="dl-ulasan-stars" style="color:#F59E0B; margin-bottom:8px;">
@@ -156,9 +158,18 @@
                     <p class="dl-ulasan-text" style="font-size:14px; color:#374151; line-height:1.5;">
                         {{ $review->komentar ?? 'Tidak ada komentar.' }}
                     </p>
+
+                    @if($review->reply)
+                    <div style="margin-top:12px; padding:12px; background:#f9fafb; border-left:4px solid #3b82f6; border-radius:4px;">
+                        <p style="font-size:13px; font-weight:600; color:#1e3a8a; margin-bottom:4px;">Balasan Mitra:</p>
+                        <p style="font-size:13px; color:#4b5563; line-height:1.4;">{{ $review->reply }}</p>
+                    </div>
+                    @endif
                 </div>
                 @empty
-                <p style="color:#6b7280; font-size:14px; text-align:center; padding:20px;">Belum ada ulasan untuk laundry ini.</p>
+                <p style="color:#6b7280; font-size:14px; text-align:center; padding:20px;">
+                    Belum ada ulasan untuk laundry ini.
+                </p>
                 @endforelse
             </div>
         </section>

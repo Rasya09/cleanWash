@@ -19,6 +19,8 @@ class Order extends Model
         'alamat_pickup',
         'alamat_pengantaran',
         'foto_barang',
+        'foto_pickup',
+        'foto_pengantaran',
         'catatan',
         'alasan_gagal',
         'alasan_batal',
@@ -28,6 +30,7 @@ class Order extends Model
         'total_bayar',
         'metode_bayar',
         'status_bayar',
+        'snap_token',
         'berat_aktual',
     ];
 
@@ -98,6 +101,8 @@ class Order extends Model
         return in_array($this->status, [
             'aktif',
             'pickup',
+            'ditimbang',
+            'menunggu_pembayaran',
             'diproses',
             'pengantaran'
         ]);
@@ -121,12 +126,14 @@ class Order extends Model
     public function stepAktif(): int
     {
         return match ($this->status) {
-            'aktif'        => 1,
-            'pickup'       => 2,
-            'diproses'     => 3,
-            'pengantaran'  => 4,
-            'selesai'      => 5,
-            default        => 1,
+            'aktif'               => 1,
+            'pickup'              => 2,
+            'ditimbang'           => 3,
+            'menunggu_pembayaran' => 4,
+            'diproses'            => 5,
+            'pengantaran'         => 6,
+            'selesai'             => 7,
+            default               => 1,
         };
     }
 

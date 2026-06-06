@@ -69,21 +69,14 @@
                     </div>
 
                     <div class="bp-radio-group">
-                        @php
-                            $layananList = [
-                                ['value' => 'cuci_kiloan',  'label' => 'Cuci Kiloan'],
-                                ['value' => 'cuci_satuan',  'label' => 'Cuci Satuan'],
-                                ['value' => 'cuci_karpet',  'label' => 'Cuci Karpet'],
-                                ['value' => 'cuci_tas',     'label' => 'Cuci Tas'],
-                                ['value' => 'cuci_sepatu',  'label' => 'Cuci Sepatu'],
-                            ];
-                        @endphp
-                        @foreach($layananList as $l)
+                        @foreach($laundry->services as $service)
+                        @if($service->is_active)
                         <label class="bp-radio-label">
-                            <input type="radio" name="layanan[0]" value="{{ $l['value'] }}" class="bp-radio-input">
+                            <input type="radio" name="layanan[0]" value="{{ $service->id }}" class="bp-radio-input" data-name="{{ $service->service_name }}" data-price="{{ $service->base_price }}">
                             <span class="bp-radio-custom"></span>
-                            {{ $l['label'] }}
+                            {{ $service->service_name }}
                         </label>
+                        @endif
                         @endforeach
                     </div>
                     <div class="bp-divider"></div>
@@ -93,7 +86,7 @@
             {{-- Tombol Tambah Layanan --}}
             <button type="button" class="bp-btn-tambah" id="btnTambahLayanan" onclick="tambahLayanan()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-                Tambah Pesanan
+                Tambah Layanan
             </button>
 
             {{-- Foto Barang --}}
@@ -188,14 +181,6 @@
                 <textarea id="modalCatatanInput" class="bp-modal-catatan-input"
                     placeholder="Contoh: pisahkan pakaian putih, jangan gunakan pewangi, dll" rows="3"></textarea>
             </div>
-
-            <div class="bp-modal-harga">
-                <div class="bp-harga-badge">
-                    <span class="bp-harga-dot"></span>
-                    <span id="modalHargaText">Mulai dari Rp7.000/kg</span>
-                </div>
-                <p class="bp-harga-note">Total akhir akan dikonfirmasi setelah laundry ditimbang oleh mitra laundry.</p>
-            </div>
         </div>
 
         <div class="bp-modal-footer">
@@ -209,5 +194,21 @@
 @endsection
 
 @section('js')
-<script src="{{ asset('assets/js/user/buat_pesanan.js') }}"></script>
+@php
+    $servicesData = $laundry->services->filter(function($service) {
+        return $service->is_active;
+    })->map(function($service) {
+        return [
+            'id' => $service->id,
+            'service_name' => $service->service_name,
+            'base_price' => $service->base_price,
+            'label' => $service->service_name
+        ];
+    })->values()->all();
+@endphp
+<script>
+    // Pass dynamic services to Javascript
+    window.laundryServices = @json($servicesData);
+</script>
+<script src="{{ asset('assets/js/user/buat_pesanan.js') }}?v=3"></script>
 @endsection
