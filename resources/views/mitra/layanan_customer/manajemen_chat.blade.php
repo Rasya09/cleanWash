@@ -2,25 +2,45 @@
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('assets/css/mitra/manajemen_chat.css') }}?v={{ time() }}">
+<style>
+  .contact-action-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: none;
+  }
+  .chat-item:hover .contact-action-btn {
+    display: block;
+  }
+  .chat-item.active {
+    background-color: #f3f4f6;
+  }
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #6b7280;
+    text-align: center;
+    padding: 20px;
+  }
+  .chat-item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+</style>
 @endsection
 
 @section('content')
-<!-- ═══════════════════ MAIN ═══════════════════ -->
 <div class="main-wrap">
 
-  <!-- CONTENT -->
   <main class="content">
 
-    <!-- Page Header -->
-    {{-- <div class="page-header">
-      <div>
-        <h1>Manajemen Chat</h1>
-        <p>Kelola semua percakapan dengan pelanggan Anda</p>
-      </div>
-      <button class="btn-settings">⚙️ Pengaturan Auto Reply</button>
-    </div> --}}
-
-    <!-- ══════════ CHAT LAYOUT ══════════ -->
     <div class="chat-layout">
       <!-- Mobile Overlays -->
       <div class="panel-overlay" id="leftOverlay" onclick="toggleLeftPanel()"></div>
@@ -43,16 +63,28 @@
           </div>
         </div>
 
-        <div class="chat-list-body">
-          <div class="chat-item active">
-            <div class="chat-avatar ca-blue">U</div>
+        <div class="chat-list-body" id="contactList">
+          @forelse($contacts as $contact)
+          <div class="chat-item" id="contact-{{ $contact->id }}" onclick="selectContact({{ $contact->id }}, '{{ $contact->name }}', '{{ $contact->email }}', '{{ $contact->phone ?? '-' }}')">
+            <div class="chat-avatar ca-blue">{{ strtoupper(substr($contact->name, 0, 1)) }}</div>
             <div class="chat-item-body">
               <div class="chat-item-top">
-                <span class="chat-name">{{ $contact->name ?? 'User' }}</span>
+                <span class="chat-name">{{ $contact->name }}</span>
+                <span class="chat-time" id="time-{{ $contact->id }}" style="font-size: 11px; color: #9ca3af;">
+                  {{ $contact->latest_message ? \Carbon\Carbon::parse($contact->latest_message->created_at)->format('H:i') : '' }}
+                </span>
               </div>
-              <div class="chat-preview">Pelanggan Aktif</div>
+              <div class="chat-item-top">
+                <div class="chat-preview" id="preview-{{ $contact->id }}">{{ $contact->latest_message ? $contact->latest_message->message : 'Mulai obrolan baru' }}</div>
+                <button class="contact-action-btn" onclick="deleteChat(event, {{ $contact->id }})" title="Hapus Percakapan">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              </div>
             </div>
           </div>
+          @empty
+          <div style="padding: 20px; text-align: center; color: #9ca3af; font-size: 14px;">Belum ada percakapan.</div>
+          @endforelse
         </div>
       </div>
 
@@ -64,22 +96,22 @@
           <button class="mobile-btn-left" onclick="toggleLeftPanel()">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
           </button>
-          <div class="contact-avatar">U</div>
+          <div class="contact-avatar" id="activeAvatar">U</div>
           <div class="contact-info">
             <div class="contact-name">
-              <strong>{{ $contact->name ?? 'User' }}</strong>
+              <strong id="activeContactName">Pilih kontak</strong>
               <span class="pelanggan-badge">Pelanggan</span>
             </div>
-            <div class="contact-sub">Pelanggan sejak Mei 2024</div>
+            <div class="contact-sub">Pilih kontak di samping untuk memulai</div>
           </div>
           <div class="contact-stats">
             <div class="cstat">
               <div class="cslabel">Total Pesanan</div>
-              <div class="csval">5 pesanan</div>
+              <div class="csval">-</div>
             </div>
             <div class="cstat">
               <div class="cslabel">Total Belanja</div>
-              <div class="csval">Rp450.000</div>
+              <div class="csval">-</div>
             </div>
           </div>
           <button class="mobile-btn-right" onclick="toggleRightPanel()">
@@ -87,70 +119,9 @@
           </button>
         </div>
 
-        <!-- Order Bar -->
-        <div class="order-bar">
-          <span>Pesanan #INV-2405-0132</span>
-          <span class="dot">•</span>
-          <span>Pickup: 20 Mei 2024</span>
-          <span class="dot">•</span>
-          <span>3 Item</span>
-          <span class="dot">•</span>
-          <span>Total: Rp65.000</span>
-          <button class="detail-link">Lihat Detail Pesanan</button>
-        </div>
-
         <!-- Messages -->
         <div class="messages-area" id="messagesArea">
-
-          <div class="day-label">Hari ini</div>
-
-          <!-- Received -->
-          <div class="msg-row">
-            <div class="msg-avatar">AS</div>
-            <div>
-              <div class="msg-bubble received">
-                Halo, apakah cucian saya sudah selesai ya?<br>
-                Kira-kira kapan bisa di pickup?
-              </div>
-              <div class="msg-meta">10:30</div>
-            </div>
-          </div>
-
-          <!-- Sent -->
-          <div class="msg-row sent">
-            <div>
-              <div class="msg-bubble sent">
-                Halo kak Andi, terima kasih telah menghubungi Laundry Bersih Jaya 😊<br><br>
-                Cucian kakak sedang dalam proses finishing ya.<br><br>
-                Estimasi selesai hari ini jam 16.00. Kurir akan pickup setelahnya.
-              </div>
-              <div class="msg-meta">10:32 <span class="msg-check">✓✓</span></div>
-            </div>
-            <div class="msg-avatar store">🏪</div>
-          </div>
-
-          <!-- Received -->
-          <div class="msg-row">
-            <div class="msg-avatar">AS</div>
-            <div>
-              <div class="msg-bubble received">
-                Baik kak, terima kasih informasinya 🙏
-              </div>
-              <div class="msg-meta">10:33</div>
-            </div>
-          </div>
-
-          <!-- Sent -->
-          <div class="msg-row sent">
-            <div>
-              <div class="msg-bubble sent">
-                Sama-sama kak, ditunggu ya 😊
-              </div>
-              <div class="msg-meta">10:33 <span class="msg-check">✓✓</span></div>
-            </div>
-            <div class="msg-avatar store">🏪</div>
-          </div>
-
+          <div class="empty-state">Silakan pilih kontak di sidebar untuk mulai mengobrol.</div>
         </div>
 
         <!-- Input Area -->
@@ -178,13 +149,11 @@
             <button class="emoji-btn" onclick="insertEmoji('✨')">✨</button>
           </div>
           <div class="input-row">
-            <input class="msg-input" type="text" placeholder="Tulis pesan..." id="msgInput">
+            <input class="msg-input" type="text" placeholder="Tulis pesan..." id="msgInput" disabled>
             <div class="input-icons">
               <span class="input-icon" title="Emoji" onclick="toggleEmojiPicker()">😊</span>
-              <span class="input-icon" title="Lampiran" onclick="document.getElementById('fileAttachment').click()">📎</span>
-              <input type="file" id="fileAttachment" style="display:none" onchange="handleFileUpload(event)">
             </div>
-            <button class="send-btn" onclick="sendMessage()">✈ Kirim</button>
+            <button class="send-btn" onclick="sendMessage()" id="chatSendBtn" disabled>✈ Kirim</button>
           </div>
         </div>
 
@@ -200,77 +169,13 @@
         <!-- Informasi Pelanggan -->
         <div class="info-section">
           <h4>Informasi Pelanggan</h4>
-          <div class="info-row"><span class="info-icon">👤</span> {{ $contact->name ?? 'User' }}</div>
+          <div class="info-row"><span class="info-icon">👤</span> <span id="rightPanelName">Nama Pelanggan</span></div>
           <div class="info-row">
             <span class="info-icon">📞</span>
-            {{ $contact->phone ?? '-' }}
+            <span id="rightPanelPhone">-</span>
             <span class="info-wa">●</span>
           </div>
-          <div class="info-row"><span class="info-icon">✉️</span> {{ $contact->email ?? '-' }}</div>
-        </div>
-
-        <!-- Riwayat Pesanan -->
-        <div class="info-section">
-          <div class="riwayat-header">
-            <h4>Riwayat Pesanan</h4>
-            <span class="lihat-semua">Lihat Semua</span>
-          </div>
-
-          <div class="order-item">
-            <div class="order-left">
-              <div class="order-id">#INV-2405-0132</div>
-              <div class="order-date">20 Mei 2024</div>
-            </div>
-            <div class="order-right">
-              <div class="order-status os-diproses">Diproses</div>
-              <div class="order-amount">Rp65.000</div>
-            </div>
-          </div>
-
-          <div class="order-item">
-            <div class="order-left">
-              <div class="order-id">#INV-2405-0101</div>
-              <div class="order-date">15 Mei 2024</div>
-            </div>
-            <div class="order-right">
-              <div class="order-status os-selesai">Selesai</div>
-              <div class="order-amount">Rp75.000</div>
-            </div>
-          </div>
-
-          <div class="order-item">
-            <div class="order-left">
-              <div class="order-id">#INV-2405-0067</div>
-              <div class="order-date">8 Mei 2024</div>
-            </div>
-            <div class="order-right">
-              <div class="order-status os-selesai">Selesai</div>
-              <div class="order-amount">Rp60.000</div>
-            </div>
-          </div>
-
-          <div class="order-item">
-            <div class="order-left">
-              <div class="order-id">#INV-2405-0023</div>
-              <div class="order-date">1 Mei 2024</div>
-            </div>
-            <div class="order-right">
-              <div class="order-status os-selesai">Selesai</div>
-              <div class="order-amount">Rp80.000</div>
-            </div>
-          </div>
-
-          <div class="order-item">
-            <div class="order-left">
-              <div class="order-id">#INV-2404-0288</div>
-              <div class="order-date">25 Apr 2024</div>
-            </div>
-            <div class="order-right">
-              <div class="order-status os-selesai">Selesai</div>
-              <div class="order-amount">Rp70.000</div>
-            </div>
-          </div>
-
+          <div class="info-row"><span class="info-icon">✉️</span> <span id="rightPanelEmail">-</span></div>
         </div>
 
         <!-- Catatan Pelanggan -->
@@ -280,8 +185,7 @@
             <span class="add-catatan">＋ Tambah Catatan</span>
           </div>
           <div class="catatan-box">
-            Pelanggan ramah dan sering menggunakan layanan cuci kiloan.
-            <div class="catatan-meta">Dicatat oleh Anda · 15 Mei 2024</div>
+            Belum ada catatan.
           </div>
         </div>
 
@@ -297,29 +201,16 @@
   const currentUserId = document.querySelector('meta[name="user-id"]').content;
   const area = document.getElementById('messagesArea');
   const msgInput = document.getElementById('msgInput');
+  const sendBtn = document.getElementById('chatSendBtn');
+  
+  const activeContactNameEl = document.getElementById('activeContactName');
+  const activeAvatarEl = document.getElementById('activeAvatar');
+  const rightPanelNameEl = document.getElementById('rightPanelName');
+  const rightPanelPhoneEl = document.getElementById('rightPanelPhone');
+  const rightPanelEmailEl = document.getElementById('rightPanelEmail');
 
-  // Tab switching – chat list
-  document.querySelectorAll('.chat-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.chat-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-    });
-  });
-
-  // Tab switching – quick reply / catatan
-  document.querySelectorAll('.quick-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.quick-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-    });
-  });
-
-  // Quick reply click
-  document.querySelectorAll('.quick-reply').forEach(btn => {
-    btn.addEventListener('click', () => {
-      insertQuickReply(btn);
-    });
-  });
+  let activeContactId = null;
+  const initialContactId = "{{ $explicitContactId ?? '' }}";
 
   // Format time HH:MM
   function formatTime(dateStr) {
@@ -346,7 +237,7 @@
       `;
     } else {
       innerHTML = `
-        <div class="msg-avatar">C</div>
+        <div class="msg-avatar">${activeAvatarEl.innerText}</div>
         <div>
           <div class="msg-bubble received">${msg.message.replace(/\n/g, '<br>')}</div>
           <div class="msg-meta">${time}</div>
@@ -359,13 +250,72 @@
     area.scrollTop = area.scrollHeight;
   }
 
+  // Select Contact
+  function selectContact(contactId, contactName, contactEmail, contactPhone) {
+    activeContactId = contactId;
+    
+    // Update DOM
+    activeContactNameEl.innerText = contactName;
+    const initial = contactName.charAt(0).toUpperCase();
+    activeAvatarEl.innerText = initial;
+    rightPanelNameEl.innerText = contactName;
+    rightPanelEmailEl.innerText = contactEmail;
+    rightPanelPhoneEl.innerText = contactPhone;
+    
+    // Enable inputs
+    msgInput.disabled = false;
+    sendBtn.disabled = false;
+    
+    // Update active class on sidebar
+    document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
+    const contactEl = document.getElementById('contact-' + contactId);
+    if(contactEl) contactEl.classList.add('active');
+
+    if(window.innerWidth <= 768) {
+      toggleLeftPanel(); // Close sidebar on mobile
+    }
+
+    loadMessages();
+  }
+
+  // Delete Chat
+  async function deleteChat(e, contactId) {
+    e.stopPropagation();
+    if(!confirm("Apakah Anda yakin ingin menghapus seluruh riwayat percakapan ini?")) return;
+
+    try {
+      const token = document.querySelector('meta[name="csrf-token"]').content;
+      await fetch(`/chat/thread/${contactId}`, {
+        method: 'DELETE',
+        headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' }
+      });
+      
+      const contactEl = document.getElementById('contact-' + contactId);
+      if(contactEl) contactEl.remove();
+
+      if(activeContactId == contactId) {
+        activeContactId = null;
+        activeContactNameEl.innerText = 'Pilih kontak';
+        activeAvatarEl.innerText = 'U';
+        msgInput.disabled = true;
+        sendBtn.disabled = true;
+        area.innerHTML = '<div class="empty-state">Silakan pilih kontak di sidebar untuk mulai mengobrol.</div>';
+      }
+    } catch (error) {
+      console.error('Error deleting chat', error);
+      alert('Gagal menghapus percakapan.');
+    }
+  }
+
   // Fetch past messages
   async function loadMessages() {
+    if(!activeContactId) return;
+    
     try {
-      const res = await fetch('/chat/messages');
+      const res = await fetch(`/chat/messages/${activeContactId}`);
       const data = await res.json();
       
-      area.innerHTML = '';
+      area.innerHTML = '<div class="day-label">Hari ini</div>';
       data.messages.forEach(msg => renderMessage(msg));
     } catch (e) {
       console.error('Error loading messages', e);
@@ -374,6 +324,8 @@
 
   // Send message
   async function sendMessage() {
+    if(!activeContactId) return;
+
     const text = msgInput.value.trim();
     if (!text) return;
     
@@ -385,9 +337,11 @@
     renderMessage(tempMsg);
     msgInput.value = '';
 
+    updateSidebarPreview(activeContactId, text, tempMsg.created_at);
+
     try {
       const token = document.querySelector('meta[name="csrf-token"]').content;
-      await fetch('/chat/send', {
+      await fetch(`/chat/send/${activeContactId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -401,6 +355,13 @@
     }
   }
 
+  function updateSidebarPreview(contactId, message, timestamp) {
+    const previewEl = document.getElementById('preview-' + contactId);
+    const timeEl = document.getElementById('time-' + contactId);
+    if(previewEl) previewEl.innerText = message;
+    if(timeEl && timestamp) timeEl.innerText = formatTime(timestamp);
+  }
+
   msgInput.addEventListener('keydown', function(e) {
     if(e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -408,16 +369,22 @@
     }
   });
 
-  // Init
-  loadMessages();
-
   // Listen to Reverb Websocket
   document.addEventListener("DOMContentLoaded", () => {
+      if(initialContactId) {
+          const contactEl = document.getElementById('contact-' + initialContactId);
+          if(contactEl) contactEl.click();
+      }
+
       setTimeout(() => {
           if (window.Echo) {
               window.Echo.private(`chat.${currentUserId}`)
                   .listen('.message.sent', (e) => {
-                      renderMessage(e.message);
+                      const msg = e.message;
+                      if (msg.sender_id == activeContactId) {
+                          renderMessage(msg);
+                      }
+                      updateSidebarPreview(msg.sender_id, msg.message, msg.created_at);
                   });
           }
       }, 1000); 
@@ -438,14 +405,6 @@
     toggleEmojiPicker(); 
   }
 
-  function handleFileUpload(event) {
-    const file = event.target.files[0];
-    if(file) {
-      msgInput.value = `[File: ${file.name}]`;
-      sendMessage();
-    }
-  }
-
   // Mobile sidebar logic
   function toggleLeftPanel() {
     document.querySelector('.chat-list-panel').classList.toggle('open');
@@ -456,7 +415,5 @@
     document.getElementById('rightOverlay').classList.toggle('active');
   }
 
-  // Auto scroll to bottom
-  if(area) area.scrollTop = area.scrollHeight;
 </script>
 @endpush

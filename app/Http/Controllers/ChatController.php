@@ -11,27 +11,75 @@ use App\Events\MessageSent;
 class ChatController extends Controller
 {
     /**
-     * Get the ID of the other user in the chat
+     * Helper to get list of contacts for the authenticated user, 
+     * ordered by latest message. If an explicit contactId is passed 
+     * (e.g. from starting a new chat), include them at the top if not present.
      */
-    private function getContactId()
+    private function getContacts($userId, $explicitContactId = null)
     {
-        $user = Auth::user();
-        if ($user->role === 'mitra') {
-            // Mitra chats with User
-            return User::where('role', 'user')->first()->id;
-        } else {
-            // User chats with Mitra
-            return User::where('role', 'mitra')->first()->id;
+        $contactIds = Message::where('sender_id', $userId)
+            ->pluck('receiver_id')
+            ->concat(Message::where('receiver_id', $userId)->pluck('sender_id'))
+            ->unique()
+            ->filter(function($id) use ($userId) {
+                return $id !== $userId;
+            })->values()->toArray();
+
+        // If explicit contact is not in list, add it
+        if ($explicitContactId && !in_array($explicitContactId, $contactIds)) {
+            array_unshift($contactIds, $explicitContactId);
         }
+
+        if (empty($contactIds)) {
+            return collect([]);
+        }
+
+        $contacts = User::with('mitraLaundry')->whereIn('id', $contactIds)->get()->map(function($contact) use ($userId) {
+            if ($contact->role === 'mitra' && $contact->mitraLaundry) {
+                $contact->name = $contact->mitraLaundry->store_name;
+            }
+            
+            $latestMsg = Message::where(function($q) use ($userId, $contact) {
+                    $q->where('sender_id', $userId)->where('receiver_id', $contact->id);
+                })->orWhere(function($q) use ($userId, $contact) {
+                    $q->where('sender_id', $contact->id)->where('receiver_id', $userId);
+                })->orderBy('created_at', 'desc')->first();
+                
+            $contact->latest_message = $latestMsg;
+            return $contact;
+        })->sortByDesc(function($contact) {
+            return $contact->latest_message ? $contact->latest_message->created_at : \Carbon\Carbon::now()->addYear(); // Put empty new chats at the top
+        })->values();
+
+        return $contacts;
     }
 
     /**
-     * Fetch messages between authenticated user and their contact
+     * Show User chat page
      */
-    public function fetchMessages()
+    public function index(Request $request)
+    {
+        $explicitContactId = $request->query('contact_id');
+        $contacts = $this->getContacts(Auth::id(), $explicitContactId);
+        return view('user.chat', compact('contacts', 'explicitContactId'));
+    }
+
+    /**
+     * Show Mitra chat page
+     */
+    public function indexMitra(Request $request)
+    {
+        $explicitContactId = $request->query('contact_id');
+        $contacts = $this->getContacts(Auth::id(), $explicitContactId);
+        return view('mitra.layanan_customer.manajemen_chat', compact('contacts', 'explicitContactId'));
+    }
+
+    /**
+     * Fetch messages between authenticated user and a contact
+     */
+    public function fetchMessages($contactId)
     {
         $userId = Auth::id();
-        $contactId = $this->getContactId();
 
         $messages = Message::where(function($query) use ($userId, $contactId) {
             $query->where('sender_id', $userId)
@@ -51,18 +99,17 @@ class ChatController extends Controller
     /**
      * Send a new message
      */
-    public function sendMessage(Request $request)
+    public function sendMessage(Request $request, $contactId)
     {
         $request->validate([
             'message' => 'required|string'
         ]);
 
         $senderId = Auth::id();
-        $receiverId = $this->getContactId();
 
         $message = Message::create([
             'sender_id' => $senderId,
-            'receiver_id' => $receiverId,
+            'receiver_id' => $contactId,
             'message' => $request->message,
             'is_read' => false
         ]);
@@ -73,6 +120,27 @@ class ChatController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => $message
+        ]);
+    }
+
+    /**
+     * Delete entire chat thread with a contact
+     */
+    public function deleteChat($contactId)
+    {
+        $userId = Auth::id();
+
+        Message::where(function($query) use ($userId, $contactId) {
+            $query->where('sender_id', $userId)
+                  ->where('receiver_id', $contactId);
+        })->orWhere(function($query) use ($userId, $contactId) {
+            $query->where('sender_id', $contactId)
+                  ->where('receiver_id', $userId);
+        })->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Chat deleted'
         ]);
     }
 }

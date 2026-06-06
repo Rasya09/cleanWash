@@ -114,6 +114,10 @@
                     </div>
                 </div>
 
+                <a href="{{ route('user.chat', ['contact_id' => $laundry->user_id]) }}" class="dl-btn-chat" style="display: flex; justify-content: center; align-items: center; gap: 8px; background-color: #10B981; color: white; padding: 14px; border-radius: 12px; font-weight: 600; font-size: 15px; text-decoration: none; margin-bottom: 12px; transition: all 0.2s; border: 1px solid #059669;">
+                    Chat Mitra
+                </a>
+
                 @if(isset($laundry->services) && $laundry->services->count() > 0)
                 <a href="{{ route('user.buat-pesanan', ['laundry_id' => $laundry->id]) }}" class="dl-btn-pesan">
                     Pesan Sekarang

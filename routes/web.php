@@ -49,8 +49,9 @@ Route::middleware('guest')->group(function () {
 
 // Chat Routes
 Route::middleware(['auth'])->group(function () {
-    Route::get('/chat/messages', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.messages');
-    Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat/messages/{contactId}', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.messages');
+    Route::post('/chat/send/{contactId}', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::delete('/chat/thread/{contactId}', [\App\Http\Controllers\ChatController::class, 'deleteChat'])->name('chat.delete');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])
@@ -70,7 +71,7 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
             [MitraRegisterController::class, 'step1']
         )->name('user.register.step1');
 
-        Route::post('/step-1/store', 
+        Route::post('/step-1/store',
             [MitraRegisterController::class, 'storeStep1'])
             ->name('user.register.step1.store');
 
@@ -191,10 +192,7 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
         return view('user.pembayaran');
     })->name('user.pembayaran');
 
-    Route::get('/chat', function () {
-        $contact = \App\Models\User::where('role', 'mitra')->first();
-        return view('user.chat', compact('contact'));
-    })->name('user.chat');
+    Route::get('/chat', [\App\Http\Controllers\ChatController::class, 'index'])->name('user.chat');
 
     Route::get('/profile', function () {
         $addresses = UserAddress::where('user_id', Auth::id())->get();
@@ -218,7 +216,7 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
             return redirect()->route('user.cari-laundry')->with('error', 'Silakan pilih mitra laundry terlebih dahulu.');
         }
         $laundry = App\Models\MitraLaundry::with('services')->findOrFail($laundryId);
-        
+
         // Cek jika toko belum memiliki layanan, redirect kembali
         if ($laundry->services->count() == 0) {
             return redirect()->route('user.detail-laundry', ['id' => $laundryId])->with('error', 'Mitra ini belum memiliki layanan yang dapat dipesan.');
@@ -231,9 +229,11 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     Route::get('/pesanan',              [OrderController::class, 'index'])->name('user.pesanan');
     Route::get('/pesanan/{id}',         [OrderController::class, 'show'])->name('user.detail-pesanan');
     Route::put('/pesanan/{id}/cancel',  [OrderController::class, 'cancel'])->name('user.pesanan.cancel');
-    
+
     // Ulasan
     Route::post('/pesanan/{id}/review', [\App\Http\Controllers\ReviewController::class, 'store'])->name('user.review.store');
+    // RATING
+    Route::middleware('auth')->post('/rating', [RatingController::class, 'store'])->name('rating.store');
 
 });
 
@@ -314,34 +314,31 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
 
     Route::get('/penilaian-toko', function () {
         $reviews = \App\Models\Review::with('user', 'order')->where('mitra_id', Auth::id())->latest()->get();
-        
+
         $totalUlasan = $reviews->count();
         $rataRata = $totalUlasan > 0 ? $reviews->avg('rating') : 0;
-        
+
         $ulasanPositif = $reviews->whereIn('rating', [4, 5])->count();
         $ulasanNetral = $reviews->where('rating', 3)->count();
         $ulasanNegatif = $reviews->whereIn('rating', [1, 2])->count();
-        
+
         $totalPelanggan = $reviews->unique('user_id')->count();
-        
+
         $rating5 = $reviews->where('rating', 5)->count();
         $rating4 = $reviews->where('rating', 4)->count();
         $rating3 = $reviews->where('rating', 3)->count();
         $rating2 = $reviews->where('rating', 2)->count();
         $rating1 = $reviews->where('rating', 1)->count();
-        
+
         return view('mitra.layanan_customer.penilaian_toko', compact(
-            'reviews', 'totalUlasan', 'rataRata', 'ulasanPositif', 'ulasanNetral', 
+            'reviews', 'totalUlasan', 'rataRata', 'ulasanPositif', 'ulasanNetral',
             'ulasanNegatif', 'totalPelanggan', 'rating5', 'rating4', 'rating3', 'rating2', 'rating1'
         ));
     })->name('mitra.penilaian');
-    
+
     Route::post('/review/{id}/reply', [\App\Http\Controllers\ReviewController::class, 'reply'])->name('mitra.review.reply');
 
-    Route::get('/manajemen-chat', function () {
-        $contact = \App\Models\User::where('role', 'user')->first();
-        return view('mitra.layanan_customer.manajemen_chat', compact('contact'));
-    })->name('mitra.chat');
+    Route::get('/manajemen-chat', [\App\Http\Controllers\ChatController::class, 'indexMitra'])->name('mitra.chat');
 
     // KEUANGAN
     Route::get('/penghasilan-saya', function () {
@@ -355,7 +352,7 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
     Route::get('/rekening-bank', function () {
         return view('mitra.keuangan.rekening_bank');
     })->name('mitra.rekening');
-    
+
     Route::get(
         '/pengaturan-pengiriman',
         [MitraController::class, 'pengiriman']
