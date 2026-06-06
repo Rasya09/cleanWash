@@ -95,7 +95,7 @@ class OrderController extends Controller
                 'alamat_pengantaran' => $alamatPengantaran,
                 'foto_barang'        => $fotoPath,
                 'catatan'            => $request->catatan,
-                'metode_bayar'       => $request->metode_bayar ?? 'cod',
+                'metode_bayar'       => $request->metode_bayar ?? 'transfer',
                 'status_bayar'       => 'menunggu_timbangan',
                 'subtotal'           => 0,
                 'ongkir'             => 0,

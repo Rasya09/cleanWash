@@ -30,6 +30,7 @@ class Order extends Model
         'total_bayar',
         'metode_bayar',
         'status_bayar',
+        'snap_token',
         'berat_aktual',
     ];
 

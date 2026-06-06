@@ -232,7 +232,7 @@
                             </svg>
                             Metode Pembayaran
                         </span>
-                        <span class="layanan-row__val">{{ strtoupper($pesanan->metode_bayar) }}</span>
+                        <span class="layanan-row__val">Midtrans PaymentGateway</span>
                     </div>
 
                     {{-- Metode Pengantaran --}}
@@ -496,15 +496,20 @@
                 </div>
 
                 @if($pesanan->status_bayar !== 'lunas' && $pesanan->total_bayar > 0 && $pesanan->status === 'menunggu_pembayaran')
-                <form action="{{ route('user.pesanan.bayar', $pesanan->id) }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn-bayar" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button type="button" class="btn-bayar" id="pay-button" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
                         </svg>
-                        Bayar Sekarang
+                        Bayar Sekarang via Midtrans
                     </button>
-                </form>
+                    <a href="{{ route('user.pesanan.cek_pembayaran', $pesanan->id) }}" class="btn-bayar" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--primary-color); background-color: transparent; color: var(--primary-color); cursor: pointer; text-decoration: none;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                        </svg>
+                        Cek Status Pembayaran
+                    </a>
+                </div>
                 @elseif($pesanan->status_bayar !== 'lunas' && $pesanan->total_bayar > 0)
                 <button type="button" class="btn-bayar" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; background-color: var(--neutral-400); cursor: not-allowed;" disabled>
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -645,4 +650,70 @@
             });
         });
     </script>
+
+    @if($pesanan->status_bayar !== 'lunas' && $pesanan->total_bayar > 0 && $pesanan->status === 'menunggu_pembayaran')
+    <script src="{{ config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+    <script>
+        document.getElementById('pay-button').onclick = function(){
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Memproses...';
+            btn.disabled = true;
+
+            // Dapatkan token lewat Ajax
+            fetch('{{ route("user.pesanan.bayar", $pesanan->id) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                
+                if (data.snap_token) {
+                    // Trigger Snap popup
+                    snap.pay(data.snap_token, {
+                        onSuccess: function(result){
+                            // Lakukan POST ke success callback lokal jika berhasil
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = '{{ route("user.pesanan.success_callback", $pesanan->id) }}';
+                            
+                            const csrfInput = document.createElement('input');
+                            csrfInput.type = 'hidden';
+                            csrfInput.name = '_token';
+                            csrfInput.value = '{{ csrf_token() }}';
+                            
+                            form.appendChild(csrfInput);
+                            document.body.appendChild(form);
+                            form.submit();
+                        },
+                        onPending: function(result){
+                            alert("Menunggu pembayaran Anda!");
+                            window.location.reload();
+                        },
+                        onError: function(result){
+                            alert("Pembayaran gagal!");
+                            window.location.reload();
+                        },
+                        onClose: function(){
+                            // alert('Anda menutup popup sebelum menyelesaikan pembayaran');
+                        }
+                    });
+                } else {
+                    alert('Gagal mendapatkan token: ' + (data.error || 'Terjadi kesalahan'));
+                }
+            })
+            .catch(error => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                alert('Terjadi kesalahan koneksi');
+                console.error(error);
+            });
+        };
+    </script>
+    @endif
 @endpush
