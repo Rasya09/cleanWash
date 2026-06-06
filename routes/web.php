@@ -274,9 +274,9 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
     )->name('mitra.store-layanan');
 
     // PROMOSI
-    Route::get('/gambar-toko', function () {
-        return view('mitra.pusat_promosi.gambar');
-    })->name('mitra.gambar');
+    Route::get('/gambar-toko',          [MitraController::class, 'gambar'])->name('mitra.gambar');
+    Route::post('/gambar-toko/upload',  [MitraController::class, 'uploadFoto'])->name('mitra.gambar.upload');
+    Route::delete('/gambar-toko/hapus', [MitraController::class, 'hapusFoto'])->name('mitra.gambar.hapus');
 
     Route::get('/diskon', function () {
         return view('mitra.pusat_promosi.diskon');

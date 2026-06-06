@@ -28,13 +28,19 @@ class MitraLaundry extends Model
         'npwp',
         'status',
         'rejection_reason',
+        'operational_days',
+        'open_time',
+        'close_time',
         'service_radius',
         'pickup_fee',
     ];
 
     protected $casts = [
-        'store_photos' => 'array',
+        'store_photos'     => 'array',
+        'operational_days' => 'array',
     ];
+
+    // ── RELASI ───────────────────────────────────────────
 
     public function user()
     {
@@ -52,38 +58,33 @@ class MitraLaundry extends Model
             ->where('is_active', true);
     }
 
+    /**
+     * Review memakai mitra_id → foreign key ke users.id
+     */
     public function reviews()
     {
-        return $this->hasMany(Review::class, 'mitra_laundry_id');
+        return $this->hasMany(Review::class, 'mitra_id', 'user_id');
     }
 
-    /**
-     * Hitung rata-rata rating dari reviews
-     */
+    // ── ACCESSOR ─────────────────────────────────────────
+
     public function getAverageRatingAttribute(): float
     {
         return round($this->reviews()->avg('rating') ?? 0, 1);
     }
 
-    /**
-     * Harga terendah dari semua layanan aktif
-     */
     public function getStartingPriceAttribute(): ?int
     {
         return $this->activeServices()->min('base_price');
     }
 
-    /**
-     * URL lengkap untuk logo
-     */
     public function getLogoUrlAttribute(): ?string
     {
-        return $this->logo ? asset('storage/' . $this->logo) : null;
+        return $this->logo
+            ? asset('storage/' . $this->logo)
+            : null;
     }
 
-    /**
-     * Array URL lengkap untuk store_photos
-     */
     public function getStorePhotoUrlsAttribute(): array
     {
         if (empty($this->store_photos)) {
