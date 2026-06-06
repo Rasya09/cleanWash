@@ -43,7 +43,7 @@
 <section class="section section-alt" id="laundry">
   <div class="section-header">
     <span class="section-tag">Pilihan Terbaik</span>
-    <h2 class="section-title">Laundry Terdekat</h2>
+    <h2 class="section-title">Laundry Terfavorit</h2>
     <p class="section-desc">Temukan mitra laundry terpercaya dengan harga transparan dan layanan terverifikasi.</p>
   </div>
   <div class="cards-grid">

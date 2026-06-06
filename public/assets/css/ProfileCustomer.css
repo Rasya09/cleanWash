@@ -28,19 +28,19 @@ body {
     --nav-h:          72px;
 }
 
-/* ===== LAYOUT ===== */
+/* ===== LAYOUT UTAMA (sidebar kiri + main-content) ===== */
 .layout {
     display: flex;
     gap: 24px;
     width: 90%;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 28px auto 60px;
     align-items: flex-start;
 }
 
-/* ===== SIDEBAR ===== */
+/* ===== SIDEBAR KIRI ===== */
 .sidebar {
-    width: 240px;
+    width: 220px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -120,7 +120,138 @@ body {
     background: #f0faea;
 }
 
-/* Hamburger — hidden on desktop */
+/* Badge toko aktif di sidebar */
+.badge-toko-aktif {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid #b6d4a8;
+    font-size: 11px;
+    color: #4a9c3a;
+    background: #f0faea;
+    font-weight: 500;
+}
+
+/* Mini toko di sidebar kiri */
+.sidebar-toko-mini {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 16px;
+}
+
+.sidebar-toko-mini-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue-dark);
+    margin-bottom: 12px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.sidebar-toko-mini-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.sidebar-toko-mini-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--blue-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.sidebar-toko-mini-info { flex: 1; min-width: 0; }
+
+.sidebar-toko-mini-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue-dark);
+}
+
+.sidebar-toko-mini-badge {
+    display: inline-block;
+    margin-top: 3px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4a9c3a;
+    background: #f0faea;
+    border: 1px solid #b6d4a8;
+}
+
+.sidebar-toko-mini-address {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+.sidebar-toko-mini-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--blue-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+.sidebar-toko-mini-link:hover { text-decoration: underline; }
+
+/* Sidebar CTA mini */
+.sidebar-cta-mini {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 16px;
+}
+
+.sidebar-cta-mini strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue-dark);
+    margin-bottom: 6px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.sidebar-cta-mini p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.btn-buka-toko-mini {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 10px;
+    background: var(--blue-primary);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .2s;
+}
+.btn-buka-toko-mini:hover { background: #1246c8; }
+
+/* Hamburger */
 .hamburger {
     display: none;
     flex-direction: column;
@@ -152,8 +283,11 @@ body {
 }
 
 .nav-item {
-    padding: 14px 20px;
-    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 18px;
+    font-size: 13.5px;
     color: var(--blue-dark);
     text-decoration: none;
     border-bottom: var(--border);
@@ -171,10 +305,10 @@ body {
 /* ===== MAIN CONTENT ===== */
 .main-content {
     flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    min-width: 0;
 }
 
 .content-header { margin-bottom: 4px; }
@@ -192,17 +326,31 @@ body {
     margin-top: 4px;
 }
 
+/* ===== CONTENT BODY — 3 KOLOM ===== */
+/* Struktur blade:
+   .content-body
+     .info-section      (kolom 1: form pribadi)
+     .right-column      (kolom 2: alamat + pesanan)
+       .address-section
+       .order-section
+     .store-sidebar     (kolom 3: CTA toko / info toko)
+*/
 .content-body {
     display: flex;
+    flex-direction: row;
     gap: 20px;
     align-items: flex-start;
+    width: 100%;
 }
 
-/* Info section */
+/* Kolom 1: Informasi Pribadi */
 .info-section {
-    flex: 1;
-    padding: 24px;
+    flex: 1 1 0;
     min-width: 0;
+    padding: 24px;
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
 }
 
 .section-title {
@@ -220,7 +368,6 @@ body {
     margin-bottom: 16px;
 }
 .section-title-row .section-title { margin-bottom: 0; }
-
 .section-icon { width: 20px; height: 20px; object-fit: contain; }
 
 /* Form */
@@ -235,7 +382,9 @@ body {
     color: var(--text-secondary);
     font-weight: 500;
 }
-.form-group input {
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"] {
     padding: 10px 14px;
     border: 1.5px solid #e5e9f5;
     border-radius: 8px;
@@ -245,11 +394,47 @@ body {
     outline: none;
     transition: border-color .2s;
     background: var(--grey-96);
+    width: 100%;
 }
 .form-group input:focus { border-color: var(--blue-primary); background: #fff; }
 .form-group input:disabled { opacity: .7; cursor: not-allowed; }
 
-/* Buttons */
+/* Radio gender */
+.gender-group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 10px 14px;
+    border: 1.5px solid #e5e9f5;
+    border-radius: 8px;
+    background: var(--grey-96);
+}
+
+.radio-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--blue-dark);
+    cursor: pointer;
+    font-weight: 400;
+    user-select: none;
+}
+
+.radio-label input[type="radio"] {
+    appearance: auto;
+    -webkit-appearance: auto;
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    accent-color: var(--blue-primary);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
 .btn-edit {
     margin-top: 8px;
     padding: 12px;
@@ -267,9 +452,9 @@ body {
 .btn-edit:hover { background: #1246c8; }
 .btn-edit:active { transform: scale(.98); }
 
-/* Right column */
+/* Kolom 2: Right Column (Alamat + Pesanan) */
 .right-column {
-    width: 300px;
+    width: 260px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -277,16 +462,25 @@ body {
 }
 
 .address-section,
-.order-section { padding: 20px; }
+.order-section {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 20px;
+}
 
 /* Address */
-.address-list { display: flex; flex-direction: column; gap: 12px; }
+.address-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
 .address-item {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    padding: 12px;
+    padding: 10px 12px;
     border: 1.5px solid #e5e9f5;
     border-radius: 10px;
 }
@@ -294,17 +488,40 @@ body {
 .pin-icon { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; }
 
 .address-name { font-size: 13px; font-weight: 600; color: var(--blue-dark); }
-.address-detail { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.address-detail { font-size: 12px; color: var(--text-secondary); margin-top: 2px; line-height: 1.4; }
+
+.btn-tambah {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+    border: 1.5px dashed #c5cfe8;
+    border-radius: 8px;
+    background: none;
+    color: var(--blue-primary);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+    width: 100%;
+}
+.btn-tambah:hover { background: var(--blue-subtle); border-color: var(--blue-primary); }
 
 /* Order summary */
-.order-summary { display: flex; justify-content: space-between; gap: 10px; }
+.order-summary {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
 
 .order-stat {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 14px 10px;
+    padding: 12px 8px;
     border: 1.5px solid #e5e9f5;
     border-radius: 10px;
     gap: 4px;
@@ -317,9 +534,347 @@ body {
     font-family: 'Bricolage Grotesque', sans-serif;
 }
 
-.stat-label { font-size: 12px; color: var(--text-secondary); }
+.stat-label { font-size: 11px; color: var(--text-secondary); text-align: center; }
 
-/* ===== RESPONSIVE — TABLET (max 900px) ===== */
+/* ===== Kolom 3: STORE SIDEBAR KANAN ===== */
+.store-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* ===== STATE: BELUM PUNYA TOKO ===== */
+
+.store-cta-card {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 20px;
+    border: 1.5px solid #e5e9f5;
+}
+
+.badge-baru {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #dcfce7;
+    color: #16a34a;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid #b6d4a8;
+    margin-bottom: 12px;
+}
+
+.store-cta-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.store-cta-text { flex: 1; }
+
+.store-cta-sub {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.store-cta-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--blue-dark);
+    line-height: 1.3;
+    font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.store-cta-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: var(--blue-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.store-cta-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.store-cta-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--blue-dark);
+}
+
+.check-icon { flex-shrink: 0; }
+
+.btn-buka-toko {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px;
+    background: var(--blue-primary);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .2s;
+}
+.btn-buka-toko:hover { background: #1246c8; }
+
+/* Status Toko Card */
+.store-status-card {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 16px 20px;
+    border: 1.5px solid #e5e9f5;
+}
+
+.store-status-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue-dark);
+    margin-bottom: 6px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.store-status-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.store-cara-kerja {
+    font-size: 13px;
+    color: var(--blue-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+.store-cara-kerja:hover { text-decoration: underline; }
+
+/* Aksi Cepat Card */
+.store-aksi-card {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 16px 20px;
+    border: 1.5px solid #e5e9f5;
+}
+
+.store-aksi-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue-dark);
+    margin-bottom: 12px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.aksi-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: var(--border);
+    text-decoration: none;
+    color: var(--blue-dark);
+    font-size: 13px;
+    transition: color .15s;
+}
+.aksi-item:last-child { border-bottom: none; padding-bottom: 0; }
+.aksi-item:hover { color: var(--blue-primary); }
+.aksi-item span { flex: 1; }
+.aksi-arrow { margin-left: auto; flex-shrink: 0; }
+
+/* ===== STATE: SUDAH PUNYA TOKO ===== */
+
+.toko-info-card {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 20px;
+    border: 1.5px solid #e5e9f5;
+}
+
+.toko-info-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue-dark);
+    margin-bottom: 14px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.toko-info-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: var(--border);
+}
+
+.toko-info-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: var(--blue-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.toko-info-detail { flex: 1; min-width: 0; }
+
+.toko-info-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue-dark);
+    margin-bottom: 4px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.badge-aktif {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4a9c3a;
+    background: #f0faea;
+    border: 1px solid #b6d4a8;
+    margin-bottom: 6px;
+}
+
+.toko-info-address {
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.toko-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toko-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+}
+
+.meta-label { flex: 1; color: var(--text-secondary); }
+
+.meta-value {
+    font-weight: 600;
+    color: var(--blue-dark);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.meta-ulasan {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+/* Performa Toko Card */
+.toko-performa-card {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 20px;
+    border: 1.5px solid #e5e9f5;
+}
+
+.toko-performa-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue-dark);
+    margin-bottom: 14px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.performa-list {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.performa-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: var(--border);
+    font-size: 13px;
+}
+.performa-item:last-child { border-bottom: none; }
+
+.performa-label { color: var(--text-secondary); }
+
+.performa-value {
+    font-weight: 600;
+    color: var(--blue-dark);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.highlight-green { color: #16a34a; }
+
+.btn-kelola-toko {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 11px;
+    background: var(--white);
+    color: var(--blue-primary);
+    border: 1.5px solid var(--blue-primary);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+}
+.btn-kelola-toko:hover {
+    background: var(--blue-primary);
+    color: var(--white);
+}
+
+/* ===== RESPONSIVE TABLET (max 1100px) ===== */
+@media (max-width: 1100px) {
+    .store-sidebar { width: 230px; }
+    .right-column  { width: 230px; }
+}
+
+/* ===== RESPONSIVE TABLET (max 900px) ===== */
 @media (max-width: 900px) {
     .layout {
         flex-direction: column;
@@ -334,7 +889,6 @@ body {
         gap: 0;
     }
 
-    /* Profile card jadi horizontal */
     .profile-card {
         display: flex;
         align-items: center;
@@ -345,31 +899,15 @@ body {
     }
 
     .profile-banner { display: none; }
-
-    .profile-avatar {
-        margin-top: 0;
-        flex-shrink: 0;
-    }
-
-    .profile-btn {
-        width: 46px;
-        height: 46px;
-    }
-
+    .profile-avatar { margin-top: 0; flex-shrink: 0; }
+    .profile-btn { width: 46px; height: 46px; }
     .profile-circle { font-size: 15px; }
-
-    .profile-info {
-        flex: 1;
-        padding: 0;
-    }
-
+    .profile-info { flex: 1; padding: 0; }
     .profile-name { font-size: 14px; margin-top: 0; }
     .profile-badge { font-size: 11px; margin-top: 3px; }
 
-    /* Hamburger muncul */
     .hamburger { display: flex; }
 
-    /* Nav tersembunyi, muncul saat open */
     .sidebar-nav {
         display: none;
         border-radius: 0 0 14px 14px;
@@ -378,26 +916,44 @@ body {
     }
     .sidebar-nav.open { display: flex; }
 
-    /* Main content full width */
-    .main-content,
-    .content-body,
-    .info-section,
-    .right-column { width: 100%; }
+    .main-content { width: 100%; }
 
-    .content-body { flex-direction: column; gap: 16px; }
-    .right-column { flex: none; }
+    .content-body {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .info-section   { width: 100%; }
+    .right-column   { width: 100%; flex-direction: row; flex-wrap: wrap; }
+    .store-sidebar  { width: 100%; flex-direction: row; flex-wrap: wrap; }
+
+    .address-section  { flex: 1; min-width: 220px; }
+    .order-section    { flex: 1; min-width: 200px; }
+
+    .store-cta-card,
+    .store-status-card,
+    .store-aksi-card,
+    .toko-info-card,
+    .toko-performa-card { flex: 1; min-width: 220px; }
 }
 
-/* ===== RESPONSIVE — MOBILE (max 600px) ===== */
+/* ===== RESPONSIVE MOBILE (max 600px) ===== */
 @media (max-width: 600px) {
     .layout { width: 100%; padding: 0 12px; margin-top: 12px; }
-
     .page-title { font-size: 18px; }
-
     .info-section { padding: 16px; }
+
+    .right-column   { flex-direction: column; }
+    .store-sidebar  { flex-direction: column; }
+
+    .address-section,
+    .order-section,
+    .store-cta-card,
+    .store-status-card,
+    .store-aksi-card,
+    .toko-info-card,
+    .toko-performa-card { width: 100%; min-width: unset; }
 
     .order-summary { gap: 8px; }
     .stat-number { font-size: 18px; }
-
-    .right-column { gap: 12px; }
 }

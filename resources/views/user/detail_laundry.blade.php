@@ -13,9 +13,13 @@
             {{-- Kiri: Info --}}
             <div class="dl-hero-left">
                 <h1>{{ $laundry->store_name }}</h1>
+                <h1>{{ $laundry->store_name }}</h1>
 
                 <div class="dl-rating">
-                    ⭐⭐⭐⭐⭐ {{ number_format($reviews->avg('rating') ?? 0, 1) }}
+                    @for($i = 1; $i <= 5; $i++)
+                        @if($i <= round($averageRating))⭐@else<span style="opacity:0.3">⭐</span>@endif
+                    @endfor
+                    {{ number_format($averageRating, 1) }}
                     <span class="dl-rating-count">({{ $reviews->count() }} ulasan)</span>
                 </div>
 
@@ -47,9 +51,9 @@
         {{-- ===================== BODY: DETAIL + SIDEBAR ===================== --}}
         <div class="dl-body">
 
-            {{-- Card Detail --}}
+            {{-- Card Detail: Daftar Layanan --}}
             <div class="dl-card">
-                <h2>Tentang Laundry</h2>
+                <h2>Daftar Layanan</h2>
                 <div class="dl-divider"></div>
 
                 <p class="dl-card-desc">
@@ -76,41 +80,28 @@
             {{-- Sidebar Pesan --}}
             <div class="dl-sidebar">
                 <p class="dl-sidebar-harga-label">Mulai dari</p>
-                <p class="dl-sidebar-harga">Rp 5.000 <span>/kg</span></p>
+                <p class="dl-sidebar-harga">
+                    @if($startingPrice)
+                        Rp {{ number_format($startingPrice, 0, ',', '.') }} <span>/kg</span>
+                    @else
+                        <span style="font-size:14px; color:#6b7280;">Hubungi mitra</span>
+                    @endif
+                </p>
 
                 <div class="dl-sidebar-divider"></div>
 
                 <div class="dl-sidebar-row">
-                    <span class="dl-sidebar-label">Jam Operasional</span>
+                    <span class="dl-sidebar-label">JAM OPERASIONAL</span>
                     <div class="dl-info-box">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
                         </svg>
-                        {{ $laundry->open_time ?? '08:00' }} – {{ $laundry->close_time ?? '20:00' }}
-                    </div>
-                </div>
-
-                <div class="dl-sidebar-row">
-                    <span class="dl-sidebar-label">Estimasi Waktu</span>
-                    <div class="dl-estimasi-grid">
-                        <div class="dl-estimasi-item">
-                            <span class="label">Regular</span>
-                            <span class="value">2–3 hari</span>
-                        </div>
-                        <div class="dl-estimasi-item express">
-                            <span class="label">Express</span>
-                            <span class="value">6 jam</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dl-sidebar-row">
-                    <span class="dl-sidebar-label">Layanan Tambahan</span>
-                    <div class="dl-info-box">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                        Antar Jemput Tersedia
+                        @if($laundry->open_time && $laundry->close_time)
+                            {{ \Carbon\Carbon::parse($laundry->open_time)->format('H:i') }} –
+                            {{ \Carbon\Carbon::parse($laundry->close_time)->format('H:i') }}
+                        @else
+                            -
+                        @endif
                     </div>
                 </div>
 
@@ -140,11 +131,15 @@
                 <div class="dl-ulasan-item" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 16px; margin-bottom: 16px;">
                     <div class="dl-ulasan-header" style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
                         <div class="dl-ulasan-avatar" style="width:40px; height:40px; background:#e0e7ff; color:#4f46e5; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold;">
-                            {{ strtoupper(substr($review->user->name ?? 'User', 0, 2)) }}
+                            {{ strtoupper(substr($review->user->name ?? 'U', 0, 2)) }}
                         </div>
                         <div class="dl-ulasan-meta">
-                            <span class="dl-ulasan-name" style="font-weight:600; display:block;">{{ $review->user->name ?? 'Customer' }}</span>
-                            <span class="dl-ulasan-time" style="font-size:12px; color:#6b7280;">{{ $review->created_at->diffForHumans() }}</span>
+                            <span class="dl-ulasan-name" style="font-weight:600; display:block;">
+                                {{ $review->user->name ?? 'Customer' }}
+                            </span>
+                            <span class="dl-ulasan-time" style="font-size:12px; color:#6b7280;">
+                                {{ $review->created_at->diffForHumans() }}
+                            </span>
                         </div>
                     </div>
                     <div class="dl-ulasan-stars" style="color:#F59E0B; margin-bottom:8px;">
@@ -162,7 +157,9 @@
                     @endif
                 </div>
                 @empty
-                <p style="color:#6b7280; font-size:14px; text-align:center; padding:20px;">Belum ada ulasan untuk laundry ini.</p>
+                <p style="color:#6b7280; font-size:14px; text-align:center; padding:20px;">
+                    Belum ada ulasan untuk laundry ini.
+                </p>
                 @endforelse
             </div>
         </section>

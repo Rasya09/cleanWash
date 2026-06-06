@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MitraRegisterController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Mitra\MitraController;
+use App\Http\Controllers\LaundryController;
 
 // ======================================================
 // PUBLIC / GUEST
