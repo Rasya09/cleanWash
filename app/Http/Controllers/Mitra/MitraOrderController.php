@@ -61,6 +61,85 @@ class MitraOrderController extends Controller
         return view('mitra.pesanan.pesanan_saya', compact('orders', 'stats'));
     }
 
+    // ── Gagal Pickup / Pembatalan ──────────────────────────
+    public function gagalPickup(Request $request)
+    {
+        $mitra = Auth::user()->mitraLaundry;
+
+        if (!$mitra) {
+            return redirect()->route('mitra.dashboard')->with('error', 'Data mitra tidak ditemukan.');
+        }
+
+        $mitraId = $mitra->id;
+
+        $query = Order::with(['user', 'items', 'statusHistories.changedBy'])
+                      ->where('mitra_laundry_id', $mitraId)
+                      ->whereIn('status', ['gagal_pickup', 'dibatalkan']);
+
+        // Search
+        if ($request->search) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('order_code', 'like', "%$search%")
+                  ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%$search%"));
+            });
+        }
+
+        $orders = $query->orderByDesc('updated_at')->paginate(10);
+
+        // Stats
+        // 1. Total Gagal Pickup (30 hari terakhir)
+        $totalGagalPickup = Order::where('mitra_laundry_id', $mitraId)
+            ->where('status', 'gagal_pickup')
+            ->where('updated_at', '>=', now()->subDays(30))
+            ->count();
+
+        // 2. Dibatalkan Pelanggan (30 hari terakhir)
+        $batalPelanggan = Order::where('mitra_laundry_id', $mitraId)
+            ->where('status', 'dibatalkan')
+            ->where('updated_at', '>=', now()->subDays(30))
+            ->whereHas('statusHistories', function($q) {
+                $q->where('status_baru', 'dibatalkan')
+                  ->where('role_changer', 'customer');
+            })
+            ->count();
+
+        // 3. Dibatalkan Mitra (30 hari terakhir)
+        $batalMitra = Order::where('mitra_laundry_id', $mitraId)
+            ->where('status', 'dibatalkan')
+            ->where('updated_at', '>=', now()->subDays(30))
+            ->whereHas('statusHistories', function($q) {
+                $q->where('status_baru', 'dibatalkan')
+                  ->where('role_changer', 'mitra');
+            })
+            ->count();
+
+        // Jika riwayat pembatalan belum mencatat role secara akurat, kita estimasi jika query di atas 0 sementara ada pesanan dibatalkan
+        $totalDibatalkan = Order::where('mitra_laundry_id', $mitraId)
+            ->where('status', 'dibatalkan')
+            ->where('updated_at', '>=', now()->subDays(30))
+            ->count();
+            
+        if ($batalPelanggan == 0 && $batalMitra == 0 && $totalDibatalkan > 0) {
+            // Asumsi default: dibatalkan oleh mitra jika kita tidak punya role yang spesifik
+            $batalMitra = $totalDibatalkan;
+        }
+
+        // 4. Persentase Pembatalan (Total Batal+Gagal / Total Pesanan)
+        $totalAllOrders = Order::where('mitra_laundry_id', $mitraId)->count();
+        $totalBatalDanGagal = Order::where('mitra_laundry_id', $mitraId)->whereIn('status', ['gagal_pickup', 'dibatalkan'])->count();
+        $persentase = $totalAllOrders > 0 ? round(($totalBatalDanGagal / $totalAllOrders) * 100, 1) : 0;
+
+        $stats = [
+            'gagal_pickup' => $totalGagalPickup,
+            'batal_pelanggan' => $batalPelanggan,
+            'batal_mitra' => $batalMitra,
+            'persentase' => $persentase
+        ];
+
+        return view('mitra.pesanan.gagal_pickup', compact('orders', 'stats'));
+    }
+
     // ── Detail pesanan ────────────────────────────────────
     public function show($id)
     {

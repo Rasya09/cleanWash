@@ -329,12 +329,22 @@
                     <h2 class="card-title">Riwayat Aktivitas</h2>
                 </div>
                 <div class="timeline">
-                    @forelse($pesanan->statusHistories as $history)
+                    {{-- 1. History steps (diurutkan descending, proses yang sedang dijalankan di paling atas) --}}
                     @php
-                        $isLast   = $loop->last;
-                        $isActive = $loop->last && !in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']);
+                        // Urutkan riwayat dari yang terbaru ke terlama berdasarkan ID
+                        $sortedHistories = $pesanan->statusHistories->sortByDesc('id')->values();
                     @endphp
-                    <div class="timeline-item {{ !$isLast ? 'timeline-item--has-line' : '' }}">
+                    @forelse($sortedHistories as $history)
+                    @php
+                        $isFirst  = $loop->first;
+                        $isLast   = $loop->last;
+                        // Status aktif berada di paling atas daftar riwayat (jika belum selesai/batal/gagal)
+                        $isActive = $loop->first && !in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']);
+                        
+                        // Cek apakah ada pending step setelah ini
+                        $hasPending = !in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']);
+                    @endphp
+                    <div class="timeline-item {{ (!$isLast || $hasPending) ? 'timeline-item--has-line' : '' }}">
                         <div class="timeline-item__dot {{ $isActive ? 'timeline-item__dot--active' : 'timeline-item__dot--done' }}">
                             @if($isActive)
                                 <svg width="8" height="8" viewBox="0 0 8 8" fill="white">
@@ -346,8 +356,8 @@
                                 </svg>
                             @endif
                         </div>
-                        @if(!$isLast)
-                        <div class="timeline-item__line {{ $isActive ? 'timeline-item__line--gradient' : 'timeline-item__line--done' }}"></div>
+                        @if(!$isLast || $hasPending)
+                        <div class="timeline-item__line timeline-item__line--done"></div>
                         @endif
                         <div class="timeline-item__content">
                             <span class="timeline-item__title">
@@ -382,10 +392,10 @@
                     <p style="font-size:13px;color:var(--neutral-400);padding:8px 0;">Belum ada aktivitas.</p>
                     @endforelse
 
-                    {{-- Pending steps (hanya jika belum selesai/batal/gagal) --}}
+                    {{-- 2. Pending steps (data yang akan datang disimpan di bawah urutan) --}}
                     @if(!in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']))
                         @php
-                            // Ambil step-step yang belum dilalui
+                            // Ambil step-step yang belum dilalui, ASC normal (dari yang terdekat ke terjauh)
                             $pendingSteps = collect($steps)->filter(function($s) use ($step) {
                                 return $s['num'] > $step;
                             })->values();

@@ -163,7 +163,7 @@ class PaymentController extends Controller
         // Di sini kita langsung tandai lunas sebagai simulasi callback berhasil di lokal.
         $this->markAsPaid($order);
 
-        return redirect()->route('user.pesanan.detail', $order->id)->with('success', 'Pembayaran Berhasil! Pesanan Anda akan segera diproses.');
+        return redirect()->route('user.detail-pesanan', $order->id)->with('success', 'Pembayaran Berhasil! Pesanan Anda akan segera diproses.');
     }
 
     private function markAsPaid(Order $order)

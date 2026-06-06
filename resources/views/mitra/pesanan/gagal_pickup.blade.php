@@ -46,7 +46,7 @@
             </div>
             <div class="gp-stat-body">
                 <p class="gp-stat-label">Total Gagal Pickup</p>
-                <p class="gp-stat-value">18</p>
+                <p class="gp-stat-value">{{ number_format($stats['gagal_pickup'], 0, ',', '.') }}</p>
                 <p class="gp-stat-sub">Dalam 30 hari terakhir</p>
             </div>
         </div>
@@ -58,7 +58,7 @@
             </div>
             <div class="gp-stat-body">
                 <p class="gp-stat-label">Dibatalkan Pelanggan</p>
-                <p class="gp-stat-value">26</p>
+                <p class="gp-stat-value">{{ number_format($stats['batal_pelanggan'], 0, ',', '.') }}</p>
                 <p class="gp-stat-sub">Dalam 30 hari terakhir</p>
             </div>
         </div>
@@ -70,7 +70,7 @@
             </div>
             <div class="gp-stat-body">
                 <p class="gp-stat-label">Dibatalkan Mitra</p>
-                <p class="gp-stat-value">7</p>
+                <p class="gp-stat-value">{{ number_format($stats['batal_mitra'], 0, ',', '.') }}</p>
                 <p class="gp-stat-sub">Dalam 30 hari terakhir</p>
             </div>
         </div>
@@ -82,7 +82,7 @@
             </div>
             <div class="gp-stat-body">
                 <p class="gp-stat-label">Persentase Pembatalan</p>
-                <p class="gp-stat-value">2,4%</p>
+                <p class="gp-stat-value">{{ number_format($stats['persentase'], 1, ',', '.') }}%</p>
                 <p class="gp-stat-sub">Dari total pesanan</p>
             </div>
         </div>
@@ -92,12 +92,13 @@
     <div class="gp-table-card">
 
         {{-- Toolbar --}}
-        <div class="gp-toolbar">
+        <form method="GET" action="{{ route('mitra.gagal-pickup') }}" class="gp-toolbar">
             <div class="gp-search-wrap">
                 <svg class="gp-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
-                <input type="text" class="gp-search-input" placeholder="Cari nomor pesanan / nama pelanggan...">
+                <input type="text" name="search" class="gp-search-input" placeholder="Cari nomor pesanan / nama pelanggan..." value="{{ request('search') }}">
+                <button type="submit" style="display:none;"></button>
             </div>
             <div class="gp-toolbar-right">
                 <button class="gp-btn-date">
@@ -109,14 +110,14 @@
                         <polyline points="6 9 12 15 18 9"/>
                     </svg>
                 </button>
-                <button class="gp-btn-filter">
+                <button type="button" class="gp-btn-filter">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
                     </svg>
                     Filter
                 </button>
             </div>
-        </div>
+        </form>
 
         {{-- Table --}}
         <div class="gp-table-wrap">
@@ -132,117 +133,49 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- Row 1 --}}
-                    <tr>
-                        <td>
-                            <p class="gp-order-id">#TRX-240501-0123</p>
-                            <p class="gp-order-sub">Kiloan 5 Kg</p>
-                        </td>
-                        <td>
-                            <p class="gp-customer-name">Rasya Ganteng</p>
-                            <p class="gp-customer-phone">0812-3456-7890</p>
-                        </td>
-                        <td>
-                            <p class="gp-date">30 Mei 2024</p>
-                            <p class="gp-time">10:30 WIB</p>
-                        </td>
-                        <td>Pelanggan tidak di rumah</td>
-                        <td><span class="gp-badge gp-badge--gagal">Gagal Pickup</span></td>
-                        <td><button class="gp-btn-detail">Lihat Detail</button></td>
-                    </tr>
-                    {{-- Row 2 --}}
-                    <tr>
-                        <td>
-                            <p class="gp-order-id">#TRX-240529-0108</p>
-                            <p class="gp-order-sub">Cuci Satuan</p>
-                        </td>
-                        <td>
-                            <p class="gp-customer-name">Mang Uwyyyy</p>
-                            <p class="gp-customer-phone">0821-9876-5432</p>
-                        </td>
-                        <td>
-                            <p class="gp-date">29 Mei 2024</p>
-                            <p class="gp-time">09:15 WIB</p>
-                        </td>
-                        <td>Perubahan jadwal</td>
-                        <td><span class="gp-badge gp-badge--batal">Dibatalkan</span></td>
-                        <td><button class="gp-btn-detail">Lihat Detail</button></td>
-                    </tr>
-                    {{-- Row 3 --}}
-                    <tr>
-                        <td>
-                            <p class="gp-order-id">#TRX-240528-0097</p>
-                            <p class="gp-order-sub">Kiloan 3 Kg</p>
-                        </td>
-                        <td>
-                            <p class="gp-customer-name">Mang Ijalll Ihirrr</p>
-                            <p class="gp-customer-phone">0813-2345-6789</p>
-                        </td>
-                        <td>
-                            <p class="gp-date">28 Mei 2024</p>
-                            <p class="gp-time">14:20 WIB</p>
-                        </td>
-                        <td>Tidak jadi laundry</td>
-                        <td><span class="gp-badge gp-badge--batal">Dibatalkan</span></td>
-                        <td><button class="gp-btn-detail">Lihat Detail</button></td>
-                    </tr>
-                    {{-- Row 4 --}}
-                    <tr>
-                        <td>
-                            <p class="gp-order-id">#TRX-240527-0085</p>
-                            <p class="gp-order-sub">Kiloan 7 Kg</p>
-                        </td>
-                        <td>
-                            <p class="gp-customer-name">Adzril</p>
-                            <p class="gp-customer-phone">0812-1122-3344</p>
-                        </td>
-                        <td>
-                            <p class="gp-date">27 Mei 2024</p>
-                            <p class="gp-time">11:00 WIB</p>
-                        </td>
-                        <td>Tidak bisa melayani</td>
-                        <td><span class="gp-badge gp-badge--batal">Dibatalkan</span></td>
-                        <td><button class="gp-btn-detail">Lihat Detail</button></td>
-                    </tr>
-                    {{-- Row 5 --}}
-                    <tr>
-                        <td>
-                            <p class="gp-order-id">#TRX-240526-0072</p>
-                            <p class="gp-order-sub">Cuci Satuan</p>
-                        </td>
-                        <td>
-                            <p class="gp-customer-name">Rizky Febrian</p>
-                            <p class="gp-customer-phone">0857-7788-9900</p>
-                        </td>
-                        <td>
-                            <p class="gp-date">26 Mei 2024</p>
-                            <p class="gp-time">16:45 WIB</p>
-                        </td>
-                        <td>Alamat tidak ditemukan</td>
-                        <td><span class="gp-badge gp-badge--gagal">Gagal Pickup</span></td>
-                        <td><button class="gp-btn-detail">Lihat Detail</button></td>
-                    </tr>
+                    @forelse($orders as $order)
+                        @php
+                            // Ambil alasan dari order status history jika ada (prioritas)
+                            $history = $order->statusHistories->whereIn('status_baru', ['dibatalkan', 'gagal_pickup'])->first();
+                            $alasan = $history ? $history->catatan : ($order->status == 'dibatalkan' ? $order->alasan_batal : $order->alasan_gagal);
+                            
+                            $badgeClass = $order->status == 'dibatalkan' ? 'gp-badge--batal' : 'gp-badge--gagal';
+                            $badgeLabel = $order->status == 'dibatalkan' ? 'Dibatalkan' : 'Gagal Pickup';
+                        @endphp
+                        <tr>
+                            <td>
+                                <p class="gp-order-id">{{ $order->order_code }}</p>
+                                <p class="gp-order-sub">{{ $order->items->pluck('nama_layanan')->join(', ') }}</p>
+                            </td>
+                            <td>
+                                <p class="gp-customer-name">{{ $order->user->name ?? 'User' }}</p>
+                                <p class="gp-customer-phone">{{ $order->user->no_hp ?? '-' }}</p>
+                            </td>
+                            <td>
+                                <p class="gp-date">{{ $order->updated_at->format('d M Y') }}</p>
+                                <p class="gp-time">{{ $order->updated_at->format('H:i') }} WIB</p>
+                            </td>
+                            <td>{{ $alasan ?? '-' }}</td>
+                            <td><span class="gp-badge {{ $badgeClass }}">{{ $badgeLabel }}</span></td>
+                            <td><a href="{{ route('mitra.pesanan.detail', $order->id) }}" class="gp-btn-detail" style="text-decoration:none; display:inline-block; text-align:center;">Lihat Detail</a></td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center" style="padding: 40px 0;">
+                                <div style="color:#9ca3af; text-align:center;">
+                                    <p>Tidak ada riwayat gagal pickup / pembatalan ditemukan.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
         {{-- Pagination --}}
-        <div class="gp-pagination-wrap">
-            <p class="gp-pagination-info">Menampilkan 1 – 5 dari 51 data</p>
-            <div class="gp-pagination">
-                <button class="gp-page-btn gp-page-btn--nav" disabled>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-                </button>
-                <button class="gp-page-btn gp-page-btn--active">1</button>
-                <button class="gp-page-btn">2</button>
-                <button class="gp-page-btn">3</button>
-                <span class="gp-page-ellipsis">...</span>
-                <button class="gp-page-btn">11</button>
-                <button class="gp-page-btn gp-page-btn--nav">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                </button>
-            </div>
-        </div>
+        @if($orders->hasPages())
+        {{ $orders->appends(request()->query())->links('mitra.layouts.pagination', ['prefix' => 'gp-']) }}
+        @endif
 
     </div>{{-- end table card --}}
 </div>{{-- end gp-page --}}
