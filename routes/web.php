@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MitraRegisterController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Mitra\MitraController;
+use App\Http\Controllers\LaundryController;
 
 // ======================================================
 // PUBLIC / GUEST
@@ -159,11 +160,8 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
         return view('user.layanan');
     })->name('user.layanan');
 
-    Route::get('/detail-laundry', function () {
-        // Karena sementara masih statis, kita ambil semua review yang ada
-        $reviews = \App\Models\Review::with('user')->latest()->get();
-        return view('user.detail_laundry', compact('reviews'));
-    })->name('user.detail-laundry');
+    Route::get('/detail-laundry/{id}', [LaundryController::class, 'show'])
+    ->name('user.detail-laundry');
 
     Route::get('/pesanan', function () {
         return view('user.pesanan');
