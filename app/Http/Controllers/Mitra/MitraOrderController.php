@@ -128,16 +128,18 @@ class MitraOrderController extends Controller
             'status_baru'  => 'required|in:pickup,diproses,pengantaran,selesai,gagal_pickup',
             'berat_aktual' => 'nullable|numeric|min:0.1',
             'catatan'      => 'nullable|string|max:300',
+            'foto_pickup'  => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
         $order = $this->getPesanan($id);
 
         // Validasi flow status
         $allowedTransitions = [
-            'aktif'        => ['pickup', 'gagal_pickup'],
-            'pickup'       => ['diproses', 'gagal_pickup'],
-            'diproses'     => ['pengantaran'],
-            'pengantaran'  => ['selesai'],
+            'aktif'               => ['pickup', 'gagal_pickup'],
+            'pickup'              => ['menunggu_pembayaran', 'gagal_pickup'],
+            'menunggu_pembayaran' => ['diproses'],
+            'diproses'            => ['pengantaran'],
+            'pengantaran'         => ['selesai'],
         ];
 
         $allowed = $allowedTransitions[$order->status] ?? [];
@@ -149,6 +151,10 @@ class MitraOrderController extends Controller
         }
 
         $updateData = ['status' => $request->status_baru];
+        
+        if ($request->hasFile('foto_pickup')) {
+            $updateData['foto_pickup'] = $request->file('foto_pickup')->store('orders/foto_pickup', 'public');
+        }
 
         // Hitung ulang harga jika berat aktual diisi
         if ($request->berat_aktual) {
@@ -156,8 +162,8 @@ class MitraOrderController extends Controller
             $this->hitungUlangHarga($order, $request->berat_aktual);
         }
 
-        // Jika gagal pickup, simpan alasan
-        if ($request->status_baru === 'gagal_pickup') {
+        // Jika gagal pickup, simpan alasan (walaupun textareanya sudah diganti, ini fallback jika ada catatan)
+        if ($request->status_baru === 'gagal_pickup' && $request->catatan) {
             $updateData['alasan_gagal'] = $request->catatan;
         }
 
@@ -168,7 +174,14 @@ class MitraOrderController extends Controller
 
         $statusLama = $order->status;
         $order->update($updateData);
-        $this->catatHistory($order, $statusLama, $request->status_baru, $request->catatan);
+
+        if ($request->status_baru === 'menunggu_pembayaran') {
+            // Catat history ditimbang juga agar muncul di timeline
+            $this->catatHistory($order, $statusLama, 'ditimbang', 'Barang telah ditimbang: ' . $request->berat_aktual . ' kg');
+            $this->catatHistory($order, 'ditimbang', 'menunggu_pembayaran', $request->catatan);
+        } else {
+            $this->catatHistory($order, $statusLama, $request->status_baru, $request->catatan);
+        }
 
         return redirect()->route('mitra.pesanan.detail', $id)
                          ->with('success', 'Status pesanan diperbarui!');

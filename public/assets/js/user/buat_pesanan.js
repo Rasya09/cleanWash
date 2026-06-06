@@ -48,6 +48,7 @@
 
         // update tombol hapus pada item pertama jika sudah ada ≥2
         updateHapusBtn();
+        updateDisabledServices();
     };
 
     /* ─── Hapus Layanan ─────────────────────────── */
@@ -60,6 +61,7 @@
         setTimeout(() => {
             item.remove();
             updateHapusBtn();
+            updateDisabledServices();
         }, 200);
     };
 
@@ -69,6 +71,46 @@
             const btn = item.querySelector('.bp-btn-hapus-layanan');
             if (btn) btn.style.display = items.length > 1 ? 'inline-flex' : 'none';
         });
+    }
+
+    function updateDisabledServices() {
+        const items = document.querySelectorAll('.bp-layanan-item');
+        const selectedValues = new Set();
+        
+        // Kumpulkan semua layanan yang dipilih
+        items.forEach(item => {
+            const checked = item.querySelector('.bp-radio-input:checked');
+            if (checked) selectedValues.add(checked.value);
+        });
+
+        // Disable input yang sudah dipilih di grup lain
+        items.forEach(item => {
+            const inputs = item.querySelectorAll('.bp-radio-input');
+            const checkedValue = item.querySelector('.bp-radio-input:checked')?.value;
+            
+            inputs.forEach(input => {
+                if (selectedValues.has(input.value) && input.value !== checkedValue) {
+                    input.disabled = true;
+                    input.parentElement.style.opacity = '0.5';
+                    input.parentElement.style.cursor = 'not-allowed';
+                } else {
+                    input.disabled = false;
+                    input.parentElement.style.opacity = '1';
+                    input.parentElement.style.cursor = 'pointer';
+                }
+            });
+        });
+
+        // Sembunyikan tombol "Tambah Layanan" jika semua layanan sudah ditambahkan
+        const btnTambah = document.getElementById('btnTambahLayanan');
+        if (btnTambah) {
+            const maxLayanan = window.laundryServices ? window.laundryServices.length : 0;
+            if (items.length >= maxLayanan) {
+                btnTambah.style.display = 'none';
+            } else {
+                btnTambah.style.display = 'inline-flex';
+            }
+        }
     }
 
     /* ─── Preview Foto ───────────────────────────── */
@@ -97,6 +139,7 @@
     /* ─── Validasi Form ──────────────────────────── */
     function validasiForm() {
         const items = document.querySelectorAll('.bp-layanan-item');
+        const selectedServices = new Set();
         for (const item of items) {
             const selected = item.querySelector('.bp-radio-input:checked');
             if (!selected) {
@@ -106,6 +149,15 @@
                 showToast('Pilih layanan untuk setiap pesanan yang ditambahkan.');
                 return false;
             }
+            
+            if (selectedServices.has(selected.value)) {
+                item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                item.style.boxShadow = '0 0 0 2px #EF4444';
+                setTimeout(() => item.style.boxShadow = '', 2000);
+                showToast('Layanan yang sama tidak boleh dipilih lebih dari satu kali.');
+                return false;
+            }
+            selectedServices.add(selected.value);
         }
 
         const tanggal = document.getElementById('pilihTanggal').value;
@@ -248,6 +300,17 @@
     }
 
        document.addEventListener('DOMContentLoaded', () => {
+
+        const daftarLayanan = document.getElementById('daftarLayanan');
+        if (daftarLayanan) {
+            daftarLayanan.addEventListener('change', (e) => {
+                if (e.target.classList.contains('bp-radio-input')) {
+                    updateDisabledServices();
+                }
+            });
+            // Initial call
+            updateDisabledServices();
+        }
 
         const tanggalInput = document.getElementById('pilihTanggal');
 

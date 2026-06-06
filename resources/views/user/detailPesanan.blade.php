@@ -56,35 +56,41 @@
 
                 @php
                     $statusLabel = [
-                        'masuk'        => 'Menunggu Konfirmasi',
-                        'aktif'        => 'Pesanan Diterima',
-                        'pickup'       => 'Driver Menuju Lokasi',
-                        'diproses'     => 'Sedang Diproses',
-                        'pengantaran'  => 'Sedang Diantar',
-                        'selesai'      => 'Selesai',
-                        'gagal_pickup' => 'Gagal Pickup',
-                        'dibatalkan'   => 'Dibatalkan',
+                        'masuk'               => 'Menunggu Konfirmasi',
+                        'aktif'               => 'Pesanan Diterima',
+                        'pickup'              => 'Pickup Berhasil',
+                        'ditimbang'           => 'Ditimbang',
+                        'menunggu_pembayaran' => 'Menunggu Pembayaran',
+                        'diproses'            => 'Sedang Diproses',
+                        'pengantaran'         => 'Sedang Diantar',
+                        'selesai'             => 'Selesai',
+                        'gagal_pickup'        => 'Gagal Pickup',
+                        'dibatalkan'          => 'Dibatalkan',
                     ];
 
                     /* Peta status → nomor step aktif */
                     $stepMap = [
-                        'masuk'        => 0,
-                        'aktif'        => 1,
-                        'pickup'       => 2,
-                        'diproses'     => 3,
-                        'pengantaran'  => 4,
-                        'selesai'      => 5,
-                        'gagal_pickup' => 2,
-                        'dibatalkan'   => 0,
+                        'masuk'               => 0,
+                        'aktif'               => 1,
+                        'pickup'              => 2,
+                        'ditimbang'           => 3,
+                        'menunggu_pembayaran' => 4,
+                        'diproses'            => 5,
+                        'pengantaran'         => 6,
+                        'selesai'             => 7,
+                        'gagal_pickup'        => 2,
+                        'dibatalkan'          => 0,
                     ];
                     $step = $stepMap[$pesanan->status] ?? 0;
 
                     $steps = [
-                        ['label' => 'Pesanan Diterima', 'num' => 1],
-                        ['label' => 'Pickup',           'num' => 2],
-                        ['label' => 'Ditimbang',        'num' => 3],
-                        ['label' => 'Pengantaran',      'num' => 4],
-                        ['label' => 'Selesai',          'num' => 5],
+                        ['label' => 'Diterima',    'num' => 1],
+                        ['label' => 'Pickup',      'num' => 2],
+                        ['label' => 'Ditimbang',   'num' => 3],
+                        ['label' => 'Pembayaran',  'num' => 4],
+                        ['label' => 'Diproses',    'num' => 5],
+                        ['label' => 'Diantar',     'num' => 6],
+                        ['label' => 'Selesai',     'num' => 7],
                     ];
                 @endphp
 
@@ -201,22 +207,6 @@
                         </span>
                         <span class="layanan-row__val">
                             {{ $pesanan->items->pluck('nama_layanan')->join(', ') ?: '-' }}
-                        </span>
-                    </div>
-
-                    {{-- Paket --}}
-                    <div class="layanan-row">
-                        <span class="layanan-row__key">
-                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <polyline points="1 4 1 10 7 10"/>
-                                <path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
-                            </svg>
-                            Paket
-                        </span>
-                        <span class="layanan-row__val">
-                            <span class="layanan-row__val--badge">
-                                {{ ucfirst($pesanan->paket ?? 'Express') }}
-                            </span>
                         </span>
                     </div>
 
@@ -370,29 +360,40 @@
                             @if($history->catatan)
                             <div class="timeline-item__desc">{{ $history->catatan }}</div>
                             @endif
+                            @if($history->status_baru === 'pickup' && $pesanan->foto_pickup)
+                            <div class="timeline-item__desc" style="margin-top: 5px;">
+                                <a href="{{ asset('storage/' . $pesanan->foto_pickup) }}" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                    Foto Bukti PickUp
+                                </a>
+                            </div>
+                            @endif
                         </div>
                     </div>
                     @empty
                     <p style="font-size:13px;color:var(--neutral-400);padding:8px 0;">Belum ada aktivitas.</p>
                     @endforelse
 
-                    {{-- Pending steps (hanya jika belum selesai/batal) --}}
+                    {{-- Pending steps (hanya jika belum selesai/batal/gagal) --}}
                     @if(!in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']))
-                    <div class="timeline-item timeline-item--has-line timeline-item--pending">
-                        <div class="timeline-item__dot timeline-item__dot--pending"></div>
-                        <div class="timeline-item__line timeline-item__line--pending"></div>
-                        <div class="timeline-item__content">
-                            <span class="timeline-item__title timeline-item__title--muted">Siap Diantar</span>
-                            <span class="timeline-item__time">Menunggu...</span>
+                        @php
+                            // Ambil step-step yang belum dilalui
+                            $pendingSteps = collect($steps)->filter(function($s) use ($step) {
+                                return $s['num'] > $step;
+                            })->values();
+                        @endphp
+                        @foreach($pendingSteps as $idx => $pStep)
+                        <div class="timeline-item {{ !$loop->last ? 'timeline-item--has-line' : '' }} timeline-item--pending">
+                            <div class="timeline-item__dot timeline-item__dot--pending"></div>
+                            @if(!$loop->last)
+                            <div class="timeline-item__line timeline-item__line--pending"></div>
+                            @endif
+                            <div class="timeline-item__content">
+                                <span class="timeline-item__title timeline-item__title--muted">{{ $pStep['label'] }}</span>
+                                <span class="timeline-item__time">Menunggu...</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="timeline-item timeline-item--pending">
-                        <div class="timeline-item__dot timeline-item__dot--pending"></div>
-                        <div class="timeline-item__content">
-                            <span class="timeline-item__title timeline-item__title--muted">Pesanan Selesai</span>
-                            <span class="timeline-item__time">Menunggu...</span>
-                        </div>
-                    </div>
+                        @endforeach
                     @endif
                 </div>
             </section>
@@ -469,13 +470,23 @@
                     </span>
                 </div>
 
-                @if($pesanan->status_bayar !== 'lunas' && $pesanan->total_bayar > 0)
-                <a href="{{ route('user.pembayaran') }}" class="btn-bayar">
+                @if($pesanan->status_bayar !== 'lunas' && $pesanan->total_bayar > 0 && $pesanan->status === 'menunggu_pembayaran')
+                <form action="{{ route('user.pesanan.bayar', $pesanan->id) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn-bayar" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
+                        </svg>
+                        Bayar Sekarang
+                    </button>
+                </form>
+                @elseif($pesanan->status_bayar !== 'lunas' && $pesanan->total_bayar > 0)
+                <button type="button" class="btn-bayar" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; background-color: var(--neutral-400); cursor: not-allowed;" disabled>
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
                     </svg>
-                    Bayar Sekarang
-                </a>
+                    Bayar Sekarang (Menunggu Timbangan)
+                </button>
                 @endif
             </section>
 
@@ -568,16 +579,16 @@
         </div>
         <h3 class="dpx-modal-title">Beri Ulasan</h3>
         <p class="dpx-modal-desc">Bagaimana pengalaman Anda dengan layanan laundry ini?</p>
-        
+
         <form action="{{ route('user.review.store', $pesanan->id) }}" method="POST" id="reviewForm">
             @csrf
             <div class="star-rating" style="margin-bottom: 16px; font-size: 24px; color: #d1d5db; cursor: pointer;">
                 <span data-value="1">★</span><span data-value="2">★</span><span data-value="3">★</span><span data-value="4">★</span><span data-value="5">★</span>
             </div>
             <input type="hidden" name="rating" id="ratingInput" required>
-            
+
             <textarea name="comment" class="dpx-modal-textarea" rows="3" placeholder="Tulis komentar Anda (opsional)..."></textarea>
-            
+
             <div class="dpx-modal-actions">
                 <button type="button" class="dpx-modal-btn dpx-modal-btn--ghost" onclick="document.getElementById('reviewModal').classList.remove('active')">Batal</button>
                 <button type="submit" class="dpx-modal-btn" style="background:var(--blue-600); color:white;">Kirim Ulasan</button>
@@ -593,12 +604,12 @@
         // Star Rating Logic
         const stars = document.querySelectorAll('.star-rating span');
         const ratingInput = document.getElementById('ratingInput');
-        
+
         stars.forEach(star => {
             star.addEventListener('click', () => {
                 const value = star.getAttribute('data-value');
                 ratingInput.value = value;
-                
+
                 stars.forEach(s => {
                     if(s.getAttribute('data-value') <= value) {
                         s.style.color = '#F59E0B'; // Gold

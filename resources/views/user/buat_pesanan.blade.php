@@ -70,11 +70,13 @@
 
                     <div class="bp-radio-group">
                         @foreach($laundry->services as $service)
+                        @if($service->is_active)
                         <label class="bp-radio-label">
                             <input type="radio" name="layanan[0]" value="{{ $service->id }}" class="bp-radio-input" data-name="{{ $service->service_name }}" data-price="{{ $service->base_price }}">
                             <span class="bp-radio-custom"></span>
                             {{ $service->service_name }}
                         </label>
+                        @endif
                         @endforeach
                     </div>
                     <div class="bp-divider"></div>
@@ -84,7 +86,7 @@
             {{-- Tombol Tambah Layanan --}}
             <button type="button" class="bp-btn-tambah" id="btnTambahLayanan" onclick="tambahLayanan()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-                Tambah Pesanan
+                Tambah Layanan
             </button>
 
             {{-- Foto Barang --}}
@@ -201,7 +203,9 @@
 
 @section('js')
 @php
-    $servicesData = $laundry->services->map(function($service) {
+    $servicesData = $laundry->services->filter(function($service) {
+        return $service->is_active;
+    })->map(function($service) {
         return [
             'id' => $service->id,
             'service_name' => $service->service_name,
@@ -214,5 +218,5 @@
     // Pass dynamic services to Javascript
     window.laundryServices = @json($servicesData);
 </script>
-<script src="{{ asset('assets/js/user/buat_pesanan.js') }}?v=2"></script>
+<script src="{{ asset('assets/js/user/buat_pesanan.js') }}?v=3"></script>
 @endsection

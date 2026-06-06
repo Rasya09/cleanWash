@@ -232,7 +232,7 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     Route::get('/pesanan',              [OrderController::class, 'index'])->name('user.pesanan');
     Route::get('/pesanan/{id}',         [OrderController::class, 'show'])->name('user.detail-pesanan');
     Route::put('/pesanan/{id}/cancel',  [OrderController::class, 'cancel'])->name('user.pesanan.cancel');
-
+    Route::post('/pesanan/{id}/bayar',  [OrderController::class, 'bayar'])->name('user.pesanan.bayar');
     // Ulasan
     Route::post('/pesanan/{id}/review', [\App\Http\Controllers\ReviewController::class, 'store'])->name('user.review.store');
     // RATING
