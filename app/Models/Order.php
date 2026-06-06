@@ -79,6 +79,11 @@ class Order extends Model
             ->orderBy('created_at', 'desc');
     }
 
+    public function review()
+    {
+        return $this->hasOne(Review::class, 'order_id');
+    }
+
     /* ─────────────────────────────
      | STATUS HELPERS
      ───────────────────────────── */

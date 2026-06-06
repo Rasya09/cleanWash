@@ -42,6 +42,12 @@ Route::middleware('guest')->group(function () {
 
 });
 
+// Chat Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/chat/messages', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.messages');
+    Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
+});
+
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
@@ -154,7 +160,9 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     })->name('user.layanan');
 
     Route::get('/detail-laundry', function () {
-        return view('user.detail_laundry');
+        // Karena sementara masih statis, kita ambil semua review yang ada
+        $reviews = \App\Models\Review::with('user')->latest()->get();
+        return view('user.detail_laundry', compact('reviews'));
     })->name('user.detail-laundry');
 
     Route::get('/pesanan', function () {
@@ -170,7 +178,8 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     })->name('user.pembayaran');
 
     Route::get('/chat', function () {
-        return view('user.chat');
+        $contact = \App\Models\User::where('role', 'mitra')->first();
+        return view('user.chat', compact('contact'));
     })->name('user.chat');
 
     Route::get('/profile', function () {
@@ -198,6 +207,9 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     Route::get('/pesanan',              [OrderController::class, 'index'])->name('user.pesanan');
     Route::get('/pesanan/{id}',         [OrderController::class, 'show'])->name('user.detail-pesanan');
     Route::put('/pesanan/{id}/cancel',  [OrderController::class, 'cancel'])->name('user.pesanan.cancel');
+    
+    // Ulasan
+    Route::post('/pesanan/{id}/review', [\App\Http\Controllers\ReviewController::class, 'store'])->name('user.review.store');
 
 });
 
@@ -274,13 +286,35 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
         return view('mitra.pusat_promosi.voucher_toko');
     })->name('mitra.voucher');
 
-    // CUSTOMER SERVICE
     Route::get('/penilaian-toko', function () {
-        return view('mitra.layanan_customer.penilaian_toko');
+        $reviews = \App\Models\Review::with('user', 'order')->where('mitra_id', Auth::id())->latest()->get();
+        
+        $totalUlasan = $reviews->count();
+        $rataRata = $totalUlasan > 0 ? $reviews->avg('rating') : 0;
+        
+        $ulasanPositif = $reviews->whereIn('rating', [4, 5])->count();
+        $ulasanNetral = $reviews->where('rating', 3)->count();
+        $ulasanNegatif = $reviews->whereIn('rating', [1, 2])->count();
+        
+        $totalPelanggan = $reviews->unique('user_id')->count();
+        
+        $rating5 = $reviews->where('rating', 5)->count();
+        $rating4 = $reviews->where('rating', 4)->count();
+        $rating3 = $reviews->where('rating', 3)->count();
+        $rating2 = $reviews->where('rating', 2)->count();
+        $rating1 = $reviews->where('rating', 1)->count();
+        
+        return view('mitra.layanan_customer.penilaian_toko', compact(
+            'reviews', 'totalUlasan', 'rataRata', 'ulasanPositif', 'ulasanNetral', 
+            'ulasanNegatif', 'totalPelanggan', 'rating5', 'rating4', 'rating3', 'rating2', 'rating1'
+        ));
     })->name('mitra.penilaian');
+    
+    Route::post('/review/{id}/reply', [\App\Http\Controllers\ReviewController::class, 'reply'])->name('mitra.review.reply');
 
     Route::get('/manajemen-chat', function () {
-        return view('mitra.layanan_customer.manajemen_chat');
+        $contact = \App\Models\User::where('role', 'user')->first();
+        return view('mitra.layanan_customer.manajemen_chat', compact('contact'));
     })->name('mitra.chat');
 
     // KEUANGAN
