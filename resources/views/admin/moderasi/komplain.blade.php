@@ -6,33 +6,79 @@
 
 @section('content')
 
-{{-- ═══ PELAPOR POPUP MODAL ═══ --}}
-<div class="pelapor-modal-overlay" id="pelaporModal">
-  <div class="pelapor-modal">
-    <div class="pm-header">
-      <h4>Informasi Pelapor</h4>
-      <button class="pm-close" id="pmClose">✕</button>
+{{-- ═══ MODAL TINDAK LANJUT ═══ --}}
+<div id="followUpModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 5000; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
+    <div style="background: #fff; width: 90%; max-width: 380px; padding: 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: modalIn 0.2s ease;">
+        <h3 style="font-family: var(--fh); font-size: 16px; font-weight: 800; color: #111827; margin-bottom: 12px; text-align: center;">Tindak Lanjut</h3>
+        <textarea id="tanggapanAdmin" style="width: 100%; min-height: 120px; padding: 12px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-family: inherit; font-size: 13px; resize: none; margin-bottom: 16px; outline: none; transition: border-color 0.2s;" placeholder="Tulis alasan atau tindakan yang diambil..."></textarea>
+        <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            <button onclick="closeFollowUpModal()" style="padding: 8px 16px; border: none; background: #f3f4f6; color: #4b5563; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;">Batal</button>
+            <button id="confirmFollowUp" style="padding: 8px 16px; border: none; background: #dc2626; color: #fff; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;">Kirim</button>
+        </div>
     </div>
-    <div class="pm-body">
-      <div class="pm-avatar-row">
-        <div class="pm-avatar" id="pmAvatar"></div>
-        <div>
-          <div class="pm-name" id="pmName"></div>
-          <div class="pm-role">Pelanggan</div>
+</div>
+
+{{-- ═══ COMBINED INFO MODAL (Pelapor & Terlapor) ═══ --}}
+<div class="pelapor-modal-overlay" id="combinedModal">
+  <div class="pelapor-modal" style="max-width: 480px; width: 95%; max-height: 90vh; overflow-y: auto; border-radius: 16px;">
+    <div class="pm-header" style="position: sticky; top: 0; background: #fff; z-index: 10; border-bottom: 1px solid #f1f5f9;">
+      <h4>Detail Pihak Terkait</h4>
+      <button class="pm-close" id="combinedClose">✕</button>
+    </div>
+    <div class="pm-body" style="padding: 20px;">
+      
+      <!-- SECTION: PELAPOR -->
+      <div style="background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <div style="font-size: 11px; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-bullhorn"></i> Pelapor
+            </div>
+            <span id="cmbPelaporType" style="font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 700; background: #e2e8f0; color: #475569;">Pelanggan</span>
+        </div>
+        <div class="pm-avatar-row" style="margin-bottom: 15px;">
+          <div class="pm-avatar" id="cmbPelaporAvatar" style="width: 48px; height: 48px; font-size: 18px;"></div>
+          <div>
+            <div class="pm-name" id="cmbPelaporName" style="font-size: 16px; font-weight: 800;"></div>
+            <div class="pm-role" id="cmbPelaporRole" style="font-size: 12px; color: #64748b;">Customer / Pelanggan</div>
+          </div>
+        </div>
+        <div class="pm-info-list" id="cmbPelaporInfo" style="gap: 10px;"></div>
+        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #cbd5e1;">
+            <a id="cmbPelaporLink" href="#" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; background: #fff; color: #64748b; border: 1.5px solid #cbd5e1; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 13px; transition: all 0.2s;">
+                <i class="fa-solid fa-user-gear"></i> Lihat Profil Pelapor
+            </a>
         </div>
       </div>
-      <div class="pm-info-list" id="pmInfoList"></div>
-    </div>
-    <div class="pm-footer">
-      <button class="pm-btn-wa" id="pmWa" style="background:#25D366; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600;">
-        <i class="fa-brands fa-whatsapp"></i> WhatsApp
-      </button>
-      <button class="pm-btn-email" id="pmEmail" style="background:#64748b; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600;">
-        <i class="fa-solid fa-envelope"></i> Email
-      </button>
-      <button class="pm-btn-chat" id="pmChat" style="background:#2563eb; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600;">
-        <i class="fa-solid fa-comment"></i> Open Chat
-      </button>
+
+      <div style="display: flex; justify-content: center; margin: -10px 0 10px;">
+        <div style="background: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; z-index: 2;">
+            <i class="fa-solid fa-arrows-up-down"></i>
+        </div>
+      </div>
+
+      <!-- SECTION: TERLAPOR -->
+      <div style="background: #fff; padding: 16px; border-radius: 12px; border: 2px solid #3b82f6; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <div style="font-size: 11px; color: #3b82f6; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-user-shield"></i> Terlapor
+            </div>
+            <span id="cmbTerlaporType" style="font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 700; background: #dbeafe; color: #1e40af;">Mitra Laundry</span>
+        </div>
+        <div class="pm-avatar-row" style="margin-bottom: 15px;">
+          <div class="pm-avatar" id="cmbTerlaporAvatar" style="width: 48px; height: 48px; font-size: 18px; background: #3b82f6; color: #fff;"></div>
+          <div>
+            <div class="pm-name" id="cmbTerlaporName" style="font-size: 16px; font-weight: 800;"></div>
+            <div class="pm-role" id="cmbTerlaporRole" style="font-size: 12px; color: #64748b;">Unit Laundry / Toko</div>
+          </div>
+        </div>
+        <div class="pm-info-list" id="cmbTerlaporInfo" style="gap: 10px;"></div>
+        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #dbeafe;">
+            <a id="cmbTerlaporLink" href="#" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; background: #3b82f6; color: #fff; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 13px; transition: all 0.2s; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Lihat di Manajemen Terlapor
+            </a>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -159,7 +205,7 @@
             <th>ID Laporan</th>
             <th>Pelapor</th>
             <th>Tipe Laporan</th>
-            <th>Mitra Laundry</th>
+            <th>Terlapor / Mitra</th>
             <th>Order ID</th>
             <th>Prioritas</th>
             <th>Status</th>
@@ -198,29 +244,18 @@
     </div>
     <div class="detbody" id="detailBody"></div>
     <div class="detfoot" id="detailFoot" style="display:none">
-      <div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-bottom:8px; padding-left:4px;">Tindak Lanjut</div>
+      <div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-bottom:10px; padding-left:4px;">Tindak Lanjut</div>
       <div class="foot-row" style="gap: 8px; margin-bottom: 8px;">
-        <button class="btn-proc" id="btnWa" style="background: #25D366; flex: 1; font-size: 11px; padding: 10px 4px;">
-          <i class="fa-brands fa-whatsapp"></i> WhatsApp
+        <button class="btn-proc" id="btnProses" style="flex: 1.5; font-size: 11px; padding: 10px 4px;">
+          <i class="fa-solid fa-check"></i> Proses Laporan
         </button>
-        <button class="btn-proc" id="btnEmail" style="background: #64748b; flex: 1; font-size: 11px; padding: 10px 4px;">
-          <i class="fa-solid fa-envelope"></i> Email
-        </button>
-      </div>
-      <div class="foot-row" style="gap: 8px;">
-        <button class="btn-proc" id="btnFollowUp" style="background: var(--primary); flex: 1; font-size: 11px; padding: 10px 4px;">
-          <i class="fa-solid fa-paper-plane"></i> Chat Mitra
-        </button>
-        <button class="btn-proc" id="btnFollowUpReporter" style="background: #14b8a6; flex: 1; font-size: 11px; padding: 10px 4px;">
-          <i class="fa-solid fa-user-clock"></i> Chat Pelapor
+        <button class="btn-info" id="btnMintaInfo" style="flex: 1; font-size: 11px; padding: 10px 4px;">
+          <i class="fa-solid fa-comment-dots"></i> Minta Info
         </button>
       </div>
-      <div class="foot-row" style="margin-top: 12px; border-top: 1px solid #f1f5f9; pt: 12px; gap: 8px;">
-        <button class="btn-proc" id="btnProses" style="flex: 1; font-size: 11px; padding: 10px 4px;">
-          <i class="fa-solid fa-check"></i> Selesaikan
-        </button>
-        <button class="btn-reject" id="btnTolak" style="flex: 1; font-size: 11px; padding: 10px 4px;">
-          <i class="fa-solid fa-xmark"></i> Tolak
+      <div class="foot-row">
+        <button class="btn-reject" id="btnTolak" style="width: 100%; font-size: 11px; padding: 10px 4px;">
+          <i class="fa-solid fa-xmark"></i> Tolak Laporan
         </button>
       </div>
     </div>
@@ -238,28 +273,44 @@
 /* ─── DATA ─────────────────────────────────────────────── */
 const complaints = {!! json_encode($komplains->map(function($c) {
     $isStoreReport = $c->mitra_laundry_id !== null;
+    // Jika reporter adalah mitra (punya mitra_laundry), berarti mitra melapor user
+    $isMitraReporting = $c->reporter?->mitraLaundry !== null;
     
     return [
         'id' => 'CMP-' . str_pad($c->id, 4, '0', STR_PAD_LEFT),
         'realId' => $c->id,
         'reporterId' => $c->reporter_id,
+        'isMitraReporting' => $isMitraReporting,
         'pelapor' => [
             'nama' => $c->reporter?->name ?? 'User',
             'inisial' => strtoupper(substr($c->reporter?->name ?? 'U', 0, 2)),
-            'warna' => $isStoreReport ? '#EF4444' : '#2563EB',
+            'warna' => $isMitraReporting ? '#3b82f6' : ($isStoreReport ? '#EF4444' : '#2563EB'),
             'hp' => $c->reporter?->phone ?? '-',
             'email' => $c->reporter?->email ?? '-',
             'alamat' => $c->reporter?->mitraLaundry?->address ?? '-',
         ],
+        'reportedUser' => [
+            'id' => $c->reported_user_id,
+            'nama' => $c->reportedUser?->name ?? 'User',
+            'inisial' => strtoupper(substr($c->reportedUser?->name ?? 'U', 0, 2)),
+            'hp' => $c->reportedUser?->phone ?? '-',
+            'email' => $c->reportedUser?->email ?? '-',
+            'alamat' => $c->reportedUser?->mitraLaundry?->address ?? '-',
+        ],
         'tipe' => [
-            'nama' => $isStoreReport ? 'Laporan Toko' : 'Laporan Ulasan',
-            'ico' => $isStoreReport ? '🏬' : '🚩',
-            'cls' => $isStoreReport ? 'orange' : 'red'
+            'nama' => $isStoreReport ? 'Laporan Toko' : ($isMitraReporting ? 'Laporan User' : 'Laporan Ulasan'),
+            'ico' => $isStoreReport ? '🏬' : ($isMitraReporting ? '👤' : '🚩'),
+            'cls' => $isStoreReport ? 'orange' : ($isMitraReporting ? 'blue' : 'red')
         ],
         'mitra' => [
+            'id' => $c->mitra_laundry_id ?? $c->reportedUser?->mitraLaundry?->id,
             'nama' => $c->mitraLaundry?->store_name ?? $c->reportedUser?->mitraLaundry?->store_name ?? 'Mitra Toko',
             'inisial' => strtoupper(substr($c->mitraLaundry?->store_name ?? $c->reportedUser?->mitraLaundry?->store_name ?? 'MT', 0, 2)),
-            'cls' => 'blue'
+            'cls' => 'blue',
+            'pemilik' => $c->mitraLaundry?->user?->name ?? $c->reportedUser?->name ?? 'Pemilik',
+            'hp' => $c->mitraLaundry?->user?->phone ?? $c->reportedUser?->phone ?? '-',
+            'email' => $c->mitraLaundry?->user?->email ?? $c->reportedUser?->email ?? '-',
+            'alamat' => $c->mitraLaundry?->address ?? $c->reportedUser?->mitraLaundry?->address ?? '-',
         ],
         'orderId' => $c->review?->order?->order_code ?? '-',
         'prioritas' => $isStoreReport ? 'high' : 'med',
@@ -346,7 +397,7 @@ function renderTable(){
       <td><input type="checkbox" class="row-check" data-id="${c.id}"/></td>
       <td><span class="cmpid">${c.id}</span></td>
       <td>
-        <div class="plcell pl-clickable" data-pelapor-id="${c.id}" title="Lihat profil pelapor">
+        <div class="plcell pl-clickable" onclick="event.stopPropagation(); openCombinedModal('${c.id}')" title="Lihat detail pihak terkait">
           <div class="plav" style="${avatarStyle(c.pelapor.warna)}">${c.pelapor.inisial}</div>
           <div>
             <div class="plname">${c.pelapor.nama}</div>
@@ -361,9 +412,11 @@ function renderTable(){
         </div>
       </td>
       <td>
-        <div class="mc">
-          <div class="mlogo ${c.mitra.cls}" style="color:#fff;font-weight:700">${c.mitra.inisial}</div>
-          <span class="mname">${c.mitra.nama}</span>
+        <div class="mc pl-clickable" onclick="event.stopPropagation(); openCombinedModal('${c.id}')" title="Lihat detail pihak terkait">
+          <div class="mlogo ${c.isMitraReporting ? 'blue' : c.mitra.cls}" style="color:#fff;font-weight:700">
+            ${c.isMitraReporting ? c.reportedUser.inisial : c.mitra.inisial}
+          </div>
+          <span class="mname">${c.isMitraReporting ? c.reportedUser.nama : c.mitra.nama}</span>
         </div>
       </td>
       <td><span class="oid">${c.orderId}</span></td>
@@ -490,37 +543,86 @@ function updateTabCounts(){
   });
 }
 
-/* ─── PELAPOR MODAL ──────────────────────────────────── */
-function openPelaporModal(id){
-  const c=complaints.find(x=>x.id===id);if(!c)return;
-  const p=c.pelapor;
-  document.getElementById('pmAvatar').style.background=p.warna;
-  document.getElementById('pmAvatar').textContent=p.inisial;
-  document.getElementById('pmName').textContent=p.nama;
-  document.getElementById('pmInfoList').innerHTML=`
-    <div class="pm-info-row">
-      <div class="pm-info-icon blue"><i class="fa-solid fa-phone"></i></div>
-      <div><div class="pm-info-label">No. WhatsApp</div><div class="pm-info-val">${p.hp}</div></div>
+/* ─── COMBINED MODAL ───────────────────────────────────── */
+function openCombinedModal(id) {
+  const c = complaints.find(x => x.id === id);
+  if (!c) return;
+
+  // 1. POPULATE PELAPOR
+  const p = c.pelapor;
+  document.getElementById('cmbPelaporAvatar').style.background = p.warna;
+  document.getElementById('cmbPelaporAvatar').textContent = p.inisial;
+  document.getElementById('cmbPelaporName').textContent = p.nama;
+  document.getElementById('cmbPelaporType').textContent = c.isMitraReporting ? 'Mitra' : 'Customer';
+  document.getElementById('cmbPelaporRole').textContent = c.isMitraReporting ? 'Pemilik Laundry' : 'Customer / Pelanggan';
+  
+  document.getElementById('cmbPelaporInfo').innerHTML = `
+    <div class="pm-info-row" style="margin-bottom: 8px;">
+      <div class="pm-info-icon blue" style="width:24px; height:24px; font-size:10px;"><i class="fa-solid fa-phone"></i></div>
+      <div><div class="pm-info-val" style="font-size:13px; font-weight:600;">${p.hp}</div></div>
+    </div>
+    <div class="pm-info-row" style="margin-bottom: 8px;">
+      <div class="pm-info-icon green" style="width:24px; height:24px; font-size:10px;"><i class="fa-solid fa-envelope"></i></div>
+      <div><div class="pm-info-val" style="font-size:13px;">${p.email}</div></div>
     </div>
     <div class="pm-info-row">
-      <div class="pm-info-icon green"><i class="fa-solid fa-envelope"></i></div>
-      <div><div class="pm-info-label">Email</div><div class="pm-info-val">${p.email}</div></div>
-    </div>
-    <div class="pm-info-row">
-      <div class="pm-info-icon orange"><i class="fa-solid fa-location-dot"></i></div>
-      <div><div class="pm-info-label">Alamat</div><div class="pm-info-val">${p.alamat}</div></div>
+      <div class="pm-info-icon orange" style="width:24px; height:24px; font-size:10px;"><i class="fa-solid fa-location-dot"></i></div>
+      <div><div class="pm-info-val" style="font-size:12px; color:#64748b; line-height:1.4;">${p.alamat}</div></div>
     </div>`;
-  
-  document.getElementById('pmWa').onclick=()=>window.open(`https://wa.me/${p.hp.replace(/\D/g,'')}`, '_blank');
-  document.getElementById('pmEmail').onclick=()=>{window.location.href=`mailto:${p.email}`;};
-  document.getElementById('pmChat').onclick=()=>{window.location.href=`/admin/chat/${c.reporterId}`;};
-  
-  document.getElementById('pelaporModal').classList.add('show');
-  document.body.style.overflow='hidden';
+
+  const pelaporLinkEl = document.getElementById('cmbPelaporLink');
+  if (c.isMitraReporting) {
+    // Jika pelapor adalah mitra, kita perlu ID mitra-nya. 
+    // Berdasarkan data mapping, kita gunakan mitra_laundry_id pelapor jika tersedia.
+    // Di mapping saat ini kita belum simpan mitra_id pelapor secara eksplisit jika dia mitra.
+    // Kita asumsikan reporterId adalah user id, dan link ke user management sudah cukup atau jika dia mitra link ke mitra management.
+    // Untuk simplifikasi, kita arahkan ke profil user yang juga menampilkan role mitra.
+    pelaporLinkEl.href = `{{ route('admin.user') }}?id=${c.reporterId}`;
+    pelaporLinkEl.innerHTML = '<i class="fa-solid fa-user-gear"></i> Lihat Profil Pelapor';
+  } else {
+    pelaporLinkEl.href = `{{ route('admin.user') }}?id=${c.reporterId}`;
+    pelaporLinkEl.innerHTML = '<i class="fa-solid fa-user-gear"></i> Lihat Profil Pelapor';
+  }
+
+  // 2. POPULATE TERLAPOR
+  const t = c.mitra_laundry_id ? c.mitra : c.reportedUser;
+  const isMitra = c.mitra_laundry_id !== null;
+
+  document.getElementById('cmbTerlaporAvatar').textContent = t.inisial;
+  document.getElementById('cmbTerlaporName').textContent = t.nama;
+  document.getElementById('cmbTerlaporType').textContent = isMitra ? 'Mitra Laundry' : 'Customer';
+  document.getElementById('cmbTerlaporRole').textContent = isMitra ? 'Unit Laundry / Toko' : 'Pihak Terlapor';
+
+  document.getElementById('cmbTerlaporInfo').innerHTML = `
+    <div class="pm-info-row" style="margin-bottom: 8px;">
+      <div class="pm-info-icon blue" style="width:24px; height:24px; font-size:10px; background:#dbeafe; color:#1e40af;"><i class="fa-solid fa-phone"></i></div>
+      <div><div class="pm-info-val" style="font-size:13px; font-weight:600;">${t.hp}</div></div>
+    </div>
+    <div class="pm-info-row" style="margin-bottom: 8px;">
+      <div class="pm-info-icon green" style="width:24px; height:24px; font-size:10px; background:#dcfce7; color:#166534;"><i class="fa-solid fa-envelope"></i></div>
+      <div><div class="pm-info-val" style="font-size:13px;">${t.email}</div></div>
+    </div>
+    <div class="pm-info-row">
+      <div class="pm-info-icon orange" style="width:24px; height:24px; font-size:10px; background:#ffedd5; color:#9a3412;"><i class="fa-solid fa-location-dot"></i></div>
+      <div><div class="pm-info-val" style="font-size:12px; color:#64748b; line-height:1.4;">${t.alamat}</div></div>
+    </div>`;
+
+  const linkEl = document.getElementById('cmbTerlaporLink');
+  if (isMitra) {
+    linkEl.href = `{{ route('admin.mitra') }}?id=${t.id}`;
+    linkEl.innerHTML = '<i class="fa-solid fa-store"></i> Lihat di Manajemen Toko';
+  } else {
+    linkEl.href = `{{ route('admin.user') }}?id=${c.reportedUser.id}`;
+    linkEl.innerHTML = '<i class="fa-solid fa-user-gear"></i> Lihat di Manajemen User';
+  }
+
+  document.getElementById('combinedModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
 }
-function closePelaporModal(){
-  document.getElementById('pelaporModal').classList.remove('show');
-  document.body.style.overflow='';
+
+function closeCombinedModal() {
+  document.getElementById('combinedModal').classList.remove('show');
+  document.body.style.overflow = '';
 }
 
 /* ─── OVERLAY HELPER ─────────────────────────────────── */
@@ -585,10 +687,10 @@ function openDetail(id){
       </div>
     </div>
     <div class="dsec">
-      <div class="dsec-title"><span class="si green"><i class="fa-solid fa-cart-shopping"></i></span>Informasi Order</div>
+      <div class="dsec-title"><span class="si green"><i class="fa-solid fa-cart-shopping"></i></span>Informasi Terkait</div>
       <div class="drows">
         <div class="drow"><span class="drow-l">Order ID</span><span class="drow-r primary">${c.orderId}</span></div>
-        <div class="drow"><span class="drow-l">Mitra Laundry</span><span class="drow-r">${c.mitra.nama}</span></div>
+        <div class="drow"><span class="drow-l">${c.isMitraReporting ? 'User Terlapor' : 'Mitra Laundry'}</span><span class="drow-r">${c.isMitraReporting ? c.reportedUser.nama : c.mitra.nama}</span></div>
         <div class="drow"><span class="drow-l">Tanggal Order</span><span class="drow-r">${c.orderTanggal}</span></div>
         <div class="drow"><span class="drow-l">Tanggal Selesai</span><span class="drow-r">${c.orderSelesai}</span></div>
         <div class="drow"><span class="drow-l">Total Bayar</span><span class="drow-r">${c.totalBayar}</span></div>
@@ -605,6 +707,20 @@ function openDetail(id){
       <div class="dsec-title"><span class="si red"><i class="fa-solid fa-file-lines"></i></span>Deskripsi Laporan</div>
       <div class="desc-text">${c.deskripsi}</div>
       ${photosHtml}${lampiranHtml}
+    </div>
+    <div style="margin-top:16px; padding-top:16px; border-top:1px solid #f1f5f9;">
+      <div class="det-label" style="margin-bottom:12px; font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Hubungan Pihak Terkait</div>
+      <div onclick="openCombinedModal('${c.id}')" style="display:flex; align-items:center; gap:12px; padding:12px; background:linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius:12px; cursor:pointer; border:1px solid #e2e8f0; transition:all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onmouseover="this.style.borderColor='var(--primary)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.transform='translateY(0)'">
+        <div style="display: flex; align-items: center; -webkit-mask-image: linear-gradient(to right, black 70%, transparent 100%);">
+            <div style="width:32px; height:32px; background:var(--primary); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; border: 2px solid #fff; z-index: 2;">${c.pelapor.inisial}</div>
+            <div style="width:32px; height:32px; background:#3b82f6; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; border: 2px solid #fff; margin-left: -12px; z-index: 1;">${c.mitra_laundry_id ? c.mitra.inisial : c.reportedUser.inisial}</div>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:12px; font-weight:800; color:var(--text-main);">Lihat Detail Kedua Pihak</div>
+          <div style="font-size:10px; color:var(--text-muted);">Pelapor vs Terlapor</div>
+        </div>
+        <i class="fa-solid fa-up-right-and-down-left-from-center" style="font-size:12px; color:var(--primary);"></i>
+      </div>
     </div>`;
 
   /* Tampilkan panel */
@@ -646,82 +762,70 @@ function closeDetail(){
 }
 
 /* ─── FOOTER ACTIONS ─────────────────────────────────── */
+function openFollowUpModal() {
+    document.getElementById('followUpModal').style.display = 'flex';
+    document.getElementById('tanggapanAdmin').value = '';
+    document.getElementById('tanggapanAdmin').focus();
+}
+
+function closeFollowUpModal() {
+    document.getElementById('followUpModal').style.display = 'none';
+}
+
 document.getElementById('btnProses').addEventListener('click',()=>{
-  if(!selectedId)return;
-  const c=complaints.find(x=>x.id===selectedId);if(!c)return;
-  if(c.status==='wait'){c.status='proc';c.statusLabel='Diproses';}
-  else if(c.status==='proc'){c.status='done';c.statusLabel='Selesai';closeDetail();}
-  renderTable();
-  if(selectedId)openDetail(selectedId);
+    if(!selectedId) return;
+    openFollowUpModal();
 });
+
+document.getElementById('confirmFollowUp').addEventListener('click', () => {
+    if(!selectedId) return;
+    const tanggapan = document.getElementById('tanggapanAdmin').value.trim();
+    if(!tanggapan) {
+        alert('Mohon isi alasan tindak lanjut.');
+        return;
+    }
+
+    const realId = selectedId.replace('CMP-', '').replace(/^0+/, '');
+    const btn = document.getElementById('confirmFollowUp');
+    btn.disabled = true;
+    btn.innerHTML = 'Mengirim...';
+
+    fetch(`/admin/komplain/${realId}/followup`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ tanggapan: tanggapan })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert('Gagal memproses laporan: ' + (data.message || 'Error tidak diketahui'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat memproses laporan.');
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = 'Kirim';
+    });
+});
+
 document.getElementById('btnTolak').addEventListener('click',()=>{
   if(!selectedId)return;
   const c=complaints.find(x=>x.id===selectedId);if(!c)return;
   if(confirm(`Tolak laporan ${c.id}?`)){c.status='rej';c.statusLabel='Ditolak';closeDetail();renderTable();}
 });
 
-document.getElementById('btnWa').addEventListener('click', function() {
-    if(!selectedId) return;
-    const c = complaints.find(x => x.id === selectedId);
-    if(c) window.open(`https://wa.me/${c.pelapor.hp.replace(/\D/g,'')}`, '_blank');
-});
-
-document.getElementById('btnEmail').addEventListener('click', function() {
-    if(!selectedId) return;
-    const c = complaints.find(x => x.id === selectedId);
-    if(c) window.location.href = `mailto:${c.pelapor.email}`;
-});
-
-document.getElementById('btnFollowUp').addEventListener('click', function() {
-    if(!selectedId) return;
-    const realId = selectedId.replace('CMP-', '').replace(/^0+/, ''); // Ambil ID asli
-    
-    if(confirm('Kirim peringatan otomatis ke mitra melalui Chat?')) {
-        fetch(`/admin/komplain/${realId}/followup`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                alert(data.message);
-                location.reload(); // Refresh untuk update status
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Gagal mengirim peringatan.');
-        });
-    }
-});
-
-document.getElementById('btnFollowUpReporter').addEventListener('click', function() {
-    if(!selectedId) return;
-    const realId = selectedId.replace('CMP-', '').replace(/^0+/, ''); // Ambil ID asli
-    
-    if(confirm('Kirim pesan konfirmasi ke Pelapor bahwa laporan sedang diproses?')) {
-        fetch(`/admin/komplain/${realId}/followup-reporter`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                alert(data.message);
-                location.reload(); // Refresh
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Gagal menghubungi pelapor.');
-        });
-    }
+document.getElementById('btnMintaInfo').addEventListener('click',()=>{
+    alert('Fitur minta info tambahan akan segera tersedia.');
 });
 
 /* ─── INIT ───────────────────────────────────────────── */
@@ -729,14 +833,19 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   renderTable();
 
-  /* Pelapor modal */
-  document.getElementById('pmClose').addEventListener('click',closePelaporModal);
-  document.getElementById('pelaporModal').addEventListener('click',e=>{
-    if(e.target===e.currentTarget)closePelaporModal();
+  /* Combined modal */
+  document.getElementById('combinedClose').addEventListener('click',closeCombinedModal);
+  document.getElementById('combinedModal').addEventListener('click',e=>{
+    if(e.target===e.currentTarget)closeCombinedModal();
   });
 
   /* Detail close button */
   document.getElementById('detailClose').addEventListener('click',closeDetail);
+
+  /* Modal Tindak Lanjut close on click outside */
+  document.getElementById('followUpModal').addEventListener('click', e => {
+    if(e.target === e.currentTarget) closeFollowUpModal();
+  });
 
   /* Overlay tap-to-close */
   overlay.addEventListener('click',()=>{

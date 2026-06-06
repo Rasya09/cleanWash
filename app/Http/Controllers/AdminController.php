@@ -150,13 +150,18 @@ class AdminController extends Controller
 
     public function followUp(Request $request, $id)
     {
+        $request->validate([
+            'tanggapan' => 'required|string'
+        ]);
+
         $komplain = \App\Models\Komplain::with(['mitraLaundry', 'reportedUser'])->findOrFail($id);
-        
+
         $mitraUserId = $komplain->mitra_laundry_id ? $komplain->mitraLaundry->user_id : $komplain->reported_user_id;
 
-        // Pesan otomatis
-        $warningMessage = "HALO MITRA!\n\nKami menerima laporan mengenai layanan Anda.\n\n" . 
+        // Pesan otomatis + Tanggapan
+        $warningMessage = "HALO MITRA!\n\nKami menerima laporan mengenai layanan Anda.\n\n" .
                          "Alasan Laporan: " . $komplain->alasan . "\n\n" .
+                         "Tindakan Admin: " . $request->tanggapan . "\n\n" .
                          "Mohon segera lakukan klarifikasi atau perbaikan layanan agar tidak terjadi penangguhan akun.";
 
         // Kirim Pesan Chat
@@ -168,12 +173,12 @@ class AdminController extends Controller
 
         $komplain->update([
             'status' => 'selesai',
-            'tanggapan_admin' => 'Telah diberikan peringatan via Chat.'
+            'tanggapan_admin' => $request->tanggapan
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil mengirimkan peringatan ke mitra.'
+            'message' => 'Laporan berhasil diproses dan peringatan telah dikirim.'
         ]);
     }
 

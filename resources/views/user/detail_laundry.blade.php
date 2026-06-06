@@ -178,7 +178,7 @@
             
             <div style="margin-bottom: 20px;">
                 <label style="display: block; font-size: 14px; font-weight: 700; color: #374151; margin-bottom: 10px;">Alasan Pelaporan</label>
-                <select name="alasan_kategori" onchange="updateAlasanText(this)" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; margin-bottom: 12px; font-family: inherit;">
+                <select name="alasan" required style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; margin-bottom: 12px; font-family: inherit;">
                     <option value="">Pilih alasan...</option>
                     <option value="Penipuan / Fraud">Penipuan / Fraud</option>
                     <option value="Layanan Tidak Sesuai">Layanan Tidak Sesuai</option>
@@ -186,7 +186,6 @@
                     <option value="Informasi Toko Palsu">Informasi Toko Palsu</option>
                     <option value="Lainnya">Lainnya</option>
                 </select>
-                <textarea name="alasan" id="alasanTextarea" required style="width: 100%; min-height: 120px; padding: 14px; border: 1px solid #d1d5db; border-radius: 12px; font-family: inherit; font-size: 14px; resize: none;" placeholder="Ceritakan lebih detail mengenai laporan Anda..."></textarea>
             </div>
 
             <div style="display: flex; gap: 12px;">
@@ -207,14 +206,6 @@
     function closeReportStoreModal() {
         document.getElementById('reportStoreModal').style.display = 'none';
         document.body.style.overflow = '';
-    }
-
-    function updateAlasanText(select) {
-        const textarea = document.getElementById('alasanTextarea');
-        if(select.value && select.value !== 'Lainnya') {
-            textarea.value = "[" + select.value + "] ";
-            textarea.focus();
-        }
     }
 
     // Close modal when clicking outside

@@ -367,6 +367,16 @@ document.addEventListener('DOMContentLoaded', function () {
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
+  // ── 3. AUTO-OPEN DETAIL DARI URL ─────────────────────────
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetId = urlParams.get('id');
+  if (targetId) {
+    // Beri sedikit delay agar data 'customers' sudah siap (jika load async)
+    // Karena ini blade, data sudah ada di variabel 'customers' di atas
+    setTimeout(() => {
+        window.openCustomerDetail(targetId);
+    }, 500);
+  }
 });
 </script>
 @endpush
