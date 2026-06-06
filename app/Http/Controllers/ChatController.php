@@ -143,4 +143,49 @@ class ChatController extends Controller
             'message' => 'Chat deleted'
         ]);
     }
+
+    /**
+     * Get User details for Mitra Chat sidebar
+     */
+    public function getUserDetails($userId)
+    {
+        $user = User::find($userId);
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        $mitraId = Auth::user()->mitraLaundry->id ?? null;
+        if (!$mitraId) {
+            return response()->json(['error' => 'Mitra not found'], 404);
+        }
+
+        $orders = \App\Models\Order::where('mitra_laundry_id', $mitraId)
+            ->where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $totalPesanan = $orders->count();
+        $totalBelanja = $orders->whereIn('status', ['selesai'])->sum('total_bayar');
+
+        return response()->json([
+            'user' => [
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone ?? '-',
+            ],
+            'stats' => [
+                'total_pesanan' => $totalPesanan,
+                'total_belanja' => $totalBelanja,
+            ],
+            'recent_orders' => $orders->take(5)->map(function ($order) {
+                return [
+                    'id' => $order->id,
+                    'order_code' => $order->order_code ?? '#INV-' . $order->id,
+                    'date' => \Carbon\Carbon::parse($order->created_at)->format('d M Y'),
+                    'status' => ucfirst($order->status),
+                    'amount' => $order->total_bayar,
+                ];
+            })
+        ]);
+    }
 }

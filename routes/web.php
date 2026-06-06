@@ -50,6 +50,7 @@ Route::middleware('guest')->group(function () {
 // Chat Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/chat/messages/{contactId}', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.messages');
+    Route::get('/chat/user-details/{userId}', [\App\Http\Controllers\ChatController::class, 'getUserDetails'])->name('chat.user_details');
     Route::post('/chat/send/{contactId}', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
     Route::delete('/chat/thread/{contactId}', [\App\Http\Controllers\ChatController::class, 'deleteChat'])->name('chat.delete');
 });
@@ -269,9 +270,7 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
     });
 
 
-    Route::get('/dashboard', function () {
-        return view('mitra.home');
-    })->name('mitra.dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\Mitra\MitraController::class, 'dashboard'])->name('mitra.dashboard');
 
     // ── PESANAN ──────────────────────────────────────────
     Route::get('/pesanan-saya',             [MitraOrderController::class, 'index'])->name('mitra.pesanan');
@@ -285,9 +284,7 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
     })->name('mitra.gagal-pickup');
 
     // LAYANAN
-    Route::get('/layanan-saya', function () {
-        return view('mitra.layanan.layanan_saya');
-    })->name('mitra.layanan');
+    Route::get('/layanan-saya', [\App\Http\Controllers\Mitra\MitraController::class, 'layananSaya'])->name('mitra.layanan');
 
     Route::get(
         '/tambah-layanan',

@@ -303,7 +303,7 @@
         </div>
         <div>
           <div class="store-name">
-            Laundry Bersih Jaya
+            {{ Auth::user()->mitraLaundry->store_name ?? Auth::user()->name }}
           </div>
           <div class="store-role">
             Mitra

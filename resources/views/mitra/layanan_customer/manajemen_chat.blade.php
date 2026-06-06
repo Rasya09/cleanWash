@@ -178,14 +178,14 @@
           <div class="info-row"><span class="info-icon">✉️</span> <span id="rightPanelEmail">-</span></div>
         </div>
 
-        <!-- Catatan Pelanggan -->
+        <!-- Riwayat Pesanan -->
         <div class="info-section">
           <div class="catatan-header">
-            <h4>Catatan Pelanggan</h4>
-            <span class="add-catatan">＋ Tambah Catatan</span>
+            <h4>Riwayat Pesanan</h4>
+            <a href="#" id="viewAllOrdersBtn" class="add-catatan" style="text-decoration:none;">Lihat Semua</a>
           </div>
-          <div class="catatan-box">
-            Belum ada catatan.
+          <div class="catatan-box" id="orderHistoryContainer" style="padding: 0;">
+            <div style="padding: 14px;">Memuat riwayat...</div>
           </div>
         </div>
 
@@ -251,16 +251,21 @@
   }
 
   // Select Contact
-  function selectContact(contactId, contactName, contactEmail, contactPhone) {
+  async function selectContact(contactId, contactName, contactEmail, contactPhone) {
     activeContactId = contactId;
     
-    // Update DOM
+    // Update DOM Immediately for basics
     activeContactNameEl.innerText = contactName;
     const initial = contactName.charAt(0).toUpperCase();
     activeAvatarEl.innerText = initial;
     rightPanelNameEl.innerText = contactName;
     rightPanelEmailEl.innerText = contactEmail;
     rightPanelPhoneEl.innerText = contactPhone;
+    
+    // Reset stats & history
+    document.querySelector('.cstat:nth-child(1) .csval').innerText = '...';
+    document.querySelector('.cstat:nth-child(2) .csval').innerText = '...';
+    document.getElementById('orderHistoryContainer').innerHTML = '<div style="padding: 14px;">Memuat riwayat...</div>';
     
     // Enable inputs
     msgInput.disabled = false;
@@ -276,6 +281,56 @@
     }
 
     loadMessages();
+
+    // Fetch User Details & Order History
+    try {
+      const res = await fetch(`/chat/user-details/${contactId}`);
+      if(res.ok) {
+        const data = await res.json();
+        
+        // Update Stats
+        document.querySelector('.cstat:nth-child(1) .csval').innerText = data.stats.total_pesanan;
+        document.querySelector('.cstat:nth-child(2) .csval').innerText = 'Rp ' + data.stats.total_belanja.toLocaleString('id-ID');
+        
+        // Update Email and Phone in case it's more accurate from DB
+        rightPanelEmailEl.innerText = data.user.email;
+        rightPanelPhoneEl.innerText = data.user.phone;
+
+        // Setup Lihat Semua button
+        const viewAllBtn = document.getElementById('viewAllOrdersBtn');
+        viewAllBtn.href = `/mitra/pesanan-saya?search=${encodeURIComponent(data.user.name)}`;
+
+        // Render Recent Orders
+        const historyContainer = document.getElementById('orderHistoryContainer');
+        if(data.recent_orders && data.recent_orders.length > 0) {
+            let html = '<div style="display: flex; flex-direction: column;">';
+            data.recent_orders.forEach(order => {
+                let badgeColor = '#f59e0b'; // pending
+                if(order.status === 'Selesai') badgeColor = '#10b981';
+                if(order.status === 'Batal') badgeColor = '#ef4444';
+                
+                html += `
+                <div style="padding: 12px 14px; border-bottom: 1px solid #f3f4f6; font-size: 13px;">
+                  <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+                    <span style="font-weight: 600;">${order.order_code}</span>
+                    <span style="color: ${badgeColor}; font-weight: 500; font-size: 12px;">${order.status}</span>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; color: #6b7280; font-size: 12px;">
+                    <span>${order.date}</span>
+                    <span style="font-weight: 500; color: #374151;">Rp ${order.amount.toLocaleString('id-ID')}</span>
+                  </div>
+                </div>`;
+            });
+            html += '</div>';
+            historyContainer.innerHTML = html;
+        } else {
+            historyContainer.innerHTML = '<div style="padding: 14px; text-align: center; color: #9ca3af;">Belum ada riwayat pesanan.</div>';
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load user details', e);
+      document.getElementById('orderHistoryContainer').innerHTML = '<div style="padding: 14px; color: red;">Gagal memuat data.</div>';
+    }
   }
 
   // Delete Chat

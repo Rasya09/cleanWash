@@ -11,6 +11,47 @@ use Illuminate\Support\Facades\Auth;
 
 class MitraController extends Controller
 {
+    public function dashboard()
+    {
+        $mitra = MitraLaundry::where('user_id', Auth::id())->first();
+        if (!$mitra) {
+            return redirect()->route('home')->with('error', 'Anda bukan mitra.');
+        }
+
+        $stats = [
+            'pesanan_hari_ini' => \App\Models\Order::where('mitra_laundry_id', $mitra->id)
+                                ->whereDate('created_at', \Carbon\Carbon::today())
+                                ->count(),
+            'pesanan_aktif' => \App\Models\Order::where('mitra_laundry_id', $mitra->id)
+                                ->whereIn('status', ['masuk', 'aktif', 'pickup', 'diproses', 'pengantaran'])
+                                ->count(),
+            'layanan_aktif' => \App\Models\LaundryService::where('mitra_laundry_id', $mitra->id)
+                                ->where('is_active', true)
+                                ->count(),
+        ];
+
+        $recentOrders = \App\Models\Order::with('user')
+            ->where('mitra_laundry_id', $mitra->id)
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        return view('mitra.home', compact('stats', 'recentOrders', 'mitra'));
+    }
+
+    public function layananSaya()
+    {
+        $mitra = MitraLaundry::where('user_id', Auth::id())->first();
+        if (!$mitra) {
+            return redirect()->route('home')->with('error', 'Anda bukan mitra.');
+        }
+
+        $services = LaundryService::where('mitra_laundry_id', $mitra->id)->get();
+        $totalLayanan = $services->count();
+        $layananAktif = $services->where('is_active', true)->count();
+
+        return view('mitra.layanan.layanan_saya', compact('services', 'totalLayanan', 'layananAktif'));
+    }
     public function profil()
     {
         $mitra = MitraLaundry::where('user_id', Auth::id())->first();
