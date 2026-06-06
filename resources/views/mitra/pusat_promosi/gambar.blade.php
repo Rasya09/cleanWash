@@ -6,87 +6,125 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('assets/css/mitra/gambar.css') }}">
 
-<input type="file" id="inputFileAsli" accept="image/*" multiple style="display: none;">
+{{-- Form upload --}}
+<form id="formUpload" action="{{ route('mitra.gambar.upload') }}" method="POST" enctype="multipart/form-data" style="display:none;">
+    @csrf
+    <input type="file" id="inputFileAsli" name="foto" accept="image/jpg,image/jpeg,image/png,image/webp">
+</form>
+
+{{-- Form hapus --}}
+<form id="formHapus" action="{{ route('mitra.gambar.hapus') }}" method="POST" style="display:none;">
+    @csrf
+    @method('DELETE')
+    <input type="hidden" name="index" id="indexHapus" value="">
+</form>
+
+{{-- Modal Konfirmasi Hapus --}}
+<div id="modalHapus" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:16px; padding:28px 24px; width:360px; box-shadow:0 20px 60px rgba(0,0,0,0.15); font-family:'Plus Jakarta Sans',sans-serif;">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <div style="width:40px;height:40px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <path d="M10 11v6M14 11v6"/>
+                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                </svg>
+            </div>
+            <div>
+                <h4 style="font-size:15px;font-weight:700;color:#111827;margin:0;">Hapus Foto</h4>
+                <p style="font-size:13px;color:#6b7280;margin:4px 0 0;">Foto yang dihapus tidak dapat dikembalikan.</p>
+            </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+            <button onclick="tutupModal()"
+                style="flex:1;padding:10px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;font-size:14px;font-weight:600;color:#374151;cursor:pointer;">
+                Batal
+            </button>
+            <button onclick="konfirmasiHapus()"
+                style="flex:1;padding:10px;border:none;border-radius:8px;background:#ef4444;font-size:14px;font-weight:600;color:#fff;cursor:pointer;">
+                Hapus
+            </button>
+        </div>
+    </div>
+</div>
+
+@php
+    $photos     = $mitra->store_photos ?? [];
+    $photoUrls  = $mitra->store_photo_urls;
+    $photoCount = count($photos);
+@endphp
+
+{{-- Flash Messages --}}
+@if(session('success'))
+    <div id="flashSuccess" style="background:#d1fae5;color:#065f46;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:14px;transition:opacity 0.5s ease;">
+        ✓ {{ session('success') }}
+    </div>
+@endif
+@if(session('error'))
+    <div id="flashError" style="background:#fee2e2;color:#991b1b;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:14px;transition:opacity 0.5s ease;">
+        ✕ {{ session('error') }}
+    </div>
+@endif
 
 <div class="super-container-promosi">
-    
+
     <div class="sisi-galeri-kiri">
         <div class="kembali-link">
             <span class="panah-kembali">‹</span> Kembali
         </div>
-        
+
         <div class="header-promosi-top">
             <div class="grup-teks-header">
                 <h2>Gambar Toko</h2>
                 <p class="sub-judul-app">Tampilkan toko laundry Anda dengan foto terbaik untuk menarik lebih banyak pelanggan.</p>
             </div>
-            </div>
+        </div>
 
         <div class="card-putih-galeri">
             <div class="pembungkus-judul-section">
                 <h3>Galeri Foto Toko</h3>
                 <p class="deskripsi-section">Tambahkan foto untuk menampilkan suasana toko, fasilitas, dan layanan Anda. (Min. 2 foto, Maks. 4 foto)</p>
             </div>
-            
+
             <div class="grid-foto-laundry" id="galleryGrid">
+
+                @foreach($photos as $index => $photo)
                 <div class="kotak-foto-item dari-galeri">
-                    <span class="badge-silang-hapus" onclick="hapusFoto(this)">×</span>
-                    <div class="area-gambar-file" style="background-image: url('https://images.unsplash.com/photo-1545173168-9f1947e8017e?auto=format&fit=crop&w=400&q=80')"></div>
+                    @if($photoCount > 2)
+                    <span class="badge-silang-hapus" onclick="hapusFoto({{ $index }})">×</span>
+                    @endif
+                    <div class="area-gambar-file"
+                         style="background-image: url('{{ asset('storage/' . $photo) }}')">
+                    </div>
                     <div class="footer-kartu-foto">
                         <div class="grup-detail-kiri">
-                            <span class="nama-file-foto">tampak-depan.jpg</span>
+                            <span class="nama-file-foto">{{ basename($photo) }}</span>
                             <span class="tag-label-aktif">Aktif</span>
                         </div>
                         <span class="titik-tiga-opsi">⋮</span>
                     </div>
                 </div>
+                @endforeach
 
-                <div class="kotak-foto-item dari-galeri">
-                    <span class="badge-silang-hapus" onclick="hapusFoto(this)">×</span>
-                    <div class="area-gambar-file" style="background-image: url('https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&fit=crop&w=400&q=80')"></div>
-                    <div class="footer-kartu-foto">
-                        <div class="grup-detail-kiri">
-                            <span class="nama-file-foto">mesin-cuci.jpg</span>
-                            <span class="tag-label-aktif">Aktif</span>
-                        </div>
-                        <span class="titik-tiga-opsi">⋮</span>
-                    </div>
-                </div>
-
-                <div class="kotak-foto-item dari-galeri">
-                    <span class="badge-silang-hapus" onclick="hapusFoto(this)">×</span>
-                    <div class="area-gambar-file" style="background-image: url('https://images.unsplash.com/photo-1604335377466-a8c8291bb18e?auto=format&fit=crop&w=400&q=80')"></div>
-                    <div class="footer-kartu-foto">
-                        <div class="grup-detail-kiri">
-                            <span class="nama-file-foto">area-setrika.jpg</span>
-                            <span class="tag-label-aktif">Aktif</span>
-                        </div>
-                        <span class="titik-tiga-opsi">⋮</span>
-                    </div>
-                </div>
-
-                <div class="kotak-foto-item dari-galeri">
-                    <span class="badge-silang-hapus" onclick="hapusFoto(this)">×</span>
-                    <div class="area-gambar-file" style="background-image: url('https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=400&q=80')"></div>
-                    <div class="footer-kartu-foto">
-                        <div class="grup-detail-kiri">
-                            <span class="nama-file-foto">resepsionis.jpg</span>
-                            <span class="tag-label-aktif">Aktif</span>
-                        </div>
-                        <span class="titik-tiga-opsi">⋮</span>
-                    </div>
-                </div>
-
-                <div class="kotak-tambah-placeholder" id="uploadSlot">
+                @if($photoCount < 4)
+                <div class="kotak-tambah-placeholder" id="uploadSlot"
+                     onclick="document.getElementById('inputFileAsli').click()">
                     <div class="lingkaran-plus-icon">+</div>
                     <span class="label-tambah-foto">Tambah Foto</span>
                     <span class="sub-label-tambah">Maks. 4 foto</span>
                 </div>
+                @endif
+
             </div>
 
             <div class="notifikasi-alert-biru">
                 <span class="ikon-info-svg">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="16" x2="12" y2="12"/>
+                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                    </svg>
                 </span>
                 <span class="teks-alert-info">Sistem mewajibkan minimal 2 foto aktif agar halaman profil toko Anda tidak kosong.</span>
             </div>
@@ -135,6 +173,7 @@
         </div>
     </div>
 
+    {{-- PREVIEW KANAN --}}
     <div class="sisi-preview-kanan">
         <h3>Preview di Halaman Toko</h3>
         <p class="deskripsi-preview-top">Berikut adalah tampilan toko Anda di aplikasi pelanggan.</p>
@@ -144,21 +183,21 @@
                 <span class="panah-slider slider-kiri" id="btnMundur">‹</span>
                 <div class="view-slider-gambar" id="layarGambarSlider"></div>
                 <span class="panah-slider slider-kanan" id="btnMaju">›</span>
-                <span class="angka-indikator-slider" id="teksIndikator">1/4</span>
+                <span class="angka-indikator-slider" id="teksIndikator">
+                    {{ $photoCount > 0 ? '1/' . $photoCount : '0/0' }}
+                </span>
             </div>
 
             <div class="detail-badan-hp">
-                <h2 class="nama-laundry-title">Laundry Bersih Jaya <span class="centang-verifikasi">✓</span></h2>
-                
+                <h2 class="nama-laundry-title">
+                    {{ $mitra->store_name }}
+                    <span class="centang-verifikasi">✓</span>
+                </h2>
+
                 <div class="baris-ulasan-rating">
                     <span class="bintang-emas">★</span>
-                    <span class="nilai-skor">4.8</span>
-                    <span class="jumlah-ulasan">(120 ulasan)</span>
-                    <span class="titik-pemisah">•</span>
-                    <span class="pin-lokasi-svg">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    </span>
-                    <span class="jarak-teks"><strong class="distance-bold">5 km</strong> dari lokasi Anda</span>
+                    <span class="nilai-skor">{{ number_format($mitra->average_rating, 1) }}</span>
+                    <span class="jumlah-ulasan">({{ $mitra->reviews()->count() }} ulasan)</span>
                 </div>
 
                 <div class="tab-menu-hp">
@@ -168,7 +207,7 @@
 
                 <div class="konten-tab-hp-wrapper">
                     <div class="isi-panel-hp active" id="panelInfo">
-                        <div class="seksi-galeri-mini-hp" style="margin-top: 10px;">
+                        <div class="seksi-galeri-mini-hp" style="margin-top:10px;">
                             <h6>Galeri Toko</h6>
                             <div class="grid-galeri-mini" id="miniGalleryContainer"></div>
                         </div>
@@ -185,171 +224,106 @@
 
 @push('scripts')
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    const daftarGambarDB = @json($photoUrls);
+    let indexYangAkanDihapus = null;
+
+    document.addEventListener("DOMContentLoaded", function () {
         let indeksSekarang = 0;
         const layarGambarSlider = document.getElementById('layarGambarSlider');
-        const teksIndikator = document.getElementById('teksIndikator');
-        const btnMundur = document.getElementById('btnMundur');
-        const btnMaju = document.getElementById('btnMaju');
-        const uploadSlot = document.getElementById('uploadSlot');
-        const galleryGrid = document.getElementById('galleryGrid');
-        const inputFileAsli = document.getElementById('inputFileAsli');
+        const teksIndikator     = document.getElementById('teksIndikator');
+        const inputFileAsli     = document.getElementById('inputFileAsli');
 
-        // 1. Fungsi Sinkronisasi Data & Validasi Batas Minimal 2 & Maksimal 4 Foto
-        function updateSistemGaleri() {
-            let daftarGambar = [];
-            let semuaFotoCard = document.querySelectorAll('.kotak-foto-item.dari-galeri');
-            
-            semuaFotoCard.forEach(el => {
-                let imgDiv = el.querySelector('.area-gambar-file');
-                let url = imgDiv.style.backgroundImage.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
-                daftarGambar.push(url);
-            });
-
-            // LOGIKA PROTEKSI MINIMAL 2 FOTO: Sembunyikan icon hapus (×) jika jumlah foto sisa 2 atau kurang
-            semuaFotoCard.forEach(card => {
-                let tombolSilang = card.querySelector('.badge-silang-hapus');
-                if (tombolSilang) {
-                    if (semuaFotoCard.length <= 2) {
-                        tombolSilang.style.display = 'none'; 
-                    } else {
-                        tombolSilang.style.display = 'flex';
-                    }
-                }
-            });
-
-            // LOGIKA MAKSIMAL 4 FOTO: Sembunyikan slot tambah jika sudah mencapai 4 foto
-            if (uploadSlot) {
-                if (daftarGambar.length >= 4) {
-                    uploadSlot.style.display = 'none';
-                } else {
-                    uploadSlot.style.display = 'flex';
-                }
+        // Auto-dismiss flash messages
+        ['flashSuccess', 'flashError'].forEach(function(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                setTimeout(function() {
+                    el.style.opacity = '0';
+                    setTimeout(function() { el.remove(); }, 500);
+                }, 2500);
             }
+        });
 
-            if (indeksSekarang >= daftarGambar.length) {
-                indeksSekarang = Math.max(0, daftarGambar.length - 1);
-            }
-
-            // Tampilan Slider Utama HP
-            if (layarGambarSlider && daftarGambar.length > 0) {
-                layarGambarSlider.style.backgroundImage = `url('${daftarGambar[indeksSekarang]}')`;
-                teksIndikator.innerText = `${indeksSekarang + 1}/${daftarGambar.length}`;
-            } else if(layarGambarSlider) {
+        function updatePreview() {
+            if (!layarGambarSlider) return;
+            if (daftarGambarDB.length > 0) {
+                layarGambarSlider.style.backgroundImage = `url('${daftarGambarDB[indeksSekarang]}')`;
+                teksIndikator.innerText = `${indeksSekarang + 1}/${daftarGambarDB.length}`;
+            } else {
                 layarGambarSlider.style.backgroundImage = 'none';
                 teksIndikator.innerText = '0/0';
             }
 
-            // Render Ulang Galeri Mini HP
-            const miniGalleryContainer = document.getElementById('miniGalleryContainer');
-            if (miniGalleryContainer) {
-                miniGalleryContainer.innerHTML = '';
-                daftarGambar.forEach((url, idx) => {
+            const mini = document.getElementById('miniGalleryContainer');
+            if (mini) {
+                mini.innerHTML = '';
+                daftarGambarDB.forEach((url, idx) => {
                     let item = document.createElement('div');
                     item.className = 'kotak-mini-img';
-                    if (idx === indeksSekarang) {
-                        item.style.border = '2px solid #2563eb';
-                    }
                     item.style.backgroundImage = `url('${url}')`;
-                    item.onclick = function() {
-                        indeksSekarang = idx;
-                        updateSistemGaleri();
-                    };
-                    miniGalleryContainer.appendChild(item);
+                    if (idx === indeksSekarang) item.style.border = '2px solid #2563eb';
+                    item.onclick = () => { indeksSekarang = idx; updatePreview(); };
+                    mini.appendChild(item);
                 });
             }
         }
 
-        // 2. Logika Unggah Berkas Baru via Klik Slot Kotak Plus (+)
-        if (uploadSlot) {
-            uploadSlot.addEventListener('click', function() {
-                let jumlahSekarang = document.querySelectorAll('.kotak-foto-item.dari-galeri').length;
-                if (jumlahSekarang >= 4) {
-                    alert("Maksimal unggahan adalah 4 foto.");
-                    return;
+        if (inputFileAsli) {
+            inputFileAsli.addEventListener('change', function () {
+                if (this.files.length > 0) {
+                    document.getElementById('formUpload').submit();
                 }
-                inputFileAsli.click();
             });
         }
 
-        inputFileAsli.addEventListener('change', function(e) {
-            const files = e.target.files;
-            
-            for (let i = 0; i < files.length; i++) {
-                let jumlahSekarang = document.querySelectorAll('.kotak-foto-item.dari-galeri').length;
-                if (jumlahSekarang >= 4) break;
-
-                let file = files[i];
-                let reader = new FileReader();
-
-                reader.onload = function(event) {
-                    let itemBaru = document.createElement('div');
-                    itemBaru.className = 'kotak-foto-item dari-galeri';
-                    itemBaru.innerHTML = `
-                        <span class="badge-silang-hapus" onclick="hapusFoto(this)">×</span>
-                        <div class="area-gambar-file" style="background-image: url('${event.target.result}')"></div>
-                        <div class="footer-kartu-foto">
-                            <div class="grup-detail-kiri">
-                                <span class="nama-file-foto">${file.name}</span>
-                                <span class="tag-label-aktif">Aktif</span>
-                            </div>
-                            <span class="titik-tiga-opsi">⋮</span>
-                        </div>
-                    `;
-                    galleryGrid.insertBefore(itemBaru, uploadSlot);
-                    indeksSekarang = document.querySelectorAll('.kotak-foto-item.dari-galeri').length - 1;
-                    updateSistemGaleri();
-                }
-                reader.readAsDataURL(file);
+        document.getElementById('btnMaju')?.addEventListener('click', function () {
+            if (daftarGambarDB.length > 0) {
+                indeksSekarang = (indeksSekarang + 1) % daftarGambarDB.length;
+                updatePreview();
             }
-            inputFileAsli.value = ''; // Reset file input buffer
         });
 
-        // 3. Logika Hapus Berkas dengan Proteksi Batas Minimum
-        window.hapusFoto = function(element) {
-            let jumlahSekarang = document.querySelectorAll('.kotak-foto-item.dari-galeri').length;
-            
-            if (jumlahSekarang <= 2) {
-                alert("Gagal menghapus! Minimal harus ada 2 foto toko tersimpan.");
-                return;
+        document.getElementById('btnMundur')?.addEventListener('click', function () {
+            if (daftarGambarDB.length > 0) {
+                indeksSekarang = (indeksSekarang - 1 + daftarGambarDB.length) % daftarGambarDB.length;
+                updatePreview();
             }
+        });
 
-            if(confirm("Apakah Anda yakin ingin menghapus foto ini?")) {
-                element.closest('.kotak-foto-item').remove();
-                updateSistemGaleri();
-            }
-        };
-
-        // Event Navigasi Slider Mockup HP
-        if (btnMaju && btnMundur) {
-            btnMaju.addEventListener('click', function() {
-                let total = document.querySelectorAll('.kotak-foto-item.dari-galeri').length;
-                if(total > 0) {
-                    indeksSekarang = (indeksSekarang + 1) % total;
-                    updateSistemGaleri();
-                }
-            });
-
-            btnMundur.addEventListener('click', function() {
-                let total = document.querySelectorAll('.kotak-foto-item.dari-galeri').length;
-                if(total > 0) {
-                    indeksSekarang = (indeksSekarang - 1 + total) % total;
-                    updateSistemGaleri();
-                }
-            });
-        }
-
-        window.gantiTabHp = function(e, targetId) {
+        window.gantiTabHp = function (e, targetId) {
             document.querySelectorAll('.item-tab-hp').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.isi-panel-hp').forEach(p => p.classList.remove('active'));
             e.currentTarget.classList.add('active');
-            if(document.getElementById(targetId)) {
-                document.getElementById(targetId).classList.add('active');
-            }
+            const panel = document.getElementById(targetId);
+            if (panel) panel.classList.add('active');
         };
 
-        // Inisialisasi awal sistem galeri
-        updateSistemGaleri();
+        // Buka modal hapus
+        window.hapusFoto = function (index) {
+            indexYangAkanDihapus = index;
+            const modal = document.getElementById('modalHapus');
+            modal.style.display = 'flex';
+        };
+
+        // Tutup modal
+        window.tutupModal = function () {
+            document.getElementById('modalHapus').style.display = 'none';
+            indexYangAkanDihapus = null;
+        };
+
+        // Konfirmasi hapus → submit form
+        window.konfirmasiHapus = function () {
+            if (indexYangAkanDihapus === null) return;
+            document.getElementById('indexHapus').value = indexYangAkanDihapus;
+            document.getElementById('formHapus').submit();
+        };
+
+        // Klik di luar modal → tutup
+        document.getElementById('modalHapus').addEventListener('click', function (e) {
+            if (e.target === this) tutupModal();
+        });
+
+        updatePreview();
     });
 </script>
 @endpush
