@@ -125,10 +125,12 @@ class MitraOrderController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status_baru'  => 'required|in:pickup,diproses,pengantaran,selesai,gagal_pickup',
-            'berat_aktual' => 'nullable|numeric|min:0.1',
-            'catatan'      => 'nullable|string|max:300',
-            'foto_pickup'  => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'status_baru'  => 'required|string',
+            'timbangan'    => 'nullable|array',
+            'timbangan.*'  => 'nullable|numeric|min:0.1',
+            'catatan'           => 'nullable|string|max:300',
+            'foto_pickup'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'foto_pengantaran'  => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
         $order = $this->getPesanan($id);
@@ -156,10 +158,13 @@ class MitraOrderController extends Controller
             $updateData['foto_pickup'] = $request->file('foto_pickup')->store('orders/foto_pickup', 'public');
         }
 
-        // Hitung ulang harga jika berat aktual diisi
-        if ($request->berat_aktual) {
-            $updateData['berat_aktual'] = $request->berat_aktual;
-            $this->hitungUlangHarga($order, $request->berat_aktual);
+        if ($request->hasFile('foto_pengantaran')) {
+            $updateData['foto_pengantaran'] = $request->file('foto_pengantaran')->store('orders/foto_pengantaran', 'public');
+        }
+
+        // Hitung ulang harga jika ada input timbangan per item
+        if ($request->has('timbangan') && is_array($request->timbangan)) {
+            $this->hitungUlangHarga($order, $request->timbangan);
         }
 
         // Jika gagal pickup, simpan alasan (walaupun textareanya sudah diganti, ini fallback jika ada catatan)
@@ -172,12 +177,17 @@ class MitraOrderController extends Controller
             $updateData['status_bayar'] = 'lunas';
         }
 
+        // Jika timbangan diinput, status pembayaran ikut berubah
+        if ($request->status_baru === 'menunggu_pembayaran') {
+            $updateData['status_bayar'] = 'menunggu_pembayaran';
+        }
+
         $statusLama = $order->status;
         $order->update($updateData);
 
         if ($request->status_baru === 'menunggu_pembayaran') {
             // Catat history ditimbang juga agar muncul di timeline
-            $this->catatHistory($order, $statusLama, 'ditimbang', 'Barang telah ditimbang: ' . $request->berat_aktual . ' kg');
+            $this->catatHistory($order, $statusLama, 'ditimbang', 'Barang telah diinput timbangannya oleh mitra.');
             $this->catatHistory($order, 'ditimbang', 'menunggu_pembayaran', $request->catatan);
         } else {
             $this->catatHistory($order, $statusLama, $request->status_baru, $request->catatan);
@@ -187,22 +197,45 @@ class MitraOrderController extends Controller
                          ->with('success', 'Status pesanan diperbarui!');
     }
 
-    // ── Hitung ulang harga berdasarkan berat aktual ───────
-    private function hitungUlangHarga(Order $order, float $beratAktual): void
+    // ── Hitung ulang harga berdasarkan timbangan per item ───────
+    private function hitungUlangHarga(Order $order, array $timbanganData): void
     {
         $subtotal = 0;
+        $totalBeratAktual = 0; // opsional, kita hitung kg nya
 
         foreach ($order->items as $item) {
-            if ($item->harga_per_kg) {
-                $itemSubtotal = $item->harga_per_kg * $beratAktual;
-            } else {
-                $itemSubtotal = ($item->harga_satuan ?? 0) * $item->qty;
+            $inputVal = $timbanganData[$item->id] ?? null;
+            if ($inputVal === null || $inputVal === '') continue;
+
+            $inputVal = (float) $inputVal;
+
+            $namaLayananLower = strtolower($item->nama_layanan);
+            $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
+            
+            $price = $isKiloan ? $item->harga_per_kg : $item->harga_satuan;
+            if (is_null($price) || $price == 0) {
+                $laundryService = \App\Models\LaundryService::find($item->jenis_layanan);
+                $price = $laundryService ? $laundryService->base_price : $item->subtotal;
             }
 
-            $item->update([
-                'berat_aktual' => $beratAktual,
-                'subtotal'     => $itemSubtotal,
-            ]);
+            $itemSubtotal = $price * $inputVal;
+
+            if ($isKiloan) {
+                $item->update([
+                    'harga_per_kg' => $price,
+                    'berat_aktual' => $inputVal,
+                    'qty'          => 1, // Reset
+                    'subtotal'     => $itemSubtotal,
+                ]);
+                $totalBeratAktual += $inputVal;
+            } else {
+                $item->update([
+                    'harga_satuan' => $price,
+                    'qty'          => $inputVal,
+                    'berat_aktual' => null, // Reset
+                    'subtotal'     => $itemSubtotal,
+                ]);
+            }
 
             $subtotal += $itemSubtotal;
         }
@@ -210,8 +243,9 @@ class MitraOrderController extends Controller
         $totalBayar = $subtotal + $order->ongkir - $order->diskon;
 
         $order->update([
-            'subtotal'   => $subtotal,
+            'subtotal'    => $subtotal,
             'total_bayar' => max(0, $totalBayar),
+            'berat_aktual' => $totalBeratAktual > 0 ? $totalBeratAktual : null, // simpan total kg saja jika ada
         ]);
     }
 

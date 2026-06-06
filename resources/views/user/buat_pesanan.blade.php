@@ -181,14 +181,6 @@
                 <textarea id="modalCatatanInput" class="bp-modal-catatan-input"
                     placeholder="Contoh: pisahkan pakaian putih, jangan gunakan pewangi, dll" rows="3"></textarea>
             </div>
-
-            <div class="bp-modal-harga">
-                <div class="bp-harga-badge">
-                    <span class="bp-harga-dot"></span>
-                    <span id="modalHargaText">Mulai dari Rp7.000/kg</span>
-                </div>
-                <p class="bp-harga-note">Total akhir akan dikonfirmasi setelah laundry ditimbang oleh mitra laundry.</p>
-            </div>
         </div>
 
         <div class="bp-modal-footer">

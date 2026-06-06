@@ -20,6 +20,7 @@ class Order extends Model
         'alamat_pengantaran',
         'foto_barang',
         'foto_pickup',
+        'foto_pengantaran',
         'catatan',
         'alasan_gagal',
         'alasan_batal',

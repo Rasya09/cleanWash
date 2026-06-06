@@ -76,13 +76,23 @@
 
 <div class="mdp-page">
 
-    {{-- ── TOP NAV ── --}}
     <div class="mdp-topnav">
         <a href="{{ route('mitra.pesanan') }}" class="mdp-back">
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
             Kembali
         </a>
     </div>
+
+    @if($errors->any())
+    <div style="background-color: #fef2f2; border-left: 4px solid #ef4444; color: #b91c1c; padding: 12px 16px; margin: 16px 24px; border-radius: 4px; font-size: 14px;">
+        <strong style="display: block; margin-bottom: 4px;">Terjadi kesalahan:</strong>
+        <ul style="margin: 0; padding-left: 20px;">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
 
     {{-- ── HERO HEADER ── --}}
     <div class="mdp-hero mdp-hero--{{ $pesanan->status }}">
@@ -187,6 +197,22 @@
                                 @if($isActive && $hist->catatan)
                                 &nbsp;·&nbsp;<strong class="mdp-tl-badge">{{ $hist->catatan }}</strong>
                                 @endif
+                                @if($hist->status_baru === 'pickup' && $pesanan->foto_pickup)
+                                <div style="margin-top: 5px;">
+                                    <a href="{{ asset('storage/' . $pesanan->foto_pickup) }}" target="_blank" style="color: #1a56e8; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; font-size: 12px;">
+                                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        Lihat Foto PickUp
+                                    </a>
+                                </div>
+                                @endif
+                                @if($hist->status_baru === 'selesai' && $pesanan->foto_pengantaran)
+                                <div style="margin-top: 5px;">
+                                    <a href="{{ asset('storage/' . $pesanan->foto_pengantaran) }}" target="_blank" style="color: #1a56e8; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; font-size: 12px;">
+                                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        Lihat Foto Pengantaran
+                                    </a>
+                                </div>
+                                @endif
                             </div>
                             @elseif(!$isDone && !$isActive)
                             <div class="mdp-tl-time mdp-tl-time--est">
@@ -255,16 +281,27 @@
                         <div class="mdp-layanan-icon">
                             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M18.36 5.64l1.41-1.41"/></svg>
                         </div>
+                        @php
+                            $namaLayananLower = strtolower($item->nama_layanan);
+                            $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
+                            $unit = $isKiloan ? 'Kg' : (str_contains($namaLayananLower, 'sepatu') ? 'Pasang' : (str_contains($namaLayananLower, 'karpet') ? 'Meter' : 'Pcs'));
+                            $qty = $isKiloan ? $item->berat_aktual : $item->qty;
+                            $price = $isKiloan ? $item->harga_per_kg : $item->harga_satuan;
+                            if (is_null($price) || $price == 0) {
+                                $laundryService = \App\Models\LaundryService::find($item->jenis_layanan);
+                                $price = $laundryService ? $laundryService->base_price : $item->subtotal;
+                            }
+                        @endphp
                         <div class="mdp-layanan-info">
                             <div class="mdp-layanan-name">{{ $item->nama_layanan }}</div>
                             <div class="mdp-layanan-qty">
-                                {{ $item->estimasi_berat ?? '-' }} kg
-                                × Rp {{ number_format($item->harga_per_kg ?? $item->harga_satuan ?? 0, 0, ',', '.') }}/kg
+                                {{ $qty ?? '0' }} {{ $unit }}
+                                × Rp {{ number_format($price, 0, ',', '.') }}/{{ $unit }}
                             </div>
                         </div>
                         <div class="mdp-layanan-right">
                             <div class="mdp-layanan-harga">Rp {{ number_format($item->subtotal ?? 0, 0, ',', '.') }}</div>
-                            <div class="mdp-layanan-berat">{{ $item->estimasi_berat ?? '-' }} kg</div>
+                            <div class="mdp-layanan-berat">{{ $qty ?? '0' }} {{ $unit }}</div>
                         </div>
                     </div>
                     @endforeach
@@ -488,6 +525,11 @@
                     <label style="display: block; font-size: 13px; margin-bottom: 6px; color: var(--neutral-600);">Foto Bukti PickUp <span style="color: red">*</span></label>
                     <input type="file" name="foto_pickup" accept="image/*" class="mdp-modal-textarea" style="padding: 8px;" required>
                 </div>
+            @elseif($pesanan->status === 'pengantaran')
+                <div style="margin-top: 15px;">
+                    <label style="display: block; font-size: 13px; margin-bottom: 6px; color: var(--neutral-600);">Foto Bukti Pengantaran <span style="color: red">*</span></label>
+                    <input type="file" name="foto_pengantaran" accept="image/*" class="mdp-modal-textarea" style="padding: 8px;" required>
+                </div>
             @else
                 <textarea name="catatan" class="mdp-modal-textarea" placeholder="Catatan (opsional)..." rows="2" style="margin-top: 15px;"></textarea>
             @endif
@@ -519,10 +561,33 @@
             @method('PUT')
             <input type="hidden" name="status_baru" value="menunggu_pembayaran">
             
-            <div style="margin-bottom: 15px;">
-                <label style="display: block; font-size: 13px; margin-bottom: 6px; color: var(--neutral-600);">Berat Aktual (kg) <span style="color: red">*</span></label>
-                <input type="number" name="berat_aktual" step="0.1" min="0.1" value="{{ $pesanan->items->sum('estimasi_berat') ?? '' }}" class="mdp-modal-textarea" style="height: 40px;" required>
+            @foreach($pesanan->items as $item)
+            @php
+                $namaLayananLower = strtolower($item->nama_layanan);
+                $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
+                $unit = $isKiloan ? 'Kg' : (str_contains($namaLayananLower, 'sepatu') ? 'Pasang' : (str_contains($namaLayananLower, 'karpet') ? 'Meter' : 'Pcs'));
+                $price = $isKiloan ? $item->harga_per_kg : $item->harga_satuan;
+                if (is_null($price) || $price == 0) {
+                    $laundryService = \App\Models\LaundryService::find($item->jenis_layanan);
+                    $price = $laundryService ? $laundryService->base_price : $item->subtotal;
+                }
+            @endphp
+            <div style="margin-bottom: 15px; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <label style="display: block; font-size: 13px; margin-bottom: 8px; font-weight: 600; color: #1e293b;">
+                    {{ $item->nama_layanan }}
+                </label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div style="flex: 1; position: relative;">
+                        <input type="number" name="timbangan[{{ $item->id }}]" step="0.1" min="0.1" class="mdp-modal-textarea input-timbangan" style="height: 38px; padding-right: 50px; margin: 0;" data-price="{{ $price }}" placeholder="0" required>
+                        <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 500; color: #64748b;">{{ $unit }}</span>
+                    </div>
+                    <div style="font-size: 14px; font-weight: 700; color: #0f172a; width: 120px; text-align: right;">
+                        <span class="timbangan-subtotal" data-price="{{ $price }}">Rp 0</span>
+                    </div>
+                </div>
+                <div style="font-size: 11px; color: #64748b; margin-top: 6px;">Harga: Rp {{ number_format($price, 0, ',', '.') }} / {{ $unit }}</div>
             </div>
+            @endforeach
 
             <textarea name="catatan" class="mdp-modal-textarea" placeholder="Catatan (opsional)..." rows="2"></textarea>
             <div class="mdp-modal-actions">
@@ -540,6 +605,18 @@
 document.querySelectorAll('.mdp-modal-overlay').forEach(function(overlay) {
     overlay.addEventListener('click', function(e) {
         if (e.target === this) this.classList.remove('active');
+    });
+});
+
+document.querySelectorAll('.input-timbangan').forEach(function(input) {
+    input.addEventListener('input', function() {
+        let val = parseFloat(this.value) || 0;
+        let price = parseFloat(this.getAttribute('data-price')) || 0;
+        let subtotal = val * price;
+        let subtotalEl = this.closest('div').nextElementSibling.querySelector('.timbangan-subtotal');
+        if (subtotalEl) {
+            subtotalEl.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(subtotal);
+        }
     });
 });
 </script>

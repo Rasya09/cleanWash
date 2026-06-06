@@ -60,9 +60,14 @@
                 <div class="dl-layanan-list">
                     @if(isset($laundry->services) && $laundry->services->count() > 0)
                         @foreach($laundry->services as $service)
+                            @php
+                                $namaLayananLower = strtolower($service->service_name);
+                                $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
+                                $unit = $isKiloan ? 'kg' : (str_contains($namaLayananLower, 'sepatu') ? 'pasang' : (str_contains($namaLayananLower, 'karpet') ? 'meter' : 'pcs'));
+                            @endphp
                             <div class="dl-layanan-item">
                                 <span class="dl-layanan-name">{{ $service->service_name }}</span>
-                                <span class="dl-layanan-price">Rp {{ number_format($service->base_price, 0, ',', '.') }}/kg</span>
+                                <span class="dl-layanan-price">Rp {{ number_format($service->base_price, 0, ',', '.') }}/{{ $unit }}</span>
                             </div>
                         @endforeach
                     @else
@@ -76,7 +81,19 @@
             {{-- Sidebar Pesan --}}
             <div class="dl-sidebar">
                 <p class="dl-sidebar-harga-label">Mulai dari</p>
-                <p class="dl-sidebar-harga">Rp 5.000 <span>/kg</span></p>
+                @php
+                    $cheapestService = isset($laundry->services) && $laundry->services->count() > 0 ? $laundry->services->sortBy('base_price')->first() : null;
+                    if ($cheapestService) {
+                        $namaLayananLower = strtolower($cheapestService->service_name);
+                        $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
+                        $unit = $isKiloan ? 'kg' : (str_contains($namaLayananLower, 'sepatu') ? 'pasang' : (str_contains($namaLayananLower, 'karpet') ? 'meter' : 'pcs'));
+                        $minPrice = $cheapestService->base_price;
+                    } else {
+                        $minPrice = 0;
+                        $unit = 'kg';
+                    }
+                @endphp
+                <p class="dl-sidebar-harga">Rp {{ number_format($minPrice, 0, ',', '.') }} <span>/{{ $unit }}</span></p>
 
                 <div class="dl-sidebar-divider"></div>
 

@@ -368,6 +368,14 @@
                                 </a>
                             </div>
                             @endif
+                            @if($history->status_baru === 'selesai' && $pesanan->foto_pengantaran)
+                            <div class="timeline-item__desc" style="margin-top: 5px;">
+                                <a href="{{ asset('storage/' . $pesanan->foto_pengantaran) }}" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                    Foto Bukti Pengantaran
+                                </a>
+                            </div>
+                            @endif
                         </div>
                     </div>
                     @empty
@@ -419,16 +427,30 @@
 
                 <div class="price-breakdown">
                     @forelse($pesanan->items as $item)
+                    @php
+                        $isMenungguTimbang = in_array($pesanan->status, ['masuk', 'pickup', 'aktif']);
+                    @endphp
                     <div class="price-row">
                         <span class="price-row__label">{{ $item->nama_layanan }}</span>
-                        <span class="price-row__val {{ $item->subtotal > 0 ? '' : 'price-row__val--pending' }}">
-                            {{ $item->subtotal > 0 ? $item->subtotalFormatted() : 'Menunggu timbang' }}
+                        <span class="price-row__val {{ !$isMenungguTimbang ? '' : 'price-row__val--pending' }}">
+                            {{ !$isMenungguTimbang ? $item->subtotalFormatted() : 'Menunggu timbang' }}
                         </span>
                     </div>
-                    @if($item->harga_per_kg && $item->berat_aktual)
+                    @php
+                        $namaLayananLower = strtolower($item->nama_layanan);
+                        $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
+                        $unit = $isKiloan ? 'Kg' : (str_contains($namaLayananLower, 'sepatu') ? 'Pasang' : (str_contains($namaLayananLower, 'karpet') ? 'Meter' : 'Pcs'));
+                        $qty = $isKiloan ? $item->berat_aktual : $item->qty;
+                        $price = $isKiloan ? $item->harga_per_kg : $item->harga_satuan;
+                        if (is_null($price) || $price == 0) {
+                            $laundryService = \App\Models\LaundryService::find($item->jenis_layanan);
+                            $price = $laundryService ? $laundryService->base_price : $item->subtotal;
+                        }
+                    @endphp
+                    @if(!$isMenungguTimbang && $qty)
                     <div class="price-row price-row--sub">
                         <span class="price-row__label">
-                            {{ $item->berat_aktual }} kg × {{ $item->hargaFormatted() }}/kg
+                            {{ $qty }} {{ $unit }} × Rp {{ number_format($price, 0, ',', '.') }}/{{ $unit }}
                         </span>
                         <span class="price-row__val">{{ $item->subtotalFormatted() }}</span>
                     </div>
@@ -458,8 +480,11 @@
 
                 <div class="price-total">
                     <span class="price-total__label">Total</span>
-                    <span class="price-total__val {{ $pesanan->total_bayar > 0 ? '' : 'price-total__val--pending' }}">
-                        {{ $pesanan->total_bayar > 0 ? $pesanan->totalFormatted() : 'Menunggu konfirmasi' }}
+                    @php
+                        $isMenungguTimbang = in_array($pesanan->status, ['masuk', 'pickup', 'aktif']);
+                    @endphp
+                    <span class="price-total__val {{ !$isMenungguTimbang ? '' : 'price-total__val--pending' }}">
+                        {{ !$isMenungguTimbang ? $pesanan->totalFormatted() : 'Menunggu konfirmasi' }}
                     </span>
                 </div>
 

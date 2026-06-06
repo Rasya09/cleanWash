@@ -108,11 +108,15 @@ class OrderController extends Controller
                 $laundryService = \App\Models\LaundryService::find($jenis);
                 $namaLayanan = $laundryService ? $laundryService->service_name : $this->labelLayanan($jenis);
 
+                $isKiloan = $laundryService && in_array($laundryService->getRawOriginal('service_name'), ['Cuci Kering', 'Setrika Aja']);
+
                 OrderItem::create([
                     'order_id'      => $order->id,
                     'nama_layanan'  => $namaLayanan,
                     'jenis_layanan' => $jenis,
                     'qty'           => 1,
+                    'harga_per_kg'  => $isKiloan && $laundryService ? $laundryService->base_price : null,
+                    'harga_satuan'  => !$isKiloan && $laundryService ? $laundryService->base_price : null,
                     'subtotal'      => $laundryService ? $laundryService->base_price : 0,
                 ]);
             }

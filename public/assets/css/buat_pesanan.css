@@ -483,32 +483,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 .bp-modal-catatan-input:focus { border-color: var(--bp-border-focus); }
 .bp-modal-catatan-input::placeholder { color: var(--bp-text-hint); }
-.bp-modal-harga {
-    background: var(--blue-light);
-    border-radius: var(--radius-sm);
-    padding: 14px 16px;
-}
-.bp-harga-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--bp-primary);
-    margin-bottom: 6px;
-    font-family: 'Bricolage Grotesque', sans-serif;
-}
-.bp-harga-dot {
-    width: 8px; height: 8px;
-    background: var(--bp-primary);
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-.bp-harga-note {
-    font-size: 12px;
-    color: var(--bp-text-sub);
-    line-height: 1.5;
-}
+
 .bp-modal-footer {
     padding: 16px 24px 20px;
     border-top: 1px solid var(--bp-border);
@@ -733,12 +708,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     .bp-btn-konfirmasi {
         font-size: 14px;
         padding: 13px;
-    }
-    .bp-harga-badge {
-        font-size: 14px;
-    }
-    .bp-harga-note {
-        font-size: 11px;
     }
 }
 
