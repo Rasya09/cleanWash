@@ -264,6 +264,21 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
         [MitraController::class, 'storeService']
     )->name('mitra.store-layanan');
 
+    Route::get(
+        '/layanan/{id}/edit',
+        [MitraController::class, 'editLayanan']
+    )->name('mitra.edit-layanan');
+
+    Route::put(
+        '/layanan/{id}',
+        [MitraController::class, 'updateLayanan']
+    )->name('mitra.update-layanan');
+
+    Route::delete(
+        '/layanan/{id}',
+        [MitraController::class, 'destroyLayanan']
+    )->name('mitra.delete-layanan');
+
     // PROMOSI
     Route::get('/gambar-toko', function () {
         return view('mitra.pusat_promosi.gambar');

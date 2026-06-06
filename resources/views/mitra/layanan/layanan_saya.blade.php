@@ -139,18 +139,22 @@
                                     </td>
                                     <td>
                                         <div class="action-btns">
-                                            <a href="#" class="btn-icon">
+                                            <a href="{{ route('mitra.edit-layanan',$service->id) }}" class="btn-icon">
                                                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none"
                                                     stroke="currentColor" stroke-width="1.6">
                                                     <path d="M9 2l2 2-6 6H3V8l6-6z" />
                                                 </svg>
                                             </a>
-                                            <a href="#" class="btn-icon danger">
-                                                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"
-                                                    stroke="currentColor" stroke-width="1.6">
-                                                    <path d="M2 3.5h9M5 3.5V2.5h3v1M4 3.5l.5 7h4l.5-7" />
-                                                </svg>
-                                            </a>
+                                            <form action="{{ route('mitra.delete-layanan', $service->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn-icon danger" onclick="return confirm('Apakah Anda yakin ingin menghapus layanan ini?')">
+                                                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"
+                                                        stroke="currentColor" stroke-width="1.6">
+                                                        <path d="M2 3.5h9M5 3.5V2.5h3v1M4 3.5l.5 7h4l.5-7" />
+                                                    </svg>
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
