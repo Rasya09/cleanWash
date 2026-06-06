@@ -260,18 +260,20 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
         return view('mitra.pesanan.gagal_pickup');
     })->name('mitra.gagal-pickup');
 
-    Route::get('/pengaturan-pengiriman', function () {
-        return view('mitra.pesanan.pengaturan_pengiriman');
-    })->name('mitra.pengiriman');
-
     // LAYANAN
     Route::get('/layanan-saya', function () {
         return view('mitra.layanan.layanan_saya');
     })->name('mitra.layanan');
 
-    Route::get('/tambah-layanan', function () {
-        return view('mitra.layanan.tambah_layanan');
-    })->name('mitra.tambah-layanan');
+    Route::get(
+        '/tambah-layanan',
+        [MitraController::class, 'createService']
+    )->name('mitra.tambah-layanan');
+
+    Route::post(
+        '/tambah-layanan',
+        [MitraController::class, 'storeService']
+    )->name('mitra.store-layanan');
 
     // PROMOSI
     Route::get('/gambar-toko', function () {
@@ -329,15 +331,16 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
     Route::get('/rekening-bank', function () {
         return view('mitra.keuangan.rekening_bank');
     })->name('mitra.rekening');
+    
+    Route::get(
+        '/pengaturan-pengiriman',
+        [MitraController::class, 'pengiriman']
+    )->name('mitra.pengiriman');
 
-    // DATA TOKO
-    Route::get('/performa-toko', function () {
-        return view('mitra.data.perfoma_toko');
-    })->name('mitra.performa');
-
-    Route::get('/kesehatan-toko', function () {
-        return view('mitra.data.kesehatan_toko');
-    })->name('mitra.kesehatan');
+    Route::post(
+        '/pengaturan-pengiriman/update',
+        [MitraController::class, 'updatePengiriman']
+    )->name('mitra.pengiriman.update');
 
     Route::get(
         '/profil-toko',

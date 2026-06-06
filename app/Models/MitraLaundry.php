@@ -28,14 +28,28 @@ class MitraLaundry extends Model
         'npwp',
         'status',
         'rejection_reason',
-        'operational_hours',
+        'operational_days',
+        'open_time',
+        'close_time',
         'service_radius',
         'pickup_fee',
+    ];
+
+    protected $casts = [
+        'operational_days' => 'array',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function services()
+    {
+        return $this->hasMany(
+            LaundryService::class,
+            'mitra_laundry_id'
+        );
     }
 
 }
