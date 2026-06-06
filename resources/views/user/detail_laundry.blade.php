@@ -13,13 +13,9 @@
             {{-- Kiri: Info --}}
             <div class="dl-hero-left">
                 <h1>{{ $laundry->store_name }}</h1>
-                <h1>{{ $laundry->store_name }}</h1>
 
                 <div class="dl-rating">
-                    @for($i = 1; $i <= 5; $i++)
-                        @if($i <= round($averageRating))⭐@else<span style="opacity:0.3">⭐</span>@endif
-                    @endfor
-                    {{ number_format($averageRating, 1) }}
+                    ⭐⭐⭐⭐⭐ {{ number_format($reviews->avg('rating') ?? 0, 1) }}
                     <span class="dl-rating-count">({{ $reviews->count() }} ulasan)</span>
                 </div>
 
@@ -36,7 +32,7 @@
             {{-- Kanan: Gambar --}}
             <div class="dl-hero-right">
                 @php
-                    $photos = json_decode($laundry->store_photos, true) ?? [];
+                    $photos = is_array($laundry->store_photos) ? $laundry->store_photos : (json_decode($laundry->store_photos, true) ?? []);
                     $mainPhoto = count($photos) > 0 ? asset('storage/' . $photos[0]) : asset('storage/' . $laundry->logo);
                 @endphp
                 <img src="{{ $mainPhoto }}" class="dl-main-img" alt="Foto utama laundry" style="object-fit: cover; height: 100%;">
@@ -80,13 +76,7 @@
             {{-- Sidebar Pesan --}}
             <div class="dl-sidebar">
                 <p class="dl-sidebar-harga-label">Mulai dari</p>
-                <p class="dl-sidebar-harga">
-                    @if($startingPrice)
-                        Rp {{ number_format($startingPrice, 0, ',', '.') }} <span>/kg</span>
-                    @else
-                        <span style="font-size:14px; color:#6b7280;">Hubungi mitra</span>
-                    @endif
-                </p>
+                <p class="dl-sidebar-harga">Rp 5.000 <span>/kg</span></p>
 
                 <div class="dl-sidebar-divider"></div>
 

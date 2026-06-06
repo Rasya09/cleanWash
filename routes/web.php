@@ -179,6 +179,7 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
         }
         $laundry = \App\Models\MitraLaundry::findOrFail($id);
         $reviews = \App\Models\Review::with('user')->where('mitra_id', $laundry->user_id)->latest()->get();
+        
         return view('user.detail_laundry', compact('laundry', 'reviews'));
     })->name('user.detail-laundry');
 
