@@ -1,0 +1,199 @@
+.ps-page {
+    padding: 60px 20px;
+    background-color: #f8fafc;
+    min-height: calc(100vh - 80px);
+}
+
+.ps-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.ps-header {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ps-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.ps-alert {
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-weight: 500;
+}
+
+.ps-alert-success {
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+/* Empty State */
+.ps-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    text-align: center;
+}
+
+.ps-empty p {
+    font-size: 18px;
+    color: #64748b;
+    margin: 20px 0 30px;
+    font-weight: 500;
+}
+
+.ps-btn-buat {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.ps-btn-buat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    color: white;
+}
+
+/* Card List */
+.ps-list {
+    display: grid;
+    gap: 20px;
+}
+
+.ps-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #f1f5f9;
+}
+
+.ps-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+.ps-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+}
+
+.ps-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ps-order-code {
+    font-weight: 700;
+    color: #3b82f6;
+    font-size: 16px;
+}
+
+.ps-laundry-name {
+    font-size: 14px;
+    color: #475569;
+    font-weight: 500;
+}
+
+.ps-badge {
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* Status Colors */
+.ps-badge-menunggu_pembayaran { background: #fef08a; color: #854d0e; }
+.ps-badge-diproses { background: #dbeafe; color: #1e40af; }
+.ps-badge-selesai { background: #dcfce7; color: #166534; }
+.ps-badge-dibatalkan { background: #fee2e2; color: #991b1b; }
+
+.ps-card-body {
+    display: grid;
+    gap: 12px;
+}
+
+.ps-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ps-label {
+    color: #64748b;
+    font-size: 14px;
+}
+
+.ps-value {
+    color: #1e293b;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.ps-total {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.ps-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed #e2e8f0;
+}
+
+.ps-date {
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.ps-btn-detail {
+    color: #3b82f6;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s;
+}
+
+.ps-btn-detail:hover {
+    color: #2563eb;
+}
+
+/* Pagination */
+.ps-pagination {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}

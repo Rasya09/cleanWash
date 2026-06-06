@@ -19,8 +19,13 @@ Route::get('/', function () {
     return view('user.home');
 })->name('home');
 
-Route::get('/cari-laundry', function () {
-    return view('user.cari_laundry');
+Route::get('/cari-laundry', function (\Illuminate\Http\Request $request) {
+    $query = \App\Models\MitraLaundry::where('status', 'approved');
+    if ($search = $request->query('search')) {
+        $query->where('store_name', 'like', "%{$search}%");
+    }
+    $laundries = $query->get();
+    return view('user.cari_laundry', compact('laundries'));
 })->name('cari-laundry');
 
 Route::get('/layanan', function () {
@@ -151,18 +156,27 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
         return view('user.home');
     })->name('user.home');
 
-    Route::get('/cari-laundry', function () {
-        return view('user.cari_laundry');
+    Route::get('/cari-laundry', function (\Illuminate\Http\Request $request) {
+        $query = \App\Models\MitraLaundry::where('status', 'approved');
+        if ($search = $request->query('search')) {
+            $query->where('store_name', 'like', "%{$search}%");
+        }
+        $laundries = $query->get();
+        return view('user.cari_laundry', compact('laundries'));
     })->name('user.cari-laundry');
 
     Route::get('/layanan', function () {
         return view('user.layanan');
     })->name('user.layanan');
 
-    Route::get('/detail-laundry', function () {
-        // Karena sementara masih statis, kita ambil semua review yang ada
-        $reviews = \App\Models\Review::with('user')->latest()->get();
-        return view('user.detail_laundry', compact('reviews'));
+    Route::get('/detail-laundry', function (\Illuminate\Http\Request $request) {
+        $id = $request->query('id');
+        if (!$id) {
+            return redirect()->route('user.cari-laundry');
+        }
+        $laundry = \App\Models\MitraLaundry::findOrFail($id);
+        $reviews = \App\Models\Review::with('user')->where('mitra_id', $laundry->user_id)->latest()->get();
+        return view('user.detail_laundry', compact('laundry', 'reviews'));
     })->name('user.detail-laundry');
 
     Route::get('/pesanan', function () {
@@ -198,8 +212,18 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     Route::post('/alamat/store',        [UserAddressController::class, 'store'])->name('alamat.store');
 
     // ── PESANAN ──────────────────────────────────────────
-    Route::get('/buat-pesanan', function () {
-        $laundry = App\Models\MitraLaundry::findOrFail(1);
+    Route::get('/buat-pesanan', function (\Illuminate\Http\Request $request) {
+        $laundryId = $request->query('laundry_id');
+        if (!$laundryId) {
+            return redirect()->route('user.cari-laundry')->with('error', 'Silakan pilih mitra laundry terlebih dahulu.');
+        }
+        $laundry = App\Models\MitraLaundry::with('services')->findOrFail($laundryId);
+        
+        // Cek jika toko belum memiliki layanan, redirect kembali
+        if ($laundry->services->count() == 0) {
+            return redirect()->route('user.detail-laundry', ['id' => $laundryId])->with('error', 'Mitra ini belum memiliki layanan yang dapat dipesan.');
+        }
+
         return view('user.buat_pesanan', compact('laundry'));
     })->name('user.buat-pesanan');
 

@@ -10,7 +10,9 @@
   <ul class="nav-menu">
     <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a></li>
     <li><a href="{{ route('cari-laundry') }}" class="{{ request()->routeIs('cari-laundry') ? 'active' : '' }}" >Cari Laundry</a></li>
-    <li><a href="{{ route('layanan') }}" class="{{ request()->routeIs('layanan') ? 'active' : '' }}">Layanan</a></li>
+    @if(Auth::check() && Auth::user()->role == 'user')
+    <li><a href="{{ route('user.pesanan') }}" class="{{ request()->routeIs('user.pesanan') ? 'active' : '' }}">Pesanan Saya</a></li>
+    @endif
   </ul>
 
   @guest
@@ -82,7 +84,9 @@
 
       <a href="{{ route('home') }}" class="nav-mobile-link {{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
       <a href="{{ route('cari-laundry') }}" class="nav-mobile-link {{ request()->routeIs('cari-laundry') ? 'active' : '' }}">Cari Laundry</a>
-      <a href="{{ route('layanan') }}" class="nav-mobile-link {{ request()->routeIs('layanan') ? 'active' : '' }}">Layanan</a>
+      @if(Auth::check() && Auth::user()->role == 'user')
+      <a href="{{ route('user.pesanan') }}" class="nav-mobile-link {{ request()->routeIs('user.pesanan') ? 'active' : '' }}">Pesanan Saya</a>
+      @endif
 
       @guest
       <div class="nav-mobile-divider"></div>
@@ -93,7 +97,6 @@
       @auth
       <div class="nav-mobile-divider"></div>
       <a href="{{ route('user.profile') }}" class="nav-mobile-link">Profil Saya</a>
-      <a href="{{ route('user.pesanan') }}" class="nav-mobile-link">Pesanan Saya</a>
       <a href="{{ route('user.chat') }}" class="nav-mobile-link">Obrolan</a>
       
       @if(Auth::user()->role == 'user')

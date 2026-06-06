@@ -69,20 +69,11 @@
                     </div>
 
                     <div class="bp-radio-group">
-                        @php
-                            $layananList = [
-                                ['value' => 'cuci_kiloan',  'label' => 'Cuci Kiloan'],
-                                ['value' => 'cuci_satuan',  'label' => 'Cuci Satuan'],
-                                ['value' => 'cuci_karpet',  'label' => 'Cuci Karpet'],
-                                ['value' => 'cuci_tas',     'label' => 'Cuci Tas'],
-                                ['value' => 'cuci_sepatu',  'label' => 'Cuci Sepatu'],
-                            ];
-                        @endphp
-                        @foreach($layananList as $l)
+                        @foreach($laundry->services as $service)
                         <label class="bp-radio-label">
-                            <input type="radio" name="layanan[0]" value="{{ $l['value'] }}" class="bp-radio-input">
+                            <input type="radio" name="layanan[0]" value="{{ $service->id }}" class="bp-radio-input" data-name="{{ $service->service_name }}" data-price="{{ $service->base_price }}">
                             <span class="bp-radio-custom"></span>
-                            {{ $l['label'] }}
+                            {{ $service->service_name }}
                         </label>
                         @endforeach
                     </div>
@@ -209,5 +200,19 @@
 @endsection
 
 @section('js')
-<script src="{{ asset('assets/js/user/buat_pesanan.js') }}"></script>
+@php
+    $servicesData = $laundry->services->map(function($service) {
+        return [
+            'id' => $service->id,
+            'service_name' => $service->service_name,
+            'base_price' => $service->base_price,
+            'label' => $service->service_name
+        ];
+    })->values()->all();
+@endphp
+<script>
+    // Pass dynamic services to Javascript
+    window.laundryServices = @json($servicesData);
+</script>
+<script src="{{ asset('assets/js/user/buat_pesanan.js') }}?v=2"></script>
 @endsection

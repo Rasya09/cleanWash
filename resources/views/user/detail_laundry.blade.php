@@ -12,32 +12,34 @@
         <section class="dl-hero">
             {{-- Kiri: Info --}}
             <div class="dl-hero-left">
-                <h1>Adzril Laundry</h1>
+                <h1>{{ $laundry->store_name }}</h1>
 
                 <div class="dl-rating">
-                    ⭐⭐⭐⭐⭐ 4.9
-                    <span class="dl-rating-count">(367 ulasan)</span>
+                    ⭐⭐⭐⭐⭐ {{ number_format($reviews->avg('rating') ?? 0, 1) }}
+                    <span class="dl-rating-count">({{ $reviews->count() }} ulasan)</span>
                 </div>
 
                 <div class="dl-alamat">
                     <svg width="13" height="15" viewBox="0 0 24 24" fill="#EF4444"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                    Jl. Kebon Jeruk No. 2, Tangerang Selatan
+                    {{ $laundry->address }}, {{ $laundry->village }}, {{ $laundry->district }}, {{ $laundry->city }}, {{ $laundry->province }}
                 </div>
 
                 <p class="dl-deskripsi">
-                    Adzril Laundry hadir untuk memberikan layanan cuci pakaian yang bersih, rapi, dan wangi.
-                    Dengan proses pencucian yang higienis serta tenaga kerja yang berpengalaman, kami siap
-                    membantu menjaga pakaian Anda tetap dalam kondisi terbaik setiap hari.
+                    {{ $laundry->description ?? 'Laundry profesional siap melayani kebutuhan Anda dengan sepenuh hati.' }}
                 </p>
             </div>
 
             {{-- Kanan: Gambar --}}
             <div class="dl-hero-right">
-                <img src="https://picsum.photos/600/400" class="dl-main-img" alt="Foto utama laundry">
+                @php
+                    $photos = json_decode($laundry->store_photos, true) ?? [];
+                    $mainPhoto = count($photos) > 0 ? asset('storage/' . $photos[0]) : asset('storage/' . $laundry->logo);
+                @endphp
+                <img src="{{ $mainPhoto }}" class="dl-main-img" alt="Foto utama laundry" style="object-fit: cover; height: 100%;">
                 <div class="dl-thumbnails">
-                    <img src="https://picsum.photos/200/150?random=1" alt="Foto 1">
-                    <img src="https://picsum.photos/200/150?random=2" alt="Foto 2">
-                    <img src="https://picsum.photos/200/150?random=3" alt="Foto 3">
+                    @foreach(array_slice($photos, 1, 3) as $photo)
+                        <img src="{{ asset('storage/' . $photo) }}" alt="Foto toko" style="object-fit: cover;">
+                    @endforeach
                 </div>
             </div>
         </section>
@@ -51,25 +53,23 @@
                 <div class="dl-divider"></div>
 
                 <p class="dl-card-desc">
-                    Adzril Laundry hadir untuk memberikan layanan cuci pakaian yang bersih, rapi, dan wangi.
-                    Dengan proses pencucian yang higienis serta tenaga kerja yang berpengalaman, kami siap
-                    membantu menjaga pakaian Anda tetap dalam kondisi terbaik setiap hari.
+                    {{ $laundry->description ?? 'Tidak ada deskripsi tambahan untuk laundry ini.' }}
                 </p>
 
                 <p class="dl-layanan-title">Daftar Layanan</p>
                 <div class="dl-layanan-list">
-                    <div class="dl-layanan-item">
-                        <span class="dl-layanan-name">Cuci Kiloan</span>
-                        <span class="dl-layanan-price">Rp 5.000/kg</span>
-                    </div>
-                    <div class="dl-layanan-item">
-                        <span class="dl-layanan-name">Cuci Setrika</span>
-                        <span class="dl-layanan-price">Rp 7.000/kg</span>
-                    </div>
-                    <div class="dl-layanan-item">
-                        <span class="dl-layanan-name">Setrika Saja</span>
-                        <span class="dl-layanan-price">Rp 4.000/kg</span>
-                    </div>
+                    @if(isset($laundry->services) && $laundry->services->count() > 0)
+                        @foreach($laundry->services as $service)
+                            <div class="dl-layanan-item">
+                                <span class="dl-layanan-name">{{ $service->service_name }}</span>
+                                <span class="dl-layanan-price">Rp {{ number_format($service->base_price, 0, ',', '.') }}/kg</span>
+                            </div>
+                        @endforeach
+                    @else
+                        <div class="dl-layanan-item" style="color:#6b7280; font-size:14px; border:none;">
+                            Belum ada layanan yang ditambahkan oleh mitra.
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -86,7 +86,7 @@
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
                         </svg>
-                        09:00 – 21:00
+                        {{ $laundry->open_time ?? '08:00' }} – {{ $laundry->close_time ?? '20:00' }}
                     </div>
                 </div>
 
@@ -114,9 +114,15 @@
                     </div>
                 </div>
 
-                <a href="{{ route('user.buat-pesanan') }}" class="dl-btn-pesan">
+                @if(isset($laundry->services) && $laundry->services->count() > 0)
+                <a href="{{ route('user.buat-pesanan', ['laundry_id' => $laundry->id]) }}" class="dl-btn-pesan">
                     Pesan Sekarang
                 </a>
+                @else
+                <button class="dl-btn-pesan" style="background-color: #9CA3AF; cursor: not-allowed;" disabled>
+                    Belum Ada Layanan
+                </button>
+                @endif
             </div>
 
         </div>{{-- /dl-body --}}
@@ -143,7 +149,7 @@
                     <p class="dl-ulasan-text" style="font-size:14px; color:#374151; line-height:1.5;">
                         {{ $review->comment ?? 'Tidak ada komentar.' }}
                     </p>
-                    
+
                     @if($review->reply)
                     <div style="margin-top:12px; padding:12px; background:#f9fafb; border-left:4px solid #3b82f6; border-radius:4px;">
                         <p style="font-size:13px; font-weight:600; color:#1e3a8a; margin-bottom:4px;">Balasan Mitra:</p>

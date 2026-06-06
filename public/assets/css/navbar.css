@@ -270,6 +270,6 @@ body {
     .nav { padding: 0 16px; }
     .nav-menu { display: none; }
     .nav-actions { display: none; }
-    .nav-user-info { display: none; }
+    .nav-user { display: none !important; }
     .hamburger { display: flex; }
 }

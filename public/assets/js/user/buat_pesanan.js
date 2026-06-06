@@ -9,19 +9,18 @@
     /* ─── State ─────────────────────────────────── */
     let layananCount = 1; // sudah ada 1 item dari blade
 
-    const LAYANAN_LABELS = {
-        cuci_kiloan:  'Cuci Kiloan',
-        cuci_satuan:  'Cuci Satuan',
-        cuci_karpet:  'Cuci Karpet',
-        cuci_tas:     'Cuci Tas',
-        cuci_sepatu:  'Cuci Sepatu',
-    };
-
-    const LAYANAN_OPTIONS = Object.entries(LAYANAN_LABELS)
-        .map(([v, l]) => `<label class="bp-radio-label">
-            <input type="radio" name="layanan[__IDX__]" value="${v}" class="bp-radio-input">
-            <span class="bp-radio-custom"></span>${l}
+    let LAYANAN_OPTIONS = '';
+    
+    // Check if dynamic services are passed from blade
+    if (window.laundryServices && window.laundryServices.length > 0) {
+        LAYANAN_OPTIONS = window.laundryServices.map(service => `<label class="bp-radio-label">
+            <input type="radio" name="layanan[__IDX__]" value="${service.id}" class="bp-radio-input" data-name="${service.service_name}" data-price="${service.base_price}">
+            <span class="bp-radio-custom"></span>${service.label}
         </label>`).join('');
+    } else {
+        // Fallback or empty if no services (shouldn't happen because of backend validation)
+        LAYANAN_OPTIONS = '<p style="color:red; font-size:14px;">Tidak ada layanan tersedia.</p>';
+    }
 
     /* ─── Tambah Layanan ─────────────────────────── */
     window.tambahLayanan = function () {
@@ -147,7 +146,11 @@
         const layanan = [];
         items.forEach((item, i) => {
             const checked = item.querySelector('.bp-radio-input:checked');
-            if (checked) layanan.push(LAYANAN_LABELS[checked.value] || checked.value);
+            if (checked) {
+                // Try to get dynamic name from data-name, or fallback to value
+                const serviceName = checked.getAttribute('data-name') || checked.value;
+                layanan.push(serviceName);
+            }
         });
 
         // Format jadwal

@@ -1,7 +1,7 @@
 @extends('user.layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/css/daftar_pesanan.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/daftar_pesanan.css') }}?v={{ time() }}">
 @endsection
 
 @section('content')
@@ -24,7 +24,7 @@
                 <rect x="9" y="3" width="6" height="4" rx="1"/>
             </svg>
             <p>Belum ada pesanan</p>
-            <a href="{{ route('user.buat-pesanan') }}" class="ps-btn-buat">Buat Pesanan</a>
+            <a href="{{ route('cari-laundry') }}" class="ps-btn-buat">Cari Laundry</a>
         </div>
         @else
 
