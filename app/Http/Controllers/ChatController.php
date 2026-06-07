@@ -60,8 +60,15 @@ class ChatController extends Controller
     public function index(Request $request)
     {
         $explicitContactId = $request->query('contact_id');
+        $orderCode = $request->query('order_code');
+        $orderContext = null;
+
+        if ($orderCode) {
+            $orderContext = \App\Models\Order::with('items')->where('order_code', $orderCode)->first();
+        }
+
         $contacts = $this->getContacts(Auth::id(), $explicitContactId);
-        return view('user.chat', compact('contacts', 'explicitContactId'));
+        return view('user.chat', compact('contacts', 'explicitContactId', 'orderContext'));
     }
 
     /**
@@ -114,8 +121,12 @@ class ChatController extends Controller
             'is_read' => false
         ]);
 
-        // Broadcast the event
-        broadcast(new MessageSent($message))->toOthers();
+        // Broadcast the event gracefully
+        try {
+            broadcast(new \App\Events\MessageSent($message))->toOthers();
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to broadcast message: ' . $e->getMessage());
+        }
 
         return response()->json([
             'status' => 'success',

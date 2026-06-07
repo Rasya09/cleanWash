@@ -325,6 +325,30 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 6px 20px rgba(26,86,232,.4);
 }
 
+.dl-btn-chat {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: #10B981;
+    color: white;
+    padding: 14px;
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    text-decoration: none;
+    margin-top: 24px;
+    margin-bottom: 0px;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.dl-btn-chat:hover {
+    background: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
 /* =============================================
    ULASAN SECTION
    ============================================= */

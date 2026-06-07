@@ -1,7 +1,7 @@
 @extends('user.layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/css/cari_laundry.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/cari_laundry.css') }}?v={{ time() }}">
 @endsection
 
 @section('content')
@@ -36,45 +36,49 @@
 
   <!-- ===== SIDEBAR FILTER ===== -->
   <aside class="sidebar" id="sidebar">
-    <div class="sidebar-title">FILTER PENCARIAN</div>
+    <form id="filterForm" action="{{ url()->current() }}" method="GET">
+      <input type="hidden" name="search" value="{{ request('search') }}">
+      <div class="sidebar-title">FILTER PENCARIAN</div>
 
-    <div class="filter-section">
-      <div class="filter-label">Urutkan</div>
-      <select class="filter-select">
-        <option>Terdekat dari lokasi</option>
-        <option>Rating tertinggi</option>
-        <option>Harga termurah</option>
-      </select>
-    </div>
-
-    <div class="filter-divider"></div>
-
-
-
-    <div class="filter-section">
-      <div class="filter-label">Status</div>
-      <div class="filter-status-row">
-        <button class="btn-status primary">Semua</button>
-        <button class="btn-status outline">Buka Sekarang</button>
+      <div class="filter-section">
+        <div class="filter-label">Urutkan</div>
+        <select class="filter-select" name="sort" onchange="document.getElementById('filterForm').submit()">
+          <option value="">-- Pilih --</option>
+          <option value="populer" {{ request('sort') == 'populer' ? 'selected' : '' }}>Populer</option>
+          <option value="rating_desc" {{ request('sort') == 'rating_desc' ? 'selected' : '' }}>Rating tertinggi</option>
+          <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Harga termurah</option>
+        </select>
       </div>
-    </div>
 
-    <div class="filter-divider"></div>
+      <div class="filter-divider"></div>
 
-    <div class="filter-section">
-      <div class="filter-label">Harga Maksimal / kg</div>
-      <div class="price-range">
-        <input type="range" min="5000" max="12000" value="12000" class="price-slider" />
-        <div class="price-labels">
-          <span>Rp 5.000</span>
-          <span>Rp 12.000</span>
+      <div class="filter-section">
+        <div class="filter-label">Status</div>
+        <div class="filter-status-row">
+          <input type="hidden" name="status" id="statusInput" value="{{ request('status', 'semua') }}">
+          <button type="button" class="btn-status {{ request('status', 'semua') == 'semua' ? 'primary' : 'outline' }}" onclick="document.getElementById('statusInput').value='semua'; document.getElementById('filterForm').submit();">Semua</button>
+          <button type="button" class="btn-status {{ request('status') == 'buka' ? 'primary' : 'outline' }}" onclick="document.getElementById('statusInput').value='buka'; document.getElementById('filterForm').submit();">Buka Sekarang</button>
         </div>
       </div>
-    </div>
 
-    <div class="filter-divider"></div>
+      <div class="filter-divider"></div>
 
-    <button class="btn-reset">↺ Reset Filter</button>
+      <div class="filter-section">
+        <div class="filter-label">Harga Maksimal</div>
+        <div class="price-range">
+          @php $maxPrice = request('max_price', 100000); @endphp
+          <input type="range" name="max_price" min="5000" max="100000" step="5000" value="{{ $maxPrice }}" class="price-slider" oninput="document.getElementById('priceVal').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(this.value)" onchange="document.getElementById('filterForm').submit()" />
+          <div class="price-labels">
+            <span>Rp 5.000</span>
+            <span id="priceVal">Rp {{ number_format($maxPrice, 0, ',', '.') }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-divider"></div>
+
+      <a href="{{ url()->current() }}" class="btn-reset" style="display:flex; justify-content:center; align-items:center; text-decoration:none;">↺ Reset Filter</a>
+    </form>
   </aside>
 
   <!-- ===== RESULTS ===== -->
@@ -86,9 +90,9 @@
     @forelse($laundries as $laundry)
     <article class="laundry-card">
       <div class="card-image-area" style="background-image: url('{{ asset('storage/' . $laundry->logo) }}'); background-size: cover; background-position: center; border-right: 1px solid #eee;">
-        @if($loop->first)
+        @if($bestStoreId == $laundry->id)
         <span class="card-corner-badge">🏆 #1 Terbaik</span>
-        @elseif($loop->iteration == 2)
+        @elseif($popularStoreId == $laundry->id)
         <span class="card-corner-badge" style="background-color: var(--blue-subtle); color: var(--primary);">⭐ Populer</span>
         @endif
       </div>
@@ -98,9 +102,9 @@
           <span class="card-distance-badge">📍 1 – 2 km</span>
         </div>
         <div class="card-rating-row">
-          <span class="card-stars">★★★★★</span>
-          <span class="card-rating-num">5.0</span>
-          <span class="card-rating-count">(Belum ada ulasan)</span>
+          <span class="card-stars" style="color: #fbbf24;">⭐</span>
+          <span class="card-rating-num">{{ number_format($laundry->average_rating ?? 0, 1) }}</span>
+          <span class="card-rating-count">({{ $laundry->reviews->count() ?? 0 }} ulasan)</span>
         </div>
         <div class="card-address">
           <span>📍</span>
@@ -118,7 +122,13 @@
           <div class="card-price-block">
             <div>
               <div class="price-label">Mulai dari</div>
-              <div class="price-amount">Rp 7.000<span class="unit">/kg</span></div>
+              <div class="price-amount">
+                @if($laundry->starting_price)
+                  Rp {{ number_format($laundry->starting_price, 0, ',', '.') }}<span class="unit"></span>
+                @else
+                  Belum ada layanan
+                @endif
+              </div>
             </div>
             <a href="{{ route('user.detail-laundry') }}?id={{ $laundry->id }}" style="text-decoration: none;">
               <button class="btn-detail-card">Lihat Detail →</button>
@@ -197,40 +207,6 @@
             });
         }
 
-        // Tombol reset filter
-        const btnReset = document.querySelector('.btn-reset');
-        const priceSlider = document.querySelector('.price-slider');
-        const filterSelect = document.querySelector('.filter-select');
-
-        if (btnReset) {
-            btnReset.addEventListener('click', () => {
-                if (filterChips.length > 0) {
-                    filterChips[0].classList.add('active');
-                    for (let i = 1; i < filterChips.length; i++) {
-                        filterChips[i].classList.remove('active');
-                    }
-                }
-                
-                if (btnStatuses.length > 0) {
-                    btnStatuses[0].classList.add('primary');
-                    btnStatuses[0].classList.remove('outline');
-                    if (btnStatuses[1]) {
-                        btnStatuses[1].classList.remove('primary');
-                        btnStatuses[1].classList.add('outline');
-                    }
-                }
-
-                if (priceSlider) {
-                    priceSlider.value = priceSlider.max;
-                }
-
-                if (filterSelect) {
-                    filterSelect.selectedIndex = 0;
-                }
-            });
-        }
-
-        // Live search filter
         const searchInput = document.querySelector('.search-input');
         const laundryCards = document.querySelectorAll('.laundry-card');
 

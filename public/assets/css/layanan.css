@@ -720,9 +720,6 @@ footer.site-footer {
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .nav { padding: 0 24px; }
-  .nav-menu { display: none; }
-  .nav-user { display: none !important; }
-  .hamburger { display: flex; }
 
   .content { padding: 40px 24px 60px; }
   .section-hero { padding: 56px 24px 48px; }

@@ -1,7 +1,7 @@
 @extends('user.layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/css/detail_laundry.css') }}?v=2">
+<link rel="stylesheet" href="{{ asset('assets/css/detail_laundry.css') }}?v=3">
 @endsection
 
 @section('content')
@@ -35,10 +35,10 @@
                     $photos = is_array($laundry->store_photos) ? $laundry->store_photos : (json_decode($laundry->store_photos, true) ?? []);
                     $mainPhoto = count($photos) > 0 ? asset('storage/' . $photos[0]) : asset('storage/' . $laundry->logo);
                 @endphp
-                <img src="{{ $mainPhoto }}" class="dl-main-img" alt="Foto utama laundry" style="object-fit: cover; height: 100%;">
+                <img src="{{ $mainPhoto }}" id="mainPhoto" class="dl-main-img" alt="Foto utama laundry" style="object-fit: cover; height: 100%;">
                 <div class="dl-thumbnails">
-                    @foreach(array_slice($photos, 1, 3) as $photo)
-                        <img src="{{ asset('storage/' . $photo) }}" alt="Foto toko" style="object-fit: cover;">
+                    @foreach(array_slice($photos, 0, 4) as $photo)
+                        <img src="{{ asset('storage/' . $photo) }}" alt="Foto toko" style="object-fit: cover; cursor: pointer;" onclick="document.getElementById('mainPhoto').src=this.src">
                     @endforeach
                 </div>
             </div>
@@ -51,12 +51,6 @@
             <div class="dl-card">
                 <h2>Daftar Layanan</h2>
                 <div class="dl-divider"></div>
-
-                <p class="dl-card-desc">
-                    {{ $laundry->description ?? 'Tidak ada deskripsi tambahan untuk laundry ini.' }}
-                </p>
-
-                <p class="dl-layanan-title">Daftar Layanan</p>
                 <div class="dl-layanan-list">
                     @if(isset($laundry->services) && $laundry->services->count() > 0)
                         @foreach($laundry->services as $service)
@@ -97,6 +91,20 @@
 
                 <div class="dl-sidebar-divider"></div>
 
+                <div class="dl-sidebar-row" style="margin-bottom: 12px;">
+                    <span class="dl-sidebar-label">HARI OPERASIONAL</span>
+                    <div class="dl-info-box">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        @if(!empty($laundry->operational_days) && is_array($laundry->operational_days))
+                            {{ implode(', ', $laundry->operational_days) }}
+                        @else
+                            Tiap Hari
+                        @endif
+                    </div>
+                </div>
+
                 <div class="dl-sidebar-row">
                     <span class="dl-sidebar-label">JAM OPERASIONAL</span>
                     <div class="dl-info-box">
@@ -112,7 +120,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('user.chat', ['contact_id' => $laundry->user_id]) }}" class="dl-btn-chat" style="display: flex; justify-content: center; align-items: center; gap: 8px; background-color: #10B981; color: white; padding: 14px; border-radius: 12px; font-weight: 600; font-size: 15px; text-decoration: none; margin-bottom: 12px; transition: all 0.2s; border: 1px solid #059669;">
+                <a href="{{ route('user.chat', ['contact_id' => $laundry->user_id]) }}" class="dl-btn-chat">
                     Chat Mitra
                 </a>
 

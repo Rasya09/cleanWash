@@ -1,7 +1,7 @@
 @extends('user.layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/home.css') }}?v={{ time() }}">
 @endsection
 
 @section('content')
@@ -16,7 +16,7 @@
     Pesan laundry terdekat, pilih antar jemput, dan pantau status cucian Anda secara real-time. Semua dalam satu aplikasi.
   </p>
   <div class="hero-cta">
-    <button class="btn-big primary">🔍 Cari Laundry</button>
+    <button class="btn-big primary" onclick="window.location.href='{{ Auth::check() ? route('user.cari-laundry') : route('cari-laundry') }}'">🔍 Cari Laundry</button>
     <button class="btn-big outline">▶ Cara Kerja</button>
   </div>
   <div class="stats-bar">

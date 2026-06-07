@@ -30,7 +30,17 @@ Swal.fire({
         </div>
     </div>
 
-    <form id="form-profil" action="{{ route('mitra.update.profil') }}" method="POST" enctype="multipart/form-data">
+    @if ($errors->any())
+        <div style="background: #fee2e2; color: #b91c1c; padding: 14px 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #fca5a5;">
+            <ul style="margin: 0; padding-left: 20px; font-size: 14px; font-weight: 500;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form id="form-profil" action="{{ route('mitra.update.profil') }}" method="POST" enctype="multipart/form-data" onsubmit="document.querySelectorAll('select').forEach(s => s.disabled = false)">
         @csrf
         <!-- Card 1: Foto Toko -->
         <div class="card">

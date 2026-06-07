@@ -76,11 +76,17 @@
   .hamburger {
     width: 32px;
     height: 32px;
-    display: flex;
+    display: none;
     flex-direction: column;
     justify-content: center;
     gap: 5px;
     cursor: pointer;
+  }
+
+  @media (max-width: 576px) {
+    .hamburger {
+      display: flex;
+    }
   }
 
   .hamburger span {

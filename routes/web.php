@@ -21,12 +21,58 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/cari-laundry', function (\Illuminate\Http\Request $request) {
-    $query = \App\Models\MitraLaundry::where('status', 'approved');
+    $query = \App\Models\MitraLaundry::with(['reviews', 'activeServices'])->where('status', 'approved');
     if ($search = $request->query('search')) {
         $query->where('store_name', 'like', "%{$search}%");
     }
+    if ($maxPrice = $request->query('max_price')) {
+        if ($maxPrice < 100000) {
+            $query->whereHas('activeServices', function ($q) use ($maxPrice) {
+                $q->where('base_price', '<=', $maxPrice);
+            });
+        }
+    }
+    if ($status = $request->query('status')) {
+        if ($status == 'buka') {
+            $now = now()->format('H:i:s');
+            $query->where('open_time', '<=', $now)
+                  ->where('close_time', '>=', $now);
+        }
+    }
+    if ($sort = $request->query('sort')) {
+        if ($sort == 'populer') {
+            $query->withCount('orders')->orderByDesc('orders_count');
+        }
+    }
+    
     $laundries = $query->get();
-    return view('user.cari_laundry', compact('laundries'));
+
+    if ($sort) {
+        if ($sort == 'rating_desc') {
+            $laundries = $laundries->sortByDesc('average_rating')->values();
+        } elseif ($sort == 'price_asc') {
+            $laundries = $laundries->sortBy(function($laundry) {
+                return $laundry->starting_price ?? 999999999;
+            })->values();
+        }
+    }
+
+    $popularStoreId = \App\Models\Order::select('mitra_laundry_id')
+        ->groupBy('mitra_laundry_id')
+        ->orderByRaw('COUNT(*) DESC')
+        ->value('mitra_laundry_id');
+
+    $bestUserId = \App\Models\Review::select('mitra_id')
+        ->where('rating', 5)
+        ->groupBy('mitra_id')
+        ->orderByRaw('COUNT(*) DESC')
+        ->value('mitra_id');
+        
+    $bestStoreId = $bestUserId 
+        ? \App\Models\MitraLaundry::where('user_id', $bestUserId)->value('id')
+        : null;
+
+    return view('user.cari_laundry', compact('laundries', 'popularStoreId', 'bestStoreId'));
 })->name('cari-laundry');
 
 Route::get('/layanan', function () {
@@ -166,12 +212,58 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     })->name('user.home');
 
     Route::get('/cari-laundry', function (\Illuminate\Http\Request $request) {
-        $query = \App\Models\MitraLaundry::where('status', 'approved');
+        $query = \App\Models\MitraLaundry::with(['reviews', 'activeServices'])->where('status', 'approved');
         if ($search = $request->query('search')) {
             $query->where('store_name', 'like', "%{$search}%");
         }
+        if ($maxPrice = $request->query('max_price')) {
+            if ($maxPrice < 100000) {
+                $query->whereHas('activeServices', function ($q) use ($maxPrice) {
+                    $q->where('base_price', '<=', $maxPrice);
+                });
+            }
+        }
+        if ($status = $request->query('status')) {
+            if ($status == 'buka') {
+                $now = now()->format('H:i:s');
+                $query->where('open_time', '<=', $now)
+                      ->where('close_time', '>=', $now);
+            }
+        }
+        if ($sort = $request->query('sort')) {
+            if ($sort == 'populer') {
+                $query->withCount('orders')->orderByDesc('orders_count');
+            }
+        }
+        
         $laundries = $query->get();
-        return view('user.cari_laundry', compact('laundries'));
+
+        if ($sort) {
+            if ($sort == 'rating_desc') {
+                $laundries = $laundries->sortByDesc('average_rating')->values();
+            } elseif ($sort == 'price_asc') {
+                $laundries = $laundries->sortBy(function($laundry) {
+                    return $laundry->starting_price ?? 999999999;
+                })->values();
+            }
+        }
+
+        $popularStoreId = \App\Models\Order::select('mitra_laundry_id')
+            ->groupBy('mitra_laundry_id')
+            ->orderByRaw('COUNT(*) DESC')
+            ->value('mitra_laundry_id');
+
+        $bestUserId = \App\Models\Review::select('mitra_id')
+            ->where('rating', 5)
+            ->groupBy('mitra_id')
+            ->orderByRaw('COUNT(*) DESC')
+            ->value('mitra_id');
+            
+        $bestStoreId = $bestUserId 
+            ? \App\Models\MitraLaundry::where('user_id', $bestUserId)->value('id')
+            : null;
+
+        return view('user.cari_laundry', compact('laundries', 'popularStoreId', 'bestStoreId'));
     })->name('user.cari-laundry');
 
     Route::get('/layanan', function () {

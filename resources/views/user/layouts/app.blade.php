@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Instrument+Sans:wght@400;500;600&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/navbar.css') }}?v={{ time() }}">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     @yield('css')
 </head>
 <body>

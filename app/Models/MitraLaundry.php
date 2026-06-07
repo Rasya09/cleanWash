@@ -66,6 +66,11 @@ class MitraLaundry extends Model
         return $this->hasMany(Review::class, 'mitra_id', 'user_id');
     }
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'mitra_laundry_id');
+    }
+
     // ── ACCESSOR ─────────────────────────────────────────
 
     public function getAverageRatingAttribute(): float
