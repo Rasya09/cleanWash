@@ -45,14 +45,23 @@
             {{-- ✅ field name harus mitra_laundry_id --}}
             <input type="hidden" name="mitra_laundry_id" value="{{ $laundry->id }}">
 
-            {{-- Error bag --}}
+            {{-- Error bag Modal --}}
             @if($errors->any())
-            <div class="bp-alert-error">
-                <ul>
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+            <div class="bp-modal-overlay active" id="modalError" onclick="this.classList.remove('active')" style="z-index: 9999;">
+                <div class="bp-modal" style="text-align: center; max-width: 400px; padding: 30px 20px;">
+                    <div style="width: 60px; height: 60px; border-radius: 50%; background: #fee2e2; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                        <svg width="30" height="30" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </div>
+                    <h3 style="font-size: 18px; color: #1e293b; margin-bottom: 10px; font-weight: 600;">Mohon Maaf</h3>
+                    <p style="font-size: 14px; color: #64748b; margin-bottom: 20px; line-height: 1.5;">
+                        @foreach($errors->all() as $error)
+                            {{ $error }}<br>
+                        @endforeach
+                    </p>
+                    <button type="button" class="bp-btn-lanjutkan" onclick="document.getElementById('modalError').classList.remove('active')" style="width: 100%; padding: 10px; border-radius: 8px;">
+                        Mengerti
+                    </button>
+                </div>
             </div>
             @endif
 
@@ -91,8 +100,8 @@
 
             {{-- Foto Barang --}}
             <div class="bp-section">
-                <h3 class="bp-section-title">Foto Barang</h3>
-                <p class="bp-section-desc">Upload foto pakaian/barang yang akan dicuci</p>
+                <h3 class="bp-section-title">Foto Barang <span style="color: #ef4444; font-size: 14px;">*</span></h3>
+                <p class="bp-section-desc">Upload foto pakaian/barang yang akan dicuci (Wajib)</p>
                 <div class="bp-upload-area" id="uploadArea" onclick="document.getElementById('fotoInput').click()">
                     <div class="bp-upload-placeholder" id="uploadPlaceholder">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5">
@@ -100,7 +109,7 @@
                             <circle cx="12" cy="13" r="4"/>
                         </svg>
                         <p class="bp-upload-text">Klik untuk upload foto</p>
-                        <p class="bp-upload-hint">JPG, PNG maksimal 5MB</p>
+                        <p class="bp-upload-hint">JPG, PNG maksimal 2MB</p>
                     </div>
                     <img id="fotoPreview" class="bp-foto-preview" style="display:none" alt="Preview foto">
                     <input type="file" id="fotoInput" name="foto_barang" accept="image/jpeg,image/png" style="display:none" onchange="previewFoto(this)">
@@ -113,7 +122,7 @@
                     <div class="bp-jadwal-col">
                         <label class="bp-input-label" for="pilihTanggal">Pilih Tanggal</label>
                         <div class="bp-input-wrapper">
-                            <input type="date" id="pilihTanggal" name="tanggal" class="bp-input" required>
+                            <input type="date" id="pilihTanggal" name="tanggal" class="bp-input" onclick="this.showPicker()" required>
                             <svg class="bp-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
                             </svg>

@@ -279,6 +279,12 @@ class MitraOrderController extends Controller
                              ->with('show_invoice_modal', true);
         }
 
+        if ($request->status_baru === 'selesai') {
+            return redirect()->route('mitra.pesanan.detail', $id)
+                             ->with('success', 'Status pesanan diperbarui!')
+                             ->with('show_review_modal', true);
+        }
+
         return redirect()->route('mitra.pesanan.detail', $id)
                          ->with('success', 'Status pesanan diperbarui!');
     }

@@ -1,7 +1,7 @@
 @extends('user.layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/css/detailpesanan.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/detailpesanan.css') }}?v={{ time() }}">
 @endsection
 
 @section('content')
@@ -741,6 +741,17 @@
                 console.error(error);
             });
         };
+    </script>
+    @endif
+
+    @if(request()->query('show_review') == '1' && $pesanan->isSelesai() && !$pesanan->review)
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var reviewModal = document.getElementById('reviewModal');
+            if (reviewModal) {
+                reviewModal.classList.add('active');
+            }
+        });
     </script>
     @endif
 @endpush

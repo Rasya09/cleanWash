@@ -48,52 +48,6 @@
                             .toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); }
                         </style>
 
-                        <div class="tl-field">
-                            <label class="tl-label">
-                                Hari Operasional
-                                <span class="tl-required">*</span>
-                            </label>
-
-                            <div class="tl-days">
-
-                                <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Senin">
-                                    <span>Sen</span>
-                                </label>
-
-                                <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Selasa">
-                                    <span>Sel</span>
-                                </label>
-
-                                <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Rabu">
-                                    <span>Rab</span>
-                                </label>
-
-                                <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Kamis">
-                                    <span>Kam</span>
-                                </label>
-
-                                <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Jumat">
-                                    <span>Jum</span>
-                                </label>
-
-                                <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Sabtu">
-                                    <span>Sab</span>
-                                </label>
-
-                                <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Minggu">
-                                    <span>Min</span>
-                                </label>
-
-                            </div>
-                        </div>
-
                         <div class="tl-grid-2">
 
                             <div class="tl-field">
@@ -281,9 +235,8 @@ btnNext.addEventListener('click', () => {
     const nama = selectLayanan.value;
     const harga = document.getElementById('basePrice').value;
     const estimasi = document.getElementById('duration').value;
-    const hari = document.querySelectorAll('input[name="hari[]"]:checked');
 
-    if (nama === '' || harga === '' || estimasi === '' || hari.length === 0) {
+    if (nama === '' || harga === '' || estimasi === '') {
         Swal.fire({
             icon:'warning',
             title:'Form Belum Lengkap',

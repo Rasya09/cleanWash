@@ -47,52 +47,6 @@
                             .toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); }
                         </style>
 
-                        <div class="tl-field">
-                            <label class="tl-label">
-                                Hari Operasional
-                                <span class="tl-required">*</span>
-                            </label>
-
-                            <div class="tl-days">
-
-                                <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Senin" {{ in_array('Senin', old('hari', $service->operational_days ?? [])) ? 'checked' : '' }}>
-                                    <span>Sen</span>
-                                </label>
-
-                                <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Selasa" {{ in_array('Selasa', old('hari', $service->operational_days ?? [])) ? 'checked' : '' }}>
-                                    <span>Sel</span>
-                                </label>
-
-                                <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Rabu" {{ in_array('Rabu', old('hari', $service->operational_days ?? [])) ? 'checked' : '' }}>
-                                    <span>Rab</span>
-                                </label>
-
-                                <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Kamis" {{ in_array('Kamis', old('hari', $service->operational_days ?? [])) ? 'checked' : '' }}>
-                                    <span>Kam</span>
-                                </label>
-
-                                <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Jumat" {{ in_array('Jumat', old('hari', $service->operational_days ?? [])) ? 'checked' : '' }}>
-                                    <span>Jum</span>
-                                </label>
-
-                                <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Sabtu" {{ in_array('Sabtu', old('hari', $service->operational_days ?? [])) ? 'checked' : '' }}>
-                                    <span>Sab</span>
-                                </label>
-
-                                <label class="tl-day-chip">
-                                    <input type="checkbox" name="hari[]" value="Minggu" {{ in_array('Minggu', old('hari', $service->operational_days ?? [])) ? 'checked' : '' }}>
-                                    <span>Min</span>
-                                </label>
-
-                            </div>
-                        </div>
-
                         <div class="tl-grid-2">
 
                             <div class="tl-field">
@@ -311,9 +265,8 @@ btnNext.addEventListener('click', () => {
     const nama = selectLayanan.value;
     const harga = document.getElementById('basePrice').value;
     const estimasi = document.getElementById('duration').value;
-    const hari = document.querySelectorAll('input[name="hari[]"]:checked');
 
-    if (nama === '' || harga === '' || estimasi === '' || hari.length === 0) {
+    if (nama === '' || harga === '' || estimasi === '') {
         Swal.fire({
             icon:'warning',
             title:'Form Belum Lengkap',
@@ -342,8 +295,6 @@ btnNext.addEventListener('click', () => {
         });
         return;
     }
-
-    const hariStr = [...hari].map(x => x.value).join(', ');
     const minOrder = minOrderVal || '-';
     const maxOrder = maxOrderVal || '-';
     let batasStr = '';
@@ -374,10 +325,6 @@ btnNext.addEventListener('click', () => {
                 <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
                     <div style="font-size:11px; color:#64748b; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Batas Order / Ukuran</div>
                     <div style="font-size:14px; font-weight:700; color:#0f172a;">${batasStr}</div>
-                </div>
-                <div style="grid-column: span 2; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
-                    <div style="font-size:11px; color:#64748b; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Hari Operasional</div>
-                    <div style="font-size:14px; font-weight:600; color:#0f172a;">${hariStr}</div>
                 </div>
             </div>
         </div>

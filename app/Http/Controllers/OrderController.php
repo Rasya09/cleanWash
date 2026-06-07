@@ -37,13 +37,20 @@ class OrderController extends Controller
             'mitra_laundry_id'   => 'required|exists:mitra_laundries,id',
             'layanan'   => 'required|array|min:1',
             'layanan.*' => 'required|string',
-            'tanggal'            => 'required|date_format:Y-m-d|after:today',
+            'tanggal'            => 'required|date_format:Y-m-d|after_or_equal:today',
             'waktu'              => 'required|date_format:H:i',
             'alamat_pickup'      => 'nullable|string|max:500',
             'alamat_pengantaran' => 'nullable|string|max:500',
-            'foto_barang'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'foto_barang'        => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
             'catatan'            => 'nullable|string|max:500',
             'metode_bayar'       => 'nullable|in:cod,transfer,ewallet',
+        ], [
+            'foto_barang.required' => 'Foto barang wajib diupload.',
+            'foto_barang.image'    => 'File foto barang harus berupa gambar.',
+            'foto_barang.max'      => 'Ukuran foto barang maksimal adalah 2MB.',
+            'tanggal.required'     => 'Pilih tanggal pickup.',
+            'waktu.required'       => 'Pilih waktu pickup.',
+            'layanan.required'     => 'Anda harus memilih minimal 1 layanan.'
         ]);
         Log::info('Order store dipanggil', $request->all());
 
@@ -57,7 +64,7 @@ class OrderController extends Controller
         }
 
         // ── Validasi jadwal: minimal H+1 & jam 07:00–20:00 ───
-        $validasiJadwal = $this->validasiJadwal($request->tanggal, $request->waktu);
+        $validasiJadwal = $this->validasiJadwal($request->tanggal, $request->waktu, $mitra);
         if ($validasiJadwal !== true) {
             return back()->withErrors(['waktu' => $validasiJadwal])->withInput();
         }
@@ -248,25 +255,54 @@ class OrderController extends Controller
     // - Hari Senin–Sabtu saja
     // - Jam 07:00–20:00
     // =========================================================
-    private function validasiJadwal(string $tanggal, string $waktu): bool|string
+    private function validasiJadwal(string $tanggal, string $waktu, \App\Models\MitraLaundry $mitra): bool|string
     {
         $tgl = Carbon::parse($tanggal)->startOfDay();
         $now = Carbon::now()->startOfDay();
 
-        if ($tgl->lessThanOrEqualTo($now)) {
-            return 'Tanggal pickup minimal adalah besok (H+1).';
+        if ($tgl->lessThan($now)) {
+            return 'Tanggal pickup minimal adalah hari ini.';
         }
 
-        if ($tgl->isSunday()) {
-            return 'Pickup tidak tersedia pada hari Minggu.';
+        $dayMapping = [
+            0 => 'Minggu',
+            1 => 'Senin',
+            2 => 'Selasa',
+            3 => 'Rabu',
+            4 => 'Kamis',
+            5 => 'Jumat',
+            6 => 'Sabtu',
+        ];
+        $dayName = $dayMapping[$tgl->dayOfWeek];
+        $operationalDays = $mitra->operational_days ?? [];
+
+        if (!in_array($dayName, $operationalDays)) {
+            return 'Pickup tidak tersedia pada hari ' . $dayName . '.';
         }
 
-        // Validasi jam 07:00–20:00
+        // Validasi jam buka - tutup toko
+        $openTime = $mitra->open_time ?? '07:00';
+        $closeTime = $mitra->close_time ?? '20:00';
+
         [$jam, $menit] = array_map('intval', explode(':', $waktu));
         $totalMenit    = $jam * 60 + $menit;
 
-        if ($totalMenit < (7 * 60) || $totalMenit > (20 * 60)) {
-            return 'Waktu pickup harus antara pukul 07:00 – 20:00.';
+        [$openJam, $openMenit] = array_map('intval', explode(':', $openTime));
+        $totalOpenMenit = $openJam * 60 + $openMenit;
+
+        [$closeJam, $closeMenit] = array_map('intval', explode(':', $closeTime));
+        $totalCloseMenit = $closeJam * 60 + $closeMenit;
+
+        if ($totalMenit < $totalOpenMenit || $totalMenit > $totalCloseMenit) {
+            return "Waktu pickup harus antara pukul $openTime – $closeTime.";
+        }
+
+        // Jika hari ini, pastikan waktu tidak di masa lalu
+        if ($tgl->equalTo($now)) {
+            $nowMinutes = Carbon::now()->hour * 60 + Carbon::now()->minute;
+            if ($totalMenit < $nowMinutes + 30) {
+                return 'Waktu pickup untuk hari ini harus minimal 30 menit dari sekarang.';
+            }
         }
 
         return true;

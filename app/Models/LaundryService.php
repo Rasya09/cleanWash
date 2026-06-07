@@ -9,7 +9,6 @@ class LaundryService extends Model
     protected $fillable = [
         'mitra_laundry_id',
         'service_name',
-        'operational_days',
         'base_price',
         'estimated_days',
         'minimum_order',
@@ -19,7 +18,6 @@ class LaundryService extends Model
     ];
 
     protected $casts = [
-        'operational_days' => 'array',
         'is_active' => 'boolean',
         'is_setrika' => 'boolean'
     ];

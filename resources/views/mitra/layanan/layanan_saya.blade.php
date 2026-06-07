@@ -95,10 +95,6 @@
                                                 <div class="service-name">
                                                     {{ $service->service_name }}
                                                 </div>
-                                                <div class="service-desc">
-                                                    Hari:
-                                                    {{ implode(', ', $service->operational_days ?? []) }}
-                                                </div>
                                             </div>
                                         </div>
                                     </td>

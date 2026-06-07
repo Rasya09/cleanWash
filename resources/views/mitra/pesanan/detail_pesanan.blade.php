@@ -246,9 +246,9 @@
                         Input Timbangan
                     </button>
                     @elseif($pesanan->status === 'menunggu_pembayaran')
-                    <button class="mdp-btn mdp-btn--update" onclick="document.getElementById('modalKirimInvoice').classList.add('active')" style="background-color: #1a56e8; color: white;">
+                    <button id="btnMenungguKirim" class="mdp-btn mdp-btn--update" onclick="document.getElementById('modalKirimInvoice').classList.add('active')" style="background-color: #1a56e8; color: white;">
                         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                        Kirim Invoice
+                        <span class="btn-text">Kirim Invoice</span>
                     </button>
                     @else
                     <button class="mdp-btn mdp-btn--update" onclick="document.getElementById('modalUpdate').classList.add('active')">
@@ -257,10 +257,10 @@
                     </button>
                     @endif
 
-                    @if(in_array($pesanan->status, ['aktif', 'pengantaran']))
-                    <button class="mdp-btn mdp-btn--update" onclick="document.getElementById('modalKirimInvoice').classList.add('active')" style="background-color: #1a56e8; color: white; border-color: #1a56e8;">
+                    @if(in_array($pesanan->status, ['aktif', 'diproses', 'pengantaran']))
+                    <button id="btnKirimInvoiceManual" class="mdp-btn mdp-btn--update" onclick="document.getElementById('modalKirimInvoice').classList.add('active')" style="background-color: #1a56e8; color: white; border-color: #1a56e8;">
                         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                        Kirim Invoice
+                        <span class="btn-text">Kirim Invoice</span>
                     </button>
                     @endif
 
@@ -542,7 +542,7 @@
                 @elseif($pesanan->status === 'diproses')
                     <button type="submit" name="status_baru" value="pengantaran" class="mdp-modal-btn mdp-modal-btn--blue" style="width: 100%;">Mulai Pengantaran & Kirim Invoice</button>
                 @elseif($pesanan->status === 'pengantaran')
-                    <button type="submit" name="status_baru" value="selesai" class="mdp-modal-btn mdp-modal-btn--green" style="width: 100%;">Tandai Selesai</button>
+                    <button type="submit" name="status_baru" value="selesai" class="mdp-modal-btn mdp-modal-btn--green" style="width: 100%;">Tandai Selesai & Kirim Pesan Ulasan</button>
                 @endif
             </div>
         </form>
@@ -629,12 +629,75 @@
                         $tagColor = '#6366f1'; // indigo
                         $showQuantity = false;
                     }
+
+                    // --- Format Teks WhatsApp ---
+                    $waText = "*INVOICE CLEANWASH*\n";
+                    $waText .= "-------------------------\n";
+                    $waText .= "*Status:* " . strtoupper($invoiceTag) . "\n";
+                    $waText .= "*No:* " . $pesanan->order_code . "\n";
+                    $waText .= "*Tanggal:* " . $pesanan->created_at->format('d M Y') . "\n\n";
+
+                    $waText .= "*Mitra:* " . ($pesanan->mitraLaundry->store_name ?? '-') . "\n";
+                    $waText .= "*Telp:* " . ($pesanan->mitraLaundry->phone ?? '-') . "\n";
+                    $waText .= "*Alamat:* " . ($pesanan->mitraLaundry->address ?? '-') . "\n\n";
+
+                    $waText .= "*Pelanggan:* " . ($pesanan->user->name ?? '-') . "\n";
+                    $waText .= "*Telp:* " . ($pesanan->user->phone ?? '-') . "\n";
+                    $waText .= "*Alamat:* " . ($pesanan->address ?? '-') . "\n\n";
+
+                    $waText .= "*Rincian Layanan:*\n";
+
+                    foreach($pesanan->items as $item) {
+                        $namaLayananLower = strtolower($item->nama_layanan);
+                        $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
+                        $satuan = $isKiloan ? 'kg' : (str_contains($namaLayananLower, 'sepatu') ? 'pasang' : (str_contains($namaLayananLower, 'karpet') ? 'meter' : 'pcs'));
+
+                        $harga = $isKiloan ? $item->harga_per_kg : $item->harga_satuan;
+                        if (is_null($harga) || $harga == 0) {
+                            $laundryService = \App\Models\LaundryService::find($item->jenis_layanan);
+                            $harga = $laundryService ? $laundryService->base_price : $item->subtotal;
+                        }
+
+                        $jumlah = floatval($isKiloan ? ($item->berat_aktual ?? $item->estimasi_berat ?? 0) : ($item->qty ?? 0));
+
+                        $waText .= "- " . ($item->nama_layanan ?? 'Layanan Laundry') . ":\n";
+
+                        if ($showQuantity) {
+                            $waText .= "  Rp " . number_format((float) $harga, 0, ',', '.') . " x " . $jumlah . " " . $satuan . " = *Rp " . number_format((float) $item->subtotal, 0, ',', '.') . "*\n";
+                        } else {
+                            $waText .= "  Rp " . number_format((float) $harga, 0, ',', '.') . " / " . $satuan . "\n";
+                        }
+                    }
+
+                    if ($showQuantity) {
+                        $waText .= "\n";
+                        if ($pesanan->ongkir > 0) {
+                            $waText .= "*Ongkir:* Rp " . number_format((float) $pesanan->ongkir, 0, ',', '.') . "\n";
+                        }
+                        if ($pesanan->diskon > 0) {
+                            $waText .= "*Diskon:* -Rp " . number_format((float) $pesanan->diskon, 0, ',', '.') . "\n";
+                        }
+                        $waText .= "*TOTAL KESELURUHAN:* Rp " . number_format($pesanan->total_bayar, 0, ',', '.') . "\n";
+                    } else {
+                        $waText .= "\n_(Jumlah barang dan total keseluruhan akan ditentukan setelah ditimbang)_\n";
+                    }
+
+                    if ($invoiceTag === 'Menunggu Pembayaran') {
+                        $waText .= "\nSilakan cek detail pesanan dan lakukan pembayaran melalui link berikut:\n";
+                        $waText .= route('user.detail-pesanan', $pesanan->id) . "\n";
+                    }
+
+                    $waText .= "-------------------------\n";
+                    $waText .= "Terima kasih telah mempercayakan cucian Anda kepada kami!";
+
+                    $encodedWaText = rawurlencode($waText);
+                                                $waNumber = preg_replace('/\D/', '', $pesanan->user->phone ?? '');
                 @endphp
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
                     <div>
                         <img src="{{ asset('assets/images/CW.png') }}" alt="Clean Wash Logo" style="height: 60px;">
                     </div>
-                    <div style="text-align: right;">
+                                                <div style="text-align: right;">
                         <span style="display: inline-block; background-color: {{ $tagColor }}; color: white; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; margin-bottom: 10px;">{{ strtoupper($invoiceTag) }}</span>
                         <p style="margin: 0; font-size: 13px;"><strong>INVOICE NO:</strong> {{ $pesanan->order_code }}</p>
                         <p style="margin: 0; font-size: 13px;"><strong>TANGGAL:</strong> {{ $pesanan->created_at->format('d M Y') }}</p>
@@ -673,13 +736,13 @@
                             $namaLayananLower = strtolower($item->nama_layanan);
                             $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
                             $satuan = $isKiloan ? 'kg' : (str_contains($namaLayananLower, 'sepatu') ? 'pasang' : (str_contains($namaLayananLower, 'karpet') ? 'meter' : 'pcs'));
-                            
+
                             $harga = $isKiloan ? $item->harga_per_kg : $item->harga_satuan;
                             if (is_null($harga) || $harga == 0) {
                                 $laundryService = \App\Models\LaundryService::find($item->jenis_layanan);
                                 $harga = $laundryService ? $laundryService->base_price : $item->subtotal;
                             }
-                            
+
                             $jumlah = floatval($isKiloan ? ($item->berat_aktual ?? $item->estimasi_berat ?? 0) : ($item->qty ?? 0));
                         @endphp
                         <tr>
@@ -725,7 +788,51 @@
 
         <div style="padding: 15px 20px; border-top: 1px solid #eee; background: #f9fafb; display: flex; justify-content: flex-end; gap: 10px;">
             <button type="button" onclick="document.getElementById('modalKirimInvoice').classList.remove('active')" style="padding: 8px 16px; border-radius: 6px; border: 1px solid #d1d5db; background: white; color: #374151; font-weight: 500; cursor: pointer;">Batal</button>
-            <button type="button" onclick="alert('Kirim Invoice'); document.getElementById('modalKirimInvoice').classList.remove('active');" style="padding: 8px 16px; border-radius: 6px; border: none; background: #1a56e8; color: white; font-weight: 500; cursor: pointer;">Kirim Sekarang</button>
+            <a id="btnKirimSekarang" href="https://wa.me/{{ $waNumber }}?text={{ $encodedWaText }}" target="_blank" onclick="document.getElementById('modalKirimInvoice').classList.remove('active');" style="padding: 8px 16px; border-radius: 6px; border: none; background: #1a56e8; color: white; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-block;">Kirim Sekarang</a>
+        </div>
+    </div>
+</div>
+
+<div class="mdp-modal-overlay" id="modalKirimUlasan">
+    <div class="mdp-modal" style="max-width: 500px; padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+        <div style="padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #f9fafb;">
+            <h3 style="margin: 0; font-size: 16px; color: #333;">Pesan Selesai & Ulasan</h3>
+        </div>
+
+        <div style="padding: 20px; background: #fff; font-family: 'Poppins', sans-serif; color: #333; line-height: 1.6;">
+            @php
+                // --- Format Teks WhatsApp Ulasan ---
+                $waReviewText = "*PESANAN SELESAI*\n";
+                $waReviewText .= "-------------------------\n";
+                $waReviewText .= "Halo *" . ($pesanan->user->name ?? 'Pelanggan') . "*, pesanan laundry Anda telah selesai!\n\n";
+
+                $waReviewText .= "*No. Pesanan:* " . $pesanan->order_code . "\n";
+                $waReviewText .= "*Status:* SELESAI\n\n";
+
+                $waReviewText .= "*Mitra:* " . ($pesanan->mitraLaundry->store_name ?? 'CleanWash') . "\n";
+                $waReviewText .= "*Telp:* " . ($pesanan->mitraLaundry->phone ?? '-') . "\n";
+                $waReviewText .= "*Alamat:* " . ($pesanan->mitraLaundry->address ?? '-') . "\n\n";
+
+                $waReviewText .= "Bagaimana pengalaman Anda menggunakan layanan kami?\n";
+                $waReviewText .= "Yuk, berikan ulasan Anda melalui link berikut ini:\n";
+                $waReviewText .= route('user.detail-pesanan', $pesanan->id) . "?show_review=1\n\n";
+
+                $waReviewText .= "-------------------------\n";
+                $waReviewText .= "Terima kasih telah mempercayakan cucian Anda kepada kami!";
+
+                $encodedWaReviewText = rawurlencode($waReviewText);
+            @endphp
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h4 style="margin: 10px 0 5px;">Pesanan Selesai</h4>
+                <p style="font-size: 13px; color: #6b7280; margin: 0;">Kirimkan pesan WhatsApp ke pelanggan untuk memberitahu bahwa pesanan telah selesai dan meminta ulasan.</p>
+            </div>
+
+            <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; font-size: 12px; white-space: pre-wrap; font-family: monospace; color: #4b5563;">{{ $waReviewText }}</div>
+        </div>
+
+        <div style="padding: 15px 20px; border-top: 1px solid #eee; background: #f9fafb; display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" onclick="document.getElementById('modalKirimUlasan').classList.remove('active')" style="padding: 8px 16px; border-radius: 6px; border: 1px solid #d1d5db; background: white; color: #374151; font-weight: 500; cursor: pointer;">Batal</button>
+            <a href="https://wa.me/{{ $waNumber ?? preg_replace('/\D/', '', $pesanan->user->phone ?? '') }}?text={{ $encodedWaReviewText }}" target="_blank" onclick="document.getElementById('modalKirimUlasan').classList.remove('active');" style="padding: 8px 16px; border-radius: 6px; border: none; background: #10b981; color: white; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-block;">Kirim Pesan</a>
         </div>
     </div>
 </div>
@@ -737,6 +844,13 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('modalKirimInvoice').classList.add('active');
+    });
+</script>
+@endif
+@if(session('show_review_modal'))
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('modalKirimUlasan').classList.add('active');
     });
 </script>
 @endif
@@ -757,6 +871,52 @@ document.querySelectorAll('.input-timbangan').forEach(function(input) {
             subtotalEl.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(subtotal);
         }
     });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const orderId = "{{ $pesanan->id }}";
+    const currentStatus = "{{ $pesanan->status }}";
+    const isLunas = {{ $pesanan->status_bayar === 'lunas' ? 'true' : 'false' }};
+    const storageKey = 'invoice_sent_' + orderId + '_' + currentStatus;
+    const lunasKey = 'invoice_sent_' + orderId + '_lunas';
+
+    function updateButtonTexts() {
+        const btnManual = document.getElementById('btnKirimInvoiceManual');
+        if (btnManual) {
+            const span = btnManual.querySelector('.btn-text');
+            if (span) span.textContent = 'Kirim Invoice Lagi';
+        }
+        const btnMenunggu = document.getElementById('btnMenungguKirim');
+        if (btnMenunggu) {
+            const span = btnMenunggu.querySelector('.btn-text');
+            if (span) span.textContent = 'Kirim Invoice Lagi';
+        }
+    }
+
+    if (localStorage.getItem(storageKey) === 'true') {
+        updateButtonTexts();
+    }
+
+    // Auto popup Invoice Lunas jika belum dikirim (Semi-Otomatis untuk Mitra)
+    if (isLunas && localStorage.getItem(lunasKey) !== 'true') {
+        const modalInvoice = document.getElementById('modalKirimInvoice');
+        const modalUlasan = document.getElementById('modalKirimUlasan');
+        // Pastikan tidak bertabrakan dengan modal ulasan
+        if (modalInvoice && (!modalUlasan || !modalUlasan.classList.contains('active'))) {
+            modalInvoice.classList.add('active');
+        }
+    }
+
+    const btnKirimSekarang = document.getElementById('btnKirimSekarang');
+    if (btnKirimSekarang) {
+        btnKirimSekarang.addEventListener('click', function() {
+            localStorage.setItem(storageKey, 'true');
+            if (isLunas) {
+                localStorage.setItem(lunasKey, 'true');
+            }
+            updateButtonTexts();
+        });
+    }
 });
 </script>
 @endpush

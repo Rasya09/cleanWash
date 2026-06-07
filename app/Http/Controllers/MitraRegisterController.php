@@ -21,16 +21,17 @@ class MitraRegisterController extends Controller
             'phone' => 'required',
             'description' => 'nullable',
         ]);
-        $mitra = MitraLaundry::create([
-            'user_id' => Auth::id(),
-            'owner_name' => $request->owner_name,
-            'store_name' => $request->store_name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'description' => $request->description,
-            'status' => 'draft',
-
-        ]);
+        $mitra = MitraLaundry::updateOrCreate(
+            ['user_id' => Auth::id()],
+            [
+                'owner_name' => $request->owner_name,
+                'store_name' => $request->store_name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'description' => $request->description,
+                'status' => 'draft',
+            ]
+        );
 
         return redirect()
             ->route('user.register.step2', $mitra->id);
@@ -43,13 +44,13 @@ class MitraRegisterController extends Controller
             Auth::id()
         )->first();
 
-        if($mitra)
+        if($mitra && $mitra->status != 'draft')
         {
             return redirect()
                 ->route('user.register.hasil');
         }
 
-        return view('auth.register_mitra.step1');
+        return view('auth.register_mitra.step1', compact('mitra'));
     }
 
     public function step2($id)

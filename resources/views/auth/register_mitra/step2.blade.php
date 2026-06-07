@@ -33,32 +33,56 @@
             color:#7a86a8;
             font-size:18px;
         }
-        .steps{
+        .stepper{
             display:flex;
-            justify-content:center;
+            justify-content:space-between;
             align-items:center;
-            gap:40px;
-            margin-bottom:40px;
+            margin-bottom:50px;
+            position:relative;
+        }
+        .stepper::before{
+            content:'';
+            position:absolute;
+            top:20px;
+            left:80px;
+            right:80px;
+            height:3px;
+            background:#dbe4ff;
+            z-index:1;
         }
         .step{
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            gap:10px;
+            position:relative;
+            z-index:2;
+            text-align:center;
+            flex:1;
         }
         .step-circle{
-            width:40px;
-            height:40px;
+            width:42px;
+            height:42px;
             border-radius:50%;
-            background:#dfe6ff;
+            background:#fff;
+            border:3px solid #dbe4ff;
+            margin:auto;
             display:flex;
-            justify-content:center;
             align-items:center;
-            font-weight:bold;
+            justify-content:center;
+            font-weight:600;
+            color:#9aa5b5;
         }
         .step.active .step-circle{
             background:#1d3565;
+            border-color:#1d3565;
             color:white;
+        }
+        .step-label{
+            margin-top:10px;
+            font-size:14px;
+            color:#7a869a;
+            display:block;
+        }
+        .step.active .step-label{
+            color:#1d3565;
+            font-weight:600;
         }
         .card{
             background:white;
@@ -149,22 +173,22 @@
         <h1>Daftarkan Toko Laundry Anda</h1>
         <p>Lengkapi alamat toko laundry Anda.</p>
     </div>
-    <div class="steps">
+    <div class="stepper">
         <div class="step">
             <div class="step-circle">1</div>
-            <span>Identitas</span>
+            <div class="step-label">Identitas</div>
         </div>
         <div class="step active">
             <div class="step-circle">2</div>
-            <span>Lokasi</span>
+            <div class="step-label">Lokasi</div>
         </div>
         <div class="step">
             <div class="step-circle">3</div>
-            <span>Foto</span>
+            <div class="step-label">Foto</div>
         </div>
         <div class="step">
             <div class="step-circle">4</div>
-            <span>Dokumen</span>
+            <div class="step-label">Dokumen</div>
         </div>
     </div>
     <div class="card">
@@ -229,12 +253,10 @@
                     </div>
                 </div>
             </div>
-            <div class="footer">
-                <span>Langkah 2 dari 4</span>
-                <button type="submit"
-                        class="btn">
-                    Lanjut
-                </button>
+            <div class="footer" style="display:flex; justify-content:space-between; align-items:center;">
+                <button type="button" onclick="window.history.back()" class="btn-back" style="background:#fff; color:#183153; border:1px solid #dbe4ff; padding:14px 30px; border-radius:14px; font-weight:600; cursor:pointer; font-size:15px;">Kembali</button>
+                <span style="color:#8b97aa; font-size:14px;">Langkah 2 dari 4</span>
+                <button type="submit" class="btn">Lanjut</button>
             </div>
         </form>
     </div>

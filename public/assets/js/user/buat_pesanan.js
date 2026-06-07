@@ -118,8 +118,8 @@
         const file = input.files[0];
         if (!file) return;
 
-        if (file.size > 5 * 1024 * 1024) {
-            alert('Ukuran file melebihi 5MB. Silakan pilih foto yang lebih kecil.');
+        if (file.size > 2 * 1024 * 1024) {
+            alert('Ukuran file melebihi 2MB. Silakan pilih foto yang lebih kecil.');
             input.value = '';
             return;
         }
@@ -162,6 +162,13 @@
 
         const tanggal = document.getElementById('pilihTanggal').value;
         const waktu = document.getElementById('pilihWaktu').value;
+        const fotoInput = document.getElementById('fotoInput');
+
+        if (!fotoInput.files || fotoInput.files.length === 0) {
+            document.getElementById('uploadArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            showToast('Foto barang wajib diupload.');
+            return false;
+        }
 
         if (!tanggal) {
             document.getElementById('pilihTanggal').focus();

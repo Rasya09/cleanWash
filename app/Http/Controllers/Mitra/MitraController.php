@@ -154,7 +154,6 @@ class MitraController extends Controller
     {
         $request->validate([
             'nama_layanan'   => 'required|in:Cuci Kering,Cuci Satuan,Cuci Sepatu,Cuci Karpet,Setrika Aja',
-            'hari'           => 'required|array|min:1',
             'harga_dasar'    => 'required|numeric|min:0',
             'estimasi'       => 'required|numeric|min:1',
             'minimal_order'  => 'nullable|numeric|min:1',
@@ -167,7 +166,6 @@ class MitraController extends Controller
         LaundryService::create([
             'mitra_laundry_id' => $mitra->id,
             'service_name'     => $request->nama_layanan,
-            'operational_days' => $request->hari,
             'base_price'       => $request->harga_dasar,
             'estimated_days'   => $request->estimasi,
             'minimum_order'    => $request->minimal_order,
@@ -260,7 +258,6 @@ class MitraController extends Controller
 
         $request->validate([
             'nama_layanan'   => 'required|in:Cuci Kering,Cuci Satuan,Cuci Sepatu,Cuci Karpet,Setrika Aja',
-            'hari'           => 'required|array|min:1',
             'harga_dasar'    => 'required|numeric|min:0',
             'estimasi'       => 'required|numeric|min:1',
             'minimal_order'  => 'nullable|numeric|min:1',
@@ -270,7 +267,6 @@ class MitraController extends Controller
 
         $service->update([
             'service_name'     => $request->nama_layanan,
-            'operational_days' => $request->hari,
             'base_price'       => $request->harga_dasar,
             'estimated_days'   => $request->estimasi,
             'minimum_order'    => $request->minimal_order,
