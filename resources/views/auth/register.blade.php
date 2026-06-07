@@ -79,11 +79,17 @@
                         <input type="email" name="email" placeholder="Masukan Email" autocomplete="email" value="{{ old('email') }}" required/>
                     </div>
                     <!-- PHONE -->
-                    <div class="field">
-                        <span class="field-icon">
-                            <img src="{{ asset('assets/icons/Icon Masukan No Telepon.png') }}" alt="Phone Icon"/>
+                    <div class="field phone-field">
+                        <span class="phone-prefix">
+                            +62
                         </span>
-                        <input type="tel" name="phone" placeholder="Masukan No Hp" autocomplete="tel" value="{{ old('phone') }}" required />
+                        <input
+                            type="tel"
+                            name="phone"
+                            id="phone"
+                            placeholder="81111111111"
+                            value="{{ old('phone') }}"
+                            required>
                     </div>
                     <!-- PASSWORD -->
                     <div class="field">
@@ -115,6 +121,21 @@
             </div>
         </div>
     </div>
+
+<script>
+document.getElementById('phone')
+.addEventListener('input', function(){
+
+    this.value =
+        this.value.replace(/\D/g,'');
+
+    if(this.value.startsWith('0')){
+        this.value =
+            this.value.substring(1);
+    }
+
+});
+</script>
 
 </body>
 </html>

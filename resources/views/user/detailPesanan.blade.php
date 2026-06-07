@@ -355,7 +355,7 @@
                         $isLast   = $loop->last;
                         // Status aktif berada di paling atas daftar riwayat (jika belum selesai/batal/gagal)
                         $isActive = $loop->first && !in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']);
-                        
+
                         // Cek apakah ada pending step setelah ini
                         $hasPending = !in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']);
                     @endphp
@@ -699,7 +699,7 @@
             .then(data => {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-                
+
                 if (data.snap_token) {
                     // Trigger Snap popup
                     snap.pay(data.snap_token, {
@@ -708,12 +708,12 @@
                             const form = document.createElement('form');
                             form.method = 'POST';
                             form.action = '{{ route("user.pesanan.success_callback", $pesanan->id) }}';
-                            
+
                             const csrfInput = document.createElement('input');
                             csrfInput.type = 'hidden';
                             csrfInput.name = '_token';
                             csrfInput.value = '{{ csrf_token() }}';
-                            
+
                             form.appendChild(csrfInput);
                             document.body.appendChild(form);
                             form.submit();

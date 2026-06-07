@@ -21,7 +21,12 @@
         </div>
         <div class="profile-info">
             <h3 class="profile-name">{{ Auth::user()->name }}</h3>
-            <span class="profile-badge">Customer Aktif</span>
+            @if(Auth::user()->role == 'user')
+                <span class="profile-badge">Customer Aktif</span>
+            @endif
+            @if(Auth::user()->role == 'mitra')
+                <span class="profile-badge">Mitra Aktif</span>
+            @endif
         </div>
         <button class="sidebar-toggle" id="sidebarHamburger" onclick="toggleNav()" aria-label="Toggle menu">
             <span></span>
@@ -31,14 +36,29 @@
     </div>
 
     <nav class="sidebar-nav" id="sidebar-nav">
-        <a href="{{ route('user.profile') }}"
-           class="nav-item {{ request()->routeIs('user.profile') ? 'active' : '' }}">
-            Profil Saya
-        </a>
-        <a href="{{ route('user.alamat-saya') }}"
-           class="nav-item {{ request()->routeIs('user.alamat-saya') ? 'active' : '' }}">
-            Alamat Saya
-        </a>
+        @if(Auth::user()->role == 'user')
+            <a href="{{ route('user.profile') }}"
+                class="nav-item {{ request()->routeIs('user.profile') ? 'active' : '' }}">
+                Profil Saya
+            </a>
+        @else
+            <a href="{{ route('mitra.profile') }}"
+                class="nav-item {{ request()->routeIs('mitra.profile') ? 'active' : '' }}">
+                    Profil Saya
+            </a>
+        @endif
+        @if(Auth::user()->role == 'user')
+            <a href="{{ route('user.alamat-saya') }}"
+                class="nav-item {{ request()->routeIs('user.alamat-saya') ? 'active' : '' }}">
+                    Alamat Saya
+            </a>
+        @else
+            <a href="{{ route('mitra.alamat-saya') }}"
+                class="nav-item {{ request()->routeIs('mitra.alamat-saya') ? 'active' : '' }}">
+                    Alamat Saya
+            </a>
+        @endif
+        
     </nav>
 </aside>
 @endauth

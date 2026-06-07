@@ -18,20 +18,22 @@ class MitraRegisterController extends Controller
             'owner_name' => 'required',
             'store_name' => 'required',
             'email' => 'nullable|email',
-            'phone' => 'required',
+            'phone' => [
+                'required',
+                'regex:/^[1-9][0-9]{8,14}$/'
+            ],
             'description' => 'nullable',
         ]);
-        $mitra = MitraLaundry::updateOrCreate(
-            ['user_id' => Auth::id()],
-            [
-                'owner_name' => $request->owner_name,
-                'store_name' => $request->store_name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'description' => $request->description,
-                'status' => 'draft',
-            ]
-        );
+        $mitra = MitraLaundry::create([
+            'user_id' => Auth::id(),
+            'owner_name' => $request->owner_name,
+            'store_name' => $request->store_name,
+            'email' => $request->email,
+            'phone' => '62' . $request->phone,
+            'description' => $request->description,
+            'status' => 'draft',
+
+        ]);
 
         return redirect()
             ->route('user.register.step2', $mitra->id);
@@ -187,7 +189,7 @@ class MitraRegisterController extends Controller
                 'Pengajuan mitra berhasil dikirim!'
             );
     }
-    
+
     public function success()
     {
         return view(
@@ -421,5 +423,5 @@ class MitraRegisterController extends Controller
 
         return view('mitra.profil.index', compact('mitra'));
     }
-    
+
 }

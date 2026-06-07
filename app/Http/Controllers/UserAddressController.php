@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\UserAddress;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class UserAddressController extends Controller
@@ -60,7 +61,29 @@ class UserAddressController extends Controller
         ]);
 
         return back()->with('success', 'Alamat berhasil ditambahkan');
-    }   
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|max:100',
+            'email' => 'required',
+            'phone' => 'required',
+        ]);
+
+        $user = User::find(Auth::id());
+        if ($user) {
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->phone = '62'.$request->phone;
+            $user->save();
+        }
+
+        return back()->with(
+            'success',
+            'Profil berhasil diperbarui'
+        );
+    }
 
     public function setPrimary($id)
     {

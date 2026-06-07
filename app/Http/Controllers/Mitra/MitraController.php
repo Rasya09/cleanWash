@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\LaundryService;
 use Illuminate\Http\Request;
 use App\Models\MitraLaundry;
+use App\Models\UserAddress;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -57,6 +58,21 @@ class MitraController extends Controller
         $mitra = MitraLaundry::where('user_id', Auth::id())->first();
 
         return view('mitra.profil_toko', compact('mitra'));
+    }
+
+    public function profile()
+    {
+        $mitra = MitraLaundry::where('user_id', Auth::id())->first();
+    
+        return view('user.profile_customer', compact('mitra'));
+    }
+    
+    public function alamat()
+    {
+        $mitra = MitraLaundry::where('user_id', Auth::id())->first();
+        $addresses = UserAddress::where('user_id', Auth::id())->get();
+
+        return view('user.alamat_saya', compact('mitra', 'addresses'));
     }
 
     public function edit()

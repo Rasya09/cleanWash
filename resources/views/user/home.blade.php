@@ -16,8 +16,8 @@
     Pesan laundry terdekat, pilih antar jemput, dan pantau status cucian Anda secara real-time. Semua dalam satu aplikasi.
   </p>
   <div class="hero-cta">
-    <button class="btn-big primary" onclick="window.location.href='{{ Auth::check() ? route('user.cari-laundry') : route('cari-laundry') }}'">🔍 Cari Laundry</button>
-    <button class="btn-big outline">▶ Cara Kerja</button>
+    {{-- <button class="btn-big primary">🔍 Cari Laundry</button>
+    <button class="btn-big outline">▶ Cara Kerja</button> --}}
   </div>
   <div class="stats-bar">
     <div class="stat-item">
@@ -46,7 +46,7 @@
       <span class="pickup-badge">Layanan Unggulan</span>
       <h2 class="pickup-title">Antar Jemput Cepat,<br>Tanpa Ribet</h2>
       <p class="pickup-desc">Nikmati layanan antar jemput langsung ke lokasi Anda. Pilih jadwal fleksibel, biarkan kami yang urus semuanya.</p>
-      <button class="btn-white">Pesan Sekarang →</button>
+      {{-- <button class="btn-white">Pesan Sekarang →</button> --}}
     </div>
     <div class="pickup-visual">
       <div class="pickup-visual-inner">
@@ -159,7 +159,7 @@
       <p>Silahkan berikan rating & ulasan untuk website kami</p>
     </div>
 
-    <form action="{{ route('rating.store') }}" method="POST">
+    <form action="" method="POST">
       @csrf
 
       {{-- Input hidden diisi JS --}}

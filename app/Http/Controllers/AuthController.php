@@ -43,8 +43,11 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'phone' => 'required|numeric|unique:users',
-            'password' => 'required|min:6|confirmed'
+            'phone' => [
+                'required',
+                'regex:/^[1-9][0-9]{8,14}$/'
+            ],
+            'password' => 'required|min:8|confirmed'
         ]);
 
 
@@ -55,7 +58,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'phone' => $request->phone,
+            'phone' => '62' . $request->phone,
             'role' => 'user',
             'status' => 'active',
             'password' => Hash::make($request->password),
@@ -112,7 +115,7 @@ class AuthController extends Controller
 
             if (Auth::user()->role == 'mitra') {
 
-                return redirect('/');
+                return redirect('/mitra/home');
             }
 
 

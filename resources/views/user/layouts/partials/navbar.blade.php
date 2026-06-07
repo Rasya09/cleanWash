@@ -8,10 +8,15 @@
 
   <!-- Menu Desktop -->
   <ul class="nav-menu">
-    <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') || request()->routeIs('user.home') ? 'active' : '' }}">Beranda</a></li>
-    <li><a href="{{ Auth::check() ? route('user.cari-laundry') : route('cari-laundry') }}" class="{{ request()->routeIs('cari-laundry') || request()->routeIs('user.cari-laundry') ? 'active' : '' }}" >Cari Laundry</a></li>
+    <li><a href="{{ route('home') }}" class="{{ request()->routeIs('mitra.home') ? 'active' : '' }} {{ request()->routeIs('user.home') ? 'active' : '' }}">Beranda</a></li>
     @if(Auth::check() && Auth::user()->role == 'user')
-    <li><a href="{{ route('user.pesanan') }}" class="{{ request()->routeIs('user.pesanan') ? 'active' : '' }}">Pesanan Saya</a></li>
+    <li><a href="{{ route('cari-laundry') }}" class="{{ request()->routeIs('cari-laundry') ? 'active' : '' }}" >Cari Laundry</a></li>
+    @endif
+    @if(Auth::check() && Auth::user()->role == 'mitra')
+    <li><a href="{{ route('mitra.cari-laundry') }}" class="{{ request()->routeIs('mitra.cari-laundry') ? 'active' : '' }}" >Cari Laundry</a></li>
+    @endif
+    @if(Auth::check() && Auth::user()->role == 'user')
+    <li><a href="{{ route('user.cari-laundry') }}" class="{{ request()->routeIs('user.cari-laundry') ? 'active' : '' }}">Pesanan Saya</a></li>
     @endif
   </ul>
 
@@ -39,21 +44,28 @@
             <span class="nav-user-role">Pengguna Aktif</span>
         </div>
         <div class="nav-user-dropdown" id="desktopDropdown">
-        <button class="dropdown-item">
-            <a href="{{ route('user.profile') }}">Profil Saya</a>
-        </button>
+        @if(Auth::user()->role == 'user')
+            <button class="dropdown-item">
+                <a href="{{ route('user.profile') }}">Profil Saya</a>
+            </button>
+        @endif
+        @if(Auth::user()->role == 'mitra')
+            <button class="dropdown-item">
+                <a href="{{ route('mitra.profile') }}">Profil Saya</a>
+            </button>
+        @endif
         @if(Auth::user()->role == 'user')
         <button class="dropdown-item">
             <a href="{{ route('user.register.step1') }}">Registrasi Mitra</a>
         </button>
         @endif
-        @if(Auth::user()->role != 'mitra')
-        <button class="dropdown-item">
-            <a href="{{ route('user.chat') }}">Obrolan</a>
-        </button>
+        @if(Auth::user()->role == 'user')
+            <button class="dropdown-item">
+                <a href="{{ route('user.chat') }}">Obrolan</a>
+            </button>
         @endif
         @if(Auth::user()->role == 'admin')
-        <button class="dropdown-item"><a href="{{ route('admin.dashboard') }}">Dashboard admin</a></button>
+            <button class="dropdown-item"><a href="{{ route('admin.dashboard') }}">Dashboard admin</a></button>
         @endif
         @if(Auth::user()->role == 'mitra')
         <button class="dropdown-item"><a href="{{ route('mitra.dashboard') }}">Dashboard mitra</a></button>
@@ -102,19 +114,19 @@
       @if(Auth::user()->role != 'mitra')
       <a href="{{ route('user.chat') }}" class="nav-mobile-link">Obrolan</a>
       @endif
-      
+
       @if(Auth::user()->role == 'user')
       <a href="{{ route('user.register.step1') }}" class="nav-mobile-link">Registrasi Mitra</a>
       @endif
-      
+
       @if(Auth::user()->role == 'admin')
       <a href="{{ route('admin.dashboard') }}" class="nav-mobile-link">Dashboard admin</a>
       @endif
-      
+
       @if(Auth::user()->role == 'mitra')
       <a href="{{ route('mitra.dashboard') }}" class="nav-mobile-link">Dashboard mitra</a>
       @endif
-      
+
       <div class="nav-mobile-divider"></div>
       <form action="{{ route('logout') }}" method="POST" style="margin:0;">
           @csrf

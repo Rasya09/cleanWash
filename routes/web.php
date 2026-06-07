@@ -304,6 +304,11 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
         return view('user.profile_customer', compact('addresses'));
     })->name('user.profile');
 
+    Route::post(
+        '/profil/update',
+        [UserAddressController::class, 'updateProfile']
+    )->name('user.profile.update');
+
     Route::get('/alamat-saya', function () {
         $addresses = UserAddress::where('user_id', Auth::id())->get();
         return view('user.alamat_saya', compact('addresses'));
@@ -343,7 +348,7 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     // Ulasan
     Route::post('/pesanan/{id}/review', [\App\Http\Controllers\ReviewController::class, 'store'])->name('user.review.store');
     // RATING
-    Route::middleware('auth')->post('/rating', [RatingController::class, 'store'])->name('rating.store');
+    // Route::middleware('auth')->post('/rating', [RatingController::class, 'store'])->name('rating.store');
 
 });
 
@@ -378,6 +383,27 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
 
     });
 
+     Route::get('/home', function () {
+        return view('user.home');
+    })->name('mitra.home');
+
+    Route::get('/cari-laundry', function (\Illuminate\Http\Request $request) {
+        $query = \App\Models\MitraLaundry::where('status', 'approved');
+        if ($search = $request->query('search')) {
+            $query->where('store_name', 'like', "%{$search}%");
+        }
+        $laundries = $query->get();
+        return view('user.cari_laundry', compact('laundries'));
+    })->name('mitra.cari-laundry');
+
+    Route::get('/profile', [MitraController::class, 'profile'])->name('mitra.profile');
+
+    Route::get('/alamat-saya', [MitraController::class, 'alamat'])->name('mitra.alamat-saya');
+
+    Route::post(
+        '/profil/update',
+        [UserAddressController::class, 'updateProfile']
+    )->name('mitra.profile.update');
 
     Route::get('/dashboard', [\App\Http\Controllers\Mitra\MitraController::class, 'dashboard'])->name('mitra.dashboard');
 
