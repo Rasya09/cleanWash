@@ -11,7 +11,6 @@ use App\Http\Controllers\MitraRegisterController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Mitra\MitraController;
 use App\Http\Controllers\LaundryController;
-use App\Http\Controllers\MidtransController;
 
 // ======================================================
 // PUBLIC / GUEST
@@ -209,6 +208,11 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
         return view('user.profile_customer', compact('addresses'));
     })->name('user.profile');
 
+    Route::post(
+        '/profil/update',
+        [UserAddressController::class, 'updateProfile']
+    )->name('user.profile.update');
+
     Route::get('/alamat-saya', function () {
         $addresses = UserAddress::where('user_id', Auth::id())->get();
         return view('user.alamat_saya', compact('addresses'));
@@ -249,11 +253,6 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     // RATING
     // Route::middleware('auth')->post('/rating', [RatingController::class, 'store'])->name('rating.store');
 
-    Route::post(
-        '/midtrans/callback',
-        [MidtransController::class, 'callback']
-    );
-
 });
 
 
@@ -287,6 +286,27 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
 
     });
 
+     Route::get('/home', function () {
+        return view('user.home');
+    })->name('mitra.home');
+
+    Route::get('/cari-laundry', function (\Illuminate\Http\Request $request) {
+        $query = \App\Models\MitraLaundry::where('status', 'approved');
+        if ($search = $request->query('search')) {
+            $query->where('store_name', 'like', "%{$search}%");
+        }
+        $laundries = $query->get();
+        return view('user.cari_laundry', compact('laundries'));
+    })->name('mitra.cari-laundry');
+
+    Route::get('/profile', [MitraController::class, 'profile'])->name('mitra.profile');
+
+    Route::get('/alamat-saya', [MitraController::class, 'alamat'])->name('mitra.alamat-saya');
+
+    Route::post(
+        '/profil/update',
+        [UserAddressController::class, 'updateProfile']
+    )->name('mitra.profile.update');
 
     Route::get('/dashboard', [\App\Http\Controllers\Mitra\MitraController::class, 'dashboard'])->name('mitra.dashboard');
 

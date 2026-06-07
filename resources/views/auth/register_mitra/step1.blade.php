@@ -174,6 +174,16 @@
         .btn-next:hover{
             background:#244b82;
         }
+        .phone-field{
+            display:flex;
+            align-items:center;
+        }
+
+        .phone-prefix{
+            padding:0 12px;
+            font-weight:600;
+            color:#555;
+        }
         @media(max-width:768px){
             .grid{
                 grid-template-columns:1fr;
@@ -249,9 +259,12 @@
                         <label>
                             No Telepon / WhatsApp *
                         </label>
-                        <input type="text"
-                               name="phone"
-                               placeholder="08xxxxxxxxxx">
+                        
+                        <input type="tel"
+                                name="phone"
+                                id="phone"
+                                placeholder="81234567891"
+                                required>
                     </div>
                     <!-- EMAIL -->
                     <div class="form-group">
@@ -285,6 +298,21 @@
         </form>
     </div>
 </div>
+
+<script>
+document.getElementById('phone')
+.addEventListener('input', function(){
+
+    this.value =
+        this.value.replace(/\D/g,'');
+
+    if(this.value.startsWith('0')){
+        this.value =
+            this.value.substring(1);
+    }
+
+});
+</script>
 
 </body>
 </html>

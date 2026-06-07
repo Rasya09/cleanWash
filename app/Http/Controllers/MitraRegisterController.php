@@ -18,7 +18,10 @@ class MitraRegisterController extends Controller
             'owner_name' => 'required',
             'store_name' => 'required',
             'email' => 'nullable|email',
-            'phone' => 'required',
+            'phone' => [
+                'required',
+                'regex:/^[1-9][0-9]{8,14}$/'
+            ],
             'description' => 'nullable',
         ]);
         $mitra = MitraLaundry::create([
@@ -26,7 +29,7 @@ class MitraRegisterController extends Controller
             'owner_name' => $request->owner_name,
             'store_name' => $request->store_name,
             'email' => $request->email,
-            'phone' => $request->phone,
+            'phone' => '62' . $request->phone,
             'description' => $request->description,
             'status' => 'draft',
 

@@ -319,7 +319,7 @@
           <p>Mitra Laundry</p>
         </div>
         <a href="{{ route('mitra.profil') }}" class="dropdown-item">
-          Profil Toko
+          Toko Saya
         </a>
         <a href="{{ route('home') }}" class="dropdown-item">
           Beranda

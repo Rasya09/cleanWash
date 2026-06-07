@@ -236,6 +236,17 @@ html, body {
   text-decoration: underline;
 }
 
+.phone-field{
+    display:flex;
+    align-items:center;
+}
+
+.phone-prefix{
+    padding:0 12px;
+    font-weight:600;
+    color:#555;
+}
+
 @media (max-width: 900px) {
   .page {
     padding: 24px 16px;

@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
-use Midtrans\Config;
-use Midtrans\Snap;
 
 class OrderController extends Controller
 {
@@ -203,48 +201,32 @@ class OrderController extends Controller
     // =========================================================
     // BAYAR PESANAN (USER)
     // =========================================================
-    public function bayar($id)
+    public function bayar(Request $request, $id)
     {
-        $order = Order::findOrFail($id);
         $order = Order::where('user_id', Auth::id())->findOrFail($id);
 
         if ($order->status !== 'menunggu_pembayaran') {
             return back()->withErrors(['error' => 'Pesanan belum menunggu pembayaran.']);
         }
 
-        // Buat order ID unik untuk Midtrans
-        $orderId = 'ORDER-' . $order->id . '-' . time();
+        $statusLama = $order->status;
 
-        $params = [
-            'transaction_details' => [
-                'order_id' => $orderId,
-                'gross_amount' => $order->total_bayar,
-            ],
+        DB::transaction(function () use ($order, $statusLama) {
+            $order->update([
+                'status_bayar' => 'lunas',
+                'status'       => 'diproses',
+            ]);
 
-            'customer_details' => [
-                'first_name' => Auth::user()->name,
-                'email' => Auth::user()->email,
-            ]
-        ];
+            $this->catatHistory(
+                $order,
+                $statusLama,
+                'diproses',
+                'user',
+                'Pembayaran lunas, pesanan mulai diproses'
+            );
+        });
 
-        // Generate Snap Token
-        $snapToken = \Midtrans\Snap::getSnapToken($params);
-
-        // Simpan ke database
-        $order->update([
-            'transaction_id' => $orderId,
-            'snap_token' => $snapToken,
-        ]);
-
-        $pesanan = Order::with(['mitraLaundry', 'items', 'statusHistories.changedBy'])
-            ->where('user_id', Auth::id())
-            ->findOrFail($id);
-
-        return view('user.detailPesanan', compact(
-            'order',
-            'snapToken',
-            'pesanan'
-        ));
+        return back()->with('success', 'Pembayaran berhasil, pesanan sedang diproses!');
     }
 
     // =========================================================
@@ -312,13 +294,4 @@ class OrderController extends Controller
             'created_at'   => now(),
         ]);
     }
-
-    public function __construct()
-    {
-        Config::$serverKey = config('midtrans.server_key');
-        Config::$isProduction = config('midtrans.is_production');
-        Config::$isSanitized = config('midtrans.is_sanitized');
-        Config::$is3ds = config('midtrans.is_3ds');
-    }
-    
 }
