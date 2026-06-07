@@ -11,6 +11,7 @@ use App\Http\Controllers\MitraRegisterController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Mitra\MitraController;
 use App\Http\Controllers\LaundryController;
+use App\Http\Controllers\MidtransController;
 
 // ======================================================
 // PUBLIC / GUEST
@@ -236,7 +237,12 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     // Ulasan
     Route::post('/pesanan/{id}/review', [\App\Http\Controllers\ReviewController::class, 'store'])->name('user.review.store');
     // RATING
-    Route::middleware('auth')->post('/rating', [RatingController::class, 'store'])->name('rating.store');
+    // Route::middleware('auth')->post('/rating', [RatingController::class, 'store'])->name('rating.store');
+
+    Route::post(
+        '/midtrans/callback',
+        [MidtransController::class, 'callback']
+    );
 
 });
 

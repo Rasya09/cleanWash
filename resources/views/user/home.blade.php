@@ -159,7 +159,7 @@
       <p>Silahkan berikan rating & ulasan untuk website kami</p>
     </div>
 
-    <form action="{{ route('rating.store') }}" method="POST">
+    <form action="" method="POST">
       @csrf
 
       {{-- Input hidden diisi JS --}}
