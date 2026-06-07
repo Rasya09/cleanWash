@@ -21,6 +21,14 @@ return new class extends Migration
             $table->text('reply')->nullable();
             $table->timestamps();
         });
+
+        // Tambahkan baris ini untuk memaksa hapus jika tabel tersangkut
+        Schema::dropIfExists('reviews');
+
+        Schema::create('reviews', function (Blueprint $table) {
+            $table->id();
+            // ... kode bawaanmu yang lain di bawahnya
+        });
     }
 
     /**
