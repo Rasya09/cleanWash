@@ -1,7 +1,7 @@
 @extends('user.layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/home.css') }}?v={{ time() }}">
 @endsection
 
 @section('content')

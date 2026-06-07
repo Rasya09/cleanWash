@@ -7,30 +7,38 @@ use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model
 {
-    /** @use HasFactory<\Database\Factories\ReviewFactory> */
     use HasFactory;
 
+    protected $table = 'reviews';
+
     protected $fillable = [
-        'order_id',
         'user_id',
         'mitra_id',
+        'order_id',
         'rating',
-        'comment',
-        'reply'
+        'komentar',
+        'status',
+        'approved_by',
+        'approved_at'
     ];
 
-    public function order()
-    {
-        return $this->belongsTo(Order::class, 'order_id');
-    }
+    protected $casts = [
+        'approved_at' => 'datetime',
+        'rating' => 'integer',
+    ];
 
-    public function user()
+    public function pelanggan()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
     public function mitra()
     {
-        return $this->belongsTo(User::class, 'mitra_id');
+        return $this->belongsTo(MitraLaundry::class, 'mitra_id');
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id');
     }
 }

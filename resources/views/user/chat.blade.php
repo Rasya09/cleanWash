@@ -106,6 +106,25 @@
       <div class="empty-state">Silakan pilih kontak di sidebar untuk mulai mengobrol.</div>
     </div>
 
+    <!-- Order Context -->
+    @if(isset($orderContext))
+    <div class="chat-order-context" id="orderContextBox" style="padding: 16px; background: #f0f4ff; border-top: 1px solid #e5e9f5; border-bottom: 1px solid #e5e9f5; display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 13px; font-weight: 600; color: #1a56e8;">Konteks Pesanan: {{ $orderContext->order_code }}</div>
+            <button onclick="document.getElementById('orderContextBox').style.display='none'" style="background: none; border: none; cursor: pointer; color: #9aaab8; font-size: 16px;">✕</button>
+        </div>
+        <div style="font-size: 12px; color: #4a5a8a;">
+            Layanan: {{ $orderContext->items->pluck('nama_layanan')->join(', ') ?: 'Layanan' }} <br>
+            Status: {{ ucfirst($orderContext->status) }}
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button onclick="prefillChat('Halo, saya ingin mengonfirmasi pesanan {{ $orderContext->order_code }}.')" style="padding: 6px 12px; background: #fff; border: 1px solid #1a56e8; border-radius: 6px; font-size: 12px; color: #1a56e8; cursor: pointer;">Konfirmasi</button>
+            <button onclick="prefillChat('Halo, pesanan {{ $orderContext->order_code }} sudah sampai mana ya?')" style="padding: 6px 12px; background: #fff; border: 1px solid #1a56e8; border-radius: 6px; font-size: 12px; color: #1a56e8; cursor: pointer;">Tanya Status</button>
+            <button onclick="prefillChat('Halo, saya ada kendala terkait pesanan {{ $orderContext->order_code }}.')" style="padding: 6px 12px; background: #fff; border: 1px solid #e03232; border-radius: 6px; font-size: 12px; color: #e03232; cursor: pointer;">Lapor Kendala</button>
+        </div>
+    </div>
+    @endif
+
     <!-- Input Area -->
     <div class="chat-input-container">
       <div class="chat-input-wrapper">
@@ -248,27 +267,42 @@
       message: text,
       created_at: new Date().toISOString()
     };
+    
+    // Optimistic UI
     renderMessage(tempMsg);
     input.value = '';
-
-    // Update sidebar preview instantly
+    
+    // Update sidebar text
     updateSidebarPreview(activeContactId, text, tempMsg.created_at);
 
     try {
       const token = document.querySelector('meta[name="csrf-token"]').content;
-      const res = await fetch(`/chat/send/${activeContactId}`, {
+      await fetch(`/chat/send/${activeContactId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-TOKEN': token,
           'Accept': 'application/json'
         },
-        body: JSON.stringify({ message: text })
+        body: JSON.stringify({
+          receiver_id: activeContactId,
+          message: text
+        })
       });
-      // Optionally handle failure and remove tempMsg
-    } catch (e) {
+    } catch(e) {
       console.error('Error sending message', e);
     }
+  }
+
+  // Prefill and send message for Order Context
+  function prefillChat(text) {
+      if(!activeContactId) {
+          alert('Mohon tunggu sampai kontak dipilih.');
+          return;
+      }
+      input.value = text;
+      sendUserMessage();
+      document.getElementById('orderContextBox').style.display = 'none';
   }
 
   function updateSidebarPreview(contactId, message, timestamp) {
@@ -317,6 +351,27 @@
   function toggleUserSidebar() {
     document.querySelector('.chat-sidebar').classList.toggle('open');
     document.getElementById('userSidebarOverlay').classList.toggle('active');
+  }
+
+  // Search contacts logic
+  const searchInputSidebar = document.querySelector('.chat-search input');
+  if (searchInputSidebar) {
+    searchInputSidebar.addEventListener('input', function() {
+      const keyword = this.value.toLowerCase();
+      const items = document.querySelectorAll('.chat-contact-item');
+      
+      items.forEach(item => {
+        const nameEl = item.querySelector('.contact-name');
+        if (nameEl) {
+          const name = nameEl.innerText.toLowerCase();
+          if (name.includes(keyword)) {
+            item.style.display = 'flex';
+          } else {
+            item.style.display = 'none';
+          }
+        }
+      });
+    });
   }
 </script>
 @endpush

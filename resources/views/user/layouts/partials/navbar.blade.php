@@ -8,13 +8,8 @@
 
   <!-- Menu Desktop -->
   <ul class="nav-menu">
-    <li><a href="{{ route('home') }}" class="{{ request()->routeIs('mitra.home') ? 'active' : '' }} {{ request()->routeIs('user.home') ? 'active' : '' }}">Beranda</a></li>
-    @if(Auth::check() && Auth::user()->role == 'user')
-    <li><a href="{{ route('cari-laundry') }}" class="{{ request()->routeIs('cari-laundry') ? 'active' : '' }}" >Cari Laundry</a></li>
-    @endif
-    @if(Auth::check() && Auth::user()->role == 'mitra')
-    <li><a href="{{ route('mitra.cari-laundry') }}" class="{{ request()->routeIs('mitra.cari-laundry') ? 'active' : '' }}" >Cari Laundry</a></li>
-    @endif
+    <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') || request()->routeIs('user.home') ? 'active' : '' }}">Beranda</a></li>
+    <li><a href="{{ Auth::check() ? route('user.cari-laundry') : route('cari-laundry') }}" class="{{ request()->routeIs('cari-laundry') || request()->routeIs('user.cari-laundry') ? 'active' : '' }}" >Cari Laundry</a></li>
     @if(Auth::check() && Auth::user()->role == 'user')
     <li><a href="{{ route('user.cari-laundry') }}" class="{{ request()->routeIs('user.cari-laundry') ? 'active' : '' }}">Pesanan Saya</a></li>
     @endif
@@ -59,10 +54,10 @@
             <a href="{{ route('user.register.step1') }}">Registrasi Mitra</a>
         </button>
         @endif
-        @if(Auth::user()->role == 'user')
-            <button class="dropdown-item">
-                <a href="{{ route('user.chat') }}">Obrolan</a>
-            </button>
+        @if(Auth::user()->role != 'mitra')
+        <button class="dropdown-item">
+            <a href="{{ route('user.chat') }}">Obrolan</a>
+        </button>
         @endif
         @if(Auth::user()->role == 'admin')
             <button class="dropdown-item"><a href="{{ route('admin.dashboard') }}">Dashboard admin</a></button>
@@ -96,8 +91,8 @@
       </div>
       @endauth
 
-      <a href="{{ route('home') }}" class="nav-mobile-link {{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
-      <a href="{{ route('cari-laundry') }}" class="nav-mobile-link {{ request()->routeIs('cari-laundry') ? 'active' : '' }}">Cari Laundry</a>
+      <a href="{{ route('home') }}" class="nav-mobile-link {{ request()->routeIs('home') || request()->routeIs('user.home') ? 'active' : '' }}">Beranda</a>
+      <a href="{{ Auth::check() ? route('user.cari-laundry') : route('cari-laundry') }}" class="nav-mobile-link {{ request()->routeIs('cari-laundry') || request()->routeIs('user.cari-laundry') ? 'active' : '' }}">Cari Laundry</a>
       @if(Auth::check() && Auth::user()->role == 'user')
       <a href="{{ route('user.pesanan') }}" class="nav-mobile-link {{ request()->routeIs('user.pesanan') ? 'active' : '' }}">Pesanan Saya</a>
       @endif
@@ -111,7 +106,9 @@
       @auth
       <div class="nav-mobile-divider"></div>
       <a href="{{ route('user.profile') }}" class="nav-mobile-link">Profil Saya</a>
+      @if(Auth::user()->role != 'mitra')
       <a href="{{ route('user.chat') }}" class="nav-mobile-link">Obrolan</a>
+      @endif
       
       @if(Auth::user()->role == 'user')
       <a href="{{ route('user.register.step1') }}" class="nav-mobile-link">Registrasi Mitra</a>

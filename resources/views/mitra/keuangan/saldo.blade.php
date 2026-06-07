@@ -134,9 +134,8 @@
     </div>
   </div>
 
-  <!-- Table + Right Panel -->
+  <!-- Riwayat Transaksi + Penarikan Terakhir -->
   <div class="content-grid">
-    <!-- Table Section -->
     <div class="table-section">
       <!-- Tabs -->
       <div class="tabs-bar">
@@ -161,6 +160,7 @@
       </div>
 
       <!-- Table -->
+      <div class="table-scroll">
       <table class="data-table">
         <thead>
           <tr>
@@ -294,10 +294,10 @@
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
 
-    <!-- Right: Recent Withdrawal -->
-    <div class="recent-withdraw">
+    <aside class="recent-withdraw">
       <div class="rw-title">Penarikan Terakhir</div>
 
       <div class="rw-bank-icon">
@@ -330,7 +330,7 @@
         Lihat Semua Penarikan
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
       </div>
-    </div>
+    </aside>
   </div>
 
   <!-- Security Banner -->

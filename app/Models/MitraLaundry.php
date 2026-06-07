@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class MitraLaundry extends Model
 {
@@ -52,6 +55,11 @@ class MitraLaundry extends Model
         return $this->hasMany(LaundryService::class, 'mitra_laundry_id');
     }
 
+    public function layanans()
+    {
+        return $this->hasMany(Layanan::class, 'mitra_laundry_id');
+    }
+
     public function activeServices()
     {
         return $this->hasMany(LaundryService::class, 'mitra_laundry_id')
@@ -64,6 +72,11 @@ class MitraLaundry extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class, 'mitra_id', 'user_id');
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'mitra_laundry_id');
     }
 
     // ── ACCESSOR ─────────────────────────────────────────

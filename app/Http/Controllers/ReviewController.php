@@ -37,9 +37,9 @@ class ReviewController extends Controller
         Review::create([
             'order_id' => $order->id,
             'user_id' => Auth::id(),
-            'mitra_id' => $order->mitraLaundry->user_id, // assuming mitraLaundry has user_id
+            'mitra_id' => $order->mitra_laundry_id,
             'rating' => $request->rating,
-            'comment' => $request->comment
+            'komentar' => $request->comment
         ]);
 
         return back()->with('success', 'Ulasan berhasil dikirim. Terima kasih!');

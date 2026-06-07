@@ -704,12 +704,6 @@ button { cursor: pointer; font-family: inherit; }
 /* ===== RESPONSIVE: TABLET (≤ 1024px) ===== */
 @media (max-width: 1024px) {
     .nav { padding: 0 24px; }
-    .nav-menu { display: none; }
-    .nav-actions { display: none; }
-    /* Hide desktop user profile completely on tablet/mobile */
-    .nav-user { display: none !important; }
-
-    .hamburger { display: flex; }
 
     .hero { padding: calc(var(--nav-h) + 48px) 24px 64px; }
     .section { padding: 72px 24px; }

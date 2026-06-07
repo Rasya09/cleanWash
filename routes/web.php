@@ -8,6 +8,10 @@ use App\Http\Controllers\Mitra\MitraOrderController;
 use App\Models\UserAddress;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MitraRegisterController;
+use App\Http\Controllers\Admin\VerifikasiMitraController;
+use App\Http\Controllers\RatingController;
+use App\Http\Controllers\Admin\ModerasiController;
+use App\Http\Controllers\Admin\NotifikasiController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Mitra\MitraController;
 use App\Http\Controllers\LaundryController;
@@ -20,13 +24,63 @@ Route::get('/', function () {
     return view('user.home');
 })->name('home');
 
+Route::get('/tentang-kami', function () {
+    return view('user.tentang_kami');
+})->name('tentang.kami');
+
 Route::get('/cari-laundry', function (\Illuminate\Http\Request $request) {
-    $query = \App\Models\MitraLaundry::where('status', 'approved');
+    $query = \App\Models\MitraLaundry::with(['reviews', 'activeServices'])->where('status', 'approved');
     if ($search = $request->query('search')) {
         $query->where('store_name', 'like', "%{$search}%");
     }
+    if ($maxPrice = $request->query('max_price')) {
+        if ($maxPrice < 100000) {
+            $query->whereHas('activeServices', function ($q) use ($maxPrice) {
+                $q->where('base_price', '<=', $maxPrice);
+            });
+        }
+    }
+    if ($status = $request->query('status')) {
+        if ($status == 'buka') {
+            $now = now()->format('H:i:s');
+            $query->where('open_time', '<=', $now)
+                  ->where('close_time', '>=', $now);
+        }
+    }
+    if ($sort = $request->query('sort')) {
+        if ($sort == 'populer') {
+            $query->withCount('orders')->orderByDesc('orders_count');
+        }
+    }
+    
     $laundries = $query->get();
-    return view('user.cari_laundry', compact('laundries'));
+
+    if ($sort) {
+        if ($sort == 'rating_desc') {
+            $laundries = $laundries->sortByDesc('average_rating')->values();
+        } elseif ($sort == 'price_asc') {
+            $laundries = $laundries->sortBy(function($laundry) {
+                return $laundry->starting_price ?? 999999999;
+            })->values();
+        }
+    }
+
+    $popularStoreId = \App\Models\Order::select('mitra_laundry_id')
+        ->groupBy('mitra_laundry_id')
+        ->orderByRaw('COUNT(*) DESC')
+        ->value('mitra_laundry_id');
+
+    $bestUserId = \App\Models\Review::select('mitra_id')
+        ->where('rating', 5)
+        ->groupBy('mitra_id')
+        ->orderByRaw('COUNT(*) DESC')
+        ->value('mitra_id');
+        
+    $bestStoreId = $bestUserId 
+        ? \App\Models\MitraLaundry::where('user_id', $bestUserId)->value('id')
+        : null;
+
+    return view('user.cari_laundry', compact('laundries', 'popularStoreId', 'bestStoreId'));
 })->name('cari-laundry');
 
 Route::get('/layanan', function () {
@@ -95,10 +149,6 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
             [MitraRegisterController::class, 'storeStep2'])
             ->name('user.register.step2.store');
 
-        Route::get('/step-3/{id}', function ($id) {
-            return "STEP 3 ID : " . $id;
-        })->name('user.register.step3');
-
         Route::get('/step-3/{id}',
             [MitraRegisterController::class, 'step3'])
             ->name('user.register.step3');
@@ -135,10 +185,6 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
             [MitraRegisterController::class, 'reapplyStep2'])
             ->name('user.register.reapply.step2');
 
-        Route::get('/register/reapply/step2/{id}',
-            [MitraRegisterController::class, 'reapplyStep2'])
-            ->name('user.register.reapply.step2');
-
         Route::post('/register/reapply/step2/{id}',
             [MitraRegisterController::class, 'updateStep2'])
             ->name('user.register.reapply.step2.update');
@@ -166,12 +212,58 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     })->name('user.home');
 
     Route::get('/cari-laundry', function (\Illuminate\Http\Request $request) {
-        $query = \App\Models\MitraLaundry::where('status', 'approved');
+        $query = \App\Models\MitraLaundry::with(['reviews', 'activeServices'])->where('status', 'approved');
         if ($search = $request->query('search')) {
             $query->where('store_name', 'like', "%{$search}%");
         }
+        if ($maxPrice = $request->query('max_price')) {
+            if ($maxPrice < 100000) {
+                $query->whereHas('activeServices', function ($q) use ($maxPrice) {
+                    $q->where('base_price', '<=', $maxPrice);
+                });
+            }
+        }
+        if ($status = $request->query('status')) {
+            if ($status == 'buka') {
+                $now = now()->format('H:i:s');
+                $query->where('open_time', '<=', $now)
+                      ->where('close_time', '>=', $now);
+            }
+        }
+        if ($sort = $request->query('sort')) {
+            if ($sort == 'populer') {
+                $query->withCount('orders')->orderByDesc('orders_count');
+            }
+        }
+        
         $laundries = $query->get();
-        return view('user.cari_laundry', compact('laundries'));
+
+        if ($sort) {
+            if ($sort == 'rating_desc') {
+                $laundries = $laundries->sortByDesc('average_rating')->values();
+            } elseif ($sort == 'price_asc') {
+                $laundries = $laundries->sortBy(function($laundry) {
+                    return $laundry->starting_price ?? 999999999;
+                })->values();
+            }
+        }
+
+        $popularStoreId = \App\Models\Order::select('mitra_laundry_id')
+            ->groupBy('mitra_laundry_id')
+            ->orderByRaw('COUNT(*) DESC')
+            ->value('mitra_laundry_id');
+
+        $bestUserId = \App\Models\Review::select('mitra_id')
+            ->where('rating', 5)
+            ->groupBy('mitra_id')
+            ->orderByRaw('COUNT(*) DESC')
+            ->value('mitra_id');
+            
+        $bestStoreId = $bestUserId 
+            ? \App\Models\MitraLaundry::where('user_id', $bestUserId)->value('id')
+            : null;
+
+        return view('user.cari_laundry', compact('laundries', 'popularStoreId', 'bestStoreId'));
     })->name('user.cari-laundry');
 
     Route::get('/layanan', function () {
@@ -242,6 +334,7 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     Route::post('/pesanan',             [OrderController::class, 'store'])->name('user.pesanan.store');
     Route::get('/pesanan',              [OrderController::class, 'index'])->name('user.pesanan');
     Route::get('/pesanan/{id}',         [OrderController::class, 'show'])->name('user.detail-pesanan');
+    Route::get('/pesanan/{id}/invoice', [OrderController::class, 'invoice'])->name('user.pesanan.invoice');
     Route::put('/pesanan/{id}/cancel',  [OrderController::class, 'cancel'])->name('user.pesanan.cancel');
 
     // Pembayaran Midtrans
@@ -251,7 +344,9 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     // Ulasan
     Route::post('/pesanan/{id}/review', [\App\Http\Controllers\ReviewController::class, 'store'])->name('user.review.store');
     // RATING
-    // Route::middleware('auth')->post('/rating', [RatingController::class, 'store'])->name('rating.store');
+    Route::middleware('auth')->post('/rating', [RatingController::class, 'store'])->name('rating.store');
+    // REPORT MITRA
+    Route::post('/laundry/report', [\App\Http\Controllers\User\KomplainController::class, 'reportStore'])->name('user.laundry.report');
 
 });
 
@@ -280,33 +375,8 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
             [MitraRegisterController::class, 'storeStep2'])
             ->name('mitra.register.step2.store');
 
-        Route::get('/step-3/{id}', function ($id) {
-            return "STEP 3 ID : " . $id;
-        })->name('mitra.register.step3');
-
     });
 
-     Route::get('/home', function () {
-        return view('user.home');
-    })->name('mitra.home');
-
-    Route::get('/cari-laundry', function (\Illuminate\Http\Request $request) {
-        $query = \App\Models\MitraLaundry::where('status', 'approved');
-        if ($search = $request->query('search')) {
-            $query->where('store_name', 'like', "%{$search}%");
-        }
-        $laundries = $query->get();
-        return view('user.cari_laundry', compact('laundries'));
-    })->name('mitra.cari-laundry');
-
-    Route::get('/profile', [MitraController::class, 'profile'])->name('mitra.profile');
-
-    Route::get('/alamat-saya', [MitraController::class, 'alamat'])->name('mitra.alamat-saya');
-
-    Route::post(
-        '/profil/update',
-        [UserAddressController::class, 'updateProfile']
-    )->name('mitra.profile.update');
 
     Route::get('/dashboard', [\App\Http\Controllers\Mitra\MitraController::class, 'dashboard'])->name('mitra.dashboard');
 
@@ -427,6 +497,8 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
         [MitraController::class, 'update'])
         ->name('mitra.update.profil');
 
+    Route::post('/review/report', [App\Http\Controllers\Mitra\KomplainController::class, 'store'])->name('mitra.review.report');
+
 });
 
 
@@ -441,39 +513,32 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     )->name('admin.dashboard');
 
     // MANAJEMEN
-   Route::get(
-        '/user',
-        [AdminController::class, 'userManagement']
-    )->name('admin.user');
+    Route::get('/user', [AdminController::class, 'userManagement'])->name('admin.user');
+    Route::post('/user/{id}/block', [AdminController::class, 'blockUser'])->name('admin.user.block');
 
-    Route::get('/mitra-laundry', function () {
-        return view('admin.manajemen.mitra_laundry');
-    })->name('admin.mitra');
+    Route::get('/mitra-laundry', [AdminController::class, 'mitraManagement'])->name('admin.mitra');
+    Route::post('/mitra-laundry/{id}/suspend', [AdminController::class, 'suspendMitra'])->name('admin.mitra.suspend');
 
-    Route::get('/verifikasi-mitra',[AdminController::class, 'index']
-    )->name('admin.verifikasi');
-
-    Route::put('/mitra/{id}/approve',
-        [AdminController::class, 'approve'])
-        ->name('admin.mitra.approve');
-
-    Route::put('/mitra/{id}/reject',
-        [AdminController::class, 'reject'])
-        ->name('admin.mitra.reject');
+    Route::get('/verifikasi-mitra', [VerifikasiMitraController::class, 'index'])
+        ->name('admin.verifikasi');
+    Route::post('/verifikasi-mitra/{mitra}/approve', [VerifikasiMitraController::class, 'approve'])
+        ->name('admin.verifikasi.approve');
+    Route::post('/verifikasi-mitra/{mitra}/reject', [VerifikasiMitraController::class, 'reject'])
+        ->name('admin.verifikasi.reject');
 
 
     // MODERASI
-    Route::get('/review-rating', function () {
-        return view('admin.moderasi.review');
-    })->name('admin.review');
+    Route::get('/review-rating', [ModerasiController::class, 'indexReview'])
+        ->name('admin.review');
+    Route::post('/review-rating/{id}/status', [ModerasiController::class, 'updateStatus'])
+        ->name('admin.review.status');
 
-    Route::get('/komplain', function () {
-        return view('admin.moderasi.komplain');
-    })->name('admin.komplain');
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])
+        ->name('admin.notifikasi');
+    Route::delete('/notifikasi/{id}', [NotifikasiController::class, 'destroy'])
+        ->name('admin.notifikasi.destroy');
 
-    // PENGATURAN
-    Route::get('/notifikasi', function () {
-        return view('admin.pengaturan.notifikasi');
-    })->name('admin.notifikasi');
-
+    Route::get('/komplain', [AdminController::class, 'komplainManagement'])->name('admin.komplain');
+    Route::post('/komplain/{id}/followup', [AdminController::class, 'followUp'])->name('admin.komplain.followup');
+    Route::post('/komplain/{id}/followup-reporter', [AdminController::class, 'followUpReporter'])->name('admin.komplain.followup.reporter');
 });

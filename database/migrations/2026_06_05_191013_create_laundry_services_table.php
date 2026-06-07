@@ -17,7 +17,6 @@ return new class extends Migration
                 ->constrained('mitra_laundries')
                 ->cascadeOnDelete();
             $table->string('service_name');
-            $table->json('operational_days');
             $table->integer('base_price');
             $table->integer('estimated_days');
             $table->integer('minimum_order')

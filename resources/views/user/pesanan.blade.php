@@ -75,9 +75,7 @@
 
         {{-- Pagination --}}
         @if($orders->hasPages())
-        <div class="ps-pagination">
-            {{ $orders->links() }}
-        </div>
+        {{ $orders->appends(request()->query())->links('mitra.layouts.pagination') }}
         @endif
 
         @endif

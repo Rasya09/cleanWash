@@ -5,15 +5,15 @@
 @endsection
 
 @section('content')
-    <div class="page">
+    <div class="page page-perfoma-toko">
 
   <!-- Header -->
-  <div class="header">
-    <div class="header-title">
+  <div class="pt-page-header">
+    <div class="pt-header-title">
       {{-- <h1>Performa Toko</h1> --}}
       <p>Pantau perkembangan toko dan kinerja bisnis Anda</p>
     </div>
-    <div class="header-actions">
+    <div class="pt-header-actions">
       <button class="btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         1 – 31 Mei 2024
@@ -128,12 +128,16 @@
         </button>
       </div>
 
-      <div class="legend">
-        <div class="legend-item"><div class="legend-dot dot-blue"></div> Dilihat</div>
-        <div class="legend-item"><div class="legend-dot dot-purple"></div> Pesanan</div>
-        <div class="legend-item"><div class="legend-dot dot-green"></div> Pesanan Selesai</div>
+      <div class="pt-scroll-x pt-scroll-x--legend">
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot dot-blue"></div> Dilihat</div>
+          <div class="legend-item"><div class="legend-dot dot-purple"></div> Pesanan</div>
+          <div class="legend-item"><div class="legend-dot dot-green"></div> Pesanan Selesai</div>
+        </div>
       </div>
 
+      <div class="pt-scroll-x pt-scroll-x--chart">
+        <div class="pt-scroll-x__inner pt-scroll-x__inner--chart">
       <div class="chart-wrap">
         <svg class="chart" viewBox="0 0 660 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -244,12 +248,15 @@
         <span>26 Mei</span>
         <span>31 Mei</span>
       </div>
+        </div>
+      </div>
     </div>
 
     <!-- Sumber Trafik -->
     <div class="card">
       <div class="card-title">Sumber Trafik Dilihat</div>
 
+      <div class="pt-scroll-x pt-scroll-x--donut">
       <div class="donut-wrap">
         <svg class="donut-svg" width="130" height="130" viewBox="0 0 130 130">
           <!-- Donut slices: total 360 -->
@@ -277,6 +284,7 @@
           <div class="donut-row"><div class="donut-dot" style="background:#9ca3af"></div> Lainnya <span class="donut-pct">6,0%</span></div>
         </div>
       </div>
+      </div>
 
       <div class="info-box">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -292,6 +300,7 @@
     <!-- Performa Layanan -->
     <div class="card">
       <div class="card-title">Performa Layanan</div>
+      <div class="pt-scroll-x pt-scroll-x--table">
       <table>
         <thead>
           <tr>
@@ -340,6 +349,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
       <div class="see-all"><a href="#">Lihat Semua Layanan ›</a></div>
     </div>
 
@@ -347,10 +357,13 @@
     <div class="card">
       <div class="card-title">Waktu Paling Banyak Dilihat</div>
 
-      <div class="heatmap-wrap" id="heatmap"></div>
-
-      <div class="heatmap-x">
-        <span>00:00</span><span>04:00</span><span>08:00</span><span>12:00</span><span>16:00</span><span>20:00</span>
+      <div class="pt-scroll-x pt-scroll-x--heatmap">
+        <div class="pt-scroll-x__inner pt-scroll-x__inner--heatmap">
+          <div class="heatmap-wrap" id="heatmap"></div>
+          <div class="heatmap-x">
+            <span>00:00</span><span>04:00</span><span>08:00</span><span>12:00</span><span>16:00</span><span>20:00</span>
+          </div>
+        </div>
       </div>
 
       <div class="heatmap-legend">

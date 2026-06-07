@@ -214,7 +214,7 @@ input[type=file]{
                                accept="image/*">
                         <div class="preview" id="storePreview">
                             @if($mitra->store_photos)
-                                @foreach(json_decode($mitra->store_photos, true) as $photo)
+                                @foreach($mitra->store_photos as $photo)
                                     <img src="{{ asset('storage/' . $photo) }}"
                                         alt="Foto Toko">
                                 @endforeach

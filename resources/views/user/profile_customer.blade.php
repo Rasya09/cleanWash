@@ -17,7 +17,7 @@
 
         // Cek apakah user sudah punya toko laundry
         // Sesuaikan dengan relasi/field di model User Anda
-        $hasToko = Auth::user()->toko !== null; // atau sesuai relasi Anda
+        $hasToko = Auth::user()->mitra_laundry !== null; // atau sesuai relasi Anda
     @endphp
     <main class="main-content">
         <div class="content-header">

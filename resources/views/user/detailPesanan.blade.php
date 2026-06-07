@@ -1,7 +1,7 @@
 @extends('user.layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/css/detailpesanan.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/detailpesanan.css') }}?v={{ time() }}">
 @endsection
 
 @section('content')
@@ -149,9 +149,21 @@
                     <div class="laundry-info__body">
                         <span class="laundry-info__name">{{ $pesanan->mitraLaundry->store_name }}</span>
                         <div class="laundry-info__rating">
-                            <span class="laundry-info__stars">★★★★★</span>
-                            <span class="laundry-info__score">5.0</span>
-                            <span class="laundry-info__review">(128 ulasan)</span>
+                            @php
+                                $avgRating = $pesanan->mitraLaundry->average_rating ?? 0;
+                                $countReview = $pesanan->mitraLaundry->reviews->count() ?? 0;
+                            @endphp
+                            <span class="laundry-info__stars">
+                                @for($i = 1; $i <= 5; $i++)
+                                    @if($i <= round($avgRating))
+                                        ★
+                                    @else
+                                        <span style="color: #ccc;">★</span>
+                                    @endif
+                                @endfor
+                            </span>
+                            <span class="laundry-info__score">{{ number_format($avgRating, 1) }}</span>
+                            <span class="laundry-info__review">({{ $countReview }} ulasan)</span>
                         </div>
                         <div class="laundry-info__meta">
                             <span class="laundry-info__meta-item">
@@ -172,12 +184,12 @@
                             @endif
                         </div>
                         <div class="laundry-info__actions">
-                            <button class="btn-outline-primary">
+                            <a href="{{ route('user.detail-laundry', ['id' => $pesanan->mitraLaundry->id]) }}" class="btn-outline-primary" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
                                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                                 </svg>
                                 Lihat Detail Laundry
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -232,7 +244,7 @@
                             </svg>
                             Metode Pembayaran
                         </span>
-                        <span class="layanan-row__val">Midtrans PaymentGateway</span>
+                        <span class="layanan-row__val">Pembayaran Online</span>
                     </div>
 
                     {{-- Metode Pengantaran --}}
@@ -289,19 +301,6 @@
                         <p class="pickup-box__val pickup-box__val--primary">{{ $pesanan->alamat_pickup }}</p>
                     </div>
 
-                    {{-- Estimasi Tiba --}}
-                    <div class="pickup-box">
-                        <div class="pickup-box__label">
-                            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                            </svg>
-                            Estimasi Tiba
-                        </div>
-                        <p class="pickup-box__val pickup-box__val--bold">
-                            {{ $pesanan->tanggal_pickup->translatedFormat('d M Y') }} – 14.00 WIB
-                        </p>
-                    </div>
-
                     {{-- Jadwal Pickup --}}
                     <div class="pickup-box">
                         <div class="pickup-box__label">
@@ -313,6 +312,22 @@
                         <p class="pickup-box__val pickup-box__val--bold">
                             {{ $pesanan->tanggal_pickup->translatedFormat('d M') }}
                             – {{ \Carbon\Carbon::parse($pesanan->waktu_pickup)->format('H:i') }}
+                        </p>
+                    </div>
+
+                    {{-- Estimasi Tiba --}}
+                    <div class="pickup-box">
+                        <div class="pickup-box__label">
+                            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            Estimasi Tiba
+                        </div>
+                        <p class="pickup-box__val pickup-box__val--bold">
+                            @php
+                                $estimasiTiba = \Carbon\Carbon::parse($pesanan->tanggal_pickup->format('Y-m-d') . ' ' . $pesanan->waktu_pickup)->addHours(2);
+                            @endphp
+                            {{ $estimasiTiba->translatedFormat('d M Y') }} – {{ $estimasiTiba->format('H.i') }} WIB
                         </p>
                     </div>
                 </div>
@@ -450,7 +465,7 @@
                         $namaLayananLower = strtolower($item->nama_layanan);
                         $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
                         $unit = $isKiloan ? 'Kg' : (str_contains($namaLayananLower, 'sepatu') ? 'Pasang' : (str_contains($namaLayananLower, 'karpet') ? 'Meter' : 'Pcs'));
-                        $qty = $isKiloan ? $item->berat_aktual : $item->qty;
+                        $qty = floatval($isKiloan ? $item->berat_aktual : $item->qty);
                         $price = $isKiloan ? $item->harga_per_kg : $item->harga_satuan;
                         if (is_null($price) || $price == 0) {
                             $laundryService = \App\Models\LaundryService::find($item->jenis_layanan);
@@ -511,7 +526,7 @@
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
                         </svg>
-                        Bayar Sekarang via Midtrans
+                        Bayar Sekarang (Pembayaran Online)
                     </button>
                     <a href="{{ route('user.pesanan.cek_pembayaran', $pesanan->id) }}" class="btn-bayar" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--primary-color); background-color: transparent; color: var(--primary-color); cursor: pointer; text-decoration: none;">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -542,16 +557,17 @@
                 </div>
                 <div class="aksi-list">
 
-                    <button class="btn-aksi">
+                    <a href="{{ route('user.chat', ['contact_id' => $pesanan->mitraLaundry->user_id, 'order_code' => $pesanan->order_code]) }}" class="btn-aksi" style="text-decoration: none;">
                         <div class="btn-aksi__icon">
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.63A2 2 0 012.18 0h3a2 2 0 012 1.72c.13 1 .37 1.97.72 2.9a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.18-1.18a2 2 0 012.11-.45c.93.35 1.9.59 2.9.72A2 2 0 0122 16.92z"/>
                             </svg>
                         </div>
                         Hubungi Laundry
-                    </button>
+                    </a>
 
-                    <button class="btn-aksi">
+                    @if($pesanan->status_bayar === 'lunas')
+                    <a href="{{ route('user.pesanan.invoice', $pesanan->id) }}" target="_blank" class="btn-aksi" style="text-decoration: none;">
                         <div class="btn-aksi__icon">
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
@@ -559,7 +575,8 @@
                             </svg>
                         </div>
                         Lihat Invoice
-                    </button>
+                    </a>
+                    @endif
 
                     <a href="{{ route('user.buat-pesanan') }}" class="btn-aksi">
                         <div class="btn-aksi__icon">
@@ -724,6 +741,17 @@
                 console.error(error);
             });
         };
+    </script>
+    @endif
+
+    @if(request()->query('show_review') == '1' && $pesanan->isSelesai() && !$pesanan->review)
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var reviewModal = document.getElementById('reviewModal');
+            if (reviewModal) {
+                reviewModal.classList.add('active');
+            }
+        });
     </script>
     @endif
 @endpush

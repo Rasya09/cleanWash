@@ -36,29 +36,18 @@
     </div>
 
     <nav class="sidebar-nav" id="sidebar-nav">
-        @if(Auth::user()->role == 'user')
-            <a href="{{ route('user.profile') }}"
-                class="nav-item {{ request()->routeIs('user.profile') ? 'active' : '' }}">
-                Profil Saya
-            </a>
-        @else
-            <a href="{{ route('mitra.profile') }}"
-                class="nav-item {{ request()->routeIs('mitra.profile') ? 'active' : '' }}">
-                    Profil Saya
-            </a>
-        @endif
-        @if(Auth::user()->role == 'user')
-            <a href="{{ route('user.alamat-saya') }}"
-                class="nav-item {{ request()->routeIs('user.alamat-saya') ? 'active' : '' }}">
-                    Alamat Saya
-            </a>
-        @else
-            <a href="{{ route('mitra.alamat-saya') }}"
-                class="nav-item {{ request()->routeIs('mitra.alamat-saya') ? 'active' : '' }}">
-                    Alamat Saya
-            </a>
-        @endif
-        
+        <a href="{{ route('user.profile') }}"
+           class="nav-item {{ request()->routeIs('user.profile') ? 'active' : '' }}">
+            Profil Saya
+        </a>
+        <a href="{{ route('user.pesanan') }}"
+           class="nav-item {{ request()->routeIs('user.pesanan') ? 'active' : '' }}">
+            Riwayat Pesanan
+        </a>
+        <a href="{{ route('user.alamat-saya') }}"
+           class="nav-item {{ request()->routeIs('user.alamat-saya') ? 'active' : '' }}">
+            Alamat Saya
+        </a>
     </nav>
 </aside>
 @endauth

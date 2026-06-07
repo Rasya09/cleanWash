@@ -106,6 +106,7 @@
     <div class="account-section-header">
       <h3>Daftar Rekening Bank</h3>
     </div>
+    <div class="account-table-wrap">
     <table class="account-table">
       <thead>
         <tr>
@@ -208,6 +209,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
 
   <!-- Terms Section -->

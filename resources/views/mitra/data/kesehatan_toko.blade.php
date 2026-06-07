@@ -337,14 +337,5 @@
 
     </div>{{-- end bottom grid --}}
 
-    {{-- Footer Info Bar --}}
-    <div class="kt-footer-bar">
-        <div class="kt-footer-left">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span>Skor kesehatan toko diperbarui setiap hari pukul 00.00 WIB berdasarkan performa toko Anda.</span>
-        </div>
-        <a href="#" class="kt-footer-link">Pelajari Cara Kerja Skor &rsaquo;</a>
-    </div>
-
 </div>{{-- end kt-page --}}
 @endsection

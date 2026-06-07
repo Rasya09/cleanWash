@@ -126,16 +126,6 @@
 
         <!-- Input Area -->
         <div class="chat-input-area">
-          <div class="quick-tabs">
-            <button class="quick-tab active">⚡ Balasan Cepat</button>
-            <button class="quick-tab">📝 Catatan</button>
-          </div>
-          <div class="quick-replies">
-            <button class="quick-reply">Pesanan sedang diproses</button>
-            <button class="quick-reply">Estimasi selesai hari ini</button>
-            <button class="quick-reply">Kurir akan pickup segera</button>
-            <button class="quick-reply">Terima kasih</button>
-          </div>
           <div class="emoji-picker" id="emojiPicker">
             <button class="emoji-btn" onclick="insertEmoji('😊')">😊</button>
             <button class="emoji-btn" onclick="insertEmoji('😂')">😂</button>
@@ -202,7 +192,7 @@
   const area = document.getElementById('messagesArea');
   const msgInput = document.getElementById('msgInput');
   const sendBtn = document.getElementById('chatSendBtn');
-  
+
   const activeContactNameEl = document.getElementById('activeContactName');
   const activeAvatarEl = document.getElementById('activeAvatar');
   const rightPanelNameEl = document.getElementById('rightPanelName');
@@ -222,10 +212,10 @@
   function renderMessage(msg) {
     const isSent = msg.sender_id == currentUserId;
     const time = formatTime(msg.created_at);
-    
+
     const div = document.createElement('div');
     div.className = 'msg-row ' + (isSent ? 'sent' : '');
-    
+
     let innerHTML = '';
     if (isSent) {
       innerHTML = `
@@ -244,7 +234,7 @@
         </div>
       `;
     }
-    
+
     div.innerHTML = innerHTML;
     area.appendChild(div);
     area.scrollTop = area.scrollHeight;
@@ -253,7 +243,7 @@
   // Select Contact
   async function selectContact(contactId, contactName, contactEmail, contactPhone) {
     activeContactId = contactId;
-    
+
     // Update DOM Immediately for basics
     activeContactNameEl.innerText = contactName;
     const initial = contactName.charAt(0).toUpperCase();
@@ -261,16 +251,16 @@
     rightPanelNameEl.innerText = contactName;
     rightPanelEmailEl.innerText = contactEmail;
     rightPanelPhoneEl.innerText = contactPhone;
-    
+
     // Reset stats & history
     document.querySelector('.cstat:nth-child(1) .csval').innerText = '...';
     document.querySelector('.cstat:nth-child(2) .csval').innerText = '...';
     document.getElementById('orderHistoryContainer').innerHTML = '<div style="padding: 14px;">Memuat riwayat...</div>';
-    
+
     // Enable inputs
     msgInput.disabled = false;
     sendBtn.disabled = false;
-    
+
     // Update active class on sidebar
     document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
     const contactEl = document.getElementById('contact-' + contactId);
@@ -287,11 +277,11 @@
       const res = await fetch(`/chat/user-details/${contactId}`);
       if(res.ok) {
         const data = await res.json();
-        
+
         // Update Stats
         document.querySelector('.cstat:nth-child(1) .csval').innerText = data.stats.total_pesanan;
         document.querySelector('.cstat:nth-child(2) .csval').innerText = 'Rp ' + data.stats.total_belanja.toLocaleString('id-ID');
-        
+
         // Update Email and Phone in case it's more accurate from DB
         rightPanelEmailEl.innerText = data.user.email;
         rightPanelPhoneEl.innerText = data.user.phone;
@@ -308,7 +298,7 @@
                 let badgeColor = '#f59e0b'; // pending
                 if(order.status === 'Selesai') badgeColor = '#10b981';
                 if(order.status === 'Batal') badgeColor = '#ef4444';
-                
+
                 html += `
                 <div style="padding: 12px 14px; border-bottom: 1px solid #f3f4f6; font-size: 13px;">
                   <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
@@ -344,7 +334,7 @@
         method: 'DELETE',
         headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' }
       });
-      
+
       const contactEl = document.getElementById('contact-' + contactId);
       if(contactEl) contactEl.remove();
 
@@ -365,11 +355,11 @@
   // Fetch past messages
   async function loadMessages() {
     if(!activeContactId) return;
-    
+
     try {
       const res = await fetch(`/chat/messages/${activeContactId}`);
       const data = await res.json();
-      
+
       area.innerHTML = '<div class="day-label">Hari ini</div>';
       data.messages.forEach(msg => renderMessage(msg));
     } catch (e) {
@@ -383,7 +373,7 @@
 
     const text = msgInput.value.trim();
     if (!text) return;
-    
+
     const tempMsg = {
       sender_id: currentUserId,
       message: text,
@@ -442,7 +432,7 @@
                       updateSidebarPreview(msg.sender_id, msg.message, msg.created_at);
                   });
           }
-      }, 1000); 
+      }, 1000);
   });
 
   function insertQuickReply(btn) {
@@ -457,7 +447,7 @@
   function insertEmoji(emoji) {
     msgInput.value += emoji;
     msgInput.focus();
-    toggleEmojiPicker(); 
+    toggleEmojiPicker();
   }
 
   // Mobile sidebar logic

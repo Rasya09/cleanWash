@@ -66,7 +66,7 @@
     padding: 24px 28px;
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: stretch;
     flex-wrap: wrap;
     gap: 20px;
     background: linear-gradient(120deg, #1a56e8 0%, #2563eb 55%, #3b82f6 100%);
@@ -107,6 +107,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    justify-content: space-between;
     gap: 8px;
     flex-shrink: 0;
 }
@@ -168,7 +169,7 @@
     grid-template-columns: 1fr 300px;
     gap: 20px;
     padding: 0 28px;
-    align-items: flex-start;
+    align-items: stretch;
 }
 .mdp-left, .mdp-right {
     display: flex;
@@ -294,7 +295,7 @@
 /* ── Alasan gagal/batal ── */
 .mdp-alasan {
     display: flex;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 8px;
     font-size: 13px;
     padding: 10px 14px;
@@ -399,7 +400,7 @@
 
 .mdp-catatan {
     display: flex;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 7px;
     font-size: 13px;
     color: var(--text-2);
@@ -416,7 +417,7 @@
 .mdp-customer-header {
     display: flex;
     gap: 12px;
-    align-items: flex-start;
+    align-items: stretch;
     margin-bottom: 14px;
 }
 .mdp-avatar {
@@ -511,7 +512,7 @@
 .mdp-info-row {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: stretch;
     padding: 9px 0;
     border-bottom: 1px solid var(--border);
     font-size: 13px;
@@ -661,7 +662,7 @@
     .mdp-hero { margin: 14px 16px 20px; padding: 20px; }
     .mdp-hero-total { font-size: 26px; }
     .mdp-body { padding: 0 16px; }
-    .mdp-hero-right { align-items: flex-start; }
+    .mdp-hero-right { align-items: flex-end; justify-content: flex-start; }
 }
 @media (max-width: 480px) {
     .mdp-hero { flex-direction: column; align-items: flex-start; }

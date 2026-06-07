@@ -8,6 +8,13 @@
     <div class="app">
     <!-- BAGIAN KONTEN UTAMA (Kanan) -->
     <main class="main">
+      <!-- Header Halaman -->
+      <div class="page-head">
+        <div>
+          <h1>Manajemen User</h1>
+          <p>Kelola data customer terdaftar di platform.</p>
+        </div>
+      </div>
       <!-- Area Isi Halaman -->
       <section class="content">
         <!-- Barisan Kartu KPI (Key Performance Indicator) -->
@@ -49,6 +56,7 @@
             </div>
           </div>
         </div>
+
         <!-- Bagian Tabel Data Customer -->
         <div class="card table-card">
           <!-- Header Tabel (Judul, Tab, & Filter) -->
@@ -87,53 +95,36 @@
             <tbody>
               @forelse($customers as $customer)
               <tr>
+                  <td><input type="checkbox"></td>
                   <td>
-                      <input type="checkbox">
-                  </td>
-                  <td>
-                      <div class="customer">
-                          <img
-                              src="https://ui-avatars.com/api/?name={{ urlencode($customer->name) }}"
-                              alt=""
-                          >
-                          <span>
-                              {{ $customer->name }}
-                          </span>
-
+                      <div class="customer" onclick="openCustomerDetail('{{ $customer->id }}')" style="cursor:pointer">
+                          <img src="https://ui-avatars.com/api/?name={{ urlencode($customer->name) }}&background=random" alt="">
+                          <span>{{ $customer->name }}</span>
                       </div>
                   </td>
+                  <td>{{ $customer->phone ?? '-' }}</td>
+                  <td>{{ $customer->email }}</td>
+                  <td>0</td>
                   <td>
-                      {{ $customer->phone ?? '-' }}
-                  </td>
-                  <td>
-                      {{ $customer->email }}
-                  </td>
-                  <td>
-                      0
-                  </td>
-                  <td>
-                      {{ $customer->created_at->format('d M Y') }}
-                      <br>
-                      <span>
-                          {{ $customer->created_at->format('H:i') }} WIB
-                      </span>
+                      {{ $customer->created_at->translatedFormat('d M Y') }}<br>
+                      <span style="color:#94a3b8; font-size:11px">{{ $customer->created_at->format('H:i') }} WIB</span>
                   </td>
                   <td>
                       <span class="status {{ $customer->status }}">
-                          {{ $customer->status == 'active'
-                              ? 'Aktif'
-                              : 'Diblokir' }}
+                          {{ $customer->status == 'active' ? 'Aktif' : 'Diblokir' }}
                       </span>
                   </td>
                   <td>
-                      <button>
-                          <i class="fa-solid fa-ellipsis-vertical"></i>
-                      </button>
+                      <div class="row-actions">
+                        <button type="button" onclick="openCustomerDetail('{{ $customer->id }}')" title="Lihat Detail">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                      </div>
                   </td>
               </tr>
               @empty
               <tr>
-                  <td colspan="8" style="text-align:center">
+                  <td colspan="8" style="text-align:center; padding: 40px; color: #94a3b8;">
                       Belum ada customer terdaftar
                   </td>
               </tr>
@@ -145,36 +136,287 @@
           <div class="table-footer">
             <div class="footer-left">
                 Menampilkan
-                {{ $customers->firstItem() }}
+                {{ $customers->firstItem() ?? 0 }}
                 -
-                {{ $customers->lastItem() }}
+                {{ $customers->lastItem() ?? 0 }}
                 dari
                 {{ $customers->total() }}
                 data
             </div>
             <div class="footer-right">
-              <select>
-                <option>10 / halaman</option>
-              </select>
-              <div class="pager">
-                <button class="nav"><i class="fa-solid fa-chevron-left"></i></button>
-                <button class="page active">1</button>
-                <button class="page">2</button>
-                <button class="page">3</button>
-                <button class="page">4</button>
-                <button class="page">5</button>
-                <span>...</span>
-                <button class="page">1246</button>
-                <button class="nav"><i class="fa-solid fa-chevron-right"></i></button>
-              </div>
+              {{ $customers->links() }}
             </div>
           </div>
         </div>
       </section>
     </main>
   </div>
+
+  <!-- ===================== MODAL DETAIL CUSTOMER ===================== -->
+  <div class="modal-backdrop" id="customerModal">
+    <div class="modal-panel">
+
+      <!-- Header Modal -->
+      <div class="modal-header">
+        <h3>Detail Customer</h3>
+        <button class="modal-close" id="modalClose"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <!-- Profil Customer -->
+      <div class="modal-profile">
+        <img class="modal-avatar" id="modalAvatar" src="" alt="" />
+        <div class="modal-profile-info">
+          <div class="modal-verified-badge" id="modalBadge">
+            <i class="fa-solid fa-circle-check"></i> Terverifikasi
+          </div>
+          <p class="modal-name" id="modalName">–</p>
+          <p class="modal-id"  id="modalId">#CUST-0001</p>
+          <div class="modal-meta">
+            <span><i class="fa-regular fa-star"></i> <span id="modalRating">4.8 (32 ulasan)</span></span>
+            <span><i class="fa-regular fa-calendar"></i> Bergabung: <span id="modalJoin">–</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Navigasi -->
+      <div class="modal-tabs">
+        <button class="modal-tab active" data-tab="info">Informasi</button>
+        <button class="modal-tab" data-tab="pesanan">Pesanan</button>
+        <button class="modal-tab" data-tab="performa">Performa</button>
+      </div>
+
+      <!-- Konten Tab: Informasi -->
+      <div class="modal-tab-content" id="tab-info">
+        <div class="modal-section">
+          <p class="modal-section-title">Informasi Akun</p>
+          <div class="modal-info-row">
+            <span class="modal-info-label">No. HP</span>
+            <span class="modal-info-value" id="modalPhone">–</span>
+          </div>
+          <div class="modal-info-row">
+            <span class="modal-info-label">Email</span>
+            <span class="modal-info-value" id="modalEmail">–</span>
+          </div>
+          <div class="modal-info-row">
+            <span class="modal-info-label">Status Akun</span>
+            <span class="modal-info-value" id="modalStatus">–</span>
+          </div>
+          <div class="modal-info-row">
+            <span class="modal-info-label">Total Pesanan</span>
+            <span class="modal-info-value" id="modalOrders">–</span>
+          </div>
+        </div>
+        <div class="modal-section">
+          <p class="modal-section-title">Preferensi</p>
+          <div class="modal-info-row">
+            <span class="modal-info-label">Metode Bayar</span>
+            <span class="modal-info-value">
+              <span class="modal-chip">QRIS</span>
+              <span class="modal-chip">Transfer</span>
+            </span>
+          </div>
+          <div class="modal-info-row">
+            <span class="modal-info-label">Notifikasi</span>
+            <span class="modal-info-value"><span class="modal-chip green">Aktif</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Konten Tab: Pesanan (tersembunyi) -->
+      <div class="modal-tab-content" id="tab-pesanan" style="display:none">
+        <div class="modal-section">
+          <p class="modal-section-title">Riwayat Pesanan</p>
+          <div class="modal-perf-row">
+            <span class="modal-perf-left"><i class="fa-solid fa-box"></i> Total Pesanan</span>
+            <span class="modal-perf-value blue" id="modalOrdersPerf">–</span>
+          </div>
+          <div class="modal-perf-row">
+            <span class="modal-perf-left"><i class="fa-solid fa-circle-check"></i> Pesanan Selesai</span>
+            <span class="modal-perf-value green">–</span>
+          </div>
+          <div class="modal-perf-row">
+            <span class="modal-perf-left"><i class="fa-solid fa-circle-xmark"></i> Dibatalkan</span>
+            <span class="modal-perf-value" style="color:#ef4444">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Konten Tab: Performa (tersembunyi) -->
+      <div class="modal-tab-content" id="tab-performa" style="display:none">
+        <div class="modal-section">
+          <div class="modal-perf-header">
+            <p class="modal-section-title" style="margin:0">Ringkasan Performa</p>
+            <button class="modal-period-btn">7 Hari Terakhir <i class="fa-solid fa-chevron-down"></i></button>
+          </div>
+          <div class="modal-perf-row">
+            <span class="modal-perf-left"><i class="fa-solid fa-chart-line"></i> Tingkat Penyelesaian</span>
+            <span class="modal-perf-value green">98%</span>
+          </div>
+          <div class="modal-perf-row">
+            <span class="modal-perf-left"><i class="fa-regular fa-comment-dots"></i> Waktu Respon</span>
+            <span class="modal-perf-value blue">18 menit</span>
+          </div>
+          <div class="modal-perf-row">
+            <span class="modal-perf-left"><i class="fa-solid fa-star"></i> Rating Rata-rata</span>
+            <span class="modal-perf-value" id="modalPerfRating">–</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Tombol Aksi -->
+      <div class="modal-footer">
+        <button class="modal-btn-primary">
+          <i class="fa-regular fa-eye"></i> Lihat Pesanan Customer
+        </button>
+        <button class="modal-btn-danger" id="modalBlockBtn">
+          <i class="fa-solid fa-ban"></i> <span id="modalBlockLabel">Blokir Customer</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+  <!-- ===================== END MODAL ===================== -->
+
 @endsection
 
 @push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const customers = @json($customers->items());
+
+  // ── 1. TABLE HORIZONTAL SCROLL WRAPPER ───────────────────
+  const table = document.querySelector('.data-table');
+  if (table && !table.parentElement.classList.contains('table-scroll-wrap')) {
+    const wrap = document.createElement('div');
+    wrap.className = 'table-scroll-wrap';
+    table.parentNode.insertBefore(wrap, table);
+    wrap.appendChild(table);
+  }
+
+  // ── 2. MODAL DETAIL CUSTOMER ──────────────────────────────
+  const modal     = document.getElementById('customerModal');
+  const modalClose = document.getElementById('modalClose');
+
+  window.openCustomerDetail = function(id) {
+    const data = customers.find(c => c.id == id);
+    if (!data) return;
+
+    // Isi profil
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=random`;
+    document.getElementById('modalAvatar').src   = avatarUrl;
+    document.getElementById('modalName').textContent = data.name;
+    document.getElementById('modalId').textContent   = '#CUST-' + String(data.id).padStart(4, '0');
     
+    // Format tanggal join
+    const joinDate = new Date(data.created_at);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('modalJoin').textContent = joinDate.toLocaleDateString('id-ID', options);
+    
+    document.getElementById('modalRating').textContent = '4.8 (32 ulasan)'; // Placeholder
+    document.getElementById('modalPerfRating').textContent = '4.8';
+
+    // Badge status
+    const badge = document.getElementById('modalBadge');
+    if (data.status === 'blocked') {
+      badge.className = 'modal-status-blocked';
+      badge.innerHTML = '<i class="fa-solid fa-ban"></i> Diblokir';
+    } else {
+      badge.className = 'modal-verified-badge';
+      badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Terverifikasi';
+    }
+
+    // Info akun
+    document.getElementById('modalPhone').textContent  = data.phone || '-';
+    document.getElementById('modalEmail').textContent  = data.email;
+    document.getElementById('modalOrders').textContent = '0 pesanan';
+    document.getElementById('modalOrdersPerf').textContent = '0';
+
+    const statusEl = document.getElementById('modalStatus');
+    if (data.status === 'blocked') {
+      statusEl.innerHTML = '<span class="status blocked">Diblokir</span>';
+      document.getElementById('modalBlockLabel').textContent = 'Aktifkan Customer';
+    } else {
+      statusEl.innerHTML = '<span class="status active">Aktif</span>';
+      document.getElementById('modalBlockLabel').textContent = 'Blokir Customer';
+    }
+
+    // Reset ke tab pertama
+    switchTab('info');
+
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeModal = function() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Tab switching
+  function switchTab(name) {
+    document.querySelectorAll('.modal-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    document.querySelectorAll('.modal-tab-content').forEach(c => c.style.display = c.id === 'tab-' + name ? '' : 'none');
+  }
+
+  document.querySelectorAll('.modal-tab').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  // Tutup modal
+  modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // ── 4. BLOCK/UNBLOCK CUSTOMER ───────────────────────────
+  const blockBtn = document.getElementById('modalBlockBtn');
+  let selectedUserId = null;
+
+  // Update openCustomerDetail to store ID
+  const originalOpenDetail = window.openCustomerDetail;
+  window.openCustomerDetail = function(id) {
+    selectedUserId = id;
+    originalOpenDetail(id);
+  };
+
+  blockBtn.addEventListener('click', function() {
+    if (!selectedUserId) return;
+    
+    const label = document.getElementById('modalBlockLabel').textContent;
+    const isBlocking = label.includes('Blokir');
+    const action = isBlocking ? 'memblokir' : 'mengaktifkan kembali';
+
+    if (confirm(`Apakah Anda yakin ingin ${action} customer ini?`)) {
+        fetch(`/admin/user/${selectedUserId}/block`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                location.reload();
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Terjadi kesalahan saat memproses permintaan.');
+        });
+    }
+  });
+
+  // ── 5. AUTO-OPEN DETAIL DARI URL ─────────────────────────
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetId = urlParams.get('id');
+  if (targetId) {
+    // Beri sedikit delay agar data 'customers' sudah siap (jika load async)
+    // Karena ini blade, data sudah ada di variabel 'customers' di atas
+    setTimeout(() => {
+        window.openCustomerDetail(targetId);
+    }, 500);
+  }
+});
+</script>
 @endpush

@@ -243,6 +243,7 @@
                         </label>
                         <input type="text"
                                name="store_name"
+                               value="{{ $mitra->store_name ?? '' }}"
                                placeholder="Contoh: Laundry Bersih Jaya">
                     </div>
                     <!-- OWNER -->
@@ -252,6 +253,7 @@
                         </label>
                         <input type="text"
                                name="owner_name"
+                               value="{{ $mitra->owner_name ?? '' }}"
                                placeholder="Nama pemilik">
                     </div>
                     <!-- PHONE -->
@@ -262,6 +264,7 @@
                         
                         <input type="tel"
                                 name="phone"
+                               value="{{ $mitra->phone ?? '' }}"
                                 id="phone"
                                 placeholder="81234567891"
                                 required>
@@ -273,6 +276,7 @@
                         </label>
                         <input type="email"
                                name="email"
+                               value="{{ $mitra->email ?? '' }}"
                                placeholder="email@toko.com">
                     </div>
                     <!-- DESCRIPTION -->
@@ -281,17 +285,18 @@
                             Deskripsi Toko
                         </label>
                         <textarea name="description"
-                                  placeholder="Ceritakan tentang usaha laundry Anda..."></textarea>
+                                  placeholder="Ceritakan tentang usaha laundry Anda...">{{ $mitra->description ?? '' }}</textarea>
                     </div>
                 </div>
             </div>
             <!-- FOOTER -->
-            <div class="card-footer">
-                <div class="step-info">
+            <div class="card-footer" style="display:flex; justify-content:space-between; align-items:center;">
+                <a href="{{ url('/') }}" class="btn-back" style="text-decoration:none; color:#183153; font-weight:600; padding:14px 24px; border-radius:14px; border:1px solid #dbe4ff; background:#fff; font-size:15px;">Kembali ke Beranda</a>
+                <div class="step-info" style="color:#8b97aa; font-size:14px;">
                     Langkah 1 dari 4
                 </div>
                 <button type="submit"
-                        class="btn-next">
+                        class="btn-next" style="background:#183153; color:#fff; padding:14px 30px; border-radius:14px; border:none; font-weight:600; font-size:15px; cursor:pointer;">
                     Lanjut
                 </button>
             </div>

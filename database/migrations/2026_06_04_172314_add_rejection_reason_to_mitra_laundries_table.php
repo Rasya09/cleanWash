@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('mitra_laundries', function ($table) {
-            $table->text('rejection_reason')
-                ->nullable()
-                ->after('status');
-        });
+        if (!Schema::hasColumn('mitra_laundries', 'rejection_reason')) {
+            Schema::table('mitra_laundries', function ($table) {
+                $table->text('rejection_reason')
+                    ->nullable()
+                    ->after('status');
+            });
+        }
     }
 
     /**
