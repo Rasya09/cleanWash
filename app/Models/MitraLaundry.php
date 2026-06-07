@@ -55,6 +55,11 @@ class MitraLaundry extends Model
         return $this->hasMany(LaundryService::class, 'mitra_laundry_id');
     }
 
+    public function layanans()
+    {
+        return $this->hasMany(Layanan::class, 'mitra_laundry_id');
+    }
+
     public function activeServices()
     {
         return $this->hasMany(LaundryService::class, 'mitra_laundry_id')

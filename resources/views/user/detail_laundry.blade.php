@@ -12,7 +12,18 @@
         <section class="dl-hero">
             {{-- Kiri: Info --}}
             <div class="dl-hero-left">
-                <h1>{{ $laundry->store_name }}</h1>
+                <div style="display: flex; align-items: center; justify-content: flex-start; gap: 10px;">
+                    <h1>{{ $laundry->store_name }}</h1>
+                    <div class="dl-options-menu" style="position: relative;">
+                        <button id="optionsBtn" style="background: none; border: none; cursor: pointer; font-size: 24px; color: #6b7280; padding: 5px;">⋮</button>
+                        <div id="optionsDropdown" style="display: none; position: absolute; right: 0; top: 100%; background: white; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); z-index: 10; min-width: 150px;">
+                            <button onclick="openReportStoreModal()" style="width: 100%; text-align: left; padding: 10px 15px; background: none; border: none; cursor: pointer; color: #dc2626; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>
+                                Laporkan Toko
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="dl-rating">
                     ⭐⭐⭐⭐⭐ {{ number_format($reviews->avg('rating') ?? 0, 1) }}
@@ -209,9 +220,26 @@
 
 @push('scripts')
 <script>
+    // Toggle options dropdown
+    const optionsBtn = document.getElementById('optionsBtn');
+    const optionsDropdown = document.getElementById('optionsDropdown');
+
+    if (optionsBtn && optionsDropdown) {
+        optionsBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const isVisible = optionsDropdown.style.display === 'block';
+            optionsDropdown.style.display = isVisible ? 'none' : 'block';
+        });
+
+        document.addEventListener('click', function() {
+            optionsDropdown.style.display = 'none';
+        });
+    }
+
     function openReportStoreModal() {
         document.getElementById('reportStoreModal').style.display = 'flex';
         document.body.style.overflow = 'hidden';
+        if (optionsDropdown) optionsDropdown.style.display = 'none';
     }
 
     function closeReportStoreModal() {

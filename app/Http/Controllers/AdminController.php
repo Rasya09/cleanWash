@@ -72,10 +72,15 @@ class AdminController extends Controller
         );
     }
 
-    public function userManagement()
+    public function userManagement(Request $request)
     {
-        $customers = User::where('role', 'user')
-            ->latest()
+        $query = User::where('role', 'user');
+
+        if ($request->has('id')) {
+            $query->where('id', $request->id);
+        }
+
+        $customers = $query->latest()
             ->paginate(10);
 
         $totalCustomer = User::where('role', 'user')
@@ -103,6 +108,88 @@ class AdminController extends Controller
                 'customerBlocked'
             )
         );
+    }
+
+    public function mitraManagement(Request $request)
+    {
+        $query = MitraLaundry::with(['user', 'services', 'reviews']);
+
+        // Filtering
+        if ($request->has('status') && $request->status != 'all') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('store_name', 'like', "%{$search}%")
+                  ->orWhere('owner_name', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->has('id')) {
+            $query->where('id', $request->id);
+        }
+
+        $mitras = $query->latest()->paginate(10);
+
+        // Stats
+        $totalMitra = MitraLaundry::count();
+        $verifiedMitra = MitraLaundry::where('status', 'approved')->count();
+        $pendingMitra = MitraLaundry::where('status', 'pending')->count();
+        $rejectedMitra = MitraLaundry::where('status', 'rejected')->count();
+        $suspendedMitra = MitraLaundry::where('status', 'suspended')->count();
+
+        return view('admin.manajemen.mitra_laundry', compact(
+            'mitras',
+            'totalMitra',
+            'verifiedMitra',
+            'pendingMitra',
+            'rejectedMitra',
+            'suspendedMitra'
+        ));
+    }
+
+    public function suspendMitra(Request $request, $id)
+    {
+        $mitra = MitraLaundry::findOrFail($id);
+        
+        if ($mitra->status === 'suspended') {
+            $mitra->status = 'approved'; // Or whatever logic for unblocking
+            $message = 'Akses mitra berhasil dipulihkan.';
+        } else {
+            $mitra->status = 'suspended';
+            $message = 'Mitra berhasil diblokir/ditangguhkan.';
+        }
+        
+        $mitra->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'new_status' => $mitra->status
+        ]);
+    }
+
+    public function blockUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        
+        if ($user->status === 'blocked') {
+            $user->status = 'active';
+            $message = 'Akun customer berhasil diaktifkan kembali.';
+        } else {
+            $user->status = 'blocked';
+            $message = 'Customer berhasil diblokir.';
+        }
+        
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'new_status' => $user->status
+        ]);
     }
 
     public function index()

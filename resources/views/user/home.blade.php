@@ -16,7 +16,9 @@
     Pesan laundry terdekat, pilih antar jemput, dan pantau status cucian Anda secara real-time. Semua dalam satu aplikasi.
   </p>
   <div class="hero-cta">
-    <button class="btn-big primary">🔍 Cari Laundry</button>
+    <a href="{{ route('user.cari-laundry') }}" style="text-decoration: none;">
+      <button class="btn-big primary">🔍 Cari Laundry</button>
+    </a>
     <button class="btn-big outline">▶ Cara Kerja</button>
   </div>
   <div class="stats-bar">

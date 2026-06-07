@@ -367,7 +367,47 @@ document.addEventListener('DOMContentLoaded', function () {
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  // ── 3. AUTO-OPEN DETAIL DARI URL ─────────────────────────
+  // ── 4. BLOCK/UNBLOCK CUSTOMER ───────────────────────────
+  const blockBtn = document.getElementById('modalBlockBtn');
+  let selectedUserId = null;
+
+  // Update openCustomerDetail to store ID
+  const originalOpenDetail = window.openCustomerDetail;
+  window.openCustomerDetail = function(id) {
+    selectedUserId = id;
+    originalOpenDetail(id);
+  };
+
+  blockBtn.addEventListener('click', function() {
+    if (!selectedUserId) return;
+    
+    const label = document.getElementById('modalBlockLabel').textContent;
+    const isBlocking = label.includes('Blokir');
+    const action = isBlocking ? 'memblokir' : 'mengaktifkan kembali';
+
+    if (confirm(`Apakah Anda yakin ingin ${action} customer ini?`)) {
+        fetch(`/admin/user/${selectedUserId}/block`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                location.reload();
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Terjadi kesalahan saat memproses permintaan.');
+        });
+    }
+  });
+
+  // ── 5. AUTO-OPEN DETAIL DARI URL ─────────────────────────
   const urlParams = new URLSearchParams(window.location.search);
   const targetId = urlParams.get('id');
   if (targetId) {

@@ -243,6 +243,8 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     Route::post('/pesanan/{id}/review', [\App\Http\Controllers\ReviewController::class, 'store'])->name('user.review.store');
     // RATING
     Route::middleware('auth')->post('/rating', [RatingController::class, 'store'])->name('rating.store');
+    // REPORT MITRA
+    Route::post('/laundry/report', [\App\Http\Controllers\User\KomplainController::class, 'reportStore'])->name('user.laundry.report');
 
 });
 
@@ -409,14 +411,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     )->name('admin.dashboard');
 
     // MANAJEMEN
-   Route::get(
-        '/user',
-        [AdminController::class, 'userManagement']
-    )->name('admin.user');
+    Route::get('/user', [AdminController::class, 'userManagement'])->name('admin.user');
+    Route::post('/user/{id}/block', [AdminController::class, 'blockUser'])->name('admin.user.block');
 
-    Route::get('/mitra-laundry', function () {
-        return view('admin.manajemen.mitra_laundry');
-    })->name('admin.mitra');
+    Route::get('/mitra-laundry', [AdminController::class, 'mitraManagement'])->name('admin.mitra');
+    Route::post('/mitra-laundry/{id}/suspend', [AdminController::class, 'suspendMitra'])->name('admin.mitra.suspend');
 
     Route::get('/verifikasi-mitra', [VerifikasiMitraController::class, 'index'])
         ->name('admin.verifikasi');
