@@ -113,14 +113,9 @@
             </div>
             @if(!in_array($pesanan->status, ['dibatalkan','gagal_pickup']))
             <div class="mdp-hero-est">
-                Est. selesai: {{ $pesanan->tanggal_pickup ? $pesanan->tanggal_pickup->format('d M') . ', ' . $pesanan->waktu_pickup . ' WIB' : '-' }}
+                Est. selesai: {{ $pesanan->tanggal_pickup ? $pesanan->tanggal_pickup->format('d M') . ', ' . \Carbon\Carbon::parse($pesanan->waktu_pickup)->format('H:i') . ' WIB' : '-' }}
             </div>
             @endif
-            @foreach($pesanan->items as $item)
-            <div class="mdp-hero-item-pill">
-                {{ $item->nama_layanan }} · {{ $item->estimasi_berat ?? '-' }} kg
-            </div>
-            @endforeach
         </div>
     </div>
 
@@ -188,7 +183,9 @@
                             @if(!$isLast)<div class="mdp-tl-line"></div>@endif
                         </div>
                         <div class="mdp-tl-content">
-                            <div class="mdp-tl-label">{{ $step['label'] }}</div>
+                            <div class="mdp-tl-label" style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>{{ $step['label'] }}</span>
+                            </div>
                             <div class="mdp-tl-desc">{{ $step['desc'] }}</div>
                             @if($hist)
                             <div class="mdp-tl-time">
@@ -249,9 +246,9 @@
                         Input Timbangan
                     </button>
                     @elseif($pesanan->status === 'menunggu_pembayaran')
-                    <button class="mdp-btn mdp-btn--update" disabled style="background-color: var(--neutral-400); cursor: not-allowed; color: white; opacity: 0.8;">
-                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
-                        Menunggu Pembayaran
+                    <button class="mdp-btn mdp-btn--update" onclick="document.getElementById('modalKirimInvoice').classList.add('active')" style="background-color: #1a56e8; color: white;">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        Kirim Invoice
                     </button>
                     @else
                     <button class="mdp-btn mdp-btn--update" onclick="document.getElementById('modalUpdate').classList.add('active')">
@@ -259,10 +256,14 @@
                         Update Status
                     </button>
                     @endif
-                    <a href="https://wa.me/{{ preg_replace('/\D/', '', $pesanan->user->phone ?? '') }}" target="_blank" class="mdp-btn mdp-btn--wa">
-                        <svg width="15" height="15" fill="currentColor" viewBox="0 0 17 17"><path d="M0.833052 6.56C2.74945 10.7339 6.15946 14.0524 10.399 15.8514L11.0786 16.1542C12.6334 16.8469 14.4612 16.3206 15.4095 14.9071L16.2976 13.5834C16.5863 13.153 16.4984 12.5734 16.095 12.248L13.0832 9.81819C12.6408 9.4613 11.9903 9.54443 11.6519 10.0011L10.7202 11.2584C8.32935 10.079 6.3883 8.13795 5.20895 5.74714L6.4662 4.81542C6.92286 4.477 7.00599 3.82649 6.6491 3.3841L4.21923 0.372161C3.89389-0.0311206 3.31438-0.119088 2.88402 0.169481L1.55118 1.06318C0.128832 2.01689-0.394548 3.85974 0.314183 5.41868L0.832272 6.5583L0.833052 6.56Z"/></svg>
-                        WhatsApp
-                    </a>
+
+                    @if(in_array($pesanan->status, ['aktif', 'pengantaran']))
+                    <button class="mdp-btn mdp-btn--update" onclick="document.getElementById('modalKirimInvoice').classList.add('active')" style="background-color: #1a56e8; color: white; border-color: #1a56e8;">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        Kirim Invoice
+                    </button>
+                    @endif
+
                 </div>
                 @endif
             </div>
@@ -285,7 +286,7 @@
                             $namaLayananLower = strtolower($item->nama_layanan);
                             $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
                             $unit = $isKiloan ? 'Kg' : (str_contains($namaLayananLower, 'sepatu') ? 'Pasang' : (str_contains($namaLayananLower, 'karpet') ? 'Meter' : 'Pcs'));
-                            $qty = $isKiloan ? $item->berat_aktual : $item->qty;
+                            $qty = floatval($isKiloan ? $item->berat_aktual : $item->qty);
                             $price = $isKiloan ? $item->harga_per_kg : $item->harga_satuan;
                             if (is_null($price) || $price == 0) {
                                 $laundryService = \App\Models\LaundryService::find($item->jenis_layanan);
@@ -380,9 +381,9 @@
                         <svg width="14" height="14" fill="currentColor" viewBox="0 0 17 17"><path d="M0.833052 6.56C2.74945 10.7339 6.15946 14.0524 10.399 15.8514L11.0786 16.1542C12.6334 16.8469 14.4612 16.3206 15.4095 14.9071L16.2976 13.5834C16.5863 13.153 16.4984 12.5734 16.095 12.248L13.0832 9.81819C12.6408 9.4613 11.9903 9.54443 11.6519 10.0011L10.7202 11.2584C8.32935 10.079 6.3883 8.13795 5.20895 5.74714L6.4662 4.81542C6.92286 4.477 7.00599 3.82649 6.6491 3.3841L4.21923 0.372161C3.89389-0.0311206 3.31438-0.119088 2.88402 0.169481L1.55118 1.06318C0.128832 2.01689-0.394548 3.85974 0.314183 5.41868L0.832272 6.5583L0.833052 6.56Z"/></svg>
                         WhatsApp
                     </a>
-                    <a href="tel:{{ $pesanan->user->phone ?? '' }}" class="mdp-btn-cust mdp-btn-cust--telp">
-                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.7A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-                        Telepon
+                    <a href="{{ route('mitra.chat', ['contact_id' => $pesanan->user->id]) }}" class="mdp-btn-cust mdp-btn-cust--telp">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                        Chat Customer
                     </a>
                 </div>
 
@@ -395,7 +396,7 @@
                             <div class="mdp-rw-code">#{{ $rw->order_code }}</div>
                             <div class="mdp-rw-layanan">
                                 @foreach($rw->items->take(1) as $ri)
-                                    {{ $ri->nama_layanan }}{{ $ri->estimasi_berat ? ' ' . $ri->estimasi_berat . 'kg' : '' }}
+                                    {{ $ri->nama_layanan }}{{ $ri->estimasi_berat ? ' ' . floatval($ri->estimasi_berat) . 'kg' : '' }}
                                 @endforeach
                             </div>
                         </div>
@@ -433,13 +434,13 @@
                     <div class="mdp-info-row">
                         <span class="mdp-info-key">Est. Selesai</span>
                         <span class="mdp-info-val mdp-info-val--blue">
-                            {{ $pesanan->tanggal_pickup ? $pesanan->tanggal_pickup->format('d M Y') . ', ' . $pesanan->waktu_pickup : '-' }}
+                            {{ $pesanan->tanggal_pickup ? $pesanan->tanggal_pickup->format('d M Y') . ', ' . \Carbon\Carbon::parse($pesanan->waktu_pickup)->format('H:i') . ' WIB' : '-' }}
                         </span>
                     </div>
                     <div class="mdp-info-row">
                         <span class="mdp-info-key">Berat Aktual</span>
                         <span class="mdp-info-val">
-                            {{ $pesanan->items->sum('estimasi_berat') ?? '-' }} kg
+                            {{ floatval($pesanan->items->sum('estimasi_berat') ?? 0) }} kg
                         </span>
                     </div>
                     <div class="mdp-info-row">
@@ -477,7 +478,7 @@
             @method('PUT')
             <div class="mdp-modal-actions">
                 <button type="button" class="mdp-modal-btn mdp-modal-btn--ghost" onclick="document.getElementById('modalTerima').classList.remove('active')">Batal</button>
-                <button type="submit" class="mdp-modal-btn mdp-modal-btn--green">Ya, Terima</button>
+                <button type="submit" class="mdp-modal-btn mdp-modal-btn--green">Terima & Kirim Invoice</button>
             </div>
         </form>
     </div>
@@ -519,7 +520,7 @@
         <form action="{{ route('mitra.pesanan.update', $pesanan->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
-            
+
             @if($pesanan->status === 'aktif')
                 <div style="margin-top: 15px;">
                     <label style="display: block; font-size: 13px; margin-bottom: 6px; color: var(--neutral-600);">Foto Bukti PickUp <span style="color: red">*</span></label>
@@ -533,13 +534,13 @@
             @else
                 <textarea name="catatan" class="mdp-modal-textarea" placeholder="Catatan (opsional)..." rows="2" style="margin-top: 15px;"></textarea>
             @endif
-            
+
             <div class="mdp-modal-actions" style="margin-top: 15px;">
                 @if($pesanan->status === 'aktif')
                     <button type="submit" name="status_baru" value="gagal_pickup" class="mdp-modal-btn mdp-modal-btn--red">Pickup Gagal</button>
                     <button type="submit" name="status_baru" value="pickup" class="mdp-modal-btn mdp-modal-btn--blue">Pickup Berhasil</button>
                 @elseif($pesanan->status === 'diproses')
-                    <button type="submit" name="status_baru" value="pengantaran" class="mdp-modal-btn mdp-modal-btn--blue" style="width: 100%;">Mulai Pengantaran</button>
+                    <button type="submit" name="status_baru" value="pengantaran" class="mdp-modal-btn mdp-modal-btn--blue" style="width: 100%;">Mulai Pengantaran & Kirim Invoice</button>
                 @elseif($pesanan->status === 'pengantaran')
                     <button type="submit" name="status_baru" value="selesai" class="mdp-modal-btn mdp-modal-btn--green" style="width: 100%;">Tandai Selesai</button>
                 @endif
@@ -560,7 +561,7 @@
             @csrf
             @method('PUT')
             <input type="hidden" name="status_baru" value="menunggu_pembayaran">
-            
+
             @foreach($pesanan->items as $item)
             @php
                 $namaLayananLower = strtolower($item->nama_layanan);
@@ -592,15 +593,153 @@
             <textarea name="catatan" class="mdp-modal-textarea" placeholder="Catatan (opsional)..." rows="2"></textarea>
             <div class="mdp-modal-actions">
                 <button type="button" class="mdp-modal-btn mdp-modal-btn--ghost" onclick="document.getElementById('modalTimbang').classList.remove('active')">Batal</button>
-                <button type="submit" class="mdp-modal-btn mdp-modal-btn--blue">Simpan & Lanjut</button>
+                <button type="submit" class="mdp-modal-btn mdp-modal-btn--blue">Simpan & Kirim Invoice</button>
             </div>
         </form>
+    </div>
+</div>
+
+{{-- 🔹🔹🔹 MODAL: Kirim Invoice 🔹🔹🔹 --}}
+<div class="mdp-modal-overlay" id="modalKirimInvoice">
+    <div class="mdp-modal" style="max-width: 700px
+; padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+        <div style="padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #f9fafb;">
+            <h3 style="margin: 0; font-size: 16px; color: #333;">Invoice</h3>
+        </div>
+
+        <div style="padding: 20px; overflow-y: auto; max-height: 60vh; background: #fff;">
+            {{-- Invoice Layout --}}
+            <div style="font-family: 'Poppins', sans-serif; color: #333; line-height: 1.6;">
+                @php
+                    $isLunas = $pesanan->status_bayar === 'lunas';
+                    if ($pesanan->status === 'pengantaran') {
+                        $invoiceTag = 'Sedang Dikirim';
+                        $tagColor = '#3b82f6'; // blue
+                        $showQuantity = true;
+                    } elseif ($isLunas || in_array($pesanan->status, ['diproses', 'selesai'])) {
+                        $invoiceTag = 'Lunas';
+                        $tagColor = '#10b981'; // green
+                        $showQuantity = true;
+                    } elseif ($pesanan->status === 'menunggu_pembayaran') {
+                        $invoiceTag = 'Menunggu Pembayaran';
+                        $tagColor = '#f59e0b'; // orange
+                        $showQuantity = true;
+                    } else {
+                        $invoiceTag = 'Terkonfirmasi';
+                        $tagColor = '#6366f1'; // indigo
+                        $showQuantity = false;
+                    }
+                @endphp
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+                    <div>
+                        <img src="{{ asset('assets/images/CW.png') }}" alt="Clean Wash Logo" style="height: 60px;">
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="display: inline-block; background-color: {{ $tagColor }}; color: white; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; margin-bottom: 10px;">{{ strtoupper($invoiceTag) }}</span>
+                        <p style="margin: 0; font-size: 13px;"><strong>INVOICE NO:</strong> {{ $pesanan->order_code }}</p>
+                        <p style="margin: 0; font-size: 13px;"><strong>TANGGAL:</strong> {{ $pesanan->created_at->format('d M Y') }}</p>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 13px;">
+                    <div style="width: 45%;">
+                        <h3 style="font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; margin-top:0;">Penagihan Kepada:</h3>
+                        <p style="margin: 3px 0;"><strong>{{ $pesanan->user->name ?? '-' }}</strong></p>
+                        <p style="margin: 3px 0;">{{ $pesanan->user->phone ?? '-' }}</p>
+                        <p style="margin: 3px 0;">{{ $pesanan->alamat_pengantaran ?? $pesanan->alamat_pickup ?? 'Alamat tidak tersedia' }}</p>
+                    </div>
+                    <div style="width: 45%;">
+                        <h3 style="font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; margin-top:0;">Layanan Laundry:</h3>
+                        <p style="margin: 3px 0;"><strong>{{ $pesanan->mitraLaundry->store_name ?? '-' }}</strong></p>
+                        <p style="margin: 3px 0;">{{ $pesanan->mitraLaundry->user->phone ?? '-' }}</p>
+                        <p style="margin: 3px 0;">{{ $pesanan->mitraLaundry->address ?? '-' }}</p>
+                    </div>
+                </div>
+
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #e5e7eb; background: #f9fafb; color: #6b7280; font-weight: 500;">Deskripsi Layanan</th>
+                            <th style="padding: 10px; text-align: right; border-bottom: 1px solid #e5e7eb; background: #f9fafb; color: #6b7280; font-weight: 500;">Harga Dasar</th>
+                            @if($showQuantity)
+                            <th style="padding: 10px; text-align: right; border-bottom: 1px solid #e5e7eb; background: #f9fafb; color: #6b7280; font-weight: 500;">Jumlah</th>
+                            <th style="padding: 10px; text-align: right; border-bottom: 1px solid #e5e7eb; background: #f9fafb; color: #6b7280; font-weight: 500;">Subtotal</th>
+                            @endif
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($pesanan->items as $item)
+                        @php
+                            $namaLayananLower = strtolower($item->nama_layanan);
+                            $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
+                            $satuan = $isKiloan ? 'kg' : (str_contains($namaLayananLower, 'sepatu') ? 'pasang' : (str_contains($namaLayananLower, 'karpet') ? 'meter' : 'pcs'));
+                            
+                            $harga = $isKiloan ? $item->harga_per_kg : $item->harga_satuan;
+                            if (is_null($harga) || $harga == 0) {
+                                $laundryService = \App\Models\LaundryService::find($item->jenis_layanan);
+                                $harga = $laundryService ? $laundryService->base_price : $item->subtotal;
+                            }
+                            
+                            $jumlah = floatval($isKiloan ? ($item->berat_aktual ?? $item->estimasi_berat ?? 0) : ($item->qty ?? 0));
+                        @endphp
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">{{ $item->nama_layanan ?? 'Layanan Laundry' }}</td>
+                            <td style="padding: 10px; text-align: right; border-bottom: 1px solid #e5e7eb;">Rp {{ number_format((float) $harga, 0, ',', '.') }} / {{ $satuan }}</td>
+                            @if($showQuantity)
+                            <td style="padding: 10px; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ $jumlah }} {{ $satuan }}</td>
+                            <td style="padding: 10px; text-align: right; border-bottom: 1px solid #e5e7eb;">Rp {{ number_format((float) $item->subtotal, 0, ',', '.') }}</td>
+                            @endif
+                        </tr>
+                        @endforeach
+
+                        @if($showQuantity)
+                            @if($pesanan->ongkir > 0)
+                            <tr>
+                                <td colspan="3" style="padding: 10px; text-align: right; border-bottom: 1px solid #e5e7eb;">Biaya Ongkir</td>
+                                <td style="padding: 10px; text-align: right; border-bottom: 1px solid #e5e7eb;">Rp {{ number_format((float) $pesanan->ongkir, 0, ',', '.') }}</td>
+                            </tr>
+                            @endif
+
+                            @if($pesanan->diskon > 0)
+                            <tr>
+                                <td colspan="3" style="padding: 10px; text-align: right; border-bottom: 1px solid #e5e7eb;">Diskon</td>
+                                <td style="padding: 10px; text-align: right; border-bottom: 1px solid #e5e7eb;">-Rp {{ number_format((float) $pesanan->diskon, 0, ',', '.') }}</td>
+                            </tr>
+                            @endif
+
+                            <tr style="font-weight: bold; font-size: 14px;">
+                                <td colspan="3" style="padding: 10px; text-align: right; border-top: 2px solid #e5e7eb;">TOTAL KESELURUHAN</td>
+                                <td style="padding: 10px; text-align: right; border-top: 2px solid #e5e7eb; color: #4f46e5;">Rp {{ number_format($pesanan->total_bayar, 0, ',', '.') }}</td>
+                            </tr>
+                        @else
+                            <tr style="font-style: italic; font-size: 12px; color: #6b7280;">
+                                <td colspan="2" style="padding: 15px 10px; text-align: center; border-top: 2px solid #e5e7eb;">
+                                    Jumlah barang dan total keseluruhan akan ditentukan setelah ditimbang.
+                                </td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="padding: 15px 20px; border-top: 1px solid #eee; background: #f9fafb; display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" onclick="document.getElementById('modalKirimInvoice').classList.remove('active')" style="padding: 8px 16px; border-radius: 6px; border: 1px solid #d1d5db; background: white; color: #374151; font-weight: 500; cursor: pointer;">Batal</button>
+            <button type="button" onclick="alert('Kirim Invoice'); document.getElementById('modalKirimInvoice').classList.remove('active');" style="padding: 8px 16px; border-radius: 6px; border: none; background: #1a56e8; color: white; font-weight: 500; cursor: pointer;">Kirim Sekarang</button>
+        </div>
     </div>
 </div>
 
 @endsection
 
 @push('scripts')
+@if(session('show_invoice_modal'))
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('modalKirimInvoice').classList.add('active');
+    });
+</script>
+@endif
 <script>
 document.querySelectorAll('.mdp-modal-overlay').forEach(function(overlay) {
     overlay.addEventListener('click', function(e) {

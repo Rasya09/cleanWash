@@ -158,6 +158,19 @@ class OrderController extends Controller
     }
 
     // =========================================================
+    // INVOICE PESANAN (USER)
+    // =========================================================
+    public function invoice($id)
+    {
+        $pesanan = Order::with(['mitraLaundry.user', 'items'])
+            ->where('user_id', Auth::id())
+            ->where('status_bayar', 'lunas')
+            ->findOrFail($id);
+
+        return view('user.invoice', compact('pesanan'));
+    }
+
+    // =========================================================
     // CANCEL PESANAN (USER)
     // Hanya bisa cancel saat status = masuk
     // =========================================================

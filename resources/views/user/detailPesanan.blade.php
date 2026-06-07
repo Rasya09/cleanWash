@@ -301,19 +301,6 @@
                         <p class="pickup-box__val pickup-box__val--primary">{{ $pesanan->alamat_pickup }}</p>
                     </div>
 
-                    {{-- Estimasi Tiba --}}
-                    <div class="pickup-box">
-                        <div class="pickup-box__label">
-                            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                            </svg>
-                            Estimasi Tiba
-                        </div>
-                        <p class="pickup-box__val pickup-box__val--bold">
-                            {{ $pesanan->tanggal_pickup->translatedFormat('d M Y') }} – 14.00 WIB
-                        </p>
-                    </div>
-
                     {{-- Jadwal Pickup --}}
                     <div class="pickup-box">
                         <div class="pickup-box__label">
@@ -325,6 +312,22 @@
                         <p class="pickup-box__val pickup-box__val--bold">
                             {{ $pesanan->tanggal_pickup->translatedFormat('d M') }}
                             – {{ \Carbon\Carbon::parse($pesanan->waktu_pickup)->format('H:i') }}
+                        </p>
+                    </div>
+
+                    {{-- Estimasi Tiba --}}
+                    <div class="pickup-box">
+                        <div class="pickup-box__label">
+                            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            Estimasi Tiba
+                        </div>
+                        <p class="pickup-box__val pickup-box__val--bold">
+                            @php
+                                $estimasiTiba = \Carbon\Carbon::parse($pesanan->tanggal_pickup->format('Y-m-d') . ' ' . $pesanan->waktu_pickup)->addHours(2);
+                            @endphp
+                            {{ $estimasiTiba->translatedFormat('d M Y') }} – {{ $estimasiTiba->format('H.i') }} WIB
                         </p>
                     </div>
                 </div>
@@ -462,7 +465,7 @@
                         $namaLayananLower = strtolower($item->nama_layanan);
                         $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
                         $unit = $isKiloan ? 'Kg' : (str_contains($namaLayananLower, 'sepatu') ? 'Pasang' : (str_contains($namaLayananLower, 'karpet') ? 'Meter' : 'Pcs'));
-                        $qty = $isKiloan ? $item->berat_aktual : $item->qty;
+                        $qty = floatval($isKiloan ? $item->berat_aktual : $item->qty);
                         $price = $isKiloan ? $item->harga_per_kg : $item->harga_satuan;
                         if (is_null($price) || $price == 0) {
                             $laundryService = \App\Models\LaundryService::find($item->jenis_layanan);
@@ -563,7 +566,8 @@
                         Hubungi Laundry
                     </a>
 
-                    <button class="btn-aksi">
+                    @if($pesanan->status_bayar === 'lunas')
+                    <a href="{{ route('user.pesanan.invoice', $pesanan->id) }}" target="_blank" class="btn-aksi" style="text-decoration: none;">
                         <div class="btn-aksi__icon">
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
@@ -571,7 +575,8 @@
                             </svg>
                         </div>
                         Lihat Invoice
-                    </button>
+                    </a>
+                    @endif
 
                     <a href="{{ route('user.buat-pesanan') }}" class="btn-aksi">
                         <div class="btn-aksi__icon">

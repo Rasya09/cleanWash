@@ -17,7 +17,7 @@
 
         // Cek apakah user sudah punya toko laundry
         // Sesuaikan dengan relasi/field di model User Anda
-        $hasToko = Auth::user()->toko !== null; // atau sesuai relasi Anda
+        $hasToko = Auth::user()->mitra_laundry !== null; // atau sesuai relasi Anda
     @endphp
     <main class="main-content">
         <div class="content-header">
@@ -72,62 +72,6 @@
                 <button class="btn-edit">Edit Data</button>
             </section>
 
-            {{-- ===== KOLOM KANAN (Alamat + Pesanan) ===== --}}
-            <div class="right-column">
-                <section class="address-section">
-                    <div class="section-title-row">
-                        <img src="{{ asset('assets/icons/Location Icon.png') }}" alt="" class="section-icon" />
-                        <h2 class="section-title">Alamat Tersimpan</h2>
-                    </div>
-
-                    <div class="address-list">
-                        <div class="address-item">
-                            <img src="{{ asset('assets/icons/Location Icon.png') }}" alt="" class="pin-icon" />
-                            <div>
-                                <p class="address-name">Alamat Utama</p>
-                                <p class="address-detail">Jl. Soekarno Hatta No.12, Bandar Lampung</p>
-                            </div>
-                        </div>
-
-                        <div class="address-item">
-                            <img src="{{ asset('assets/icons/Location Icon.png') }}" alt="" class="pin-icon" />
-                            <div>
-                                <p class="address-name">Alamat Kos / Rumah</p>
-                                <p class="address-detail">Jl. Melati No. 5, Kedaton, Bandar Lampung</p>
-                            </div>
-                        </div>
-
-                        <button class="btn-tambah">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12H19"/><path d="M12 5V19"/>
-                            </svg>
-                            Tambah Alamat
-                        </button>
-                    </div>
-                </section>
-
-                <section class="order-section">
-                    <div class="section-title-row">
-                        <img src="{{ asset('assets/icons/keranjang icon.png') }}" alt="" class="section-icon" />
-                        <h2 class="section-title">Ringkasan Pesanan</h2>
-                    </div>
-
-                    <div class="order-summary">
-                        <div class="order-stat">
-                            <span class="stat-number">12</span>
-                            <span class="stat-label">Pesanan</span>
-                        </div>
-                        <div class="order-stat">
-                            <span class="stat-number">9</span>
-                            <span class="stat-label">Selesai</span>
-                        </div>
-                        <div class="order-stat">
-                            <span class="stat-number">3</span>
-                            <span class="stat-label">Diproses</span>
-                        </div>
-                    </div>
-                </section>
-            </div>
 
             {{-- ===== SIDEBAR KANAN ===== --}}
             <aside class="store-sidebar">
