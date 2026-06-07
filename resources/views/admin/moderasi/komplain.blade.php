@@ -6,18 +6,6 @@
 
 @section('content')
 
-{{-- ═══ MODAL TINDAK LANJUT ═══ --}}
-<div id="followUpModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 5000; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
-    <div style="background: #fff; width: 90%; max-width: 380px; padding: 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: modalIn 0.2s ease;">
-        <h3 style="font-family: var(--fh); font-size: 16px; font-weight: 800; color: #111827; margin-bottom: 12px; text-align: center;">Tindak Lanjut</h3>
-        <textarea id="tanggapanAdmin" style="width: 100%; min-height: 120px; padding: 12px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-family: inherit; font-size: 13px; resize: none; margin-bottom: 16px; outline: none; transition: border-color 0.2s;" placeholder="Tulis alasan atau tindakan yang diambil..."></textarea>
-        <div style="display: flex; justify-content: flex-end; gap: 8px;">
-            <button onclick="closeFollowUpModal()" style="padding: 8px 16px; border: none; background: #f3f4f6; color: #4b5563; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;">Batal</button>
-            <button id="confirmFollowUp" style="padding: 8px 16px; border: none; background: #dc2626; color: #fff; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;">Kirim</button>
-        </div>
-    </div>
-</div>
-
 {{-- ═══ COMBINED INFO MODAL (Pelapor & Terlapor) ═══ --}}
 <div class="pelapor-modal-overlay" id="combinedModal">
   <div class="pelapor-modal" style="max-width: 480px; width: 95%; max-height: 90vh; overflow-y: auto; border-radius: 16px;">
@@ -245,14 +233,6 @@
     <div class="detbody" id="detailBody"></div>
     <div class="detfoot" id="detailFoot" style="display:none">
       <div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-bottom:10px; padding-left:4px;">Tindak Lanjut</div>
-      <div class="foot-row" style="gap: 8px; margin-bottom: 8px;">
-        <button class="btn-proc" id="btnProses" style="flex: 1.5; font-size: 11px; padding: 10px 4px;">
-          <i class="fa-solid fa-check"></i> Proses Laporan
-        </button>
-        <button class="btn-info" id="btnMintaInfo" style="flex: 1; font-size: 11px; padding: 10px 4px;">
-          <i class="fa-solid fa-comment-dots"></i> Minta Info
-        </button>
-      </div>
       <div class="foot-row">
         <button class="btn-reject" id="btnTolak" style="width: 100%; font-size: 11px; padding: 10px 4px;">
           <i class="fa-solid fa-xmark"></i> Tolak Laporan
@@ -738,13 +718,6 @@ function openDetail(id){
 
   /* Tombol aksi */
   foot.style.display=(c.status==='wait'||c.status==='proc')?'flex':'none';
-  if(c.status==='proc'){
-    document.getElementById('btnProses').innerHTML='<i class="fa-solid fa-check"></i> Tandai Selesai';
-    document.getElementById('btnProses').style.background='var(--success)';
-  }else{
-    document.getElementById('btnProses').innerHTML='<i class="fa-solid fa-play"></i> Proses Laporan';
-    document.getElementById('btnProses').style.background='var(--primary)';
-  }
 }
 
 function closeDetail(){
@@ -762,70 +735,10 @@ function closeDetail(){
 }
 
 /* ─── FOOTER ACTIONS ─────────────────────────────────── */
-function openFollowUpModal() {
-    document.getElementById('followUpModal').style.display = 'flex';
-    document.getElementById('tanggapanAdmin').value = '';
-    document.getElementById('tanggapanAdmin').focus();
-}
-
-function closeFollowUpModal() {
-    document.getElementById('followUpModal').style.display = 'none';
-}
-
-document.getElementById('btnProses').addEventListener('click',()=>{
-    if(!selectedId) return;
-    openFollowUpModal();
-});
-
-document.getElementById('confirmFollowUp').addEventListener('click', () => {
-    if(!selectedId) return;
-    const tanggapan = document.getElementById('tanggapanAdmin').value.trim();
-    if(!tanggapan) {
-        alert('Mohon isi alasan tindak lanjut.');
-        return;
-    }
-
-    const realId = selectedId.replace('CMP-', '').replace(/^0+/, '');
-    const btn = document.getElementById('confirmFollowUp');
-    btn.disabled = true;
-    btn.innerHTML = 'Mengirim...';
-
-    fetch(`/admin/komplain/${realId}/followup`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({ tanggapan: tanggapan })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if(data.success) {
-            alert(data.message);
-            location.reload();
-        } else {
-            alert('Gagal memproses laporan: ' + (data.message || 'Error tidak diketahui'));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Terjadi kesalahan saat memproses laporan.');
-    })
-    .finally(() => {
-        btn.disabled = false;
-        btn.innerHTML = 'Kirim';
-    });
-});
-
 document.getElementById('btnTolak').addEventListener('click',()=>{
   if(!selectedId)return;
   const c=complaints.find(x=>x.id===selectedId);if(!c)return;
   if(confirm(`Tolak laporan ${c.id}?`)){c.status='rej';c.statusLabel='Ditolak';closeDetail();renderTable();}
-});
-
-document.getElementById('btnMintaInfo').addEventListener('click',()=>{
-    alert('Fitur minta info tambahan akan segera tersedia.');
 });
 
 /* ─── INIT ───────────────────────────────────────────── */
@@ -841,11 +754,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   /* Detail close button */
   document.getElementById('detailClose').addEventListener('click',closeDetail);
-
-  /* Modal Tindak Lanjut close on click outside */
-  document.getElementById('followUpModal').addEventListener('click', e => {
-    if(e.target === e.currentTarget) closeFollowUpModal();
-  });
 
   /* Overlay tap-to-close */
   overlay.addEventListener('click',()=>{
