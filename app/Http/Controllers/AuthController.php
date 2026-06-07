@@ -115,7 +115,7 @@ class AuthController extends Controller
 
             if (Auth::user()->role == 'mitra') {
 
-                return redirect('/mitra/home');
+                return redirect('/user/home');
             }
 
 

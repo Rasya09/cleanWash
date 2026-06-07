@@ -90,11 +90,7 @@
     @forelse($laundries as $laundry)
     <article class="laundry-card">
       <div class="card-image-area" style="background-image: url('{{ asset('storage/' . $laundry->logo) }}'); background-size: cover; background-position: center; border-right: 1px solid #eee;">
-        @if($bestStoreId == $laundry->id)
-        <span class="card-corner-badge">🏆 #1 Terbaik</span>
-        @elseif($popularStoreId == $laundry->id)
-        <span class="card-corner-badge" style="background-color: var(--blue-subtle); color: var(--primary);">⭐ Populer</span>
-        @endif
+
       </div>
       <div class="card-content">
         <div class="card-head">

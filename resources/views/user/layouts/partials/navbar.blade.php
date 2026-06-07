@@ -8,16 +8,11 @@
 
   <!-- Menu Desktop -->
   <ul class="nav-menu">
-    <li><a href="{{ route('home') }}" class="{{ request()->routeIs('mitra.home') ? 'active' : '' }} {{ request()->routeIs('user.home') ? 'active' : '' }}">Beranda</a></li>
-    @if(Auth::check() && Auth::user()->role == 'user')
-    <li><a href="{{ route('cari-laundry') }}" class="{{ request()->routeIs('cari-laundry') ? 'active' : '' }}" >Cari Laundry</a></li>
-    @endif
-    @if(Auth::check() && Auth::user()->role == 'mitra')
-    <li><a href="{{ route('mitra.cari-laundry') }}" class="{{ request()->routeIs('mitra.cari-laundry') ? 'active' : '' }}" >Cari Laundry</a></li>
-    @endif
-    @if(Auth::check() && Auth::user()->role == 'user')
-    <li><a href="{{ route('user.cari-laundry') }}" class="{{ request()->routeIs('user.cari-laundry') ? 'active' : '' }}">Pesanan Saya</a></li>
-    @endif
+      <li><a href="{{ route('user.home') }}" class="{{ request()->routeIs('user.home') ? 'active' : '' }} {{ request()->routeIs('user.home') ? 'active' : '' }}">Beranda</a></li>
+      <li><a href="{{ route('cari-laundry') }}" class="{{ request()->routeIs('cari-laundry') ? 'active' : '' }}" >Cari Laundry</a></li>
+
+      <li><a href="{{ route('user.pesanan') }}" class="{{ request()->routeIs('user.pesanan') ? 'active' : '' }}">Pesanan Saya</a></li>
+
   </ul>
 
   @guest
@@ -54,7 +49,7 @@
                 <a href="{{ route('mitra.profile') }}">Profil Saya</a>
             </button>
         @endif
-        @if(Auth::user()->role == 'user')
+        @if(Auth::user()->role == 'user' && !\App\Models\MitraLaundry::where('user_id', Auth::id())->exists())
         <button class="dropdown-item">
             <a href="{{ route('user.register.step1') }}">Registrasi Mitra</a>
         </button>
@@ -115,7 +110,7 @@
       <a href="{{ route('user.chat') }}" class="nav-mobile-link">Obrolan</a>
       @endif
 
-      @if(Auth::user()->role == 'user')
+      @if(Auth::user()->role == 'user' && !\App\Models\MitraLaundry::where('user_id', Auth::id())->exists())
       <a href="{{ route('user.register.step1') }}" class="nav-mobile-link">Registrasi Mitra</a>
       @endif
 

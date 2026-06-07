@@ -170,7 +170,12 @@ class OrderController extends Controller
     public function invoice($id)
     {
         $pesanan = Order::with(['mitraLaundry.user', 'items'])
-            ->where('user_id', Auth::id())
+            ->where(function ($query) {
+                $query->where('user_id', Auth::id())
+                      ->orWhereHas('mitraLaundry', function ($q) {
+                          $q->where('user_id', Auth::id());
+                      });
+            })
             ->where('status_bayar', 'lunas')
             ->findOrFail($id);
 

@@ -139,11 +139,7 @@
                         </div>
                     </div>
 
-                    @if (Auth::check() && Auth::user()->role == 'mitra')
-                        <button class="dl-btn-pesan" style="background-color: #9CA3AF; cursor: not-allowed;" disabled>
-                            Mitra Tidak Dapat Memesan
-                        </button>
-                    @elseif(isset($laundry->services) && $laundry->services->count() > 0)
+                    @if (isset($laundry->services) && $laundry->services->count() > 0)
                         <a href="{{ route('user.chat', ['contact_id' => $laundry->user_id]) }}" class="dl-btn-chat"
                             style="display: flex; justify-content: center; align-items: center; gap: 8px; background-color: #10B981; color: white; padding: 14px; border-radius: 12px; font-weight: 600; font-size: 15px; text-decoration: none; margin-bottom: 12px; transition: all 0.2s; border: 1px solid #059669;">
                             Chat Mitra

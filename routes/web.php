@@ -25,58 +25,12 @@ Route::get('/tentang-kami', function () {
 })->name('tentang.kami');
 
 Route::get('/cari-laundry', function (\Illuminate\Http\Request $request) {
-    $query = \App\Models\MitraLaundry::with(['reviews', 'activeServices'])->where('status', 'approved');
+    $query = \App\Models\MitraLaundry::where('status', 'approved');
     if ($search = $request->query('search')) {
         $query->where('store_name', 'like', "%{$search}%");
     }
-    if ($maxPrice = $request->query('max_price')) {
-        if ($maxPrice < 100000) {
-            $query->whereHas('activeServices', function ($q) use ($maxPrice) {
-                $q->where('base_price', '<=', $maxPrice);
-            });
-        }
-    }
-    if ($status = $request->query('status')) {
-        if ($status == 'buka') {
-            $now = now()->format('H:i:s');
-            $query->where('open_time', '<=', $now)
-                  ->where('close_time', '>=', $now);
-        }
-    }
-    if ($sort = $request->query('sort')) {
-        if ($sort == 'populer') {
-            $query->withCount('orders')->orderByDesc('orders_count');
-        }
-    }
-    
     $laundries = $query->get();
-
-    if ($sort) {
-        if ($sort == 'rating_desc') {
-            $laundries = $laundries->sortByDesc('average_rating')->values();
-        } elseif ($sort == 'price_asc') {
-            $laundries = $laundries->sortBy(function($laundry) {
-                return $laundry->starting_price ?? 999999999;
-            })->values();
-        }
-    }
-
-    $popularStoreId = \App\Models\Order::select('mitra_laundry_id')
-        ->groupBy('mitra_laundry_id')
-        ->orderByRaw('COUNT(*) DESC')
-        ->value('mitra_laundry_id');
-
-    $bestUserId = \App\Models\Review::select('mitra_id')
-        ->where('rating', 5)
-        ->groupBy('mitra_id')
-        ->orderByRaw('COUNT(*) DESC')
-        ->value('mitra_id');
-        
-    $bestStoreId = $bestUserId 
-        ? \App\Models\MitraLaundry::where('user_id', $bestUserId)->value('id')
-        : null;
-
-    return view('user.cari_laundry', compact('laundries', 'popularStoreId', 'bestStoreId'));
+    return view('user.cari_laundry', compact('laundries'));
 })->name('cari-laundry');
 
 Route::get('/layanan', function () {
@@ -100,6 +54,8 @@ Route::middleware('guest')->group(function () {
 
 // Chat Routes
 Route::middleware(['auth'])->group(function () {
+    Route::get('/pesanan/{id}/invoice', [\App\Http\Controllers\OrderController::class, 'invoice'])->name('user.pesanan.invoice');
+
     Route::get('/chat/messages/{contactId}', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.messages');
     Route::get('/chat/user-details/{userId}', [\App\Http\Controllers\ChatController::class, 'getUserDetails'])->name('chat.user_details');
     Route::post('/chat/send/{contactId}', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
@@ -137,31 +93,27 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
             [MitraRegisterController::class, 'updateStep1'])
         ->name('user.register.step1.update');
 
-        Route::get('/step-2/{id}',
+        Route::get('/step-2',
             [MitraRegisterController::class, 'step2'])
             ->name('user.register.step2');
 
-        Route::post('/step-2/{id}/store',
+        Route::post('/step-2/store',
             [MitraRegisterController::class, 'storeStep2'])
             ->name('user.register.step2.store');
 
-        Route::get('/step-3/{id}', function ($id) {
-            return "STEP 3 ID : " . $id;
-        })->name('user.register.step3');
-
-        Route::get('/step-3/{id}',
+        Route::get('/step-3',
             [MitraRegisterController::class, 'step3'])
             ->name('user.register.step3');
 
-        Route::post('/step-3/store/{id}',
+        Route::post('/step-3/store',
             [MitraRegisterController::class, 'storeStep3'])
             ->name('user.register.step3.store');
 
-        Route::get('/step-4/{id}',
+        Route::get('/step-4',
             [MitraRegisterController::class, 'step4'])
             ->name('user.register.step4');
 
-        Route::post('/step-4/store/{id}',
+        Route::post('/step-4/store',
             [MitraRegisterController::class, 'storeStep4'])
             ->name('user.register.step4.store');
 
@@ -216,58 +168,12 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     })->name('user.home');
 
     Route::get('/cari-laundry', function (\Illuminate\Http\Request $request) {
-        $query = \App\Models\MitraLaundry::with(['reviews', 'activeServices'])->where('status', 'approved');
+        $query = \App\Models\MitraLaundry::where('status', 'approved');
         if ($search = $request->query('search')) {
             $query->where('store_name', 'like', "%{$search}%");
         }
-        if ($maxPrice = $request->query('max_price')) {
-            if ($maxPrice < 100000) {
-                $query->whereHas('activeServices', function ($q) use ($maxPrice) {
-                    $q->where('base_price', '<=', $maxPrice);
-                });
-            }
-        }
-        if ($status = $request->query('status')) {
-            if ($status == 'buka') {
-                $now = now()->format('H:i:s');
-                $query->where('open_time', '<=', $now)
-                      ->where('close_time', '>=', $now);
-            }
-        }
-        if ($sort = $request->query('sort')) {
-            if ($sort == 'populer') {
-                $query->withCount('orders')->orderByDesc('orders_count');
-            }
-        }
-        
         $laundries = $query->get();
-
-        if ($sort) {
-            if ($sort == 'rating_desc') {
-                $laundries = $laundries->sortByDesc('average_rating')->values();
-            } elseif ($sort == 'price_asc') {
-                $laundries = $laundries->sortBy(function($laundry) {
-                    return $laundry->starting_price ?? 999999999;
-                })->values();
-            }
-        }
-
-        $popularStoreId = \App\Models\Order::select('mitra_laundry_id')
-            ->groupBy('mitra_laundry_id')
-            ->orderByRaw('COUNT(*) DESC')
-            ->value('mitra_laundry_id');
-
-        $bestUserId = \App\Models\Review::select('mitra_id')
-            ->where('rating', 5)
-            ->groupBy('mitra_id')
-            ->orderByRaw('COUNT(*) DESC')
-            ->value('mitra_id');
-            
-        $bestStoreId = $bestUserId 
-            ? \App\Models\MitraLaundry::where('user_id', $bestUserId)->value('id')
-            : null;
-
-        return view('user.cari_laundry', compact('laundries', 'popularStoreId', 'bestStoreId'));
+        return view('user.cari_laundry', compact('laundries'));
     })->name('user.cari-laundry');
 
     Route::get('/layanan', function () {
@@ -338,7 +244,6 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     Route::post('/pesanan',             [OrderController::class, 'store'])->name('user.pesanan.store');
     Route::get('/pesanan',              [OrderController::class, 'index'])->name('user.pesanan');
     Route::get('/pesanan/{id}',         [OrderController::class, 'show'])->name('user.detail-pesanan');
-    Route::get('/pesanan/{id}/invoice', [OrderController::class, 'invoice'])->name('user.pesanan.invoice');
     Route::put('/pesanan/{id}/cancel',  [OrderController::class, 'cancel'])->name('user.pesanan.cancel');
 
     // Pembayaran Midtrans

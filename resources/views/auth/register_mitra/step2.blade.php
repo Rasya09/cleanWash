@@ -196,7 +196,7 @@
             <h2>Lokasi Toko</h2>
             <p>Masukkan alamat lengkap toko laundry Anda.</p>
         </div>
-        <form action="{{ route('user.register.step2.store', $mitra->id) }}"
+        <form action="{{ route('user.register.step2.store') }}"
               method="POST">
             @csrf
             <div class="card-body">

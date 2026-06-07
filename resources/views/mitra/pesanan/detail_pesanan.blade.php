@@ -449,9 +449,17 @@
                     </div>
                     <div class="mdp-info-row">
                         <span class="mdp-info-key">Pembayaran</span>
-                        <span class="mdp-pay-badge {{ $lunas ? 'pay--lunas' : 'pay--belum' }}">
-                            {{ $lunas ? 'Lunas' : 'Belum Lunas' }}
-                        </span>
+                        @if($lunas)
+                            <a href="{{ route('user.pesanan.invoice', $pesanan->id) }}" target="_blank" style="text-decoration: none;" title="Lihat Invoice Pembayaran">
+                                <span class="mdp-pay-badge pay--lunas" style="cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.2s;">
+                                    Lunas 📄
+                                </span>
+                            </a>
+                        @else
+                            <span class="mdp-pay-badge pay--belum">
+                                Belum Lunas
+                            </span>
+                        @endif
                     </div>
                     <div class="mdp-info-row">
                         <span class="mdp-info-key">Alamat Pickup</span>
@@ -685,6 +693,9 @@
                     if ($invoiceTag === 'Menunggu Pembayaran') {
                         $waText .= "\nSilakan cek detail pesanan dan lakukan pembayaran melalui link berikut:\n";
                         $waText .= route('user.detail-pesanan', $pesanan->id) . "\n";
+                    } elseif ($invoiceTag === 'Lunas') {
+                        $waText .= "\nSilakan lihat struk/invoice pembayaran Anda melalui link berikut:\n";
+                        $waText .= route('user.pesanan.invoice', $pesanan->id) . "\n";
                     }
 
                     $waText .= "-------------------------\n";

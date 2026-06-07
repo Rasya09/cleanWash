@@ -63,7 +63,7 @@
                         <div class="store-cta-top">
                             <div class="store-cta-text">
                                 <p class="store-cta-sub">Punya Laundry?</p>
-                                <h3 class="store-cta-title">Buka Toko Laundry<br>Seperti di Shopee!</h3>
+                                <h3 class="store-cta-title">Buka Toko Laundry Aja!</h3>
                             </div>
                             <div class="store-cta-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none">

@@ -24,44 +24,38 @@ class MitraRegisterController extends Controller
             ],
             'description' => 'nullable',
         ]);
-        $mitra = MitraLaundry::create([
-            'user_id' => Auth::id(),
-            'owner_name' => $request->owner_name,
-            'store_name' => $request->store_name,
-            'email' => $request->email,
-            'phone' => '62' . $request->phone,
-            'description' => $request->description,
-            'status' => 'draft',
+        
+        $data = session('register_mitra', []);
+        $data = array_merge($data, $request->only('owner_name', 'store_name', 'email', 'phone', 'description'));
+        session(['register_mitra' => $data]);
 
-        ]);
-
-        return redirect()
-            ->route('user.register.step2', $mitra->id);
+        return redirect()->route('user.register.step2');
     }
 
     public function step1()
     {
-        $mitra = MitraLaundry::where(
-            'user_id',
-            Auth::id()
-        )->first();
+        $existingMitra = MitraLaundry::where('user_id', Auth::id())->first();
 
-        if($mitra && $mitra->status != 'draft')
-        {
-            return redirect()
-                ->route('user.register.hasil');
+        if($existingMitra && $existingMitra->status != 'draft') {
+            return redirect()->route('user.home')->with('success', 'Anda sudah mendaftar sebagai mitra. Silakan tunggu verifikasi atau cek status Anda.');
         }
 
+        if ($existingMitra && $existingMitra->status == 'draft') {
+            $existingMitra->delete();
+        }
+
+        $mitra = (object) session('register_mitra', []);
         return view('auth.register_mitra.step1', compact('mitra'));
     }
 
-    public function step2($id)
+    public function step2()
     {
-        $mitra = MitraLaundry::findOrFail($id);
+        if(!session()->has('register_mitra')) { return redirect()->route('user.register.step1'); }
+        $mitra = (object) session('register_mitra', []);
         return view('auth.register_mitra.step2', compact('mitra'));
     }
 
-    public function storeStep2(Request $request, $id)
+    public function storeStep2(Request $request)
     {
         $request->validate([
             'address' => 'required',
@@ -72,122 +66,99 @@ class MitraRegisterController extends Controller
             'postal_code' => 'required',
         ]);
 
-        $mitra = MitraLaundry::findOrFail($id);
+        $data = session('register_mitra', []);
+        $data = array_merge($data, $request->only('address', 'village', 'district', 'city', 'province', 'postal_code'));
+        session(['register_mitra' => $data]);
 
-        $mitra->update([
-            'address' => $request->address,
-            'village' => $request->village,
-            'district' => $request->district,
-            'city' => $request->city,
-            'province' => $request->province,
-            'postal_code' => $request->postal_code,
-        ]);
-
-        return redirect()
-            ->route('user.register.step3', $mitra->id);
+        return redirect()->route('user.register.step3');
     }
 
-    public function step3($id)
+    public function step3()
     {
-        $mitra = MitraLaundry::findOrFail($id);
-        return view('auth.register_mitra.step3',compact('mitra'));
+        if(!session()->has('register_mitra')) { return redirect()->route('user.register.step1'); }
+        $mitra = (object) session('register_mitra', []);
+        return view('auth.register_mitra.step3', compact('mitra'));
     }
 
-    public function storeStep3(Request $request, $id)
+    public function storeStep3(Request $request)
     {
-        // dd($request->all(), $request->file());
         $request->validate([
-            'logo' =>
-                'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'store_photos' =>
-                'required|array|min:2|max:3',
-            'store_photos.*' =>
-                'image|mimes:jpg,jpeg,png|max:2048',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'store_photos' => 'required|array|min:2|max:3',
+            'store_photos.*' => 'image|mimes:jpg,jpeg,png|max:2048',
         ]);
-        $mitra = MitraLaundry::findOrFail($id);
-        // =========================
-        // UPLOAD LOGO
-        // =========================
-        $logoPath = null;
-        if($request->hasFile('logo'))
-        {
-            $logoPath = $request
-                ->file('logo')
-                ->store('mitra/logo', 'public');
+
+        $data = session('register_mitra', []);
+
+        if($request->hasFile('logo')) {
+            $data['logo'] = $request->file('logo')->store('mitra/logo', 'public');
         }
-        // =========================
-        // UPLOAD STORE PHOTOS
-        // =========================
+
         $photos = [];
-        if($request->hasFile('store_photos'))
-        {
-            foreach($request->file('store_photos') as $photo)
-            {
-                $path = $photo->store(
-                    'mitra/store',
-                    'public'
-                );
-                $photos[] = $path;
+        if($request->hasFile('store_photos')) {
+            foreach($request->file('store_photos') as $photo) {
+                $photos[] = $photo->store('mitra/store', 'public');
             }
+            $data['store_photos'] = json_encode($photos);
         }
-        $mitra->update([
-            'logo' => $logoPath,
-            'store_photos' =>
-                json_encode($photos)
-        ]);
-        return redirect()->route('user.register.step4',$mitra->id);
+
+        session(['register_mitra' => $data]);
+
+        return redirect()->route('user.register.step4');
     }
 
-    public function step4($id)
+    public function step4()
     {
-        $mitra = MitraLaundry::findOrFail($id);
-        return view('auth.register_mitra.step4',compact('mitra'));
+        if(!session()->has('register_mitra')) { return redirect()->route('user.register.step1'); }
+        $mitra = (object) session('register_mitra', []);
+        return view('auth.register_mitra.step4', compact('mitra'));
     }
 
-    public function storeStep4(Request $request, $id)
+    public function storeStep4(Request $request)
     {
         $request->validate([
             'ktp'   => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'nib'   => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'npwp'  => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ], [
+            'ktp.max' => 'Ukuran file KTP maksimal 2MB',
+            'nib.max' => 'Ukuran file NIB maksimal 2MB',
+            'npwp.max' => 'Ukuran file NPWP maksimal 2MB',
+            'ktp.mimes' => 'Format file KTP harus jpg, jpeg, png, atau pdf',
+            'nib.mimes' => 'Format file NIB harus jpg, jpeg, png, atau pdf',
+            'npwp.mimes' => 'Format file NPWP harus jpg, jpeg, png, atau pdf',
         ]);
-        // ambil data mitra
-        $mitra = MitraLaundry::findOrFail($id);
-        // upload KTP
-        $ktpPath = $request->file('ktp')->store(
-            'mitra/documents/ktp',
-            'public'
-        );
-        // upload NIB
-        $nibPath = $request->file('nib')->store(
-            'mitra/documents/nib',
-            'public'
-        );
-        // upload NPWP (optional)
-        $npwpPath = null;
-        if($request->hasFile('npwp'))
-        {
-            $npwpPath = $request->file('npwp')->store(
-                'mitra/documents/npwp',
-                'public'
-            );
-        }
-        // update database
-        $mitra->update([
+
+        $data = session('register_mitra', []);
+
+        $ktpPath = $request->file('ktp')->store('mitra/documents/ktp', 'public');
+        $nibPath = $request->file('nib')->store('mitra/documents/nib', 'public');
+        $npwpPath = $request->hasFile('npwp') ? $request->file('npwp')->store('mitra/documents/npwp', 'public') : null;
+
+        MitraLaundry::create([
+            'user_id' => Auth::id(),
+            'owner_name' => $data['owner_name'],
+            'store_name' => $data['store_name'],
+            'email' => $data['email'] ?? null,
+            'phone' => '62' . $data['phone'],
+            'description' => $data['description'] ?? null,
+            'address' => $data['address'],
+            'village' => $data['village'],
+            'district' => $data['district'],
+            'city' => $data['city'],
+            'province' => $data['province'],
+            'postal_code' => $data['postal_code'],
+            'logo' => $data['logo'] ?? null,
+            'store_photos' => $data['store_photos'] ?? null,
             'ktp'   => $ktpPath,
             'nib'   => $nibPath,
             'npwp'  => $npwpPath,
-
-            // status pengajuan
             'status' => 'pending',
         ]);
-        // redirect selesai
-        return redirect()
-            ->route('user.register.hasil')
-            ->with(
-                'success',
-                'Pengajuan mitra berhasil dikirim!'
-            );
+
+        session()->forget('register_mitra');
+
+        return redirect()->route('user.home')->with('success', 'Pengajuan mitra berhasil dikirim! Silakan tunggu verifikasi dari admin.');
     }
 
     public function success()

@@ -201,7 +201,7 @@ input[type=file]{
                 </ul>
             </div>
         @endif
-        <form action="{{ route('user.register.step3.store', $mitra->id) }}"
+        <form action="{{ route('user.register.step3.store') }}"
               method="POST"
               enctype="multipart/form-data">
             @csrf

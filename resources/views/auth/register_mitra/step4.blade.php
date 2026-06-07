@@ -189,7 +189,16 @@ input[type=file]{
             <h2>Dokumen Usaha</h2>
             <p>Upload dokumen untuk verifikasi mitra laundry.</p>
         </div>
-        <form action="{{ route('user.register.step4.store', $mitra->id) }}"
+        @if ($errors->any())
+            <div style="background:#ffe5e5; color:#d8000c; padding:15px; border-radius:10px; margin:20px;">
+                <ul style="margin:0; padding-left:20px;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <form action="{{ route('user.register.step4.store') }}"
               method="POST"
               enctype="multipart/form-data">
             @csrf
