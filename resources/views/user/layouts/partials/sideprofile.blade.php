@@ -58,7 +58,7 @@
                     Alamat Saya
             </a>
         @endif
-        
+
     </nav>
 </aside>
 @endauth

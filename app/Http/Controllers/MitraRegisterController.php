@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\MitraLaundry;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Notifikasi;
 
 class MitraRegisterController extends Controller
 {
@@ -24,7 +25,7 @@ class MitraRegisterController extends Controller
             ],
             'description' => 'nullable',
         ]);
-        
+
         $data = session('register_mitra', []);
         $data = array_merge($data, $request->only('owner_name', 'store_name', 'email', 'phone', 'description'));
         session(['register_mitra' => $data]);
@@ -318,7 +319,7 @@ class MitraRegisterController extends Controller
                 );
             }
 
-            $mitra->store_photos = json_encode($photos);
+            $mitra->store_photos = $photos;
         }
 
         $mitra->save();

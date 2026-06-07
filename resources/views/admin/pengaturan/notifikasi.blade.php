@@ -5,673 +5,307 @@
 @endsection
 
 @section('content')
-<!-- MAIN WRAPPER -->
-<div class="main-wrapper">
-
-  <!-- TOPBAR -->
-  <header class="topbar">
-    <button class="topbar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
-    <div class="topbar-title">
-      <h1>Notifikasi</h1>
-      <p>Kelola dan pantau semua notifikasi yang dikirimkan melalui platform.</p>
-    </div>
-    <div class="topbar-right">
-      <div class="search-box">
-        <i class="fa-solid fa-search"></i>
-        <input type="text" placeholder="Cari notifikasi, judul, modul..." />
-      </div>
-      <button class="topbar-icon-btn notif-btn">
-        <i class="fa-solid fa-bell"></i>
-        <span class="dot-badge">1</span>
-      </button>
-      <div class="topbar-user">
-        <div class="user-avatar">SA</div>
-        <div class="user-info">
-          <span class="user-name">Super Admin</span>
-          <span class="user-role">Administrator</span>
-        </div>
-        <i class="fa-solid fa-chevron-down"></i>
-      </div>
-    </div>
-  </header>
-
-  <!-- CONTENT -->
-  <div class="content-area">
+<div class="app">
+  <main class="main">
+    <div class="content-area">
 
     <!-- STATS CARDS -->
     <div class="stats-grid">
-      <div class="stat-card stat-total">
-        <div class="stat-icon"><i class="fa-solid fa-paper-plane"></i></div>
-        <div class="stat-info">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#eff6ff; color:var(--primary)"><i class="fa-solid fa-bell"></i></div>
+        <div class="sd">
           <div class="stat-label">Total Notifikasi</div>
-          <div class="stat-value">12.458</div>
+          <div class="stat-value" id="stat-total">0</div>
           <div class="stat-sub">Semua notifikasi</div>
         </div>
       </div>
-      <div class="stat-card stat-sent">
-        <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
-        <div class="stat-info">
-          <div class="stat-label">Terkirim</div>
-          <div class="stat-value">11.032</div>
-          <div class="stat-sub">88,6% dari total</div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#f5f3ff; color:#7c3aed"><i class="fa-solid fa-star"></i></div>
+        <div class="sd">
+          <div class="stat-label">Review & Rating</div>
+          <div class="stat-value" id="stat-review">0</div>
+          <div class="stat-sub" id="sub-review">0% dari total</div>
         </div>
       </div>
-      <div class="stat-card stat-scheduled">
-        <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
-        <div class="stat-info">
-          <div class="stat-label">Terjadwal</div>
-          <div class="stat-value">1.245</div>
-          <div class="stat-sub">10,0% dari total</div>
-        </div>
-      </div>
-      <div class="stat-card stat-failed">
-        <div class="stat-icon"><i class="fa-solid fa-circle-xmark"></i></div>
-        <div class="stat-info">
-          <div class="stat-label">Gagal Terkirim</div>
-          <div class="stat-value">181</div>
-          <div class="stat-sub">1,4% dari total</div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#fef2f2; color:#dc2626"><i class="fa-solid fa-circle-exclamation"></i></div>
+        <div class="sd">
+          <div class="stat-label">Komplain / Laporan</div>
+          <div class="stat-value" id="stat-komplain">0</div>
+          <div class="stat-sub" id="sub-komplain">0% dari total</div>
         </div>
       </div>
     </div>
 
-    <!-- TABLE SECTION + DETAIL PANEL -->
-    <div class="table-detail-wrapper">
+    <!-- MAIN BODY (Identical to Review) -->
+    <div class="table-detail-wrapper" style="flex:1; display:flex; overflow:hidden; margin-top:12px; gap:16px;">
 
       <!-- TABLE SECTION -->
-      <div class="table-section" id="tableSection">
-
-        <!-- FILTER BAR -->
-        <div class="filter-bar">
-          <div class="filter-search">
-            <i class="fa-solid fa-search"></i>
-            <input type="text" placeholder="Cari judul notifikasi, modul, atau penerima..." id="tableSearch" />
-          </div>
-          <select class="filter-select">
-            <option>Semua Modul</option>
-            <option>Pesanan</option>
-            <option>Pembayaran</option>
-            <option>Review & Rating</option>
-            <option>Verifikasi Mitra</option>
-            <option>Komplain</option>
-            <option>Laporan</option>
-            <option>Marketing</option>
-            <option>Keamanan</option>
-          </select>
-          <select class="filter-select">
-            <option>Semua Tipe</option>
-            <option>Email</option>
-            <option>Push</option>
-            <option>SMS</option>
-          </select>
-          <select class="filter-select">
-            <option>Status</option>
-            <option>Terkirim</option>
-            <option>Terjadwal</option>
-            <option>Gagal</option>
-            <option>Draf</option>
-          </select>
-          <div class="filter-date">
-            <i class="fa-regular fa-calendar"></i>
-            <span>1 Mei 2024 - 31 Mei 2024</span>
-          </div>
-          <button class="btn-filter"><i class="fa-solid fa-filter"></i> Filter</button>
-        </div>
-
+      <div class="table-section" style="flex:1; display:flex; flex-direction:column; min-width:0; background:#fff; border-radius:10px; border:1px solid #e2e8f0; overflow:hidden;">
+        
         <!-- TABS -->
         <div class="tabs-bar">
           <div class="tabs-left">
-            <button class="tab-btn active" data-tab="semua">Semua <span class="tab-count">12.458</span></button>
-            <button class="tab-btn" data-tab="terkirim">Terkirim <span class="tab-count">11.032</span></button>
-            <button class="tab-btn" data-tab="terjadwal">Terjadwal <span class="tab-count">1.245</span></button>
-            <button class="tab-btn" data-tab="gagal">Gagal <span class="tab-count">181</span></button>
-            <button class="tab-btn" data-tab="draf">Draf <span class="tab-count">156</span></button>
+            <button class="tab-btn active" data-tab="semua">Semua <span class="tab-count" id="tab-count-semua">0</span></button>
+            <button class="tab-btn" data-tab="Review & Rating">Review & Rating <span class="tab-count" id="tab-count-review">0</span></button>
+            <button class="tab-btn" data-tab="Komplain">Komplain <span class="tab-count" id="tab-count-komplain">0</span></button>
           </div>
-          <button class="btn-primary" id="btnBuatNotif">
+          <button class="btn-primary" id="btnBuatNotif" style="background:var(--primary); color:#fff; padding:6px 12px; border-radius:6px; font-size:12px; margin-right:10px">
             <i class="fa-solid fa-plus"></i> Buat Notifikasi
           </button>
         </div>
 
+        <!-- FILTER TOOLBAR -->
+        <div class="filter-bar" style="display:flex; gap:10px; padding:12px; border-bottom:1px solid #f1f5f9; flex-wrap:wrap">
+          <div class="filter-search" style="flex:1; position:relative">
+            <i class="fa-solid fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#94a3b8"></i>
+            <input type="text" id="tableSearch" placeholder="Cari notifikasi..." style="width:100%; padding:8px 12px 8px 34px; border:1px solid #e2e8f0; border-radius:6px; font-size:13px">
+          </div>
+          <select id="filterModul" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:6px; font-size:13px; color:#64748b">
+            <option value="semua">Semua Modul</option>
+            <option value="Review & Rating">Review & Rating</option>
+            <option value="Komplain">Komplain / Laporan</option>
+          </select>
+          <button id="btnResetFilter" style="padding:8px 12px; background:#f1f5f9; border-radius:6px; font-size:13px; color:#64748b"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        </div>
+
         <!-- TABLE -->
         <div class="table-wrapper">
-          <table class="notif-table" id="notifTable">
+          <table class="notif-table">
             <thead>
               <tr>
-                <th class="th-check"><input type="checkbox" id="checkAll" /></th>
+                <th width="40"><input type="checkbox" id="checkAll"></th>
                 <th>Judul Notifikasi</th>
                 <th>Modul</th>
                 <th>Tipe</th>
                 <th>Penerima</th>
-                <th>Status</th>
                 <th>Waktu</th>
-                <th>Aksi</th>
+                <th width="60">Aksi</th>
               </tr>
             </thead>
-            <tbody id="notifTableBody">
-              <!-- Rows injected by JS -->
-            </tbody>
+            <tbody id="notifTableBody"></tbody>
           </table>
         </div>
 
         <!-- PAGINATION -->
         <div class="pagination-bar">
-          <span class="pagination-info">Menampilkan 1 - 10 dari 12.458 data</span>
-          <div class="pagination-right">
-            <select class="page-size-select">
-              <option>10 / halaman</option>
-              <option>25 / halaman</option>
-              <option>50 / halaman</option>
+          <span class="pagination-info" id="paginationInfo"></span>
+          <div class="pagination-right" style="display:flex; align-items:center; gap:12px">
+            <select id="pageSizeSelect" class="page-size-select">
+              <option value="10">10 / halaman</option>
+              <option value="25">25 / halaman</option>
             </select>
-            <div class="pagination-btns">
-              <button class="page-btn" disabled><i class="fa-solid fa-chevron-left"></i></button>
-              <button class="page-btn active">1</button>
-              <button class="page-btn">2</button>
-              <button class="page-btn">3</button>
-              <button class="page-btn">4</button>
-              <button class="page-btn">5</button>
-              <span class="page-ellipsis">…</span>
-              <button class="page-btn">1.246</button>
-              <button class="page-btn"><i class="fa-solid fa-chevron-right"></i></button>
-            </div>
+            <div class="pagination-btns" id="paginationBtns"></div>
           </div>
         </div>
       </div>
 
-      <!-- DETAIL PANEL -->
-      <div class="detail-panel" id="detailPanel">
+      <!-- DETAIL PANEL (Identical to Review) -->
+      <div class="detail-panel" id="detailPanel" style="display:none">
         <div class="detail-header">
           <h3>Detail Notifikasi</h3>
-          <button class="detail-close" id="detailClose"><i class="fa-solid fa-xmark"></i></button>
+          <button class="detail-close" id="detailClose">✕</button>
         </div>
-
-        <div class="detail-body" id="detailBody">
-          <div class="detail-empty">
-            <i class="fa-solid fa-bell-slash"></i>
-            <p>Pilih notifikasi untuk melihat detail</p>
-          </div>
-        </div>
+        <div class="detail-body" id="detailBody"></div>
       </div>
 
-    </div><!-- /table-detail-wrapper -->
-  </div><!-- /content-area -->
-</div><!-- /main-wrapper -->
-
-<!-- MODAL BUAT NOTIFIKASI -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3><i class="fa-solid fa-plus"></i> Buat Notifikasi Baru</h3>
-      <button class="modal-close" id="modalClose"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Judul Notifikasi</label>
-        <input type="text" placeholder="Masukkan judul notifikasi..." class="form-input" />
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Modul</label>
-          <select class="form-input">
-            <option>Pilih Modul</option>
-            <option>Pesanan</option>
-            <option>Pembayaran</option>
-            <option>Marketing</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Tipe</label>
-          <select class="form-input">
-            <option>Pilih Tipe</option>
-            <option>Email</option>
-            <option>Push</option>
-            <option>SMS</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Penerima</label>
-        <select class="form-input">
-          <option>Pilih Penerima</option>
-          <option>Customer</option>
-          <option>Mitra Laundry</option>
-          <option>Admin</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Konten Notifikasi</label>
-        <textarea class="form-input form-textarea" placeholder="Tulis isi notifikasi..."></textarea>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" id="modalCancel">Batal</button>
-      <button class="btn-primary">Simpan sebagai Draf</button>
-      <button class="btn-primary btn-send"><i class="fa-solid fa-paper-plane"></i> Kirim Sekarang</button>
     </div>
   </div>
+</main>
 </div>
+
+<!-- Modal Overlay for Mobile Detail -->
+<div class="detail-popup-overlay" id="detailPopupOverlay">
+    <div class="detail-popup-box">
+        <div class="detail-header">
+            <h3>Detail Notifikasi</h3>
+            <button class="detail-close" id="detailPopupClose">✕</button>
+        </div>
+        <div class="detail-body" id="detailPopupBody"></div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
-
 <script>
-  /* =========================================
-   LAUNDRYHUB – NOTIFIKASI ADMIN PANEL
-   script.js
-   ========================================= */
-
 'use strict';
+let notifications = @json($notificationsData);
+let activeTab = 'semua', searchQ = '', filterModul = 'semua';
+let currentPage = 1, pageSize = 10;
+let selectedIdRaw = null;
 
-// ─── DATA ────────────────────────────────────────────────────────────────────
-const notifications = [
-  {
-    id: 'NTF-2024-0508-0001',
-    judul: 'Pesanan Baru Diterima',
-    sub: 'Pesanan via Mitra',
-    modul: 'Pesanan',
-    tipe: ['Email', 'Push'],
-    penerima: 'Mitra Laundry',
-    status: 'Terkirim',
-    rate: '92%',
-    waktu: '8 Mei 2024\n09:20 WIB',
-    bahasa: 'Bahasa Indonesia',
-    dibuat: 'Super Admin',
-    dibuatPada: '8 Mei 2024, 09:10 WIB',
-    konten: 'Pesanan baru telah diterima!\nAnda memiliki pesanan baru dari Laundry Bersih Sejahtera.\n\nOrder ID: #ORD-2024-0508-0001\n\nSilakan cek detail pesanan di aplikasi.\n\nTerima kasih.',
-    statTotal: 248, statTerkirim: 229, statTerbaca: 189, statGagal: 19,
-    iconClass: 'fa-cart-shopping', iconBg: '#eff6ff', iconColor: '#2563eb',
-    modulClass: 'mod-pesanan'
-  },
-  {
-    id: 'NTF-2024-0508-0002',
-    judul: 'Pembayaran Berhasil',
-    sub: 'Pembayaran order #ORD-2024-0508-0001',
-    modul: 'Pembayaran',
-    tipe: ['Email', 'Push', 'SMS'],
-    penerima: 'Customer',
-    status: 'Terkirim',
-    rate: '100%',
-    waktu: '8 Mei 2024\n09:15 WIB',
-    bahasa: 'Bahasa Indonesia',
-    dibuat: 'System',
-    dibuatPada: '8 Mei 2024, 09:14 WIB',
-    konten: 'Pembayaran Anda sebesar Rp 75.000 untuk order #ORD-2024-0508-0001 telah berhasil diproses.\n\nTerima kasih telah menggunakan LaundryHub!',
-    statTotal: 1, statTerkirim: 1, statTerbaca: 1, statGagal: 0,
-    iconClass: 'fa-credit-card', iconBg: '#f0fdf4', iconColor: '#16a34a',
-    modulClass: 'mod-pembayaran'
-  },
-  {
-    id: 'NTF-2024-0509-0003',
-    judul: 'Pengingat Review',
-    sub: 'Berikan review untuk order selesai',
-    modul: 'Review & Rating',
-    tipe: ['Push'],
-    penerima: 'Customer',
-    status: 'Terjadwal',
-    rate: '',
-    waktu: '9 Mei 2024\n10:00 WIB',
-    bahasa: 'Bahasa Indonesia',
-    dibuat: 'Super Admin',
-    dibuatPada: '8 Mei 2024, 11:00 WIB',
-    konten: 'Pesanan Anda sudah selesai! Bagaimana pengalaman Anda?\n\nBerikan review dan bantu pelanggan lain menemukan laundry terbaik.',
-    statTotal: 0, statTerkirim: 0, statTerbaca: 0, statGagal: 0,
-    iconClass: 'fa-star', iconBg: '#f5f3ff', iconColor: '#7c3aed',
-    modulClass: 'mod-review'
-  },
-  {
-    id: 'NTF-2024-0507-0004',
-    judul: 'Verifikasi Mitra Disetujui',
-    sub: 'Akun mitra laundry Anda telah diverifikasi',
-    modul: 'Verifikasi Mitra',
-    tipe: ['Email', 'Push'],
-    penerima: 'Mitra Laundry',
-    status: 'Terkirim',
-    rate: '100%',
-    waktu: '7 Mei 2024\n16:30 WIB',
-    bahasa: 'Bahasa Indonesia',
-    dibuat: 'Admin',
-    dibuatPada: '7 Mei 2024, 16:25 WIB',
-    konten: 'Selamat! Akun mitra laundry Anda telah berhasil diverifikasi.\n\nAnda sekarang dapat menerima pesanan dari pelanggan LaundryHub.',
-    statTotal: 1, statTerkirim: 1, statTerbaca: 1, statGagal: 0,
-    iconClass: 'fa-shield-check', iconBg: '#fffbeb', iconColor: '#d97706',
-    modulClass: 'mod-verifikasi'
-  },
-  {
-    id: 'NTF-2024-0507-0005',
-    judul: 'Komplain Baru Diterima',
-    sub: 'Komplain #CMP-2024-0507-0014',
-    modul: 'Komplain',
-    tipe: ['Email', 'Push'],
-    penerima: 'Admin',
-    status: 'Terkirim',
-    rate: '100%',
-    waktu: '7 Mei 2024\n15:10 WIB',
-    bahasa: 'Bahasa Indonesia',
-    dibuat: 'System',
-    dibuatPada: '7 Mei 2024, 15:09 WIB',
-    konten: 'Terdapat komplain baru yang masuk dan memerlukan tindakan segera.\n\nID Komplain: #CMP-2024-0507-0014\n\nSilakan segera tangani komplain ini.',
-    statTotal: 3, statTerkirim: 3, statTerbaca: 3, statGagal: 0,
-    iconClass: 'fa-triangle-exclamation', iconBg: '#fef2f2', iconColor: '#dc2626',
-    modulClass: 'mod-komplain'
-  },
-  {
-    id: 'NTF-2024-0507-0006',
-    judul: 'Laporan Harian Platform',
-    sub: 'Ringkasan aktivitas platform harian',
-    modul: 'Laporan',
-    tipe: ['Email'],
-    penerima: 'Admin',
-    status: 'Terkirim',
-    rate: '100%',
-    waktu: '7 Mei 2024\n09:00 WIB',
-    bahasa: 'Bahasa Indonesia',
-    dibuat: 'System',
-    dibuatPada: '7 Mei 2024, 09:00 WIB',
-    konten: 'Laporan Harian LaundryHub – 6 Mei 2024\n\nTotal Pesanan: 342\nPendapatan: Rp 18.750.000\nMitra Aktif: 128\nCustomer Baru: 45',
-    statTotal: 5, statTerkirim: 5, statTerbaca: 4, statGagal: 0,
-    iconClass: 'fa-chart-bar', iconBg: '#f1f5f9', iconColor: '#64748b',
-    modulClass: 'mod-laporan'
-  },
-  {
-    id: 'NTF-2024-0506-0007',
-    judul: 'Promo Spesial Untuk Anda!',
-    sub: 'Dapatkan diskon 20% untuk cuci kiloan',
-    modul: 'Marketing',
-    tipe: ['Push', 'SMS'],
-    penerima: 'Customer (Segment)',
-    status: 'Gagal',
-    rate: '12%',
-    waktu: '6 Mei 2024\n18:20 WIB',
-    bahasa: 'Bahasa Indonesia',
-    dibuat: 'Super Admin',
-    dibuatPada: '6 Mei 2024, 17:00 WIB',
-    konten: 'Promo eksklusif hanya untuk Anda! 🎉\n\nDapatkan DISKON 20% untuk layanan cuci kiloan.\nBerlaku: 7–10 Mei 2024\n\nGunakan kode: LAUNDRY20',
-    statTotal: 4820, statTerkirim: 578, statTerbaca: 210, statGagal: 4242,
-    iconClass: 'fa-bullhorn', iconBg: '#fdf4ff', iconColor: '#9333ea',
-    modulClass: 'mod-marketing'
-  },
-  {
-    id: 'NTF-2024-0506-0008',
-    judul: 'Pesanan Dalam Proses',
-    sub: 'Order #ORD-2024-0506-0012 sedang diproses',
-    modul: 'Pesanan',
-    tipe: ['Push'],
-    penerima: 'Customer',
-    status: 'Terkirim',
-    rate: '95%',
-    waktu: '6 Mei 2024\n14:05 WIB',
-    bahasa: 'Bahasa Indonesia',
-    dibuat: 'System',
-    dibuatPada: '6 Mei 2024, 14:04 WIB',
-    konten: 'Pesanan Anda sedang diproses!\n\nOrder ID: #ORD-2024-0506-0012\nLaundry: Bersih Kilat Jaya\n\nEstimasi selesai: 8 Mei 2024',
-    statTotal: 1, statTerkirim: 1, statTerbaca: 1, statGagal: 0,
-    iconClass: 'fa-cart-shopping', iconBg: '#eff6ff', iconColor: '#2563eb',
-    modulClass: 'mod-pesanan'
-  },
-  {
-    id: 'NTF-2024-0506-0009',
-    judul: 'Pesanan Selesai',
-    sub: 'Order #ORD-2024-0506-0012 telah selesai',
-    modul: 'Pesanan',
-    tipe: ['Email', 'Push', 'SMS'],
-    penerima: 'Customer',
-    status: 'Terkirim',
-    rate: '100%',
-    waktu: '6 Mei 2024\n16:45 WIB',
-    bahasa: 'Bahasa Indonesia',
-    dibuat: 'System',
-    dibuatPada: '6 Mei 2024, 16:44 WIB',
-    konten: 'Pesanan Anda telah selesai!\n\nOrder ID: #ORD-2024-0506-0012\n\nSilakan jemput pakaian Anda atau tunggu pengiriman.\nTerima kasih telah menggunakan LaundryHub!',
-    statTotal: 1, statTerkirim: 1, statTerbaca: 1, statGagal: 0,
-    iconClass: 'fa-circle-check', iconBg: '#f0fdf4', iconColor: '#16a34a',
-    modulClass: 'mod-pesanan'
-  },
-  {
-    id: 'NTF-2024-0505-0010',
-    judul: 'Reset Password',
-    sub: 'Permintaan reset password akun Anda',
-    modul: 'Keamanan',
-    tipe: ['Email'],
-    penerima: 'User',
-    status: 'Terkirim',
-    rate: '100%',
-    waktu: '5 Mei 2024\n11:30 WIB',
-    bahasa: 'Bahasa Indonesia',
-    dibuat: 'System',
-    dibuatPada: '5 Mei 2024, 11:29 WIB',
-    konten: 'Kami menerima permintaan reset password untuk akun Anda.\n\nKlik tautan di bawah untuk membuat password baru.\nTautan ini akan kedaluwarsa dalam 30 menit.\n\nJika Anda tidak meminta ini, abaikan email ini.',
-    statTotal: 1, statTerkirim: 1, statTerbaca: 1, statGagal: 0,
-    iconClass: 'fa-lock', iconBg: '#ecfeff', iconColor: '#0e7490',
-    modulClass: 'mod-keamanan'
-  }
-];
+function updateStats() {
+    const total = notifications.length;
+    const reviewCount = notifications.filter(n => n.modul === 'Review & Rating').length;
+    const komplainCount = notifications.filter(n => n.modul === 'Komplain').length;
 
-// ─── HELPERS ─────────────────────────────────────────────────────────────────
-function statusClass(s) {
-  if (s === 'Terkirim') return 'stat-terkirim';
-  if (s === 'Terjadwal') return 'stat-terjadwal';
-  if (s === 'Gagal') return 'stat-gagal';
-  return 'stat-draf';
+    document.getElementById('stat-total').textContent = total.toLocaleString('id-ID');
+    document.getElementById('stat-review').textContent = reviewCount.toLocaleString('id-ID');
+    document.getElementById('stat-komplain').textContent = komplainCount.toLocaleString('id-ID');
+
+    const calcPct = (val) => total > 0 ? ((val / total) * 100).toFixed(1) + '%' : '0%';
+    document.getElementById('sub-review').textContent = `${calcPct(reviewCount)} dari total`;
+    document.getElementById('sub-komplain').textContent = `${calcPct(komplainCount)} dari total`;
+
+    document.getElementById('tab-count-semua').textContent = total;
+    document.getElementById('tab-count-review').textContent = reviewCount;
+    document.getElementById('tab-count-komplain').textContent = komplainCount;
 }
 
-function pct(val, total) {
-  if (!total) return '0%';
-  return Math.round((val / total) * 100) + '%';
+function getFiltered() {
+    return notifications.filter(n => {
+        if (activeTab !== 'semua' && n.modul !== activeTab) return false;
+        if (filterModul !== 'semua' && n.modul !== filterModul) return false;
+        if (searchQ) {
+            const q = searchQ.toLowerCase();
+            return n.judul.toLowerCase().includes(q) || n.penerima.toLowerCase().includes(q);
+        }
+        return true;
+    });
 }
 
-// ─── RENDER TABLE ────────────────────────────────────────────────────────────
-function renderTable(data) {
-  const tbody = document.getElementById('notifTableBody');
-  if (!data.length) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-faint);">
-      <i class="fa-solid fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>Tidak ada data notifikasi</td></tr>`;
-    return;
-  }
+function renderTable() {
+    const filtered = getFiltered();
+    const total = filtered.length;
+    const start = (currentPage - 1) * pageSize;
+    const pageData = filtered.slice(start, start + pageSize);
+    const tbody = document.getElementById('notifTableBody');
 
-  tbody.innerHTML = data.map((n, idx) => {
-    const tipeHtml = n.tipe.map(t => `<span class="tipe-chip">${t}</span>`).join('');
-    const waktLines = n.waktu.split('\n');
-    return `
-    <tr data-idx="${idx}" class="notif-row">
-      <td><input type="checkbox" class="row-check" /></td>
-      <td>
-        <div class="notif-title-cell">
-          <div class="row-icon" style="background:${n.iconBg};color:${n.iconColor}">
-            <i class="fa-solid ${n.iconClass}"></i>
-          </div>
-          <div class="notif-title-info">
-            <div class="title-main">${n.judul}</div>
-            <div class="title-sub">${n.sub}</div>
-          </div>
+    if (!pageData.length) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#94a3b8">Tidak ada data notifikasi</td></tr>`;
+        updatePagination(0, 0);
+        return;
+    }
+
+    tbody.innerHTML = pageData.map((n) => `
+        <tr class="notif-row ${selectedIdRaw == n.id_raw ? 'selected' : ''}" onclick="openDetail('${n.id_raw}')">
+            <td><input type="checkbox" onclick="event.stopPropagation()"></td>
+            <td>
+                <div style="display:flex; align-items:center; gap:10px">
+                    <div style="width:32px; height:32px; background:${n.iconBg}; color:${n.iconColor}; border-radius:6px; display:flex; align-items:center; justify-content:center">
+                        <i class="fa-solid ${n.iconClass}"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:600; color:#0f172a">${n.judul}</div>
+                        <div style="font-size:11.5px; color:#64748b">${n.sub}</div>
+                    </div>
+                </div>
+            </td>
+            <td><span class="module-badge ${n.modulClass}">${n.modul}</span></td>
+            <td><div style="display:flex; gap:4px">${n.tipe.map(t => `<span style="background:#f1f5f9; padding:2px 6px; border-radius:4px; font-size:11px">${t}</span>`).join('')}</div></td>
+            <td>${n.penerima}</td>
+            <td style="font-size:12px; color:#64748b">${n.waktu.replace('\n', '<br>')}</td>
+            <td>
+                <div class="action-menu-wrap">
+                    <button class="aksi-btn" onclick="event.stopPropagation();toggleActionMenu(this)"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                    <div class="action-dropdown">
+                        <button class="ad-delete" onclick="event.stopPropagation();deleteNotif('${n.id_raw}')"><i class="fa-solid fa-trash"></i> Hapus</button>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+
+    updatePagination(total, pageData.length);
+}
+
+function updatePagination(total, currentCount) {
+    const tp = Math.ceil(total / pageSize) || 1;
+    const start = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+    const end = (currentPage - 1) * pageSize + currentCount;
+    document.getElementById('paginationInfo').textContent = `Menampilkan ${start} - ${end} dari ${total} data`;
+    
+    let h = `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goPage(${currentPage - 1})">‹</button>`;
+    for (let i = 1; i <= tp; i++) {
+        if (i === 1 || i === tp || (i >= currentPage - 1 && i <= currentPage + 1)) {
+            h += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`;
+        } else if (i === currentPage - 2 || i === currentPage + 2) {
+            h += `<span style="padding:0 4px; color:#94a3b8">…</span>`;
+        }
+    }
+    h += `<button class="page-btn" ${currentPage === tp ? 'disabled' : ''} onclick="goPage(${currentPage + 1})">›</button>`;
+    document.getElementById('paginationBtns').innerHTML = h;
+}
+
+function goPage(p) { currentPage = p; renderTable(); clearDetail(); window.scrollTo({top:0, behavior:'smooth'}); }
+
+function toggleActionMenu(btn) {
+    const dropdown = btn.nextElementSibling;
+    const isOpen = dropdown.classList.contains('show');
+    document.querySelectorAll('.action-dropdown.show').forEach(d => d.classList.remove('show'));
+    if (!isOpen) dropdown.classList.add('show');
+}
+
+function openDetail(idRaw) {
+    const n = notifications.find(x => x.id_raw == idRaw);
+    if (!n) return;
+    selectedIdRaw = idRaw;
+    renderTable();
+
+    const html = `
+        <div style="padding-bottom:16px; border-bottom:1px solid #f1f5f9">
+            <div style="font-weight:700; font-size:16px; color:#0f172a">${n.judul}</div>
+            <div style="font-size:13px; color:#64748b; margin-top:4px">${n.sub}</div>
         </div>
-      </td>
-      <td><span class="module-badge ${n.modulClass}">${n.modul}</span></td>
-      <td><div class="tipe-chips">${tipeHtml}</div></td>
-      <td style="font-size:12.5px;color:var(--text-muted)">${n.penerima}</td>
-      <td>
-        <span class="status-badge ${statusClass(n.status)}">${n.status}</span>
-        ${n.rate ? `<span class="stat-rate">${n.rate}</span>` : ''}
-      </td>
-      <td style="font-size:12px;color:var(--text-muted);white-space:nowrap">
-        ${waktLines[0]}<br/><span style="color:var(--text-faint)">${waktLines[1] || ''}</span>
-      </td>
-      <td><button class="aksi-btn"><i class="fa-solid fa-ellipsis"></i></button></td>
-    </tr>`;
-  }).join('');
+        <div style="margin-top:16px">
+            <div style="font-size:12px; font-weight:700; color:#94a3b8; text-transform:uppercase; margin-bottom:10px">Informasi Notifikasi</div>
+            <div style="display:flex; flex-direction:column; gap:8px">
+                <div style="display:flex; justify-content:space-between; font-size:13px"><span style="color:#64748b">Modul</span><span class="module-badge ${n.modulClass}">${n.modul}</span></div>
+                <div style="display:flex; justify-content:space-between; font-size:13px"><span style="color:#64748b">Penerima</span><span style="font-weight:600">${n.penerima}</span></div>
+                <div style="display:flex; justify-content:space-between; font-size:13px"><span style="color:#64748b">Waktu</span><span style="font-weight:600">${n.dibuatPada}</span></div>
+            </div>
+        </div>
+        <div style="margin-top:20px; padding:12px; background:#f8fafc; border-radius:8px; font-size:13px; color:#334155; line-height:1.6">
+            ${n.konten.replace(/\n/g, '<br>')}
+        </div>
+        <div style="margin-top:auto; padding-top:20px">
+            <button onclick="deleteNotif('${n.id_raw}')" style="width:100%; padding:10px; background:#fff; color:#dc2626; border:1.5px solid #dc2626; border-radius:6px; font-weight:600; cursor:pointer">
+                <i class="fa-solid fa-trash"></i> Hapus Notifikasi
+            </button>
+        </div>
+    `;
 
-  // Click rows → detail
-  tbody.querySelectorAll('.notif-row').forEach(tr => {
-    tr.addEventListener('click', e => {
-      if (e.target.closest('.aksi-btn') || e.target.closest('.row-check')) return;
-      const idx = parseInt(tr.dataset.idx);
-      showDetail(data[idx]);
-      tbody.querySelectorAll('.notif-row').forEach(r => r.classList.remove('selected'));
-      tr.classList.add('selected');
-    });
-  });
-
-  // Aksi btn → stop propagation
-  tbody.querySelectorAll('.aksi-btn').forEach(btn => {
-    btn.addEventListener('click', e => e.stopPropagation());
-  });
+    if (window.innerWidth < 1100) {
+        document.getElementById('detailPopupBody').innerHTML = html;
+        document.getElementById('detailPopupOverlay').classList.add('open');
+    } else {
+        document.getElementById('detailBody').innerHTML = html;
+        document.getElementById('detailPanel').style.display = 'flex';
+    }
 }
-
-// ─── SHOW DETAIL ─────────────────────────────────────────────────────────────
-function showDetail(n) {
-  const panel = document.getElementById('detailPanel');
-  const body = document.getElementById('detailBody');
-
-  const sentPct = pct(n.statTerkirim, n.statTotal);
-  const readPct = pct(n.statTerbaca, n.statTotal);
-  const failPct = pct(n.statGagal, n.statTotal);
-  const kontenHtml = n.konten.replace(/\n/g, '<br/>');
-
-  body.innerHTML = `
-    <div>
-      <span class="detail-status-badge ${statusClass(n.status)}" style="margin-bottom:8px;display:inline-flex">${n.status}</span>
-      <div class="detail-notif-title">${n.judul}</div>
-      <div class="detail-notif-sub">${n.sub}</div>
-    </div>
-
-    <div class="detail-divider"></div>
-
-    <div>
-      <div class="detail-section-title">Informasi Notifikasi</div>
-      <div class="detail-info-grid">
-        <div class="detail-info-row"><span class="detail-info-key">ID Notifikasi</span><span class="detail-info-val" style="font-size:11px">#${n.id}</span></div>
-        <div class="detail-info-row"><span class="detail-info-key">Modul</span><span class="detail-info-val"><span class="module-badge ${n.modulClass}" style="font-size:11px">${n.modul}</span></span></div>
-        <div class="detail-info-row"><span class="detail-info-key">Tipe</span><span class="detail-info-val">${n.tipe.join(', ')}</span></div>
-        <div class="detail-info-row"><span class="detail-info-key">Penerima</span><span class="detail-info-val">${n.penerima}</span></div>
-        <div class="detail-info-row"><span class="detail-info-key">Dibuat oleh</span><span class="detail-info-val">${n.dibuat}</span></div>
-        <div class="detail-info-row"><span class="detail-info-key">Dibuat pada</span><span class="detail-info-val" style="font-size:11px">${n.dibuatPada}</span></div>
-      </div>
-    </div>
-
-    <div class="detail-divider"></div>
-
-    <div>
-      <div class="detail-section-title">Konten Notifikasi</div>
-      <div class="detail-info-row" style="margin-bottom:8px"><span class="detail-info-key">Bahasa</span><span class="detail-info-val">${n.bahasa}</span></div>
-      <div class="detail-content-box">${kontenHtml}</div>
-    </div>
-
-    <div class="detail-divider"></div>
-
-    <div>
-      <div class="detail-section-title">Statistik Pengiriman</div>
-      <div class="detail-stat-row"><span class="detail-stat-key">Total Penerima</span><span class="detail-stat-val">${n.statTotal.toLocaleString('id-ID')}</span></div>
-      <div class="detail-stat-row"><span class="detail-stat-key">Terkirim</span><span class="detail-stat-val val-green">${n.statTerkirim.toLocaleString('id-ID')} (${sentPct})</span></div>
-      <div class="detail-stat-row"><span class="detail-stat-key">Terbaca</span><span class="detail-stat-val">${n.statTerbaca.toLocaleString('id-ID')} (${readPct})</span></div>
-      <div class="detail-stat-row"><span class="detail-stat-key">Gagal</span><span class="detail-stat-val val-red">${n.statGagal.toLocaleString('id-ID')} (${failPct})</span></div>
-    </div>
-
-    <div class="detail-divider"></div>
-
-    <div>
-      <div class="detail-section-title">Aksi</div>
-      <div class="detail-aksi">
-        <button class="btn-kirim-ulang"><i class="fa-solid fa-paper-plane"></i> Kirim Ulang</button>
-        <button class="btn-duplikat"><i class="fa-solid fa-copy"></i> Duplikat</button>
-        <button class="btn-hapus"><i class="fa-solid fa-trash"></i> Hapus</button>
-      </div>
-    </div>
-  `;
-
-  // Show panel on small screens too
-  panel.style.display = 'flex';
-  panel.style.animation = 'fadeIn .2s ease';
-}
-
-// ─── FILTER / SEARCH ─────────────────────────────────────────────────────────
-function filterData() {
-  const q = document.getElementById('tableSearch').value.toLowerCase();
-  const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
-
-  return notifications.filter(n => {
-    const matchTab = activeTab === 'semua' ||
-      (activeTab === 'terkirim' && n.status === 'Terkirim') ||
-      (activeTab === 'terjadwal' && n.status === 'Terjadwal') ||
-      (activeTab === 'gagal' && n.status === 'Gagal') ||
-      (activeTab === 'draf' && n.status === 'Draf');
-    const matchQ = !q || n.judul.toLowerCase().includes(q) || n.sub.toLowerCase().includes(q) || n.penerima.toLowerCase().includes(q);
-    return matchTab && matchQ;
-  });
-}
-
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  renderTable(notifications);
-
-  // Search
-  document.getElementById('tableSearch').addEventListener('input', () => {
-    renderTable(filterData());
-    clearDetail();
-  });
-
-  // Tabs
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderTable(filterData());
-      clearDetail();
-    });
-  });
-
-  // Select All checkbox
-  document.getElementById('checkAll').addEventListener('change', function () {
-    document.querySelectorAll('.row-check').forEach(cb => cb.checked = this.checked);
-  });
-
-  // Detail close
-  document.getElementById('detailClose').addEventListener('click', () => {
-    clearDetail();
-    document.querySelectorAll('.notif-row').forEach(r => r.classList.remove('selected'));
-  });
-
-  // Sidebar toggle
-  document.getElementById('sidebarToggle').addEventListener('click', () => {
-    document.getElementById('sidebar').classList.toggle('open');
-  });
-
-  // Modal Buat Notifikasi
-  const modalOverlay = document.getElementById('modalOverlay');
-  document.getElementById('btnBuatNotif').addEventListener('click', () => {
-    modalOverlay.classList.add('open');
-  });
-  document.getElementById('modalClose').addEventListener('click', () => {
-    modalOverlay.classList.remove('open');
-  });
-  document.getElementById('modalCancel').addEventListener('click', () => {
-    modalOverlay.classList.remove('open');
-  });
-  modalOverlay.addEventListener('click', e => {
-    if (e.target === modalOverlay) modalOverlay.classList.remove('open');
-  });
-
-  // Pagination buttons
-  document.querySelectorAll('.page-btn').forEach(btn => {
-    btn.addEventListener('click', function () {
-      if (this.disabled || this.querySelector('i')) return;
-      document.querySelectorAll('.page-btn').forEach(b => {
-        if (!b.querySelector('i')) b.classList.remove('active');
-      });
-      this.classList.add('active');
-    });
-  });
-
-  // Auto-open first row detail
-  const firstRow = document.querySelector('.notif-row');
-  if (firstRow) {
-    firstRow.click();
-  }
-});
 
 function clearDetail() {
-  const body = document.getElementById('detailBody');
-  body.innerHTML = `
-    <div class="detail-empty">
-      <i class="fa-solid fa-bell-slash"></i>
-      <p>Pilih notifikasi untuk melihat detail</p>
-    </div>`;
+    selectedIdRaw = null;
+    document.getElementById('detailPanel').style.display = 'none';
+    document.getElementById('detailPopupOverlay').classList.remove('open');
 }
+
+window.deleteNotif = function(id) {
+    if (!confirm('Hapus notifikasi ini secara permanen dari database?')) return;
+    fetch(`/admin/notifikasi/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            notifications = notifications.filter(n => n.id_raw != id);
+            updateStats(); renderTable(); clearDetail();
+            alert(data.message);
+        }
+    });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateStats(); renderTable();
+    document.getElementById('detailClose').onclick = clearDetail;
+    document.getElementById('detailPopupClose').onclick = clearDetail;
+    document.getElementById('tableSearch').oninput = (e) => { searchQ = e.target.value; currentPage = 1; renderTable(); };
+    document.getElementById('filterModul').onchange = (e) => { filterModul = e.target.value; currentPage = 1; renderTable(); };
+    document.getElementById('btnResetFilter').onclick = () => { searchQ = ''; filterModul = 'semua'; document.getElementById('tableSearch').value = ''; document.getElementById('filterModul').value = 'semua'; currentPage = 1; renderTable(); };
+    document.querySelectorAll('.tab-btn').forEach(b => b.onclick = () => { document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); activeTab = b.dataset.tab; currentPage = 1; renderTable(); clearDetail(); });
+    document.addEventListener('click', () => document.querySelectorAll('.action-dropdown.show').forEach(d => d.classList.remove('show')));
+});
 </script>
 @endpush

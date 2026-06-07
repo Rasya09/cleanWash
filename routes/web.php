@@ -8,6 +8,10 @@ use App\Http\Controllers\Mitra\MitraOrderController;
 use App\Models\UserAddress;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MitraRegisterController;
+use App\Http\Controllers\Admin\VerifikasiMitraController;
+use App\Http\Controllers\RatingController;
+use App\Http\Controllers\Admin\ModerasiController;
+use App\Http\Controllers\Admin\NotifikasiController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Mitra\MitraController;
 use App\Http\Controllers\LaundryController;
@@ -132,10 +136,6 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
         Route::post('/register/reapply/{id}',
             [MitraRegisterController::class, 'updateStep1'])
             ->name('user.register.reapply.update');
-
-        Route::get('/register/reapply/step2/{id}',
-            [MitraRegisterController::class, 'reapplyStep2'])
-            ->name('user.register.reapply.step2');
 
         Route::get('/register/reapply/step2/{id}',
             [MitraRegisterController::class, 'reapplyStep2'])
@@ -429,6 +429,8 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
         [MitraController::class, 'update'])
         ->name('mitra.update.profil');
 
+    Route::post('/review/report', [App\Http\Controllers\Mitra\KomplainController::class, 'store'])->name('mitra.review.report');
+
 });
 
 
@@ -443,39 +445,32 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     )->name('admin.dashboard');
 
     // MANAJEMEN
-   Route::get(
-        '/user',
-        [AdminController::class, 'userManagement']
-    )->name('admin.user');
+    Route::get('/user', [AdminController::class, 'userManagement'])->name('admin.user');
+    Route::post('/user/{id}/block', [AdminController::class, 'blockUser'])->name('admin.user.block');
 
-    Route::get('/mitra-laundry', function () {
-        return view('admin.manajemen.mitra_laundry');
-    })->name('admin.mitra');
+    Route::get('/mitra-laundry', [AdminController::class, 'mitraManagement'])->name('admin.mitra');
+    Route::post('/mitra-laundry/{id}/suspend', [AdminController::class, 'suspendMitra'])->name('admin.mitra.suspend');
 
-    Route::get('/verifikasi-mitra',[AdminController::class, 'index']
-    )->name('admin.verifikasi');
-
-    Route::put('/mitra/{id}/approve',
-        [AdminController::class, 'approve'])
-        ->name('admin.mitra.approve');
-
-    Route::put('/mitra/{id}/reject',
-        [AdminController::class, 'reject'])
-        ->name('admin.mitra.reject');
+    Route::get('/verifikasi-mitra', [VerifikasiMitraController::class, 'index'])
+        ->name('admin.verifikasi');
+    Route::post('/verifikasi-mitra/{mitra}/approve', [VerifikasiMitraController::class, 'approve'])
+        ->name('admin.verifikasi.approve');
+    Route::post('/verifikasi-mitra/{mitra}/reject', [VerifikasiMitraController::class, 'reject'])
+        ->name('admin.verifikasi.reject');
 
 
     // MODERASI
-    Route::get('/review-rating', function () {
-        return view('admin.moderasi.review');
-    })->name('admin.review');
+    Route::get('/review-rating', [ModerasiController::class, 'indexReview'])
+        ->name('admin.review');
+    Route::post('/review-rating/{id}/status', [ModerasiController::class, 'updateStatus'])
+        ->name('admin.review.status');
 
-    Route::get('/komplain', function () {
-        return view('admin.moderasi.komplain');
-    })->name('admin.komplain');
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])
+        ->name('admin.notifikasi');
+    Route::delete('/notifikasi/{id}', [NotifikasiController::class, 'destroy'])
+        ->name('admin.notifikasi.destroy');
 
-    // PENGATURAN
-    Route::get('/notifikasi', function () {
-        return view('admin.pengaturan.notifikasi');
-    })->name('admin.notifikasi');
-
+    Route::get('/komplain', [AdminController::class, 'komplainManagement'])->name('admin.komplain');
+    Route::post('/komplain/{id}/followup', [AdminController::class, 'followUp'])->name('admin.komplain.followup');
+    Route::post('/komplain/{id}/followup-reporter', [AdminController::class, 'followUpReporter'])->name('admin.komplain.followup.reporter');
 });
