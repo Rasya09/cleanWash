@@ -196,11 +196,6 @@
   </div>
 </section>
 
-<!-- Demo toggle button -->
-<button class="demo-toggle" id="demoToggle" onclick="simulateLogin()">
-  🔐 Simulasi Masuk
-</button>
-
 @endsection
 
 @push('scripts')

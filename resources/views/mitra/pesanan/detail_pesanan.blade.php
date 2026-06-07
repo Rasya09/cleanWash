@@ -494,7 +494,7 @@
         <form action="{{ route('mitra.pesanan.tolak', $pesanan->id) }}" method="POST">
             @csrf
             @method('PUT')
-            <textarea name="alasan_batal" class="mdp-modal-textarea" placeholder="Alasan penolakan..." rows="3" required></textarea>
+            <textarea name="alasan" class="mdp-modal-textarea" placeholder="Alasan penolakan..." rows="3" required></textarea>
             <div class="mdp-modal-actions">
                 <button type="button" class="mdp-modal-btn mdp-modal-btn--ghost" onclick="document.getElementById('modalTolak').classList.remove('active')">Batal</button>
                 <button type="submit" class="mdp-modal-btn mdp-modal-btn--red">Ya, Tolak</button>

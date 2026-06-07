@@ -63,6 +63,12 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 
 // ======================================================
+// MIDTRANS WEBHOOK (NO CSRF, NO AUTH)
+// ======================================================
+Route::post('/payment/notification', [\App\Http\Controllers\User\PaymentController::class, 'notificationCallback'])->name('payment.notification');
+
+
+// ======================================================
 // USER
 // ======================================================
 
@@ -233,7 +239,11 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     Route::get('/pesanan',              [OrderController::class, 'index'])->name('user.pesanan');
     Route::get('/pesanan/{id}',         [OrderController::class, 'show'])->name('user.detail-pesanan');
     Route::put('/pesanan/{id}/cancel',  [OrderController::class, 'cancel'])->name('user.pesanan.cancel');
-    Route::post('/pesanan/{id}/bayar',  [OrderController::class, 'bayar'])->name('user.pesanan.bayar');
+
+    // Pembayaran Midtrans
+    Route::post('/pesanan/{id}/bayar',  [\App\Http\Controllers\User\PaymentController::class, 'pay'])->name('user.pesanan.bayar');
+    Route::get('/pesanan/{id}/cek-pembayaran', [\App\Http\Controllers\User\PaymentController::class, 'checkStatus'])->name('user.pesanan.cek_pembayaran');
+    Route::post('/pesanan/{id}/success', [\App\Http\Controllers\User\PaymentController::class, 'successCallback'])->name('user.pesanan.success_callback');
     // Ulasan
     Route::post('/pesanan/{id}/review', [\App\Http\Controllers\ReviewController::class, 'store'])->name('user.review.store');
     // RATING
@@ -287,9 +297,7 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
     Route::put('/pesanan/{id}/tolak',       [MitraOrderController::class, 'tolak'])->name('mitra.pesanan.tolak');
     Route::put('/pesanan/{id}/update',      [MitraOrderController::class, 'updateStatus'])->name('mitra.pesanan.update');
 
-    Route::get('/gagal-pickup', function () {
-        return view('mitra.pesanan.gagal_pickup');
-    })->name('mitra.gagal-pickup');
+    Route::get('/gagal-pickup',            [MitraOrderController::class, 'gagalPickup'])->name('mitra.gagal-pickup');
 
     // LAYANAN
     Route::get(
