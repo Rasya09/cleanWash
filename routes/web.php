@@ -20,6 +20,10 @@ Route::get('/', function () {
     return view('user.home');
 })->name('home');
 
+Route::get('/tentang-kami', function () {
+    return view('user.tentang_kami');
+})->name('tentang.kami');
+
 Route::get('/cari-laundry', function (\Illuminate\Http\Request $request) {
     $query = \App\Models\MitraLaundry::with(['reviews', 'activeServices'])->where('status', 'approved');
     if ($search = $request->query('search')) {
