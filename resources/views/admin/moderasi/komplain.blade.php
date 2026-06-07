@@ -6,30 +6,67 @@
 
 @section('content')
 
-{{-- ═══ PELAPOR POPUP MODAL ═══ --}}
-<div class="pelapor-modal-overlay" id="pelaporModal">
-  <div class="pelapor-modal">
-    <div class="pm-header">
-      <h4>Informasi Pelapor</h4>
-      <button class="pm-close" id="pmClose">✕</button>
+{{-- ═══ COMBINED INFO MODAL (Pelapor & Terlapor) ═══ --}}
+<div class="pelapor-modal-overlay" id="combinedModal">
+  <div class="pelapor-modal" style="max-width: 480px; width: 95%; max-height: 90vh; overflow-y: auto; border-radius: 16px;">
+    <div class="pm-header" style="position: sticky; top: 0; background: #fff; z-index: 10; border-bottom: 1px solid #f1f5f9;">
+      <h4>Detail Pihak Terkait</h4>
+      <button class="pm-close" id="combinedClose">✕</button>
     </div>
-    <div class="pm-body">
-      <div class="pm-avatar-row">
-        <div class="pm-avatar" id="pmAvatar"></div>
-        <div>
-          <div class="pm-name" id="pmName"></div>
-          <div class="pm-role">Pelanggan</div>
+    <div class="pm-body" style="padding: 20px;">
+      
+      <!-- SECTION: PELAPOR -->
+      <div style="background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <div style="font-size: 11px; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-bullhorn"></i> Pelapor
+            </div>
+            <span id="cmbPelaporType" style="font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 700; background: #e2e8f0; color: #475569;">Pelanggan</span>
+        </div>
+        <div class="pm-avatar-row" style="margin-bottom: 15px;">
+          <div class="pm-avatar" id="cmbPelaporAvatar" style="width: 48px; height: 48px; font-size: 18px;"></div>
+          <div>
+            <div class="pm-name" id="cmbPelaporName" style="font-size: 16px; font-weight: 800;"></div>
+            <div class="pm-role" id="cmbPelaporRole" style="font-size: 12px; color: #64748b;">Customer / Pelanggan</div>
+          </div>
+        </div>
+        <div class="pm-info-list" id="cmbPelaporInfo" style="gap: 10px;"></div>
+        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #cbd5e1;">
+            <a id="cmbPelaporLink" href="#" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; background: #fff; color: #64748b; border: 1.5px solid #cbd5e1; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 13px; transition: all 0.2s;">
+                <i class="fa-solid fa-user-gear"></i> Lihat Profil Pelapor
+            </a>
         </div>
       </div>
-      <div class="pm-info-list" id="pmInfoList"></div>
-    </div>
-    <div class="pm-footer">
-      <button class="pm-btn-wa" id="pmWa">
-        <i class="fa-brands fa-whatsapp"></i> WhatsApp
-      </button>
-      <button class="pm-btn-email" id="pmEmail">
-        <i class="fa-solid fa-envelope"></i> Email
-      </button>
+
+      <div style="display: flex; justify-content: center; margin: -10px 0 10px;">
+        <div style="background: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; z-index: 2;">
+            <i class="fa-solid fa-arrows-up-down"></i>
+        </div>
+      </div>
+
+      <!-- SECTION: TERLAPOR -->
+      <div style="background: #fff; padding: 16px; border-radius: 12px; border: 2px solid #3b82f6; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <div style="font-size: 11px; color: #3b82f6; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-user-shield"></i> Terlapor
+            </div>
+            <span id="cmbTerlaporType" style="font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 700; background: #dbeafe; color: #1e40af;">Mitra Laundry</span>
+        </div>
+        <div class="pm-avatar-row" style="margin-bottom: 15px;">
+          <div class="pm-avatar" id="cmbTerlaporAvatar" style="width: 48px; height: 48px; font-size: 18px; background: #3b82f6; color: #fff;"></div>
+          <div>
+            <div class="pm-name" id="cmbTerlaporName" style="font-size: 16px; font-weight: 800;"></div>
+            <div class="pm-role" id="cmbTerlaporRole" style="font-size: 12px; color: #64748b;">Unit Laundry / Toko</div>
+          </div>
+        </div>
+        <div class="pm-info-list" id="cmbTerlaporInfo" style="gap: 10px;"></div>
+        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #dbeafe;">
+            <a id="cmbTerlaporLink" href="#" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; background: #3b82f6; color: #fff; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 13px; transition: all 0.2s; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Lihat di Manajemen Terlapor
+            </a>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -42,12 +79,19 @@
   <div class="content" id="mainContent">
 
     {{-- STAT CARDS --}}
+    @php
+      $total = $komplains->count();
+      $wait = $komplains->where('status', 'pending')->count();
+      $proc = $komplains->where('status', 'proc')->count();
+      $done = $komplains->where('status', 'selesai')->count();
+      $rej = $komplains->where('status', 'ditolak')->count();
+    @endphp
     <div class="stat-row">
       <div class="scard">
         <div class="sico2 indigo">📋</div>
         <div>
           <div class="slabel">Total Laporan</div>
-          <div class="sval" id="stat-total">186</div>
+          <div class="sval" id="stat-total">{{ $total }}</div>
           <div class="ssub">Semua laporan</div>
         </div>
       </div>
@@ -55,43 +99,43 @@
         <div class="sico2 orange">⏳</div>
         <div>
           <div class="slabel">Menunggu Tindak Lanjut</div>
-          <div class="sval" id="stat-wait">32</div>
-          <div class="ssub">17,2% dari total</div>
+          <div class="sval" id="stat-wait">{{ $wait }}</div>
+          <div class="ssub">{{ $total > 0 ? round(($wait/$total)*100, 1) : 0 }}% dari total</div>
         </div>
       </div>
       <div class="scard">
         <div class="sico2 blue">⚙️</div>
         <div>
           <div class="slabel">Sedang Diproses</div>
-          <div class="sval" id="stat-proc">68</div>
-          <div class="ssub">36,6% dari total</div>
+          <div class="sval" id="stat-proc">{{ $proc }}</div>
+          <div class="ssub">{{ $total > 0 ? round(($proc/$total)*100, 1) : 0 }}% dari total</div>
         </div>
       </div>
       <div class="scard">
         <div class="sico2 green">✅</div>
         <div>
           <div class="slabel">Selesai</div>
-          <div class="sval" id="stat-done">78</div>
-          <div class="ssub">41,9% dari total</div>
+          <div class="sval" id="stat-done">{{ $done }}</div>
+          <div class="ssub">{{ $total > 0 ? round(($done/$total)*100, 1) : 0 }}% dari total</div>
         </div>
       </div>
       <div class="scard">
         <div class="sico2 red">❌</div>
         <div>
           <div class="slabel">Ditolak</div>
-          <div class="sval" id="stat-rej">8</div>
-          <div class="ssub">4,3% dari total</div>
+          <div class="sval" id="stat-rej">{{ $rej }}</div>
+          <div class="ssub">{{ $total > 0 ? round(($rej/$total)*100, 1) : 0 }}% dari total</div>
         </div>
       </div>
     </div>
 
     {{-- TABS --}}
     <div class="tabs" id="tabsBar">
-      <div class="tab active" data-tab="semua">Semua <span class="tc" id="tc-semua">186</span></div>
-      <div class="tab" data-tab="wait">Menunggu <span class="tc" id="tc-wait">32</span></div>
-      <div class="tab" data-tab="proc">Diproses <span class="tc" id="tc-proc">68</span></div>
-      <div class="tab" data-tab="done">Selesai <span class="tc" id="tc-done">78</span></div>
-      <div class="tab" data-tab="rej">Ditolak <span class="tc" id="tc-rej">8</span></div>
+      <div class="tab active" data-tab="semua">Semua <span class="tc" id="tc-semua">{{ $total }}</span></div>
+      <div class="tab" data-tab="wait">Menunggu <span class="tc" id="tc-wait">{{ $wait }}</span></div>
+      <div class="tab" data-tab="proc">Diproses <span class="tc" id="tc-proc">{{ $proc }}</span></div>
+      <div class="tab" data-tab="done">Selesai <span class="tc" id="tc-done">{{ $done }}</span></div>
+      <div class="tab" data-tab="rej">Ditolak <span class="tc" id="tc-rej">{{ $rej }}</span></div>
     </div>
 
     {{-- TOOLBAR --}}
@@ -149,7 +193,7 @@
             <th>ID Laporan</th>
             <th>Pelapor</th>
             <th>Tipe Laporan</th>
-            <th>Mitra Laundry</th>
+            <th>Terlapor / Mitra</th>
             <th>Order ID</th>
             <th>Prioritas</th>
             <th>Status</th>
@@ -188,17 +232,12 @@
     </div>
     <div class="detbody" id="detailBody"></div>
     <div class="detfoot" id="detailFoot" style="display:none">
+      <div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-bottom:10px; padding-left:4px;">Tindak Lanjut</div>
       <div class="foot-row">
-        <button class="btn-proc" id="btnProses">
-          <i class="fa-solid fa-play"></i> Proses Laporan
-        </button>
-        <button class="btn-info" id="btnMintaInfo">
-          <i class="fa-solid fa-comment-dots"></i> Minta Info Tambahan
+        <button class="btn-reject" id="btnTolak" style="width: 100%; font-size: 11px; padding: 10px 4px;">
+          <i class="fa-solid fa-xmark"></i> Tolak Laporan
         </button>
       </div>
-      <button class="btn-reject" id="btnTolak">
-        <i class="fa-solid fa-xmark"></i> Tolak Laporan
-      </button>
     </div>
   </div>
 
@@ -212,112 +251,75 @@
 'use strict';
 
 /* ─── DATA ─────────────────────────────────────────────── */
-const complaints = [
-  {
-    id:'CMP-2024-0508-0001',
-    pelapor:{nama:'Andi Pratama',inisial:'AP',warna:'#2563EB',hp:'0812-3456-7890',email:'andi.pratama@email.com',alamat:'Jl. Melati No. 12, Cipete Jakarta Selatan'},
-    tipe:{nama:'Pakaian Rusak',ico:'👕',cls:'red'},
-    mitra:{nama:'Laundry Bersih Sejahtera',inisial:'LB',cls:'blue'},
-    orderId:'#ORD-2024-0508-0001',prioritas:'high',prioritasLabel:'Tinggi',
-    status:'wait',statusLabel:'Menunggu',
-    tanggal:'8 Mei 2024',jam:'09:20',
-    orderTanggal:'7 Mei 2024, 14:10',orderSelesai:'8 Mei 2024, 09:20',
-    totalBayar:'Rp85.000',
-    deskripsi:'Pakaian saya (kemeja putih) rusak pada bagian lengan setelah dicuci. Mohon ganti rugi atau perbaikan.',
-    lampiran:3,photos:['🧥','👔','📸'],dibuat:'8 Mei 2024, 09:20'
-  },
-  {
-    id:'CMP-2024-0508-0002',
-    pelapor:{nama:'Siti Aisyah',inisial:'SA',warna:'#10B981',hp:'0821-9876-5432',email:'siti.aisyah@email.com',alamat:'Jl. Kenanga No. 5, Tebet Jakarta Selatan'},
-    tipe:{nama:'Terlambat Diambil',ico:'⏰',cls:'orange'},
-    mitra:{nama:'Quick Wash Laundry',inisial:'QW',cls:'teal'},
-    orderId:'#ORD-2024-0508-0002',prioritas:'med',prioritasLabel:'Sedang',
-    status:'proc',statusLabel:'Diproses',
-    tanggal:'8 Mei 2024',jam:'08:45',
-    orderTanggal:'6 Mei 2024, 10:00',orderSelesai:'8 Mei 2024, 08:00',
-    totalBayar:'Rp60.000',
-    deskripsi:'Pakaian sudah seharusnya selesai kemarin tapi baru bisa diambil hari ini. Mohon penjelasan.',
-    lampiran:1,photos:['📦'],dibuat:'8 Mei 2024, 08:45'
-  },
-  {
-    id:'CMP-2024-0507-0015',
-    pelapor:{nama:'Budi Santoso',inisial:'BS',warna:'#F59E0B',hp:'0813-2345-6789',email:'budi.santoso@email.com',alamat:'Jl. Anggrek No. 8, Kebayoran Jakarta Selatan'},
-    tipe:{nama:'Hasil Cucian Buruk',ico:'✅',cls:'blue'},
-    mitra:{nama:'Fresh & Clean Laundry',inisial:'FC',cls:'green'},
-    orderId:'#ORD-2024-0507-0015',prioritas:'high',prioritasLabel:'Tinggi',
-    status:'proc',statusLabel:'Diproses',
-    tanggal:'7 Mei 2024',jam:'15:35',
-    orderTanggal:'5 Mei 2024, 09:30',orderSelesai:'7 Mei 2024, 14:00',
-    totalBayar:'Rp120.000',
-    deskripsi:'Pakaian masih kotor setelah dicuci. Ada noda yang tidak hilang pada bagian kerah.',
-    lampiran:2,photos:['👗','🔍'],dibuat:'7 Mei 2024, 15:35'
-  },
-  {
-    id:'CMP-2024-0507-0014',
-    pelapor:{nama:'Dewi Lestari',inisial:'DL',warna:'#7C3AED',hp:'0822-1122-3344',email:'dewi.lestari@email.com',alamat:'Jl. Dahlia No. 3, Pancoran Jakarta Selatan'},
-    tipe:{nama:'Kehilangan Barang',ico:'🎒',cls:'orange'},
-    mitra:{nama:'LaundryKita',inisial:'LK',cls:'orange'},
-    orderId:'#ORD-2024-0507-0014',prioritas:'high',prioritasLabel:'Tinggi',
-    status:'wait',statusLabel:'Menunggu',
-    tanggal:'7 Mei 2024',jam:'14:25',
-    orderTanggal:'4 Mei 2024, 11:00',orderSelesai:'7 Mei 2024, 13:00',
-    totalBayar:'Rp95.000',
-    deskripsi:'Jaket kulit saya hilang setelah proses laundry. Nilainya cukup besar, mohon segera ditangani.',
-    lampiran:1,photos:['🧥'],dibuat:'7 Mei 2024, 14:25'
-  },
-  {
-    id:'CMP-2024-0507-0013',
-    pelapor:{nama:'Fahmi Hidayat',inisial:'FH',warna:'#EF4444',hp:'0838-7766-5544',email:'fahmi.hidayat@email.com',alamat:'Jl. Mawar No. 17, Mampang Jakarta Selatan'},
-    tipe:{nama:'Pelayanan Buruk',ico:'⭐',cls:'purple'},
-    mitra:{nama:'CleanPro Laundry',inisial:'CP',cls:'purple'},
-    orderId:'#ORD-2024-0507-0013',prioritas:'med',prioritasLabel:'Sedang',
-    status:'done',statusLabel:'Selesai',
-    tanggal:'7 Mei 2024',jam:'11:15',
-    orderTanggal:'3 Mei 2024, 08:00',orderSelesai:'7 Mei 2024, 10:00',
-    totalBayar:'Rp45.000',
-    deskripsi:'Staff tidak ramah dan tidak informatif terkait status cucian. Pengalaman yang sangat buruk.',
-    lampiran:0,photos:[],dibuat:'7 Mei 2024, 11:15'
-  },
-  {
-    id:'CMP-2024-0506-0010',
-    pelapor:{nama:'Rini Wulandari',inisial:'RW',warna:'#06B6D4',hp:'0815-5566-7788',email:'rini.wulandari@email.com',alamat:'Jl. Cempaka No. 22, Cilandak Jakarta Selatan'},
-    tipe:{nama:'Tagihan Salah',ico:'💰',cls:'green'},
-    mitra:{nama:'Bersih Kilat',inisial:'BK',cls:'cyan'},
-    orderId:'#ORD-2024-0506-0010',prioritas:'low',prioritasLabel:'Rendah',
-    status:'done',statusLabel:'Selesai',
-    tanggal:'6 Mei 2024',jam:'16:00',
-    orderTanggal:'2 Mei 2024, 13:00',orderSelesai:'6 Mei 2024, 15:00',
-    totalBayar:'Rp75.000',
-    deskripsi:'Tagihan yang diterima lebih besar dari yang seharusnya. Ada biaya tambahan yang tidak jelas.',
-    lampiran:2,photos:['📄','💳'],dibuat:'6 Mei 2024, 16:00'
-  },
-  {
-    id:'CMP-2024-0506-0009',
-    pelapor:{nama:'Ahmad Fauzi',inisial:'AF',warna:'#4F46E5',hp:'0819-2233-4455',email:'ahmad.fauzi@email.com',alamat:'Jl. Seruni No. 9, Jagakarsa Jakarta Selatan'},
-    tipe:{nama:'Pakaian Rusak',ico:'👕',cls:'red'},
-    mitra:{nama:'Laundry Express',inisial:'LE',cls:'indigo'},
-    orderId:'#ORD-2024-0506-0009',prioritas:'med',prioritasLabel:'Sedang',
-    status:'rej',statusLabel:'Ditolak',
-    tanggal:'6 Mei 2024',jam:'10:30',
-    orderTanggal:'1 Mei 2024, 09:00',orderSelesai:'6 Mei 2024, 09:00',
-    totalBayar:'Rp55.000',
-    deskripsi:'Warna celana berubah setelah dicuci. Awalnya biru tua, sekarang menjadi pucat.',
-    lampiran:1,photos:['👖'],dibuat:'6 Mei 2024, 10:30'
-  },
-  {
-    id:'CMP-2024-0505-0005',
-    pelapor:{nama:'Lina Marlina',inisial:'LM',warna:'#0D9488',hp:'0823-6677-8899',email:'lina.marlina@email.com',alamat:'Jl. Tulip No. 14, Pesanggrahan Jakarta Selatan'},
-    tipe:{nama:'Kehilangan Barang',ico:'🎒',cls:'orange'},
-    mitra:{nama:'Sparkle Laundry',inisial:'SL',cls:'red'},
-    orderId:'#ORD-2024-0505-0005',prioritas:'high',prioritasLabel:'Tinggi',
-    status:'proc',statusLabel:'Diproses',
-    tanggal:'5 Mei 2024',jam:'09:10',
-    orderTanggal:'29 Apr 2024, 10:00',orderSelesai:'5 Mei 2024, 08:00',
-    totalBayar:'Rp110.000',
-    deskripsi:'Sepasang kaus kaki dan satu baju anak tidak ada dalam hasil laundry yang dikembalikan.',
-    lampiran:0,photos:[],dibuat:'5 Mei 2024, 09:10'
-  }
-];
+const complaints = {!! json_encode($komplains->map(function($c) {
+    $isStoreReport = $c->mitra_laundry_id !== null;
+    // Jika reporter adalah mitra (punya mitra_laundry), berarti mitra melapor user
+    $isMitraReporting = $c->reporter?->mitraLaundry !== null;
+    
+    return [
+        'id' => 'CMP-' . str_pad($c->id, 4, '0', STR_PAD_LEFT),
+        'realId' => $c->id,
+        'reporterId' => $c->reporter_id,
+        'isMitraReporting' => $isMitraReporting,
+        'pelapor' => [
+            'nama' => $c->reporter?->name ?? 'User',
+            'inisial' => strtoupper(substr($c->reporter?->name ?? 'U', 0, 2)),
+            'warna' => $isMitraReporting ? '#3b82f6' : ($isStoreReport ? '#EF4444' : '#2563EB'),
+            'hp' => $c->reporter?->phone ?? '-',
+            'email' => $c->reporter?->email ?? '-',
+            'alamat' => $c->reporter?->mitraLaundry?->address ?? '-',
+        ],
+        'reportedUser' => [
+            'id' => $c->reported_user_id,
+            'nama' => $c->reportedUser?->name ?? 'User',
+            'inisial' => strtoupper(substr($c->reportedUser?->name ?? 'U', 0, 2)),
+            'hp' => $c->reportedUser?->phone ?? '-',
+            'email' => $c->reportedUser?->email ?? '-',
+            'alamat' => $c->reportedUser?->mitraLaundry?->address ?? '-',
+        ],
+        'tipe' => [
+            'nama' => $isStoreReport ? 'Laporan Toko' : ($isMitraReporting ? 'Laporan User' : 'Laporan Ulasan'),
+            'ico' => $isStoreReport ? '🏬' : ($isMitraReporting ? '👤' : '🚩'),
+            'cls' => $isStoreReport ? 'orange' : ($isMitraReporting ? 'blue' : 'red')
+        ],
+        'mitra' => [
+            'id' => $c->mitra_laundry_id ?? $c->reportedUser?->mitraLaundry?->id,
+            'nama' => $c->mitraLaundry?->store_name ?? $c->reportedUser?->mitraLaundry?->store_name ?? 'Mitra Toko',
+            'inisial' => strtoupper(substr($c->mitraLaundry?->store_name ?? $c->reportedUser?->mitraLaundry?->store_name ?? 'MT', 0, 2)),
+            'cls' => 'blue',
+            'pemilik' => $c->mitraLaundry?->user?->name ?? $c->reportedUser?->name ?? 'Pemilik',
+            'hp' => $c->mitraLaundry?->user?->phone ?? $c->reportedUser?->phone ?? '-',
+            'email' => $c->mitraLaundry?->user?->email ?? $c->reportedUser?->email ?? '-',
+            'alamat' => $c->mitraLaundry?->address ?? $c->reportedUser?->mitraLaundry?->address ?? '-',
+        ],
+        'orderId' => $c->review?->order?->order_code ?? '-',
+        'prioritas' => $isStoreReport ? 'high' : 'med',
+        'prioritasLabel' => $isStoreReport ? 'Tinggi' : 'Sedang',
+        'status' => match($c->status) {
+            'pending' => 'wait',
+            'proc'    => 'proc',
+            'selesai' => 'done',
+            'ditolak' => 'rej',
+            default   => 'wait'
+        },
+        'statusLabel' => match($c->status) {
+            'pending' => 'Menunggu',
+            'proc'    => 'Diproses',
+            'selesai' => 'Selesai',
+            'ditolak' => 'Ditolak',
+            default   => 'Menunggu'
+        },
+        'tanggal' => $c->created_at->format('d M Y'),
+        'jam' => $c->created_at->format('H:i'),
+        'orderTanggal' => $c->review?->order?->created_at?->format('d M Y, H:i') ?? '-',
+        'orderSelesai' => $c->review?->order?->updated_at?->format('d M Y, H:i') ?? '-',
+        'totalBayar' => 'Rp ' . number_format($c->review?->order?->total_bayar ?? 0, 0, ',', '.'),
+        'deskripsi' => '<b>Alasan Pelaporan:</b><br>' . $c->alasan . ($isStoreReport ? '' : '<br><br><b>Isi Ulasan:</b><br>' . ($c->review?->komentar ?? '-')),
+        'lampiran' => 0,
+        'photos' => [],
+        'dibuat' => $c->created_at->format('d M Y, H:i')
+    ];
+})->values()->all()) !!};
 
 /* ─── STATE ─────────────────────────────────────────── */
 let activeTab      = 'semua';
@@ -330,7 +332,12 @@ let filterKategori = '';
 let filterPrioritas= '';
 
 /* ─── HELPERS ────────────────────────────────────────── */
-const statusBadge = (s,l) => `<span class="badge ${s}">${l}</span>`;
+const statusBadge = (s,l) => {
+    let cls = 'wait';
+    if(s === 'selesai') cls = 'done';
+    if(s === 'ditolak') cls = 'rej';
+    return `<span class="badge ${cls}">${l}</span>`;
+};
 const prioBadge   = (p,l) => `<span class="prio ${p}">${l}</span>`;
 const avatarStyle = c     => `background:${c}`;
 
@@ -370,7 +377,7 @@ function renderTable(){
       <td><input type="checkbox" class="row-check" data-id="${c.id}"/></td>
       <td><span class="cmpid">${c.id}</span></td>
       <td>
-        <div class="plcell pl-clickable" data-pelapor-id="${c.id}" title="Lihat profil pelapor">
+        <div class="plcell pl-clickable" onclick="event.stopPropagation(); openCombinedModal('${c.id}')" title="Lihat detail pihak terkait">
           <div class="plav" style="${avatarStyle(c.pelapor.warna)}">${c.pelapor.inisial}</div>
           <div>
             <div class="plname">${c.pelapor.nama}</div>
@@ -385,9 +392,11 @@ function renderTable(){
         </div>
       </td>
       <td>
-        <div class="mc">
-          <div class="mlogo ${c.mitra.cls}" style="color:#fff;font-weight:700">${c.mitra.inisial}</div>
-          <span class="mname">${c.mitra.nama}</span>
+        <div class="mc pl-clickable" onclick="event.stopPropagation(); openCombinedModal('${c.id}')" title="Lihat detail pihak terkait">
+          <div class="mlogo ${c.isMitraReporting ? 'blue' : c.mitra.cls}" style="color:#fff;font-weight:700">
+            ${c.isMitraReporting ? c.reportedUser.inisial : c.mitra.inisial}
+          </div>
+          <span class="mname">${c.isMitraReporting ? c.reportedUser.nama : c.mitra.nama}</span>
         </div>
       </td>
       <td><span class="oid">${c.orderId}</span></td>
@@ -395,9 +404,33 @@ function renderTable(){
       <td>${statusBadge(c.status,c.statusLabel)}</td>
       <td><div class="tdate">${c.tanggal}</div><div class="ttime">${c.jam}</div></td>
       <td>
-        <div class="acell">
-          <button class="abtn v btn-view" data-id="${c.id}" title="Lihat Detail"><i class="fa-solid fa-eye"></i></button>
-          <button class="abtn btn-more" data-id="${c.id}" title="Lainnya"><i class="fa-solid fa-ellipsis"></i></button>
+        <div class="acell action-menu-wrap">
+          <button class="abtn btn-more" data-id="${c.id}" title="Aksi" onclick="toggleActionDropdown(event, '${c.id}')">
+            <i class="fa-solid fa-ellipsis"></i>
+          </button>
+          <div class="action-dropdown" id="dropdown-${c.id}" style="display:none; position:absolute; right:0; top:100%; z-index:100; background:#fff; border:1px solid var(--border); border-radius:8px; box-shadow:var(--shadow-md); padding:6px; min-width:180px;">
+            <div style="font-size:10px; color:var(--text-muted); padding:4px 12px; font-weight:700; text-transform:uppercase;">Tindak Lanjut Mitra</div>
+            <button onclick="window.open('https://wa.me/${c.pelapor.hp.replace(/\D/g,'')}', '_blank')" style="width:100%; text-align:left; background:none; border:none; padding:8px 12px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--text-main);">
+                <i class="fa-brands fa-whatsapp" style="color:#25D366; width:16px;"></i> WhatsApp Mitra
+            </button>
+            <button onclick="triggerFollowUpM('${c.id}')" style="width:100%; text-align:left; background:none; border:none; padding:8px 12px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--text-main);">
+                <i class="fa-solid fa-comment" style="color:#2563eb; width:16px;"></i> Open Chat Mitra
+            </button>
+            
+            <hr style="border:none; border-top:1px solid #f1f5f9; margin:4px 0;">
+            <div style="font-size:10px; color:var(--text-muted); padding:4px 12px; font-weight:700; text-transform:uppercase;">Tindak Lanjut Pelapor</div>
+            <button onclick="window.open('https://wa.me/${c.pelapor.hp.replace(/\D/g,'')}', '_blank')" style="width:100%; text-align:left; background:none; border:none; padding:8px 12px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--text-main);">
+                <i class="fa-brands fa-whatsapp" style="color:#25D366; width:16px;"></i> WhatsApp Pelapor
+            </button>
+            <button onclick="triggerFollowUpP('${c.id}')" style="width:100%; text-align:left; background:none; border:none; padding:8px 12px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--text-main);">
+                <i class="fa-solid fa-comment" style="color:#14b8a6; width:16px;"></i> Open Chat Pelapor
+            </button>
+
+            <hr style="border:none; border-top:1px solid #f1f5f9; margin:4px 0;">
+            <button onclick="openDetail('${c.id}')" style="width:100%; text-align:left; background:none; border:none; padding:8px 12px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--text-main);">
+                <i class="fa-solid fa-eye" style="color:#64748b; width:16px;"></i> Lihat Detail
+            </button>
+          </div>
         </div>
       </td>
     </tr>
@@ -406,16 +439,11 @@ function renderTable(){
   /* events */
   tbody.querySelectorAll('tr[data-id]').forEach(tr=>{
     tr.addEventListener('click',e=>{
-      if(e.target.closest('.row-check,.abtn,.pl-clickable')) return;
+      if(e.target.closest('.row-check,.action-menu-wrap,.pl-clickable')) return;
       openDetail(tr.dataset.id);
     });
   });
-  tbody.querySelectorAll('.btn-view').forEach(btn=>{
-    btn.addEventListener('click',e=>{e.stopPropagation();openDetail(btn.dataset.id);});
-  });
-  tbody.querySelectorAll('.btn-more').forEach(btn=>{
-    btn.addEventListener('click',e=>e.stopPropagation());
-  });
+
   tbody.querySelectorAll('.pl-clickable').forEach(cell=>{
     cell.addEventListener('click',e=>{e.stopPropagation();openPelaporModal(cell.dataset.pelaporId);});
   });
@@ -423,6 +451,32 @@ function renderTable(){
   renderPagination(total);
   updateTabCounts();
 }
+
+/* ─── DROPDOWN ACTIONS ───────────────────────────────── */
+function toggleActionDropdown(e, id) {
+    e.stopPropagation();
+    // Close all other dropdowns
+    document.querySelectorAll('.action-dropdown').forEach(d => {
+        if(d.id !== 'dropdown-'+id) d.style.display = 'none';
+    });
+    const el = document.getElementById('dropdown-'+id);
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function triggerFollowUpM(id) {
+    selectedId = id;
+    document.getElementById('btnFollowUp').click();
+}
+
+function triggerFollowUpP(id) {
+    selectedId = id;
+    document.getElementById('btnFollowUpReporter').click();
+}
+
+// Close dropdowns on window click
+window.addEventListener('click', () => {
+    document.querySelectorAll('.action-dropdown').forEach(d => d.style.display = 'none');
+});
 
 /* ─── PAGINATION ─────────────────────────────────────── */
 function renderPagination(total){
@@ -442,12 +496,20 @@ function renderPagination(total){
   html+=`<button class="pgb nav" id="pgNext" ${currentPage===totalPages?'disabled':''}>›</button>`;
   container.innerHTML=html;
   container.querySelectorAll('.pgb[data-pg]').forEach(btn=>{
-    btn.addEventListener('click',()=>{currentPage=parseInt(btn.dataset.pg);renderTable();});
+    btn.addEventListener('click',()=>{
+        goPage(parseInt(btn.dataset.pg));
+    });
   });
   const prev=document.getElementById('pgPrev');
   const next=document.getElementById('pgNext');
-  if(prev)prev.addEventListener('click',()=>{if(currentPage>1){currentPage--;renderTable();}});
-  if(next)next.addEventListener('click',()=>{if(currentPage<totalPages){currentPage++;renderTable();}});
+  if(prev)prev.addEventListener('click',()=>{if(currentPage>1){goPage(currentPage-1);}});
+  if(next)next.addEventListener('click',()=>{if(currentPage<totalPages){goPage(currentPage+1);}});
+}
+
+function goPage(p){
+    currentPage = p;
+    renderTable();
+    window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 /* ─── TAB COUNTS ─────────────────────────────────────── */
@@ -461,34 +523,86 @@ function updateTabCounts(){
   });
 }
 
-/* ─── PELAPOR MODAL ──────────────────────────────────── */
-function openPelaporModal(id){
-  const c=complaints.find(x=>x.id===id);if(!c)return;
-  const p=c.pelapor;
-  document.getElementById('pmAvatar').style.background=p.warna;
-  document.getElementById('pmAvatar').textContent=p.inisial;
-  document.getElementById('pmName').textContent=p.nama;
-  document.getElementById('pmInfoList').innerHTML=`
-    <div class="pm-info-row">
-      <div class="pm-info-icon blue"><i class="fa-solid fa-phone"></i></div>
-      <div><div class="pm-info-label">No. WhatsApp</div><div class="pm-info-val">${p.hp}</div></div>
+/* ─── COMBINED MODAL ───────────────────────────────────── */
+function openCombinedModal(id) {
+  const c = complaints.find(x => x.id === id);
+  if (!c) return;
+
+  // 1. POPULATE PELAPOR
+  const p = c.pelapor;
+  document.getElementById('cmbPelaporAvatar').style.background = p.warna;
+  document.getElementById('cmbPelaporAvatar').textContent = p.inisial;
+  document.getElementById('cmbPelaporName').textContent = p.nama;
+  document.getElementById('cmbPelaporType').textContent = c.isMitraReporting ? 'Mitra' : 'Customer';
+  document.getElementById('cmbPelaporRole').textContent = c.isMitraReporting ? 'Pemilik Laundry' : 'Customer / Pelanggan';
+  
+  document.getElementById('cmbPelaporInfo').innerHTML = `
+    <div class="pm-info-row" style="margin-bottom: 8px;">
+      <div class="pm-info-icon blue" style="width:24px; height:24px; font-size:10px;"><i class="fa-solid fa-phone"></i></div>
+      <div><div class="pm-info-val" style="font-size:13px; font-weight:600;">${p.hp}</div></div>
+    </div>
+    <div class="pm-info-row" style="margin-bottom: 8px;">
+      <div class="pm-info-icon green" style="width:24px; height:24px; font-size:10px;"><i class="fa-solid fa-envelope"></i></div>
+      <div><div class="pm-info-val" style="font-size:13px;">${p.email}</div></div>
     </div>
     <div class="pm-info-row">
-      <div class="pm-info-icon green"><i class="fa-solid fa-envelope"></i></div>
-      <div><div class="pm-info-label">Email</div><div class="pm-info-val">${p.email}</div></div>
-    </div>
-    <div class="pm-info-row">
-      <div class="pm-info-icon orange"><i class="fa-solid fa-location-dot"></i></div>
-      <div><div class="pm-info-label">Alamat</div><div class="pm-info-val">${p.alamat}</div></div>
+      <div class="pm-info-icon orange" style="width:24px; height:24px; font-size:10px;"><i class="fa-solid fa-location-dot"></i></div>
+      <div><div class="pm-info-val" style="font-size:12px; color:#64748b; line-height:1.4;">${p.alamat}</div></div>
     </div>`;
-  document.getElementById('pmWa').onclick=()=>window.open(`https://wa.me/${p.hp.replace(/\D/g,'')}`, '_blank');
-  document.getElementById('pmEmail').onclick=()=>{window.location.href=`mailto:${p.email}`;};
-  document.getElementById('pelaporModal').classList.add('show');
-  document.body.style.overflow='hidden';
+
+  const pelaporLinkEl = document.getElementById('cmbPelaporLink');
+  if (c.isMitraReporting) {
+    // Jika pelapor adalah mitra, kita perlu ID mitra-nya. 
+    // Berdasarkan data mapping, kita gunakan mitra_laundry_id pelapor jika tersedia.
+    // Di mapping saat ini kita belum simpan mitra_id pelapor secara eksplisit jika dia mitra.
+    // Kita asumsikan reporterId adalah user id, dan link ke user management sudah cukup atau jika dia mitra link ke mitra management.
+    // Untuk simplifikasi, kita arahkan ke profil user yang juga menampilkan role mitra.
+    pelaporLinkEl.href = `{{ route('admin.user') }}?id=${c.reporterId}`;
+    pelaporLinkEl.innerHTML = '<i class="fa-solid fa-user-gear"></i> Lihat Profil Pelapor';
+  } else {
+    pelaporLinkEl.href = `{{ route('admin.user') }}?id=${c.reporterId}`;
+    pelaporLinkEl.innerHTML = '<i class="fa-solid fa-user-gear"></i> Lihat Profil Pelapor';
+  }
+
+  // 2. POPULATE TERLAPOR
+  const t = c.mitra_laundry_id ? c.mitra : c.reportedUser;
+  const isMitra = c.mitra_laundry_id !== null;
+
+  document.getElementById('cmbTerlaporAvatar').textContent = t.inisial;
+  document.getElementById('cmbTerlaporName').textContent = t.nama;
+  document.getElementById('cmbTerlaporType').textContent = isMitra ? 'Mitra Laundry' : 'Customer';
+  document.getElementById('cmbTerlaporRole').textContent = isMitra ? 'Unit Laundry / Toko' : 'Pihak Terlapor';
+
+  document.getElementById('cmbTerlaporInfo').innerHTML = `
+    <div class="pm-info-row" style="margin-bottom: 8px;">
+      <div class="pm-info-icon blue" style="width:24px; height:24px; font-size:10px; background:#dbeafe; color:#1e40af;"><i class="fa-solid fa-phone"></i></div>
+      <div><div class="pm-info-val" style="font-size:13px; font-weight:600;">${t.hp}</div></div>
+    </div>
+    <div class="pm-info-row" style="margin-bottom: 8px;">
+      <div class="pm-info-icon green" style="width:24px; height:24px; font-size:10px; background:#dcfce7; color:#166534;"><i class="fa-solid fa-envelope"></i></div>
+      <div><div class="pm-info-val" style="font-size:13px;">${t.email}</div></div>
+    </div>
+    <div class="pm-info-row">
+      <div class="pm-info-icon orange" style="width:24px; height:24px; font-size:10px; background:#ffedd5; color:#9a3412;"><i class="fa-solid fa-location-dot"></i></div>
+      <div><div class="pm-info-val" style="font-size:12px; color:#64748b; line-height:1.4;">${t.alamat}</div></div>
+    </div>`;
+
+  const linkEl = document.getElementById('cmbTerlaporLink');
+  if (isMitra) {
+    linkEl.href = `{{ route('admin.mitra') }}?id=${t.id}`;
+    linkEl.innerHTML = '<i class="fa-solid fa-store"></i> Lihat di Manajemen Toko';
+  } else {
+    linkEl.href = `{{ route('admin.user') }}?id=${c.reportedUser.id}`;
+    linkEl.innerHTML = '<i class="fa-solid fa-user-gear"></i> Lihat di Manajemen User';
+  }
+
+  document.getElementById('combinedModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
 }
-function closePelaporModal(){
-  document.getElementById('pelaporModal').classList.remove('show');
-  document.body.style.overflow='';
+
+function closeCombinedModal() {
+  document.getElementById('combinedModal').classList.remove('show');
+  document.body.style.overflow = '';
 }
 
 /* ─── OVERLAY HELPER ─────────────────────────────────── */
@@ -537,7 +651,15 @@ function openDetail(id){
     <div class="dsec">
       <div class="dsec-title"><span class="si blue"><i class="fa-solid fa-user"></i></span>Informasi Pelapor</div>
       <div class="drows">
-        <div class="drow"><span class="drow-l">Nama</span><span class="drow-r">${c.pelapor.nama}</span></div>
+        <div class="drow">
+            <span class="drow-l">Nama</span>
+            <span class="drow-r">
+                ${c.pelapor.nama} 
+                <a href="/admin/chat/${c.reporterId}" style="margin-left:8px; color:var(--primary); text-decoration:none; font-size:11px; font-weight:700;" title="Buka Chat Langsung">
+                    <i class="fa-solid fa-comment"></i> Chat
+                </a>
+            </span>
+        </div>
         <div class="drow"><span class="drow-l">No. WhatsApp</span>
           <span class="drow-r" style="display:flex;align-items:center;gap:6px">${c.pelapor.hp}<i class="fa-brands fa-whatsapp" style="color:#25D366;font-size:14px"></i></span></div>
         <div class="drow"><span class="drow-l">Email</span><span class="drow-r">${c.pelapor.email}</span></div>
@@ -545,10 +667,10 @@ function openDetail(id){
       </div>
     </div>
     <div class="dsec">
-      <div class="dsec-title"><span class="si green"><i class="fa-solid fa-cart-shopping"></i></span>Informasi Order</div>
+      <div class="dsec-title"><span class="si green"><i class="fa-solid fa-cart-shopping"></i></span>Informasi Terkait</div>
       <div class="drows">
         <div class="drow"><span class="drow-l">Order ID</span><span class="drow-r primary">${c.orderId}</span></div>
-        <div class="drow"><span class="drow-l">Mitra Laundry</span><span class="drow-r">${c.mitra.nama}</span></div>
+        <div class="drow"><span class="drow-l">${c.isMitraReporting ? 'User Terlapor' : 'Mitra Laundry'}</span><span class="drow-r">${c.isMitraReporting ? c.reportedUser.nama : c.mitra.nama}</span></div>
         <div class="drow"><span class="drow-l">Tanggal Order</span><span class="drow-r">${c.orderTanggal}</span></div>
         <div class="drow"><span class="drow-l">Tanggal Selesai</span><span class="drow-r">${c.orderSelesai}</span></div>
         <div class="drow"><span class="drow-l">Total Bayar</span><span class="drow-r">${c.totalBayar}</span></div>
@@ -565,6 +687,20 @@ function openDetail(id){
       <div class="dsec-title"><span class="si red"><i class="fa-solid fa-file-lines"></i></span>Deskripsi Laporan</div>
       <div class="desc-text">${c.deskripsi}</div>
       ${photosHtml}${lampiranHtml}
+    </div>
+    <div style="margin-top:16px; padding-top:16px; border-top:1px solid #f1f5f9;">
+      <div class="det-label" style="margin-bottom:12px; font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Hubungan Pihak Terkait</div>
+      <div onclick="openCombinedModal('${c.id}')" style="display:flex; align-items:center; gap:12px; padding:12px; background:linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius:12px; cursor:pointer; border:1px solid #e2e8f0; transition:all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onmouseover="this.style.borderColor='var(--primary)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.transform='translateY(0)'">
+        <div style="display: flex; align-items: center; -webkit-mask-image: linear-gradient(to right, black 70%, transparent 100%);">
+            <div style="width:32px; height:32px; background:var(--primary); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; border: 2px solid #fff; z-index: 2;">${c.pelapor.inisial}</div>
+            <div style="width:32px; height:32px; background:#3b82f6; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; border: 2px solid #fff; margin-left: -12px; z-index: 1;">${c.mitra_laundry_id ? c.mitra.inisial : c.reportedUser.inisial}</div>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:12px; font-weight:800; color:var(--text-main);">Lihat Detail Kedua Pihak</div>
+          <div style="font-size:10px; color:var(--text-muted);">Pelapor vs Terlapor</div>
+        </div>
+        <i class="fa-solid fa-up-right-and-down-left-from-center" style="font-size:12px; color:var(--primary);"></i>
+      </div>
     </div>`;
 
   /* Tampilkan panel */
@@ -582,13 +718,6 @@ function openDetail(id){
 
   /* Tombol aksi */
   foot.style.display=(c.status==='wait'||c.status==='proc')?'flex':'none';
-  if(c.status==='proc'){
-    document.getElementById('btnProses').innerHTML='<i class="fa-solid fa-check"></i> Tandai Selesai';
-    document.getElementById('btnProses').style.background='var(--success)';
-  }else{
-    document.getElementById('btnProses').innerHTML='<i class="fa-solid fa-play"></i> Proses Laporan';
-    document.getElementById('btnProses').style.background='var(--primary)';
-  }
 }
 
 function closeDetail(){
@@ -606,21 +735,10 @@ function closeDetail(){
 }
 
 /* ─── FOOTER ACTIONS ─────────────────────────────────── */
-document.getElementById('btnProses').addEventListener('click',()=>{
-  if(!selectedId)return;
-  const c=complaints.find(x=>x.id===selectedId);if(!c)return;
-  if(c.status==='wait'){c.status='proc';c.statusLabel='Diproses';}
-  else if(c.status==='proc'){c.status='done';c.statusLabel='Selesai';closeDetail();}
-  renderTable();
-  if(selectedId)openDetail(selectedId);
-});
 document.getElementById('btnTolak').addEventListener('click',()=>{
   if(!selectedId)return;
   const c=complaints.find(x=>x.id===selectedId);if(!c)return;
   if(confirm(`Tolak laporan ${c.id}?`)){c.status='rej';c.statusLabel='Ditolak';closeDetail();renderTable();}
-});
-document.getElementById('btnMintaInfo').addEventListener('click',()=>{
-  alert('Fitur minta info tambahan akan segera tersedia.');
 });
 
 /* ─── INIT ───────────────────────────────────────────── */
@@ -628,10 +746,10 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   renderTable();
 
-  /* Pelapor modal */
-  document.getElementById('pmClose').addEventListener('click',closePelaporModal);
-  document.getElementById('pelaporModal').addEventListener('click',e=>{
-    if(e.target===e.currentTarget)closePelaporModal();
+  /* Combined modal */
+  document.getElementById('combinedClose').addEventListener('click',closeCombinedModal);
+  document.getElementById('combinedModal').addEventListener('click',e=>{
+    if(e.target===e.currentTarget)closeCombinedModal();
   });
 
   /* Detail close button */

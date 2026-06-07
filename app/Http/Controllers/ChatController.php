@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Events\MessageSent;
 
 class ChatController extends Controller
 {
@@ -109,7 +108,8 @@ class ChatController extends Controller
     public function sendMessage(Request $request, $contactId)
     {
         $request->validate([
-            'message' => 'required|string'
+            'receiver_id' => 'required|exists:users,id',
+            'message' => 'required|string',
         ]);
 
         $senderId = Auth::id();

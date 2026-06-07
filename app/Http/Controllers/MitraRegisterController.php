@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\MitraLaundry;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Notifikasi;
 
 class MitraRegisterController extends Controller
 {
@@ -79,10 +80,21 @@ class MitraRegisterController extends Controller
             'city' => $request->city,
             'province' => $request->province,
             'postal_code' => $request->postal_code,
+            'status' => 'pending',
+        ]);
+
+        // Kirim Notifikasi ke Admin
+        Notifikasi::create([
+            'judul'    => 'Pendaftaran Mitra Baru!',
+            'pesan'    => 'Mitra "' . $mitra->store_name . '" baru saja mendaftar dan menunggu verifikasi.',
+            'modul'    => 'Verifikasi Mitra',
+            'penerima' => 'Admin',
+            'is_read'  => false,
         ]);
 
         return redirect()
-            ->route('user.register.step3', $mitra->id);
+            ->route('user.register.step3', $mitra->id)
+            ->with('success', 'Data alamat tersimpan. Menunggu verifikasi admin.');
     }
 
     public function step3($id)
@@ -130,8 +142,7 @@ class MitraRegisterController extends Controller
         }
         $mitra->update([
             'logo' => $logoPath,
-            'store_photos' =>
-                json_encode($photos)
+            'store_photos' => $photos
         ]);
         return redirect()->route('user.register.step4',$mitra->id);
     }
@@ -345,7 +356,7 @@ class MitraRegisterController extends Controller
                 );
             }
 
-            $mitra->store_photos = json_encode($photos);
+            $mitra->store_photos = $photos;
         }
 
         $mitra->save();

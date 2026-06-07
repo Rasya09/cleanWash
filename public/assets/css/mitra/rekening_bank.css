@@ -28,19 +28,11 @@
     --font: 'Plus Jakarta Sans', sans-serif;
   }
 
-  body {
-    font-family: var(--font);
-    background: var(--gray-50);
-    color: var(--gray-800);
-    display: flex;
-    min-height: 100vh;
-  }
-
-  /* ===== MAIN ===== */
+  /* ===== MAIN (konten halaman) ===== */
   .main {
-    flex: 1;
-    padding: 28px;
-    min-height: calc(100vh - var(--topbar-h));
+    width: 100%;
+    padding: 20px 24px 28px;
+    max-width: 100%;
   }
 
   /* ===== PAGE HEADER ===== */
@@ -141,8 +133,14 @@
     font-size: 15px; font-weight: 700; color: var(--gray-800);
   }
 
+  .account-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .account-table {
     width: 100%; border-collapse: collapse;
+    min-width: 640px;
   }
 
   .account-table th {
@@ -312,3 +310,42 @@
     font-size: 13px; color: var(--gray-400); padding: 4px 0 8px;
   }
   .help-footer a { color: var(--blue-primary); font-weight: 600; cursor: pointer; text-decoration: none; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1280px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .stat-card { border-right: none; border-bottom: 1px solid var(--gray-200); }
+    .stat-card:nth-child(2n) { border-right: none; }
+    .terms-grid { grid-template-columns: 1fr; gap: 16px; }
+  }
+
+  @media (max-width: 1024px) {
+    .main { padding: 16px 18px 24px; }
+    .info-banner { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .info-banner-link { width: 100%; justify-content: center; }
+  }
+
+  @media (max-width: 768px) {
+    .main { padding: 14px 14px 20px; }
+    .page-header { flex-direction: column; gap: 12px; align-items: stretch; }
+    .btn-primary { width: 100%; justify-content: center; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .stat-card { border-right: none; }
+    .account-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .account-table { min-width: 640px; }
+    .bank-cell { min-width: 180px; }
+  }
+
+  @media (max-width: 480px) {
+    .main { padding: 12px 12px 18px; }
+    .stat-card { padding: 16px; gap: 12px; }
+    .stat-value { font-size: 22px; }
+    .stat-value.large { font-size: 18px; }
+    .terms-section { padding: 16px; }
+    .account-section-header { padding: 14px 16px; }
+  }
+
+  @media (max-width: 360px) {
+    .stat-icon { width: 40px; height: 40px; }
+    .stat-value { font-size: 20px; }
+  }

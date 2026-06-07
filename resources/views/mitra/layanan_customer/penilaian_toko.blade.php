@@ -240,7 +240,7 @@
                 </div>
                 <span class="review-date">{{ $review->created_at->format('d M Y, H:i') }}</span>
               </div>
-              <div class="review-text">{{ $review->comment ?? 'Tidak ada komentar.' }}</div>
+              <div class="review-text">{{ $review->komentar ?? 'Tidak ada komentar.' }}</div>
               
               @if($review->reply)
               <div style="margin-top:12px; padding:12px; background:#f9fafb; border-left:4px solid #3b82f6; border-radius:4px;">

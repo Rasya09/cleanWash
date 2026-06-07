@@ -214,7 +214,7 @@
             searchInput.addEventListener('input', function(e) {
                 const keyword = e.target.value.toLowerCase();
                 let visibleCount = 0;
-                
+
                 laundryCards.forEach(card => {
                     const name = card.querySelector('.card-name').innerText.toLowerCase();
                     if (name.includes(keyword)) {

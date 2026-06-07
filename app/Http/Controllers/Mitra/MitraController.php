@@ -54,7 +54,13 @@ class MitraController extends Controller
     }
     public function profil()
     {
-        $mitra = MitraLaundry::where('user_id', Auth::id())->first();
+        $mitra = MitraLaundry::with(['layanans', 'reviews.pelanggan'])
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$mitra) {
+            return redirect()->route('user.register.step1')->with('error', 'Silakan lengkapi profil toko Anda terlebih dahulu.');
+        }
 
         return view('mitra.profil_toko', compact('mitra'));
     }

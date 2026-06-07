@@ -28,20 +28,13 @@
     --font: 'Plus Jakarta Sans', sans-serif;
   }
 
-  body {
-    font-family: var(--font);
-    background: var(--gray-50);
-    color: var(--gray-800);
-    display: flex;
-    min-height: 100vh;
-  }
-
-  
-  /* ===== MAIN ===== */
+  /* ===== MAIN (konten halaman) ===== */
   .main {
-    flex: 1;
-    padding: 28px;
-    min-height: calc(100vh - var(--topbar-h));
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 24px 28px;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
 
   /* ===== PAGE HEADER ===== */
@@ -437,12 +430,17 @@
   .more-btn:hover { background: var(--gray-100); }
   .more-btn svg { width: 16px; height: 16px; }
 
-  /* ===== RIGHT PANEL ===== */
+  /* ===== RIWAYAT TRANSAKSI + PENARIKAN TERAKHIR ===== */
   .content-grid {
     display: grid;
-    grid-template-columns: 1fr 280px;
+    grid-template-columns: minmax(0, 1fr) 300px;
     gap: 20px;
-    margin-bottom: 20px;
+    align-items: start;
+    margin-bottom: 24px;
+  }
+
+  .content-grid .table-section {
+    min-width: 0;
   }
 
   .recent-withdraw {
@@ -513,11 +511,14 @@
     background: #fff;
     border: 1px solid var(--gray-200);
     border-radius: 12px;
-    padding: 14px 20px;
+    padding: 16px 20px;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    margin-top: 0;
+    width: 100%;
+    max-width: 100%;
   }
 
   .security-left {
@@ -550,3 +551,64 @@
     white-space: nowrap;
   }
   .btn-manage-bank svg { width: 14px; height: 14px; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1440px) {
+    .content-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .security-banner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .btn-manage-bank {
+      width: 100%;
+      max-width: 320px;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 1280px) {
+    .top-grid { grid-template-columns: 1fr; }
+    .balance-illustration { display: none; }
+  }
+
+  @media (max-width: 1024px) {
+    .main { padding: 16px 18px 24px; }
+    .balance-amount { font-size: 30px; }
+  }
+
+  @media (max-width: 768px) {
+    .main { padding: 14px 14px 20px; }
+    .page-header { flex-direction: column; gap: 12px; align-items: stretch; }
+    .page-actions { width: 100%; flex-direction: column; }
+    .btn-outline,
+    .btn-primary { width: 100%; justify-content: center; }
+    .balance-card { padding: 22px 20px; }
+    .balance-amount { font-size: 26px; }
+    .balance-sub { grid-template-columns: 1fr; }
+    .tabs-bar { flex-direction: column; align-items: stretch; padding: 12px; gap: 10px; }
+    .tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; }
+    .tabs-right { width: 100%; justify-content: space-between; }
+    .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .data-table { min-width: 720px; }
+    .btn-manage-bank { max-width: none; width: 100%; }
+  }
+
+  @media (max-width: 480px) {
+    .main { padding: 12px 12px 18px; }
+    .balance-amount { font-size: 22px; }
+    .tab { padding: 10px 12px; font-size: 12px; }
+    .summary-amount { font-size: 14px; }
+    .recent-withdraw { padding: 16px; }
+  }
+
+  @media (max-width: 360px) {
+    .balance-card { padding: 18px 16px; }
+    .sub-amount { font-size: 15px; }
+  }
+
+  .table-scroll { width: 100%; overflow-x: auto; }

@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="user-id" content="{{ Auth::check() ? Auth::id() : '' }}">
-    <title>Mitra Laundry - Dashboard</title>
+    @php
+        $routeName = request()->route()?->getName() ?? '';
+        $pageTitle = config('mitra_header.' . $routeName, 'Mitra Laundry');
+    @endphp
+    <title>@yield('title', $pageTitle . ' — Mitra Laundry')</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -17,19 +21,21 @@
 
     @include('mitra.layouts.partials.sidebar')
 
-<!-- ═══ MAIN ═══ -->
-<div class="main-wrapper">
+    <div class="main-wrapper">
 
-  <!-- HEADER -->
-  @include('mitra.layouts.partials.navbar')
+        @include('mitra.layouts.partials.navbar')
 
-  <!-- CONTENT -->
-  @yield('content')
+        <div class="mitra-page-content">
+            @yield('content')
+        </div>
 
-</div><!-- /main-wrapper -->
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    @include('mitra.layouts.partials.sidebar-mobile')
 
     @stack('scripts')
-
 
 </body>
 </html>

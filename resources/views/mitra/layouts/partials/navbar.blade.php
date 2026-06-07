@@ -272,41 +272,25 @@
 
 <header class="header">
 
-  <!-- LEFT -->
   <div class="header-title">
-
-    <div class="hamburger">
+    <div class="hamburger" role="button" tabindex="0" aria-label="Buka menu">
       <span></span>
       <span></span>
       <span></span>
     </div>
-
-    {{ request()->routeIs('mitra.dashboard') ? 'Dashboard' : '' }}
-    {{ request()->routeIs('mitra.pesanan') ? 'Pesanan Saya' : '' }}
-    {{ request()->routeIs('mitra.gagal-pickup') ? 'Gagal Pickup / Pembatalan' : '' }}
-    {{ request()->routeIs('mitra.pengiriman') ? 'Pengaturan Pengiriman' : '' }}
-    {{ request()->routeIs('mitra.layanan') ? 'Layanan Saya' : '' }}
-    {{ request()->routeIs('mitra.tambah-layanan') ? 'Tambah Layanan' : '' }}
-    {{ request()->routeIs('mitra.gambar') ? 'Gambar Toko' : '' }}
-    {{ request()->routeIs('mitra.diskon') ? 'Diskon Toko' : '' }}
-    {{ request()->routeIs('mitra.penilaian') ? 'Penilaian Toko' : '' }}
-    {{ request()->routeIs('mitra.chat') ? 'Manajemen Chat' : '' }}
-    {{ request()->routeIs('mitra.penghasilan') ? 'Penghasilan Saya' : '' }}
-    {{ request()->routeIs('mitra.saldo') ? 'Saldo Saya' : '' }}
-    {{ request()->routeIs('mitra.rekening') ? 'Rekening Bank' : '' }}
-    {{ request()->routeIs('mitra.performa') ? 'Performa Toko' : '' }}
-    {{ request()->routeIs('mitra.kesehatan') ? 'Kesehatan Toko' : '' }}
-
+    @yield('page_title', $headerTitle)
   </div>
 
-  <!-- RIGHT -->
   <div class="header-right">
-    <!-- STORE DROPDOWN -->
+
+    <div class="notif-btn" aria-label="Notifikasi">
+      🔔
+      <div class="notif-badge">3</div>
+    </div>
+
     <div class="store-dropdown">
       <div class="store-info" id="dropdownToggle">
-        <div class="store-avatar">
-          🏪
-        </div>
+        <div class="store-avatar">🏪</div>
         <div>
           <div class="store-name">
             {{ Auth::user()->mitraLaundry->store_name ?? Auth::user()->name }}
@@ -315,27 +299,19 @@
             Mitra
           </div>
         </div>
-        <span class="chevron" id="chevron">
-          ▾
-        </span>
+        <span class="chevron" id="chevron">▾</span>
       </div>
-      <!-- DROPDOWN MENU -->
+
       <div class="dropdown-menu" id="dropdownMenu">
         <div class="dropdown-header">
           <p>Mitra Laundry</p>
         </div>
-        <a href="{{ route('mitra.profil') }}" class="dropdown-item">
-          Profil Toko
-        </a>
-        <a href="{{ route('home') }}" class="dropdown-item">
-          Beranda
-        </a>
+        <a href="{{ route('mitra.profil') }}" class="dropdown-item">Profil Toko</a>
+        <a href="{{ route('home') }}" class="dropdown-item">Beranda</a>
         <div class="dropdown-divider"></div>
         <form action="{{ route('logout') }}" method="POST">
             @csrf
-            <button type="submit" class="dropdown-item logout-item logout-btn">
-                Logout
-            </button>
+            <button type="submit" class="dropdown-item logout-item logout-btn">Logout</button>
         </form>
       </div>
     </div>
@@ -347,20 +323,17 @@
   const dropdownMenu = document.getElementById('dropdownMenu');
   const chevron = document.getElementById('chevron');
 
-  dropdownToggle.addEventListener('click', () => {
-    dropdownMenu.classList.toggle('active');
-    chevron.classList.toggle('rotate');
-  });
+  if (dropdownToggle && dropdownMenu) {
+    dropdownToggle.addEventListener('click', () => {
+      dropdownMenu.classList.toggle('active');
+      chevron.classList.toggle('rotate');
+    });
 
-  document.addEventListener('click', function (e) {
-
-    if (
-      !dropdownToggle.contains(e.target) &&
-      !dropdownMenu.contains(e.target)
-    ) {
-      dropdownMenu.classList.remove('active');
-      chevron.classList.remove('rotate');
-    }
-
-  });
+    document.addEventListener('click', function (e) {
+      if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        dropdownMenu.classList.remove('active');
+        chevron.classList.remove('rotate');
+      }
+    });
+  }
 </script>
