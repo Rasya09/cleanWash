@@ -129,7 +129,7 @@
 
             <!-- Anggota 2 -->
             <div class="team-card">
-                <img src="{{ asset('assets/images/team/tsar.png') }}"
+                <img src="{{ asset('assets/images/team/tsar.jpeg') }}"
                     alt="Dwi Raysah Anandifa Kautsar" class="team-avatar">
                 <h3 class="team-name">Dwi R.A Kautsar</h3>
                 <div class="team-role">Prompt Engineering</div>
@@ -139,7 +139,7 @@
 
             <!-- Anggota 3 -->
             <div class="team-card">
-                <img src="{{ asset('assets/images/team/rizal.png') }}" alt="M Rizal Nurfuadi"
+                <img src="{{ asset('assets/images/team/rizal.jpeg') }}" alt="M Rizal Nurfuadi"
                     class="team-avatar">
                 <h3 class="team-name">M Rizal Nurfuadi</h3>
                 <div class="team-role">Cigarette Engineering</div>
@@ -149,7 +149,7 @@
 
             <!-- Anggota 4 -->
             <div class="team-card">
-                <img src="{{ asset('assets/images/team/rasya.png') }}" alt="Rasya Fadil Arfiano"
+                <img src="{{ asset('assets/images/team/rasya.jpeg') }}" alt="Rasya Fadil Arfiano"
                     class="team-avatar">
                 <h3 class="team-name">Rasya Fadil Arfiano</h3>
                 <div class="team-role">Sleepy Engineering</div>

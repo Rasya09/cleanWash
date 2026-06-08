@@ -90,15 +90,29 @@ class MitraLaundry extends Model
             : null;
     }
 
+    public function getStorePhotosAttribute($value)
+    {
+        if (is_string($value)) {
+            $decoded = json_decode($value, true);
+            if (is_string($decoded)) {
+                $decoded = json_decode($decoded, true);
+            }
+            return is_array($decoded) ? $decoded : [];
+        }
+        return is_array($value) ? $value : [];
+    }
+
     public function getStorePhotoUrlsAttribute(): array
     {
-        if (empty($this->store_photos)) {
+        $photos = $this->store_photos;
+
+        if (empty($photos) || !is_array($photos)) {
             return [];
         }
 
         return array_map(
             fn($photo) => asset('storage/' . $photo),
-            $this->store_photos
+            $photos
         );
     }
 }

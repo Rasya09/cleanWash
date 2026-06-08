@@ -67,6 +67,16 @@
     </div>
 @endif
 
+@if ($errors->any())
+    <div id="flashValidationErrors" style="background:#fee2e2;color:#991b1b;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:14px;transition:opacity 0.5s ease;">
+        <ul style="margin:0; padding-left:20px;">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <div class="super-container-promosi">
 
     <div class="sisi-galeri-kiri">
@@ -99,7 +109,7 @@
                     </div>
                     <div class="footer-kartu-foto">
                         <div class="grup-detail-kiri">
-                            <span class="nama-file-foto">{{ basename($photo) }}</span>
+                            <span class="nama-file-foto">Foto {{ $index + 1 }}</span>
                             <span class="tag-label-aktif">Aktif</span>
                         </div>
                         <span class="titik-tiga-opsi">⋮</span>
