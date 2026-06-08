@@ -266,6 +266,34 @@
                                placeholder="email@toko.com"
                                value="{{ old('email', $mitra->email) }}">
                     </div>
+                    <!-- OPERATIONAL -->
+                    <div class="form-group full">
+                        <label>Hari Operasional *</label>
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
+                            @php
+                                $savedDays = old('operational_days', $mitra->operational_days) ?? [];
+                                if (is_string($savedDays)) $savedDays = json_decode($savedDays, true) ?? [];
+                                $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+                            @endphp
+                            @foreach($days as $day)
+                                <label style="font-weight: normal; font-size: 14px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                    <input type="checkbox" name="operational_days[]" value="{{ $day }}" 
+                                    @if(in_array($day, $savedDays)) checked @endif style="width: auto; padding: 0;"> {{ $day }}
+                                </label>
+                            @endforeach
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                            <div class="form-group">
+                                <label>Jam Buka *</label>
+                                <input type="time" name="open_time" value="{{ old('open_time', $mitra->open_time) }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Jam Tutup *</label>
+                                <input type="time" name="close_time" value="{{ old('close_time', $mitra->close_time) }}" required>
+                            </div>
+                        </div>
+                    </div>
                     <!-- DESCRIPTION -->
                     <div class="form-group full">
                         <label>

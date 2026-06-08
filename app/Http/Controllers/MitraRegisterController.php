@@ -23,10 +23,13 @@ class MitraRegisterController extends Controller
                 'regex:/^[1-9][0-9]{8,14}$/'
             ],
             'description' => 'nullable',
+            'operational_days' => 'required|array|min:1',
+            'open_time' => 'required|string',
+            'close_time' => 'required|string',
         ]);
         
         $data = session('register_mitra', []);
-        $data = array_merge($data, $request->only('owner_name', 'store_name', 'email', 'phone', 'description'));
+        $data = array_merge($data, $request->only('owner_name', 'store_name', 'email', 'phone', 'description', 'operational_days', 'open_time', 'close_time'));
         session(['register_mitra' => $data]);
 
         return redirect()->route('user.register.step2');
@@ -148,6 +151,9 @@ class MitraRegisterController extends Controller
             'city' => $data['city'],
             'province' => $data['province'],
             'postal_code' => $data['postal_code'],
+            'operational_days' => $data['operational_days'] ?? [],
+            'open_time' => $data['open_time'] ?? '08:00',
+            'close_time' => $data['close_time'] ?? '20:00',
             'logo' => $data['logo'] ?? null,
             'store_photos' => $data['store_photos'] ?? null,
             'ktp'   => $ktpPath,
@@ -246,6 +252,9 @@ class MitraRegisterController extends Controller
             'email'      => $request->email,
             'phone'      => $request->phone,
             'description'=> $request->description,
+            'operational_days' => $request->operational_days,
+            'open_time'  => $request->open_time,
+            'close_time' => $request->close_time,
         ]);
 
         return redirect()
