@@ -17,9 +17,9 @@ class LaundryController extends Controller
             ->where('status', 'approved')
             ->findOrFail($id);
 
-        // Review pakai mitra_id → user_id milik mitra
+        // Review pakai mitra_id (foreign key ke mitra_laundries.id)
         $reviews = Review::with('user')
-            ->where('mitra_id', $laundry->user_id)
+            ->where('mitra_id', $laundry->id)
             ->latest()
             ->get();
 

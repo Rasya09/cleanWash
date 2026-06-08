@@ -63,7 +63,7 @@ class MitraLaundry extends Model
      */
     public function reviews()
     {
-        return $this->hasMany(Review::class, 'mitra_id', 'user_id');
+        return $this->hasMany(Review::class, 'mitra_id');
     }
 
     public function orders()

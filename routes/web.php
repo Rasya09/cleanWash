@@ -186,7 +186,7 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
             return redirect()->route('user.cari-laundry');
         }
         $laundry = \App\Models\MitraLaundry::findOrFail($id);
-        $reviews = \App\Models\Review::with('user')->where('mitra_id', $laundry->user_id)->latest()->get();
+        $reviews = \App\Models\Review::with('user')->where('mitra_id', $laundry->id)->latest()->get();
 
         return view('user.detail_laundry', compact('laundry', 'reviews'));
     })->name('user.detail-laundry');
@@ -366,7 +366,8 @@ Route::middleware(['auth', 'mitra'])->prefix('mitra')->group(function () {
     })->name('mitra.voucher');
 
     Route::get('/penilaian-toko', function () {
-        $reviews = \App\Models\Review::with('user', 'order')->where('mitra_id', Auth::id())->latest()->get();
+        $mitraId = \App\Models\MitraLaundry::where('user_id', Auth::id())->value('id');
+        $reviews = \App\Models\Review::with('user', 'order')->where('mitra_id', $mitraId)->latest()->get();
 
         $totalUlasan = $reviews->count();
         $rataRata = $totalUlasan > 0 ? $reviews->avg('rating') : 0;
