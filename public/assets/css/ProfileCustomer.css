@@ -6,6 +6,9 @@ body {
     background: #fff;
     color: #0f1f4b;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 /* ===== ROOT ===== */
@@ -36,6 +39,7 @@ body {
     max-width: 1400px;
     margin: 28px auto 60px;
     align-items: flex-start;
+    flex: 1;
 }
 
 /* ===== SIDEBAR KIRI ===== */

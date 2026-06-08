@@ -28,7 +28,7 @@
             <div class="label">Rating Toko</div>
             <div class="value">{{ number_format($rataRata, 1) }}</div>
           </div>
-          <span class="trend"></span>
+          <span class="trend">↑ 0.2</span>
         </div>
         <div class="stars-row">
           {!! str_repeat('<span class="star-filled">★</span>', floor($rataRata)) !!}

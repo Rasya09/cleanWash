@@ -2,38 +2,6 @@
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('assets/css/mitra/manajemen_chat.css') }}?v={{ time() }}">
-<style>
-  .contact-action-btn {
-    background: none;
-    border: none;
-    color: #ef4444;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    display: none;
-  }
-  .chat-item:hover .contact-action-btn {
-    display: block;
-  }
-  .chat-item.active {
-    background-color: #f3f4f6;
-  }
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: #6b7280;
-    text-align: center;
-    padding: 20px;
-  }
-  .chat-item-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-</style>
 @endsection
 
 @section('content')

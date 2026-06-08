@@ -93,9 +93,7 @@
 
       <a href="{{ route('home') }}" class="nav-mobile-link {{ request()->routeIs('home') || request()->routeIs('user.home') ? 'active' : '' }}">Beranda</a>
       <a href="{{ Auth::check() ? route('user.cari-laundry') : route('cari-laundry') }}" class="nav-mobile-link {{ request()->routeIs('cari-laundry') || request()->routeIs('user.cari-laundry') ? 'active' : '' }}">Cari Laundry</a>
-      @if(Auth::check() && Auth::user()->role == 'user')
       <a href="{{ route('user.pesanan') }}" class="nav-mobile-link {{ request()->routeIs('user.pesanan') ? 'active' : '' }}">Pesanan Saya</a>
-      @endif
 
       @guest
       <div class="nav-mobile-divider"></div>

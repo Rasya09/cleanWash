@@ -55,9 +55,9 @@
         }
 
         .team-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 16px;
+            width: 200px;
+            height: 200px;
+            border-radius: 24px;
             margin-bottom: 20px;
             object-fit: cover;
             background: var(--blue-100);
@@ -100,6 +100,12 @@
             .about-page {
                 padding: 40px 16px;
             }
+
+            .team-avatar {
+                width: 160px;
+                height: 160px;
+                border-radius: 20px;
+            }
         }
     </style>
 
@@ -113,7 +119,7 @@
         <div class="team-grid">
             <!-- Anggota 1 -->
             <div class="team-card">
-                <img src="{{ asset('storage/pp/azrl.jpeg') }}" alt="Adzril Ilham Ramadhan"
+                <img src="{{ asset('assets/images/team/adzril.jpeg') }}" alt="Adzril Ilham Ramadhan"
                     class="team-avatar">
                 <h3 class="team-name">Adzril Ilham Ramadhan</h3>
                 <div class="team-role">Conflict Engineering</div>
@@ -123,7 +129,7 @@
 
             <!-- Anggota 2 -->
             <div class="team-card">
-                <img src="{{ asset('storage/pp/dwi.png') }}"
+                <img src="{{ asset('assets/images/team/tsar.png') }}"
                     alt="Dwi Raysah Anandifa Kautsar" class="team-avatar">
                 <h3 class="team-name">Dwi R.A Kautsar</h3>
                 <div class="team-role">Prompt Engineering</div>
@@ -133,7 +139,7 @@
 
             <!-- Anggota 3 -->
             <div class="team-card">
-                <img src="{{ asset('storage/pp/rzl.png') }}" alt="M Rizal Nurfuadi"
+                <img src="{{ asset('assets/images/team/rizal.png') }}" alt="M Rizal Nurfuadi"
                     class="team-avatar">
                 <h3 class="team-name">M Rizal Nurfuadi</h3>
                 <div class="team-role">Cigarette Engineering</div>
@@ -143,7 +149,7 @@
 
             <!-- Anggota 4 -->
             <div class="team-card">
-                <img src="{{ asset('storage/pp/rsya.png') }}" alt="Rasya Fadil Arfiano"
+                <img src="{{ asset('assets/images/team/rasya.png') }}" alt="Rasya Fadil Arfiano"
                     class="team-avatar">
                 <h3 class="team-name">Rasya Fadil Arfiano</h3>
                 <div class="team-role">Sleepy Engineering</div>

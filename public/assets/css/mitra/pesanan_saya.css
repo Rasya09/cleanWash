@@ -483,3 +483,26 @@
         font-size: 22px;
     }
 }
+@media (max-width: 768px) {
+  .ps-table-card, .table-card, .card, .panel-card, .super-container-promosi { min-width: 0 !important; max-width: 100% !important; overflow-x: auto !important; }
+  .stats-grid > *, .stat-grid > *, .stats-row > *, .form-grid > *, .form-row > *, .grid-2 > *, .middle-grid > *, .bottom-grid > *, .top-grid > *, .content-grid > *, .main-grid > *, .mdp-info-grid > *, .mdp-two-col > * { min-width: 0 !important; max-width: 100% !important; }
+  .stats-grid, .stat-grid, .stats-row, .form-grid, .form-row, .grid-2, .middle-grid, .bottom-grid, .top-grid, .content-grid, .main-grid, .mdp-info-grid, .mdp-two-col, .profil-grid { grid-template-columns: 1fr !important; }
+  .chat-layout { grid-template-columns: 1fr !important; }
+  .ps-page, .mdp-page, .tl-page, .gp-page, .kt-page, .main-pengiriman, .content, .penghasilan-container, .performa-container, .edit-profil-container, .profil-container, .super-container-promosi { padding: 16px !important; }
+  .ps-title, .mdp-page-title, .tl-title, .gp-title, .page-title, .section-title-text { font-size: 20px !important; }
+  .table-wrap, .ps-table-wrap, .mdp-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .jam-row { grid-template-columns: 1fr auto 1fr !important; }
+}
+@media (max-width: 480px) {
+  .ps-page, .mdp-page, .tl-page, .gp-page, .kt-page, .main-pengiriman, .content, .penghasilan-container, .performa-container, .edit-profil-container, .profil-container, .super-container-promosi { padding: 12px !important; }
+  .ps-title, .mdp-page-title, .tl-title, .gp-title, .page-title, .section-title-text { font-size: 18px !important; }
+  .ps-stat-value, .stat-value, .stat-number { font-size: 20px !important; }
+  .ps-stat-icon, .stat-icon { width: 42px !important; height: 42px !important; }
+  .ps-tabs, .filter-tabs, .status-tabs, .mdp-tabs, .tabs-container { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap !important; }
+  .ps-tabs > *, .filter-tabs > *, .status-tabs > *, .mdp-tabs > *, .tabs-container > * { white-space: nowrap; flex-shrink: 0; }
+  .ps-search-input, .search-input, .search-box input, .mdp-search-input { width: 100% !important; max-width: 100% !important; }
+  .ps-toolbar, .mdp-toolbar, .ls-toolbar { flex-direction: column !important; align-items: stretch !important; }
+  .ps-actions, .mdp-actions { width: 100%; }
+  .ps-pagination-wrap, .mdp-pagination-wrap { flex-direction: column !important; align-items: center !important; gap: 8px; }
+}
+

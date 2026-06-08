@@ -12,7 +12,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @yield('css')
-    <link rel="stylesheet" href="{{ asset('assets/css/mitra/responsive.css') }}">
 </head>
 <body>
 
