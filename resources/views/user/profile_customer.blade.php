@@ -116,9 +116,9 @@
                             </svg>
                         </div>
                         <div class="toko-info-detail">
-                            <p class="toko-info-name">{{ $mitra->store_name }}</p>
+                            <p class="toko-info-name">{{ Auth::user()->mitraLaundry->store_name ?? 'Toko Anda' }}</p>
                             <span class="badge-aktif">Aktif</span>
-                            <p class="toko-info-address">{{ $mitra->address }}</p>
+                            <p class="toko-info-address">{{ Auth::user()->mitraLaundry->address ?? '-' }}</p>
                         </div>
                     </div>
 

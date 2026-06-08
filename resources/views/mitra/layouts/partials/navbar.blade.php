@@ -48,6 +48,22 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    transition: margin-left 0.3s ease;
+  }
+
+  /* ── SIDEBAR OVERLAY ── */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 99;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .sidebar-overlay.active {
+    display: block;
+    opacity: 1;
   }
 
   /* ── HEADER ── */
@@ -71,22 +87,28 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .hamburger {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     display: none;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     gap: 5px;
     cursor: pointer;
+    border-radius: 8px;
+    flex-shrink: 0;
+    transition: background 0.2s;
   }
 
-  @media (max-width: 576px) {
-    .hamburger {
-      display: flex;
-    }
+  .hamburger:hover {
+    background: var(--neutral-100);
   }
 
   .hamburger span {
@@ -94,13 +116,15 @@
     height: 2px;
     background: var(--neutral-500);
     border-radius: 2px;
-    width: 100%;
+    width: 20px;
+    transition: all 0.3s ease;
   }
 
   .header-right {
     display: flex;
     align-items: center;
     gap: 16px;
+    flex-shrink: 0;
   }
 
   /* ── NOTIFICATION ── */
@@ -179,6 +203,10 @@
   .store-role {
     font-size: 11px;
     color: var(--neutral-500);
+  }
+
+  .store-text-info {
+    display: block;
   }
 
   .chevron {
@@ -267,15 +295,81 @@
     cursor: pointer;
     text-align: left;
     font-family: inherit;
-}
+  }
+
+  /* ══════════════════════════════════════ */
+  /* ══ RESPONSIVE: TABLET (≤ 768px)  ══ */
+  /* ══════════════════════════════════════ */
+  @media (max-width: 768px) {
+    .hamburger {
+      display: flex;
+    }
+
+    .sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 100;
+    }
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .main-wrapper {
+      margin-left: 0;
+    }
+
+    .header {
+      padding: 0 16px;
+    }
+
+    .header-title {
+      font-size: 16px;
+      gap: 10px;
+    }
+
+    .store-text-info {
+      display: none;
+    }
+
+    .store-info {
+      padding: 6px;
+      gap: 0;
+    }
+
+    .chevron {
+      display: none;
+    }
+  }
+
+  /* ══════════════════════════════════════ */
+  /* ══ RESPONSIVE: MOBILE (≤ 480px)  ══ */
+  /* ══════════════════════════════════════ */
+  @media (max-width: 480px) {
+    .header-title {
+      font-size: 14px;
+    }
+
+    .header-right {
+      gap: 8px;
+    }
+
+    .store-avatar {
+      width: 32px;
+      height: 32px;
+      font-size: 15px;
+    }
+  }
 </style>
+
+{{-- Overlay untuk menutup sidebar saat diklik di luar --}}
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <header class="header">
 
   <!-- LEFT -->
   <div class="header-title">
 
-    <div class="hamburger">
+    <div class="hamburger" id="hamburgerToggle">
       <span></span>
       <span></span>
       <span></span>
@@ -307,7 +401,7 @@
         <div class="store-avatar">
           🏪
         </div>
-        <div>
+        <div class="store-text-info">
           <div class="store-name">
             {{ Auth::user()->mitraLaundry->store_name ?? Auth::user()->name }}
           </div>
@@ -343,6 +437,7 @@
 </header>
 
 <script>
+  // Dropdown profil
   const dropdownToggle = document.getElementById('dropdownToggle');
   const dropdownMenu = document.getElementById('dropdownMenu');
   const chevron = document.getElementById('chevron');
@@ -353,7 +448,6 @@
   });
 
   document.addEventListener('click', function (e) {
-
     if (
       !dropdownToggle.contains(e.target) &&
       !dropdownMenu.contains(e.target)
@@ -361,6 +455,41 @@
       dropdownMenu.classList.remove('active');
       chevron.classList.remove('rotate');
     }
+  });
 
+  // Sidebar toggle (mobile)
+  const hamburgerToggle = document.getElementById('hamburgerToggle');
+  const sidebar = document.querySelector('.sidebar');
+  const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+  function openSidebar() {
+    sidebar.classList.add('open');
+    sidebarOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  hamburgerToggle.addEventListener('click', () => {
+    if (sidebar.classList.contains('open')) {
+      closeSidebar();
+    } else {
+      openSidebar();
+    }
+  });
+
+  sidebarOverlay.addEventListener('click', closeSidebar);
+
+  // Menutup sidebar saat item navigasi diklik (mobile)
+  document.querySelectorAll('.sidebar .nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      if (window.innerWidth <= 768) {
+        closeSidebar();
+      }
+    });
   });
 </script>

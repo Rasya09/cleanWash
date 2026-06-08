@@ -125,84 +125,13 @@
         </div>
       </div>
 
-      <!-- Rating per Kategori + Promo Box -->
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-
-        <div class="panel">
-          <h3>Rating per Kategori</h3>
-          <div style="display:flex; flex-direction:column; gap:0;">
-
-            <div class="kategori-item">
-              <div class="kat-label"><span class="kicon">🛁</span> Kualitas Layanan</div>
-              <div class="kat-right">
-                <div class="kat-stars">
-                  <span class="star-filled">★</span><span class="star-filled">★</span>
-                  <span class="star-filled">★</span><span class="star-filled">★</span>
-                  <span class="star-half" style="color:#F59E0B;">★</span>
-                </div>
-                <span class="kat-score">4.8</span>
-              </div>
-            </div>
-
-            <div class="kategori-item">
-              <div class="kat-label"><span class="kicon">👕</span> Kualitas Hasil Cucian</div>
-              <div class="kat-right">
-                <div class="kat-stars">
-                  <span class="star-filled">★</span><span class="star-filled">★</span>
-                  <span class="star-filled">★</span><span class="star-filled">★</span>
-                  <span class="star-half" style="color:#F59E0B;">★</span>
-                </div>
-                <span class="kat-score">4.9</span>
-              </div>
-            </div>
-
-            <div class="kategori-item">
-              <div class="kat-label"><span class="kicon">⏱️</span> Kecepatan</div>
-              <div class="kat-right">
-                <div class="kat-stars">
-                  <span class="star-filled">★</span><span class="star-filled">★</span>
-                  <span class="star-filled">★</span><span class="star-filled">★</span>
-                  <span class="star-empty">★</span>
-                </div>
-                <span class="kat-score">4.7</span>
-              </div>
-            </div>
-
-            <div class="kategori-item">
-              <div class="kat-label"><span class="kicon">💲</span> Harga</div>
-              <div class="kat-right">
-                <div class="kat-stars">
-                  <span class="star-filled">★</span><span class="star-filled">★</span>
-                  <span class="star-filled">★</span><span class="star-filled">★</span>
-                  <span class="star-empty">★</span>
-                </div>
-                <span class="kat-score">4.6</span>
-              </div>
-            </div>
-
-            <div class="kategori-item" style="border-bottom:none;">
-              <div class="kat-label"><span class="kicon">🧑‍💼</span> Sikap Kurir / Staff</div>
-              <div class="kat-right">
-                <div class="kat-stars">
-                  <span class="star-filled">★</span><span class="star-filled">★</span>
-                  <span class="star-filled">★</span><span class="star-filled">★</span>
-                  <span class="star-half" style="color:#F59E0B;">★</span>
-                </div>
-                <span class="kat-score">4.9</span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- Promo Box -->
-        <div class="panel promo-box" style="padding:24px 16px;">
-          <div class="promo-icon">⭐</div>
-          <p>Pertahankan kualitas bagus ini!</p>
-          <small>Pelanggan merasa puas dengan layanan Anda.</small>
-        </div>
-
+      <!-- Promo Box (Menggantikan Rating Kategori di kolom kanan) -->
+      <div class="panel promo-box" style="padding:24px 16px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+        <div class="promo-icon" style="font-size:40px; margin-bottom:12px;">⭐</div>
+        <p style="font-weight:600; font-size:16px; margin-bottom:8px;">Pertahankan kualitas bagus ini!</p>
+        <small style="color:var(--gray-500); font-size:13px;">Pelanggan merasa puas dengan layanan Anda secara keseluruhan.</small>
       </div>
+
     </div>
 
     <!-- ── BOTTOM GRID ── -->
@@ -213,17 +142,17 @@
         <h3 style="font-size:15px; font-weight:700; margin-bottom:14px;">Ulasan Terbaru</h3>
 
         <div class="filter-tabs">
-          <button class="tab active">Semua (128)</button>
-          <button class="tab">5 ★ (98)</button>
-          <button class="tab">4 ★ (20)</button>
-          <button class="tab">3 ★ (8)</button>
-          <button class="tab">2 ★ (1)</button>
-          <button class="tab">1 ★ (1)</button>
+          <button class="tab active" data-filter="all">Semua ({{ $totalUlasan }})</button>
+          @if($rating5 > 0)<button class="tab" data-filter="5">5 ★ ({{ $rating5 }})</button>@endif
+          @if($rating4 > 0)<button class="tab" data-filter="4">4 ★ ({{ $rating4 }})</button>@endif
+          @if($rating3 > 0)<button class="tab" data-filter="3">3 ★ ({{ $rating3 }})</button>@endif
+          @if($rating2 > 0)<button class="tab" data-filter="2">2 ★ ({{ $rating2 }})</button>@endif
+          @if($rating1 > 0)<button class="tab" data-filter="1">1 ★ ({{ $rating1 }})</button>@endif
         </div>
 
         <div class="review-list">
           @forelse($reviews as $review)
-          <div class="review-card">
+          <div class="review-card" data-rating="{{ $review->rating }}">
             <div class="avatar av-blue">{{ strtoupper(substr($review->user->name ?? 'U', 0, 2)) }}</div>
             <div class="review-body">
               <div class="review-top">
@@ -331,8 +260,19 @@
     // Tab filter interactivity
     document.querySelectorAll('.tab').forEach(btn => {
         btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+            document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const filter = btn.getAttribute('data-filter');
+            const reviews = document.querySelectorAll('.review-card');
+
+            reviews.forEach(card => {
+                if(filter === 'all' || card.getAttribute('data-rating') === filter) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
         });
     });
 
