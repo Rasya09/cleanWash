@@ -105,7 +105,11 @@
 
       @auth
       <div class="nav-mobile-divider"></div>
+      @if(Auth::user()->role == 'mitra')
+      <a href="{{ route('mitra.profile') }}" class="nav-mobile-link">Profil Saya</a>
+      @else
       <a href="{{ route('user.profile') }}" class="nav-mobile-link">Profil Saya</a>
+      @endif
       @if(Auth::user()->role != 'mitra')
       <a href="{{ route('user.chat') }}" class="nav-mobile-link">Obrolan</a>
       @endif
