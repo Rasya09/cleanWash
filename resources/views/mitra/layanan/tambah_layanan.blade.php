@@ -267,7 +267,6 @@ btnNext.addEventListener('click', () => {
         return;
     }
 
-    const hariStr = [...hari].map(x => x.value).join(', ');
     const minOrder = minOrderVal || '-';
     const maxOrder = maxOrderVal || '-';
     let batasStr = '';
@@ -298,10 +297,6 @@ btnNext.addEventListener('click', () => {
                 <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
                     <div style="font-size:11px; color:#64748b; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Batas Order / Ukuran</div>
                     <div style="font-size:14px; font-weight:700; color:#0f172a;">${batasStr}</div>
-                </div>
-                <div style="grid-column: span 2; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
-                    <div style="font-size:11px; color:#64748b; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Hari Operasional</div>
-                    <div style="font-size:14px; font-weight:600; color:#0f172a;">${hariStr}</div>
                 </div>
             </div>
         </div>

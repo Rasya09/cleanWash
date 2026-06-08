@@ -40,6 +40,10 @@ class AuthController extends Controller
     public function register(Request $request)
     {
 
+        $request->merge([
+            'full_phone' => '62' . $request->phone
+        ]);
+
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
@@ -47,7 +51,11 @@ class AuthController extends Controller
                 'required',
                 'regex:/^[1-9][0-9]{8,14}$/'
             ],
+            'full_phone' => 'unique:users,phone',
             'password' => 'required|min:8|confirmed'
+        ], [
+            'full_phone.unique' => 'Nomor telepon ini sudah terdaftar. Silakan gunakan nomor lain.',
+            'email.unique' => 'Email ini sudah terdaftar. Silakan gunakan email lain.',
         ]);
 
 

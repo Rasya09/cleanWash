@@ -526,7 +526,7 @@
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
                         </svg>
-                        Bayar Sekarang (Pembayaran Online)
+                        Bayar Sekarang
                     </button>
                     <a href="{{ route('user.pesanan.cek_pembayaran', $pesanan->id) }}" class="btn-bayar" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--primary-color); background-color: transparent; color: var(--primary-color); cursor: pointer; text-decoration: none;">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

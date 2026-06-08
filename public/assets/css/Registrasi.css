@@ -247,6 +247,40 @@ html, body {
     color:#555;
 }
 
+.error-box {
+  background-color: #fef2f2;
+  border: 1.5px solid #fca5a5;
+  color: #ef4444;
+  padding: 16px 20px;
+  border-radius: var(--radius-input);
+  margin-bottom: 24px;
+  font-size: 14px;
+  font-family: var(--font);
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.08);
+}
+
+.error-box ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.error-box li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.error-box li::before {
+  font-size: 16px;
+}
+
+.error-box li:last-child {
+  margin-bottom: 0;
+}
+
 @media (max-width: 900px) {
   .page {
     padding: 24px 16px;

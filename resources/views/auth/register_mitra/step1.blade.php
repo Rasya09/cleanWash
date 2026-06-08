@@ -184,6 +184,60 @@
             font-weight:600;
             color:#555;
         }
+        
+        /* ===================================
+           CUSTOM TOGGLE
+        =================================== */
+        .custom-toggle {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+        .custom-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .custom-toggle .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #dbe4ff;
+            transition: .3s;
+            border-radius: 30px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .custom-toggle .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .custom-toggle input:checked + .slider {
+            background-color: #4285f4;
+        }
+        .custom-toggle input:checked + .slider:before {
+            transform: translateX(18px);
+        }
+        .toggle-text {
+            font-size: 13px; 
+            font-weight: 500; 
+            color: #7a869a; 
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.3s;
+        }
+        .custom-toggle input:checked ~ .toggle-text {
+            color: #183153;
+        }
+
         @media(max-width:768px){
             .grid{
                 grid-template-columns:1fr;
@@ -265,8 +319,17 @@
                         <input type="tel"
                                 name="phone"
                                 id="phone"
+                                value="{{ $mitra->phone ?? '' }}"
                                 placeholder="81234567891"
                                 required>
+                        
+                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+                            <label class="custom-toggle" style="margin-bottom: 0;">
+                                <input type="checkbox" id="useAccountPhone">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="toggle-text" onclick="document.getElementById('useAccountPhone').click()">Samakan dengan akun</span>
+                        </div>
                     </div>
                     <!-- EMAIL -->
                     <div class="form-group">
@@ -304,17 +367,38 @@
 </div>
 
 <script>
-document.getElementById('phone')
-.addEventListener('input', function(){
-
-    this.value =
-        this.value.replace(/\D/g,'');
-
-    if(this.value.startsWith('0')){
-        this.value =
-            this.value.substring(1);
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneInput = document.getElementById('phone');
+    const useAccountPhone = document.getElementById('useAccountPhone');
+    
+    // Ambil nomor HP user dan hilangkan 62 atau 0 di depannya
+    let userPhone = "{{ Auth::user()->phone ?? '' }}";
+    if (userPhone.startsWith('62')) {
+        userPhone = userPhone.substring(2);
+    } else if (userPhone.startsWith('0')) {
+        userPhone = userPhone.substring(1);
     }
 
+    useAccountPhone.addEventListener('change', function() {
+        if (this.checked) {
+            phoneInput.value = userPhone;
+            phoneInput.setAttribute('readonly', true);
+            phoneInput.style.backgroundColor = '#eef2ff';
+            phoneInput.style.color = '#7a869a';
+        } else {
+            phoneInput.value = '';
+            phoneInput.removeAttribute('readonly');
+            phoneInput.style.backgroundColor = '#f8faff';
+            phoneInput.style.color = 'inherit';
+        }
+    });
+
+    phoneInput.addEventListener('input', function(){
+        this.value = this.value.replace(/\D/g,'');
+        if(this.value.startsWith('0')){
+            this.value = this.value.substring(1);
+        }
+    });
 });
 </script>
 
