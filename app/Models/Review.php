@@ -31,6 +31,6 @@ class Review extends Model
 
     public function mitra()
     {
-        return $this->belongsTo(User::class, 'mitra_id');
+        return $this->belongsTo(MitraLaundry::class, 'mitra_id');
     }
 }
