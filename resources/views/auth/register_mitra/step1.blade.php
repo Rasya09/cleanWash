@@ -238,6 +238,58 @@
             color: #183153;
         }
 
+        /* ===================================
+           OPERATIONAL DAYS & HOURS
+        =================================== */
+        .hari-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 2px;
+        }
+        .hari-chip input { display: none; }
+        .hari-chip label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1.5px solid #dbe4ff;
+            background: #fff;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #7a869a;
+            cursor: pointer;
+            transition: all .18s;
+            user-select: none;
+        }
+        .hari-chip input:checked + label {
+            background: #183153;
+            border-color: #183153;
+            color: #fff;
+        }
+        .hari-chip label:hover {
+            border-color: #183153;
+            color: #183153;
+        }
+        .hari-chip input:checked + label:hover {
+            background: #244b82;
+            color: #fff;
+        }
+        
+        .jam-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 10px;
+        }
+        .jam-sep {
+            font-size: 13px;
+            color: #7a869a;
+            font-weight: 600;
+            text-align: center;
+        }
+
         @media(max-width:768px){
             .grid{
                 grid-template-columns:1fr;
@@ -344,29 +396,26 @@
                     <!-- OPERATIONAL -->
                     <div class="form-group full">
                         <label>Hari Operasional *</label>
-                        <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
+                        <div class="hari-grid" style="margin-bottom: 15px;">
                             @php
                                 $savedDays = $mitra->operational_days ?? ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
                                 if (is_string($savedDays)) $savedDays = json_decode($savedDays, true) ?? [];
                                 $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
                             @endphp
                             @foreach($days as $day)
-                                <label style="font-weight: normal; font-size: 14px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
-                                    <input type="checkbox" name="operational_days[]" value="{{ $day }}" 
-                                    @if(in_array($day, $savedDays)) checked @endif style="width: auto; padding: 0;"> {{ $day }}
-                                </label>
+                                <div class="hari-chip">
+                                    <input type="checkbox" id="hari_{{ strtolower($day) }}" name="operational_days[]" value="{{ $day }}" 
+                                    @if(in_array($day, $savedDays)) checked @endif>
+                                    <label for="hari_{{ strtolower($day) }}">{{ $day }}</label>
+                                </div>
                             @endforeach
                         </div>
                         
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-                            <div class="form-group">
-                                <label>Jam Buka *</label>
-                                <input type="time" name="open_time" value="{{ $mitra->open_time ?? '08:00' }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Jam Tutup *</label>
-                                <input type="time" name="close_time" value="{{ $mitra->close_time ?? '20:00' }}" required>
-                            </div>
+                        <label>Jam Buka - Tutup *</label>
+                        <div class="jam-row">
+                            <input type="time" name="open_time" value="{{ $mitra->open_time ?? '08:00' }}" required>
+                            <span class="jam-sep">-</span>
+                            <input type="time" name="close_time" value="{{ $mitra->close_time ?? '20:00' }}" required>
                         </div>
                     </div>
                     <!-- DESCRIPTION -->
