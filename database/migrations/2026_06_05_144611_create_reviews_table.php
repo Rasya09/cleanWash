@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('mitra_id')->constrained('mitra_laundries')->onDelete('cascade');
             $table->foreignId('order_id')->nullable()->constrained('orders')->onDelete('set null');
-            $table->integer('rating'); // 1-5
+            $table->integer('rating'); // 1-5   
             $table->text('komentar')->nullable();
             $table->enum('status', ['wait', 'ok', 'rej'])->default('wait');
             $table->unsignedBigInteger('approved_by')->nullable();
