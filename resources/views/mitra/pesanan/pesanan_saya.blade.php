@@ -169,11 +169,38 @@
 
 @push('scripts')
 <script>
-// Logic pencarian otomatis submit ketika enter
-document.getElementById('psSearch').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        this.closest('form').submit();
+function initSearch() {
+    const psSearch = document.getElementById('psSearch');
+    if (psSearch) {
+        // Hapus listener lama jika ada (opsional jika elemen diganti)
+        psSearch.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.closest('form').submit();
+            }
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    initSearch();
+    
+    if (window.Echo) {
+        window.Echo.private(`user.{{ auth()->id() }}`)
+            .listen('.order.updated', (e) => {
+                fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(res => res.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const current = document.querySelector('.ps-page');
+                        const next = doc.querySelector('.ps-page');
+                        if (current && next) {
+                            current.innerHTML = next.innerHTML;
+                            initSearch();
+                        }
+                    });
+            });
     }
 });
 </script>

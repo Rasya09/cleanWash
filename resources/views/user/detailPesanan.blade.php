@@ -657,101 +657,135 @@
 @endsection
 
 @push('scripts')
-    <script>
-        // Star Rating Logic
-        const stars = document.querySelectorAll('.star-rating span');
-        const ratingInput = document.getElementById('ratingInput');
-
-        stars.forEach(star => {
-            star.addEventListener('click', () => {
-                const value = star.getAttribute('data-value');
-                ratingInput.value = value;
-
-                stars.forEach(s => {
-                    if(s.getAttribute('data-value') <= value) {
-                        s.style.color = '#F59E0B'; // Gold
-                    } else {
-                        s.style.color = '#d1d5db'; // Gray
-                    }
-                });
-            });
-        });
-    </script>
-
-    @if($pesanan->status_bayar !== 'lunas' && $pesanan->total_bayar > 0 && $pesanan->status === 'menunggu_pembayaran')
     <script src="{{ config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
     <script>
-        document.getElementById('pay-button').onclick = function(){
-            const btn = this;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'Memproses...';
-            btn.disabled = true;
+        function initDetailPesananListeners() {
+            // Star Rating Logic
+            const stars = document.querySelectorAll('.star-rating span');
+            const ratingInput = document.getElementById('ratingInput');
 
-            // Dapatkan token lewat Ajax
-            fetch('{{ route("user.pesanan.bayar", $pesanan->id) }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const value = star.getAttribute('data-value');
+                    ratingInput.value = value;
 
-                if (data.snap_token) {
-                    // Trigger Snap popup
-                    snap.pay(data.snap_token, {
-                        onSuccess: function(result){
-                            // Lakukan POST ke success callback lokal jika berhasil
-                            const form = document.createElement('form');
-                            form.method = 'POST';
-                            form.action = '{{ route("user.pesanan.success_callback", $pesanan->id) }}';
-
-                            const csrfInput = document.createElement('input');
-                            csrfInput.type = 'hidden';
-                            csrfInput.name = '_token';
-                            csrfInput.value = '{{ csrf_token() }}';
-
-                            form.appendChild(csrfInput);
-                            document.body.appendChild(form);
-                            form.submit();
-                        },
-                        onPending: function(result){
-                            alert("Menunggu pembayaran Anda!");
-                            window.location.reload();
-                        },
-                        onError: function(result){
-                            alert("Pembayaran gagal!");
-                            window.location.reload();
-                        },
-                        onClose: function(){
-                            // alert('Anda menutup popup sebelum menyelesaikan pembayaran');
+                    stars.forEach(s => {
+                        if(s.getAttribute('data-value') <= value) {
+                            s.style.color = '#F59E0B'; // Gold
+                        } else {
+                            s.style.color = '#d1d5db'; // Gray
                         }
                     });
-                } else {
-                    alert('Gagal mendapatkan token: ' + (data.error || 'Terjadi kesalahan'));
-                }
-            })
-            .catch(error => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                alert('Terjadi kesalahan koneksi');
-                console.error(error);
+                });
             });
-        };
-    </script>
-    @endif
 
-    @if(request()->query('show_review') == '1' && $pesanan->isSelesai() && !$pesanan->review)
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var reviewModal = document.getElementById('reviewModal');
-            if (reviewModal) {
-                reviewModal.classList.add('active');
+            // Payment Logic
+            const payButton = document.getElementById('pay-button');
+            if (payButton) {
+                payButton.onclick = function(){
+                    const btn = this;
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = 'Memproses...';
+                    btn.disabled = true;
+
+                    // Dapatkan token lewat Ajax
+                    fetch('{{ route("user.pesanan.bayar", $pesanan->id) }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+
+                        if (data.snap_token) {
+                            // Trigger Snap popup
+                            snap.pay(data.snap_token, {
+                                onSuccess: function(result){
+                                    const form = document.createElement('form');
+                                    form.method = 'POST';
+                                    form.action = '{{ route("user.pesanan.success_callback", $pesanan->id) }}';
+                                    const csrfInput = document.createElement('input');
+                                    csrfInput.type = 'hidden';
+                                    csrfInput.name = '_token';
+                                    csrfInput.value = '{{ csrf_token() }}';
+                                    form.appendChild(csrfInput);
+                                    document.body.appendChild(form);
+                                    form.submit();
+                                },
+                                onPending: function(result){
+                                    alert("Menunggu pembayaran Anda!");
+                                    window.location.reload();
+                                },
+                                onError: function(result){
+                                    alert("Pembayaran gagal!");
+                                    window.location.reload();
+                                },
+                                onClose: function(){
+                                }
+                            });
+                        } else {
+                            alert('Gagal mendapatkan token: ' + (data.error || 'Terjadi kesalahan'));
+                        }
+                    })
+                    .catch(error => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                        alert('Terjadi kesalahan koneksi');
+                        console.error(error);
+                    });
+                };
+            }
+
+            // Show Review Modal if needed
+            if (new URLSearchParams(window.location.search).get('show_review') === '1' && {{ $pesanan->isSelesai() && !$pesanan->review ? 'true' : 'false' }}) {
+                const reviewModal = document.getElementById('reviewModal');
+                if (reviewModal) {
+                    reviewModal.classList.add('active');
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initDetailPesananListeners();
+
+            if (window.Echo) {
+                window.Echo.private(`user.{{ auth()->id() }}`)
+                    .listen('.order.updated', (e) => {
+                        fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                            .then(res => res.text())
+                            .then(html => {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+                                
+                                // Ganti isi main
+                                const currentMain = document.querySelector('.detail-page');
+                                const nextMain = doc.querySelector('.detail-page');
+                                if (currentMain && nextMain) {
+                                    currentMain.innerHTML = nextMain.innerHTML;
+                                }
+
+                                // Ganti isi page-bar (tanggal, status) jika ada
+                                const currentBar = document.querySelector('.page-bar');
+                                const nextBar = doc.querySelector('.page-bar');
+                                if (currentBar && nextBar) {
+                                    currentBar.innerHTML = nextBar.innerHTML;
+                                }
+
+                                // Ganti isi modal ulasan (bisa juga terpengaruh state baru)
+                                const currentModal = document.getElementById('reviewModal');
+                                const nextModal = doc.getElementById('reviewModal');
+                                if (currentModal && nextModal) {
+                                    currentModal.innerHTML = nextModal.innerHTML;
+                                }
+
+                                initDetailPesananListeners();
+                            });
+                    });
             }
         });
     </script>
-    @endif
 @endpush

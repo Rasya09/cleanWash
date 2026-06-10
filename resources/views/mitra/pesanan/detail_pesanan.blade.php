@@ -866,28 +866,28 @@
 </script>
 @endif
 <script>
-document.querySelectorAll('.mdp-modal-overlay').forEach(function(overlay) {
-    overlay.addEventListener('click', function(e) {
-        if (e.target === this) this.classList.remove('active');
+function initMitraDetailListeners() {
+    document.querySelectorAll('.mdp-modal-overlay').forEach(function(overlay) {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('active');
+        });
     });
-});
 
-document.querySelectorAll('.input-timbangan').forEach(function(input) {
-    input.addEventListener('input', function() {
-        let val = parseFloat(this.value) || 0;
-        let price = parseFloat(this.getAttribute('data-price')) || 0;
-        let subtotal = val * price;
-        let subtotalEl = this.closest('div').nextElementSibling.querySelector('.timbangan-subtotal');
-        if (subtotalEl) {
-            subtotalEl.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(subtotal);
-        }
+    document.querySelectorAll('.input-timbangan').forEach(function(input) {
+        input.addEventListener('input', function() {
+            let val = parseFloat(this.value) || 0;
+            let price = parseFloat(this.getAttribute('data-price')) || 0;
+            let subtotal = val * price;
+            let subtotalEl = this.closest('div').nextElementSibling.querySelector('.timbangan-subtotal');
+            if (subtotalEl) {
+                subtotalEl.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(subtotal);
+            }
+        });
     });
-});
 
-document.addEventListener("DOMContentLoaded", function() {
     const orderId = "{{ $pesanan->id }}";
-    const currentStatus = "{{ $pesanan->status }}";
-    const isLunas = {{ $pesanan->status_bayar === 'lunas' ? 'true' : 'false' }};
+    const currentStatus = document.querySelector('.mdp-status-badge') ? document.querySelector('.mdp-status-badge').innerText.trim().toLowerCase() : "{{ $pesanan->status }}";
+    const isLunas = document.querySelector('.pay--lunas') ? true : false;
     const storageKey = 'invoice_sent_' + orderId + '_' + currentStatus;
     const lunasKey = 'invoice_sent_' + orderId + '_lunas';
 
@@ -908,11 +908,10 @@ document.addEventListener("DOMContentLoaded", function() {
         updateButtonTexts();
     }
 
-    // Auto popup Invoice Lunas jika belum dikirim (Semi-Otomatis untuk Mitra)
+    // Auto popup Invoice Lunas jika belum dikirim
     if (isLunas && localStorage.getItem(lunasKey) !== 'true') {
         const modalInvoice = document.getElementById('modalKirimInvoice');
         const modalUlasan = document.getElementById('modalKirimUlasan');
-        // Pastikan tidak bertabrakan dengan modal ulasan
         if (modalInvoice && (!modalUlasan || !modalUlasan.classList.contains('active'))) {
             modalInvoice.classList.add('active');
         }
@@ -927,6 +926,39 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             updateButtonTexts();
         });
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    initMitraDetailListeners();
+
+    if (window.Echo) {
+        window.Echo.private(`user.{{ auth()->id() }}`)
+            .listen('.order.updated', (e) => {
+                fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(res => res.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        
+                        const currentBody = document.querySelector('.mdp-body');
+                        const nextBody = doc.querySelector('.mdp-body');
+                        if (currentBody && nextBody) {
+                            currentBody.innerHTML = nextBody.innerHTML;
+                        }
+                        
+                        const modals = ['modalTerima', 'modalTolak', 'modalUpdate', 'modalTimbang', 'modalKirimInvoice', 'modalKirimUlasan'];
+                        modals.forEach(id => {
+                            const currentModal = document.getElementById(id);
+                            const nextModal = doc.getElementById(id);
+                            if (currentModal && nextModal) {
+                                currentModal.innerHTML = nextModal.innerHTML;
+                            }
+                        });
+
+                        initMitraDetailListeners();
+                    });
+            });
     }
 });
 </script>

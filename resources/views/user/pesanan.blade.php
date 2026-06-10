@@ -85,4 +85,24 @@
 @endsection
 
 @section('js')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.Echo) {
+            window.Echo.private(`user.{{ auth()->id() }}`)
+                .listen('.order.updated', (e) => {
+                    fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(res => res.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const current = document.querySelector('.ps-page');
+                            const next = doc.querySelector('.ps-page');
+                            if (current && next) {
+                                current.innerHTML = next.innerHTML;
+                            }
+                        });
+                });
+        }
+    });
+</script>
 @endsection

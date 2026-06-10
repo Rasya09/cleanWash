@@ -172,6 +172,8 @@ class MitraOrderController extends Controller
         $order->update(['status' => 'aktif']);
         $this->catatHistory($order, $statusLama, 'aktif', 'Pesanan diterima oleh mitra');
 
+        broadcast(new \App\Events\OrderStatusUpdated($order));
+
         return redirect()->route('mitra.pesanan.detail', $id)
                          ->with('success', 'Pesanan berhasil diterima!')
                          ->with('show_invoice_modal', true);
@@ -196,6 +198,8 @@ class MitraOrderController extends Controller
             'alasan_batal' => $request->alasan,
         ]);
         $this->catatHistory($order, $statusLama, 'dibatalkan', $request->alasan);
+
+        broadcast(new \App\Events\OrderStatusUpdated($order));
 
         return redirect()->route('mitra.pesanan')
                          ->with('success', 'Pesanan ditolak.');
@@ -272,6 +276,8 @@ class MitraOrderController extends Controller
         } else {
             $this->catatHistory($order, $statusLama, $request->status_baru, $request->catatan);
         }
+
+        broadcast(new \App\Events\OrderStatusUpdated($order));
 
         if (in_array($request->status_baru, ['menunggu_pembayaran', 'pengantaran'])) {
             return redirect()->route('mitra.pesanan.detail', $id)
