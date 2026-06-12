@@ -243,8 +243,11 @@
                         </label>
                         <input type="text"
                                name="store_name"
+                               maxlength="32"
+                               id="store_name"
                                value="{{ $mitra->store_name ?? '' }}"
                                placeholder="Contoh: Laundry Bersih Jaya">
+                            <small id="store_nameCounter">0 / 32</small>
                     </div>
                     <!-- OWNER -->
                     <div class="form-group">
@@ -253,8 +256,11 @@
                         </label>
                         <input type="text"
                                name="owner_name"
+                               maxlength="32"
+                               id="owner_name"
                                value="{{ $mitra->owner_name ?? '' }}"
                                placeholder="Nama pemilik">
+                            <small id="owner_nameCounter">0 / 32</small>
                     </div>
                     <!-- PHONE -->
                     <div class="form-group">
@@ -264,7 +270,8 @@
                         
                         <input type="tel"
                                 name="phone"
-                               value="{{ $mitra->phone ?? '' }}"
+                                maxlength="15"
+                                value="{{ $mitra->phone ?? '' }}"
                                 id="phone"
                                 placeholder="81234567891"
                                 required>
@@ -276,6 +283,7 @@
                         </label>
                         <input type="email"
                                name="email"
+                               maxlength="255"
                                value="{{ $mitra->email ?? '' }}"
                                placeholder="email@toko.com">
                     </div>
@@ -284,8 +292,13 @@
                         <label>
                             Deskripsi Toko
                         </label>
-                        <textarea name="description"
-                                  placeholder="Ceritakan tentang usaha laundry Anda...">{{ $mitra->description ?? '' }}</textarea>
+                        <textarea
+                            name="address"
+                            id="address"
+                            maxlength="300"
+                            required></textarea>
+
+                        <small id="addressCounter">0 / 300</small>
                     </div>
                 </div>
             </div>
@@ -304,7 +317,58 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@if ($errors->any())
 <script>
+Swal.fire({
+    icon: 'error',
+    title: 'Pendaftaran Mitra Step 1 Gagal',
+    html: `{!! implode('<br>', $errors->all()) !!}`,
+    confirmButtonText: 'OK'
+});
+</script>
+@endif
+
+<script>
+const address =
+    document.getElementById('address');
+
+const addressCounter =
+    document.getElementById('addressCounter');
+
+address.addEventListener('input', function(){
+
+    addressCounter.textContent =
+        `${this.value.length} / ${this.maxLength}`;
+
+});
+
+const owner_name =
+    document.getElementById('owner_name');
+
+const owner_nameCounter =
+    document.getElementById('owner_nameCounter');
+
+owner_name.addEventListener('input', function(){
+
+    owner_nameCounter.textContent =
+        `${this.value.length} / ${this.maxLength}`;
+
+});
+const store_name =
+    document.getElementById('store_name');
+
+const store_nameCounter =
+    document.getElementById('store_nameCounter');
+
+store_name.addEventListener('input', function(){
+
+    store_nameCounter.textContent =
+        `${this.value.length} / ${this.maxLength}`;
+
+});
+
 document.getElementById('phone')
 .addEventListener('input', function(){
 

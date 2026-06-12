@@ -198,30 +198,47 @@ input[type=file]{
                 <div class="form-group">
                     <label>KTP *</label>
                     <div class="upload-box">
-                        <input type="file"
-                               name="ktp"
-                               accept="image/*"
-                               required>
+                        <input
+                            type="file"
+                            name="ktp"
+                            id="ktpInput"
+                            accept=".jpg,.jpeg,.png,.pdf"
+                            required>
+                        <div
+                            class="preview"
+                            id="ktpPreview">
+                        </div>
                     </div>
                 </div>
                 <!-- NIB -->
                 <div class="form-group">
                     <label>NIB *</label>
                     <div class="upload-box">
-                        <input type="file"
-                               name="nib"
-                               accept="image/*"
-                               required>
+                        <input
+                            type="file"
+                            name="nib"
+                            id="nibInput"
+                            accept=".jpg,.jpeg,.png,.pdf"
+                            required>
+                        <div
+                            class="preview"
+                            id="nibPreview">
+                        </div>
                     </div>
                 </div>
                 <!-- NPWP -->
                 <div class="form-group">
-                    <label>NPWP *</label>
+                    <label>NPWP (Opsional)</label>
                     <div class="upload-box">
-                        <input type="file"
-                               name="npwp"
-                               accept="image/*"
-                               required>
+                        <input
+                            type="file"
+                            name="npwp"
+                            id="npwpInput"
+                            accept=".jpg,.jpeg,.png,.pdf">
+                        <div
+                            class="preview"
+                            id="npwpPreview">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -234,44 +251,160 @@ input[type=file]{
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@if ($errors->any())
 <script>
+document.addEventListener('DOMContentLoaded', function(){
 
-document
-.getElementById('businessInput')
-.addEventListener('change', function(e){
-
-    const preview =
-        document.getElementById('businessPreview');
-
-    preview.innerHTML = '';
-
-    const files = e.target.files;
-
-    if(files.length < 2)
-    {
-        alert('Minimal upload 2 foto');
-        return;
-    }
-
-    if(files.length > 5)
-    {
-        alert('Maksimal 5 foto');
-        return;
-    }
-
-    Array.from(files).forEach(file => {
-
-        const img =
-            document.createElement('img');
-
-        img.src =
-            URL.createObjectURL(file);
-
-        preview.appendChild(img);
-
+    Swal.fire({
+        icon:'error',
+        title:'Upload Dokumen Gagal',
+        html:`{!! implode('<br>', $errors->all()) !!}`
     });
 
 });
+</script>
+@endif
+
+<script>
+
+const MAX_SIZE = 2 * 1024 * 1024;
+
+// =========================
+// GENERIC PREVIEW
+// =========================
+
+function setupPreview(inputId, previewId)
+{
+    const input =
+        document.getElementById(inputId);
+
+    const preview =
+        document.getElementById(previewId);
+
+    input.addEventListener('change', function(e){
+
+        preview.innerHTML = '';
+
+        const file =
+            e.target.files[0];
+
+        if(!file) return;
+
+        if(file.size > MAX_SIZE)
+        {
+            Swal.fire({
+                icon:'error',
+                title:'File Terlalu Besar',
+                text:'Ukuran file maksimal 2 MB'
+            });
+
+            input.value = '';
+
+            return;
+        }
+
+        const wrapper =
+            document.createElement('div');
+
+        wrapper.style.position = 'relative';
+        wrapper.style.display = 'inline-block';
+
+        // =====================
+        // IMAGE
+        // =====================
+
+        if(file.type.startsWith('image/'))
+        {
+            const img =
+                document.createElement('img');
+
+            img.src =
+                URL.createObjectURL(file);
+
+            img.style.width = '150px';
+            img.style.height = '150px';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '10px';
+
+            wrapper.appendChild(img);
+        }
+
+        // =====================
+        // PDF
+        // =====================
+
+        else
+        {
+            const pdf =
+                document.createElement('div');
+
+            pdf.innerHTML =
+                '📄 ' + file.name;
+
+            pdf.style.padding = '20px';
+            pdf.style.background = '#f5f5f5';
+            pdf.style.borderRadius = '10px';
+
+            wrapper.appendChild(pdf);
+        }
+
+        // =====================
+        // DELETE BUTTON
+        // =====================
+
+        const remove =
+            document.createElement('button');
+
+        remove.type = 'button';
+
+        remove.innerHTML = '×';
+
+        remove.style.position = 'absolute';
+        remove.style.top = '-8px';
+        remove.style.right = '-8px';
+        remove.style.width = '28px';
+        remove.style.height = '28px';
+        remove.style.border = 'none';
+        remove.style.borderRadius = '50%';
+        remove.style.background = '#ff4d4f';
+        remove.style.color = '#fff';
+        remove.style.cursor = 'pointer';
+
+        remove.onclick = () => {
+
+            preview.innerHTML = '';
+
+            input.value = '';
+
+        };
+
+        wrapper.appendChild(remove);
+
+        preview.appendChild(wrapper);
+
+    });
+}
+
+// =========================
+// INIT
+// =========================
+
+setupPreview(
+    'ktpInput',
+    'ktpPreview'
+);
+
+setupPreview(
+    'nibInput',
+    'nibPreview'
+);
+
+setupPreview(
+    'npwpInput',
+    'npwpPreview'
+);
 
 </script>
 

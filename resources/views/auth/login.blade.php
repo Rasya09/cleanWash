@@ -47,6 +47,8 @@
                             placeholder="Masukkan Email" 
                             autocomplete="username"
                             value="{{ old('email') }}"
+                            maxlength="255"
+                            required
                         />
                     </div>
 
@@ -58,19 +60,13 @@
                             type="password" 
                             name="password"
                             placeholder="Masukkan Password" 
-                            autocomplete="current-password" 
+                            autocomplete="current-password"
+                            maxlength="50"
+                            required
                         />
                     </div>
 
-                    <div class="forgot-wrap">
-                        <a href="#" class="forgot-link">Lupa Password?</a>
-                    </div>
-
                     <button class="btn-login" type="submit">Login</button>
-
-                    @if(session('error'))
-                        <p style="color:red;">{{ session('error') }}</p>
-                    @endif
 
                 </form>
 
@@ -82,5 +78,37 @@
         </div>
 
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if ($errors->any())
+    <script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Login Gagal',
+        html: `{!! implode('<br>', $errors->all()) !!}`,
+        confirmButtonText: 'OK'
+    });
+    </script>
+    @endif
+    @if(session('error'))
+    <script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Login Gagal',
+        text: '{{ session('error') }}',
+        confirmButtonText: 'OK'
+    });
+    </script>
+    @endif
+    @if(session('success'))
+    <script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil',
+        text: '{{ session('success') }}',
+        timer: 2000,
+        showConfirmButton: false
+    });
+    </script>
+    @endif
 </body>
 </html>

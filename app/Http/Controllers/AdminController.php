@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\MitraLaundry;
 use App\Models\User;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -72,15 +72,10 @@ class AdminController extends Controller
         );
     }
 
-    public function userManagement(Request $request)
+    public function userManagement()
     {
-        $query = User::where('role', 'user');
-
-        if ($request->has('id')) {
-            $query->where('id', $request->id);
-        }
-
-        $customers = $query->latest()
+        $customers = User::where('role', 'user')
+            ->latest()
             ->paginate(10);
 
         $totalCustomer = User::where('role', 'user')
@@ -253,7 +248,7 @@ class AdminController extends Controller
 
         // Kirim Pesan Chat
         \App\Models\Message::create([
-            'sender_id' => auth()->id(),
+            'sender_id' => Auth::id(),
             'receiver_id' => $mitraUserId,
             'message' => $warningMessage,
         ]);
@@ -278,7 +273,7 @@ class AdminController extends Controller
                   "Mohon tunggu informasi selanjutnya. Salam, Admin CleanWash.";
 
         \App\Models\Message::create([
-            'sender_id' => auth()->id(),
+            'sender_id' => Auth::id(),
             'receiver_id' => $komplain->reporter_id,
             'message' => $msgText,
         ]);

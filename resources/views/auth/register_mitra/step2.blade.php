@@ -244,12 +244,18 @@
                     <div class="form-group">
                         <label>Kode Pos *</label>
                         <input type="text"
-                            name="postal_code">
+                            name="postal_code"
+                            id="postal_code"
+                            maxlength="5"
+                            inputmode="numeric"
+                            required>
+                        <small id="postal_codeCounter">0 / 5</small>
                     </div>
                     <!-- ALAMAT -->
                     <div class="form-group full">
                         <label>Alamat Lengkap *</label>
-                        <textarea name="address"></textarea>
+                        <textarea name="address" id="address" maxlength="100" required></textarea>
+                        <small id="addressCounter">0 / 100</small>
                     </div>
                 </div>
             </div>
@@ -261,8 +267,54 @@
         </form>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@if ($errors->any())
+<script>
+Swal.fire({
+    icon: 'error',
+    title: 'Data Lokasi Tidak Valid',
+    html: `{!! implode('<br>', $errors->all()) !!}`,
+    confirmButtonText: 'OK'
+});
+</script>
+@endif
+
+
 
 <script>
+document.getElementById('postal_code')
+.addEventListener('input', function(){
+
+    this.value =
+        this.value.replace(/\D/g,'');
+
+});
+const address =
+    document.getElementById('address');
+
+const addressCounter =
+    document.getElementById('addressCounter');
+
+address.addEventListener('input', function(){
+
+    addressCounter.textContent =
+        `${this.value.length} / ${this.maxLength}`;
+
+});
+const postal_code =
+    document.getElementById('postal_code');
+
+const postal_codeCounter =
+    document.getElementById('postal_codeCounter');
+
+postal_code.addEventListener('input', function(){
+
+    postal_codeCounter.textContent =
+        `${this.value.length} / ${this.maxLength}`;
+
+});
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const province = document.getElementById('province');
@@ -572,13 +624,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     selectOption(village, villageName);
 
-                    alert('Lokasi berhasil diisi otomatis');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: 'Lokasi berhasil diisi otomatis'
+                    });
 
                 }
                 catch(error)
                 {
                     console.log(error);
-                    alert('Gagal mengambil lokasi');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: 'Gagal mengambil lokasi GPS'
+                    });
                 }
             }
 

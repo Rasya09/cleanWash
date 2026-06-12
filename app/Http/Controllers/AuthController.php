@@ -41,13 +41,32 @@ class AuthController extends Controller
     {
 
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
+            'name' => 'required|string|min:3|max:32',
+            'email' => 'required|email|max:255|unique:users,email',
             'phone' => [
                 'required',
-                'regex:/^[1-9][0-9]{8,14}$/'
+                'numeric',
+                'digits_between:9,15'
             ],
-            'password' => 'required|min:8|confirmed'
+            'password' => 'required|min:8|max:50|confirmed'
+        ],[
+            'name.required' => 'Nama wajib diisi.',
+            'name.min' => 'Nama minimal 3 karakter.',
+            'name.max' => 'Nama maksimal 32 karakter.',
+
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.max' => 'Email terlalu panjang.',
+            'email.unique' => 'Email sudah digunakan.',
+
+            'phone.required' => 'Nomor HP wajib diisi.',
+            'phone.numeric' => 'Nomor HP hanya boleh berisi angka.',
+            'phone.digits_between' => 'Nomor HP harus terdiri dari 12 sampai 15 digit setelah +62.',
+
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.max' => 'Password maksimal 50 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
 
@@ -88,49 +107,33 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email|max:255',
+            'password' => 'required|min:8|max:50',
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.max' => 'Email terlalu panjang.',
 
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.max' => 'Password maksimal 50 karakter.',
         ]);
 
+        if (!Auth::attempt([
+            'email' => $request->email,
+            'password' => $request->password
+        ])) {
 
-        if (Auth::attempt($credentials)) {
-
-            $request->session()->regenerate();
-
-            // =========================
-            // ADMIN
-            // =========================
-
-            if (Auth::user()->role == 'admin') {
-
-                return redirect('/admin/dashboard');
-            }
-
-
-            // =========================
-            // MITRA
-            // =========================
-
-            if (Auth::user()->role == 'mitra') {
-
-                return redirect('/mitra/home');
-            }
-
-
-            // =========================
-            // USER
-            // =========================
-
-            return redirect('/user/home');
+            return back()
+                ->withInput()
+                ->with('error', 'Email atau password salah.');
         }
 
+        $request->session()->regenerate();
 
-        return back()->with(
-            'error',
-            'Email atau password salah'
-        );
+        return redirect('/user/home')
+            ->with('success', 'Login berhasil.');
     }
 
 

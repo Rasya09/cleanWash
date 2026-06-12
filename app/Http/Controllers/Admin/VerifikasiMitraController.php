@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class VerifikasiMitraController extends Controller
@@ -111,7 +112,7 @@ class VerifikasiMitraController extends Controller
     private function ensureAdmin(): void
     {
         abort_unless(
-            auth()->check() && auth()->user()->role === 'admin',
+            Auth::check() && optional(Auth::user())->role === 'admin',
             403,
             'Akses khusus admin.'
         );
@@ -153,7 +154,7 @@ class VerifikasiMitraController extends Controller
             return round((($current - $previous) / $previous) * 100, 1);
         };
 
-        $createdBetween = fn (Carbon $from, Carbon $to) => MitraLaundry::query()
+        $createdBetween = fn(Carbon $from, Carbon $to) => MitraLaundry::query()
             ->whereBetween('created_at', [$from, $to]);
 
         $totalNewWeek = $createdBetween($weekStart, $now)->count();
@@ -210,7 +211,7 @@ class VerifikasiMitraController extends Controller
         }
 
         if (Schema::hasColumn('mitra_laundries', 'verified_by')) {
-            $data['verified_by'] = auth()->id();
+            $data['verified_by'] = Auth::id();
         }
 
         return $data;

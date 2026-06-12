@@ -16,14 +16,32 @@ class MitraRegisterController extends Controller
     public function storeStep1(Request $request)
     {
         $request->validate([
-            'owner_name' => 'required',
-            'store_name' => 'required',
-            'email' => 'nullable|email',
+            'owner_name' => 'required|string|min:3|max:32',
+            'store_name' => 'required|string|min:3|max:32',
+            'email' => 'nullable|email|max:255',
             'phone' => [
                 'required',
-                'regex:/^[1-9][0-9]{8,14}$/'
+                'numeric',
+                'digits_between:9,15'
             ],
-            'description' => 'nullable',
+            'description' => 'nullable|string|max:300',
+        ], [
+            'owner_name.required' => 'Nama pemilik wajib diisi.',
+            'owner_name.min' => 'Nama pemilik minimal 3 karakter.',
+            'owner_name.max' => 'Nama pemilik maksimal 32 karakter.',
+
+            'store_name.required' => 'Nama toko wajib diisi.',
+            'store_name.min' => 'Nama toko minimal 3 karakter.',
+            'store_name.max' => 'Nama toko maksimal 32 karakter.',
+
+            'email.email' => 'Format email tidak valid.',
+            'email.max' => 'Email maksimal 255 karakter.',
+
+            'phone.required' => 'Nomor WhatsApp wajib diisi.',
+            'phone.numeric' => 'Nomor WhatsApp hanya boleh berisi angka.',
+            'phone.digits_between' => 'Nomor WhatsApp harus terdiri dari 9 sampai 15 digit setelah +62.',
+
+            'description.max' => 'Deskripsi maksimal 300 karakter.',
         ]);
         $mitra = MitraLaundry::updateOrCreate(
             ['user_id' => Auth::id()],
@@ -66,12 +84,24 @@ class MitraRegisterController extends Controller
     public function storeStep2(Request $request, $id)
     {
         $request->validate([
-            'address' => 'required',
-            'village' => 'required',
-            'district' => 'required',
-            'city' => 'required',
-            'province' => 'required',
-            'postal_code' => 'required',
+            'address' => 'required|string|min:10|max:100',
+            'village' => 'required|string|max:100',
+            'district' => 'required|string|max:100',
+            'city' => 'required|string|max:100',
+            'province' => 'required|string|max:100',
+            'postal_code' => 'required|digits:5',
+        ], [
+            'address.required' => 'Alamat lengkap wajib diisi.',
+            'address.min' => 'Alamat lengkap minimal 10 karakter.',
+            'address.max' => 'Alamat lengkap maksimal 100 karakter.',
+
+            'village.required' => 'Kelurahan wajib dipilih.',
+            'district.required' => 'Kecamatan wajib dipilih.',
+            'city.required' => 'Kota/Kabupaten wajib dipilih.',
+            'province.required' => 'Provinsi wajib dipilih.',
+
+            'postal_code.required' => 'Kode pos wajib diisi.',
+            'postal_code.digits' => 'Kode pos harus terdiri dari 5 digit angka.',
         ]);
 
         $mitra = MitraLaundry::findOrFail($id);
@@ -87,13 +117,13 @@ class MitraRegisterController extends Controller
         ]);
 
         // Kirim Notifikasi ke Admin
-        Notifikasi::create([
-            'judul'    => 'Pendaftaran Mitra Baru!',
-            'pesan'    => 'Mitra "' . $mitra->store_name . '" baru saja mendaftar dan menunggu verifikasi.',
-            'modul'    => 'Verifikasi Mitra',
-            'penerima' => 'Admin',
-            'is_read'  => false,
-        ]);
+        // Notifikasi::create([
+        //     'judul'    => 'Pendaftaran Mitra Baru!',
+        //     'pesan'    => 'Mitra "' . $mitra->store_name . '" baru saja mendaftar dan menunggu verifikasi.',
+        //     'modul'    => 'Verifikasi Mitra',
+        //     'penerima' => 'Admin',
+        //     'is_read'  => false,
+        // ]);
 
         return redirect()
             ->route('user.register.step3', $mitra->id)
@@ -108,14 +138,20 @@ class MitraRegisterController extends Controller
 
     public function storeStep3(Request $request, $id)
     {
-        // dd($request->all(), $request->file());
         $request->validate([
-            'logo' =>
-                'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'store_photos' =>
-                'required|array|min:2|max:3',
-            'store_photos.*' =>
-                'image|mimes:jpg,jpeg,png|max:2048',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'store_photos' => 'required|array|min:2|max:3',
+            'store_photos.*' => 'image|mimes:jpg,jpeg,png|max:2048',
+        ], [
+            'logo.image' => 'Logo harus berupa gambar.',
+            'logo.max' => 'Logo maksimal 2 MB.',
+
+            'store_photos.required' => 'Foto toko wajib diupload.',
+            'store_photos.min' => 'Minimal upload 2 foto toko.',
+            'store_photos.max' => 'Maksimal upload 3 foto toko.',
+
+            'store_photos.*.image' => 'File harus berupa gambar.',
+            'store_photos.*.max' => 'Ukuran setiap foto maksimal 2 MB.',
         ]);
         $mitra = MitraLaundry::findOrFail($id);
         // =========================
