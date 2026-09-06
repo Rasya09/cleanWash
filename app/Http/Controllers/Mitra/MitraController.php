@@ -95,7 +95,7 @@ class MitraController extends Controller
             'district'         => 'required',
             'village'          => 'required',
             'postal_code'      => 'required',
-            'address'          => 'required',
+            'address'          => 'required|max:250',
             'operational_days' => 'required|array|min:1',
             'open_time'        => 'required',
             'close_time'       => 'required',
@@ -187,9 +187,8 @@ class MitraController extends Controller
             'minimum_order'    => $request->minimal_order,
             'maximum_order'    => $request->maksimal_order,
             'is_active'        => true,
-            'is_setrika'       => $request->has('is_setrika') ? true : false,
+            'is_setrika'       => $request->has('is_setrika'),
         ]);
-
         return redirect()
             ->route('mitra.layanan')
             ->with(

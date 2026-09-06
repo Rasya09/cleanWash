@@ -68,7 +68,6 @@
                         'dibatalkan'          => 'Dibatalkan',
                     ];
 
-                    /* Peta status → nomor step aktif */
                     $stepMap = [
                         'masuk'               => 0,
                         'aktif'               => 1,
@@ -105,7 +104,7 @@
                         @php
                             $isDone   = $step > $s['num'];
                             $isActive = $step === $s['num'];
-                            $dotClass = $isDone ? 'progress-step__dot--done' : ($isActive ? 'progress-step__dot--active' : '');
+                            $dotClass  = $isDone ? 'progress-step__dot--done' : ($isActive ? 'progress-step__dot--active' : '');
                             $stepClass = $isDone ? 'progress-step--done' : ($isActive ? 'progress-step--active' : '');
                         @endphp
                         <div class="progress-step {{ $stepClass }}">
@@ -150,7 +149,7 @@
                         <span class="laundry-info__name">{{ $pesanan->mitraLaundry->store_name }}</span>
                         <div class="laundry-info__rating">
                             @php
-                                $avgRating = $pesanan->mitraLaundry->average_rating ?? 0;
+                                $avgRating   = $pesanan->mitraLaundry->average_rating ?? 0;
                                 $countReview = $pesanan->mitraLaundry->reviews->count() ?? 0;
                             @endphp
                             <span class="laundry-info__stars">
@@ -184,7 +183,9 @@
                             @endif
                         </div>
                         <div class="laundry-info__actions">
-                            <a href="{{ route('user.detail-laundry', ['id' => $pesanan->mitraLaundry->id]) }}" class="btn-outline-primary" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                            <a href="{{ route('user.detail-laundry', ['id' => $pesanan->mitraLaundry->id]) }}"
+                               class="btn-outline-primary"
+                               style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
                                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                                 </svg>
@@ -208,7 +209,6 @@
                 </div>
                 <div class="layanan-list">
 
-                    {{-- Layanan --}}
                     <div class="layanan-row">
                         <span class="layanan-row__key">
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -222,7 +222,6 @@
                         </span>
                     </div>
 
-                    {{-- Estimasi Selesai --}}
                     @if($pesanan->estimasi_selesai)
                     <div class="layanan-row">
                         <span class="layanan-row__key">
@@ -235,7 +234,6 @@
                     </div>
                     @endif
 
-                    {{-- Metode Pembayaran --}}
                     <div class="layanan-row">
                         <span class="layanan-row__key">
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -247,7 +245,6 @@
                         <span class="layanan-row__val">Pembayaran Online</span>
                     </div>
 
-                    {{-- Metode Pengantaran --}}
                     <div class="layanan-row">
                         <span class="layanan-row__key">
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -261,7 +258,6 @@
                         <span class="layanan-row__val">Antar Jemput</span>
                     </div>
 
-                    {{-- Instruksi / Catatan --}}
                     @if($pesanan->catatan)
                     <div class="layanan-row layanan-row--full">
                         <span class="layanan-row__key">
@@ -289,7 +285,6 @@
                 </div>
                 <div class="pickup-grid">
 
-                    {{-- Alamat Pickup --}}
                     <div class="pickup-box pickup-box--full">
                         <div class="pickup-box__label">
                             <svg width="12" height="12" fill="none" stroke="var(--red-500)" stroke-width="2" viewBox="0 0 24 24">
@@ -301,7 +296,6 @@
                         <p class="pickup-box__val pickup-box__val--primary">{{ $pesanan->alamat_pickup }}</p>
                     </div>
 
-                    {{-- Jadwal Pickup --}}
                     <div class="pickup-box">
                         <div class="pickup-box__label">
                             <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -315,7 +309,6 @@
                         </p>
                     </div>
 
-                    {{-- Estimasi Tiba --}}
                     <div class="pickup-box">
                         <div class="pickup-box__label">
                             <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -344,19 +337,14 @@
                     <h2 class="card-title">Riwayat Aktivitas</h2>
                 </div>
                 <div class="timeline">
-                    {{-- 1. History steps (diurutkan descending, proses yang sedang dijalankan di paling atas) --}}
                     @php
-                        // Urutkan riwayat dari yang terbaru ke terlama berdasarkan ID
                         $sortedHistories = $pesanan->statusHistories->sortByDesc('id')->values();
                     @endphp
                     @forelse($sortedHistories as $history)
                     @php
-                        $isFirst  = $loop->first;
-                        $isLast   = $loop->last;
-                        // Status aktif berada di paling atas daftar riwayat (jika belum selesai/batal/gagal)
-                        $isActive = $loop->first && !in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']);
-
-                        // Cek apakah ada pending step setelah ini
+                        $isFirst    = $loop->first;
+                        $isLast     = $loop->last;
+                        $isActive   = $loop->first && !in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']);
                         $hasPending = !in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']);
                     @endphp
                     <div class="timeline-item {{ (!$isLast || $hasPending) ? 'timeline-item--has-line' : '' }}">
@@ -387,16 +375,26 @@
                             @endif
                             @if($history->status_baru === 'pickup' && $pesanan->foto_pickup)
                             <div class="timeline-item__desc" style="margin-top: 5px;">
-                                <a href="{{ asset('storage/' . $pesanan->foto_pickup) }}" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                <a href="{{ asset('storage/' . $pesanan->foto_pickup) }}" target="_blank"
+                                   style="color: var(--primary-color); text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
                                     Foto Bukti PickUp
                                 </a>
                             </div>
                             @endif
                             @if($history->status_baru === 'selesai' && $pesanan->foto_pengantaran)
                             <div class="timeline-item__desc" style="margin-top: 5px;">
-                                <a href="{{ asset('storage/' . $pesanan->foto_pengantaran) }}" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                <a href="{{ asset('storage/' . $pesanan->foto_pengantaran) }}" target="_blank"
+                                   style="color: var(--primary-color); text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
                                     Foto Bukti Pengantaran
                                 </a>
                             </div>
@@ -407,10 +405,8 @@
                     <p style="font-size:13px;color:var(--neutral-400);padding:8px 0;">Belum ada aktivitas.</p>
                     @endforelse
 
-                    {{-- 2. Pending steps (data yang akan datang disimpan di bawah urutan) --}}
                     @if(!in_array($pesanan->status, ['selesai', 'dibatalkan', 'gagal_pickup']))
                         @php
-                            // Ambil step-step yang belum dilalui, ASC normal (dari yang terdekat ke terjauh)
                             $pendingSteps = collect($steps)->filter(function($s) use ($step) {
                                 return $s['num'] > $step;
                             })->values();
@@ -464,9 +460,9 @@
                     @php
                         $namaLayananLower = strtolower($item->nama_layanan);
                         $isKiloan = str_contains($namaLayananLower, 'cuci kering') || str_contains($namaLayananLower, 'setrika');
-                        $unit = $isKiloan ? 'Kg' : (str_contains($namaLayananLower, 'sepatu') ? 'Pasang' : (str_contains($namaLayananLower, 'karpet') ? 'Meter' : 'Pcs'));
-                        $qty = floatval($isKiloan ? $item->berat_aktual : $item->qty);
-                        $price = $isKiloan ? $item->harga_per_kg : $item->harga_satuan;
+                        $unit     = $isKiloan ? 'Kg' : (str_contains($namaLayananLower, 'sepatu') ? 'Pasang' : (str_contains($namaLayananLower, 'karpet') ? 'Meter' : 'Pcs'));
+                        $qty      = floatval($isKiloan ? $item->berat_aktual : $item->qty);
+                        $price    = $isKiloan ? $item->harga_per_kg : $item->harga_satuan;
                         if (is_null($price) || $price == 0) {
                             $laundryService = \App\Models\LaundryService::find($item->jenis_layanan);
                             $price = $laundryService ? $laundryService->base_price : $item->subtotal;
@@ -522,13 +518,16 @@
 
                 @if($pesanan->status_bayar !== 'lunas' && $pesanan->total_bayar > 0 && $pesanan->status === 'menunggu_pembayaran')
                 <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <button type="button" class="btn-bayar" id="pay-button" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
+                    <button type="button" class="btn-bayar" id="pay-button"
+                            style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
                         </svg>
                         Bayar Sekarang
                     </button>
-                    <a href="{{ route('user.pesanan.cek_pembayaran', $pesanan->id) }}" class="btn-bayar" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--primary-color); background-color: transparent; color: var(--primary-color); cursor: pointer; text-decoration: none;">
+                    <a href="{{ route('user.pesanan.cek_pembayaran', $pesanan->id) }}"
+                       class="btn-bayar"
+                       style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--primary-color); background-color: transparent; color: var(--primary-color); cursor: pointer; text-decoration: none;">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
                         </svg>
@@ -536,7 +535,9 @@
                     </a>
                 </div>
                 @elseif($pesanan->status_bayar !== 'lunas' && $pesanan->total_bayar > 0)
-                <button type="button" class="btn-bayar" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; background-color: var(--neutral-400); cursor: not-allowed;" disabled>
+                <button type="button" class="btn-bayar"
+                        style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; background-color: var(--neutral-400); cursor: not-allowed;"
+                        disabled>
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
                     </svg>
@@ -557,7 +558,8 @@
                 </div>
                 <div class="aksi-list">
 
-                    <a href="{{ route('user.chat', ['contact_id' => $pesanan->mitraLaundry->user_id, 'order_code' => $pesanan->order_code]) }}" class="btn-aksi" style="text-decoration: none;">
+                    <a href="{{ route('user.chat', ['contact_id' => $pesanan->mitraLaundry->user_id, 'order_code' => $pesanan->order_code]) }}"
+                       class="btn-aksi" style="text-decoration: none;">
                         <div class="btn-aksi__icon">
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.63A2 2 0 012.18 0h3a2 2 0 012 1.72c.13 1 .37 1.97.72 2.9a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.18-1.18a2 2 0 012.11-.45c.93.35 1.9.59 2.9.72A2 2 0 0122 16.92z"/>
@@ -589,10 +591,11 @@
                     </a>
 
                     @if($pesanan->isSelesai() && !$pesanan->review)
-                    <button class="btn-aksi btn-aksi--primary" onclick="document.getElementById('reviewModal').classList.add('active')">
+                    <button class="btn-aksi btn-aksi--primary"
+                            onclick="document.getElementById('reviewModal').classList.add('active')">
                         <div class="btn-aksi__icon" style="background:#eef2ff; color:#4f46e5;">
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                             </svg>
                         </div>
                         Beri Ulasan
@@ -631,7 +634,7 @@
     <div class="dpx-modal">
         <div class="dpx-modal-icon" style="background:#eef2ff; color:#4f46e5;">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
             </svg>
         </div>
         <h3 class="dpx-modal-title">Beri Ulasan</h3>
@@ -640,15 +643,22 @@
         <form action="{{ route('user.review.store', $pesanan->id) }}" method="POST" id="reviewForm">
             @csrf
             <div class="star-rating" style="margin-bottom: 16px; font-size: 24px; color: #d1d5db; cursor: pointer;">
-                <span data-value="1">★</span><span data-value="2">★</span><span data-value="3">★</span><span data-value="4">★</span><span data-value="5">★</span>
+                <span data-value="1">★</span>
+                <span data-value="2">★</span>
+                <span data-value="3">★</span>
+                <span data-value="4">★</span>
+                <span data-value="5">★</span>
             </div>
             <input type="hidden" name="rating" id="ratingInput" required>
-
             <textarea name="comment" class="dpx-modal-textarea" rows="3" placeholder="Tulis komentar Anda (opsional)..."></textarea>
-
             <div class="dpx-modal-actions">
-                <button type="button" class="dpx-modal-btn dpx-modal-btn--ghost" onclick="document.getElementById('reviewModal').classList.remove('active')">Batal</button>
-                <button type="submit" class="dpx-modal-btn" style="background:var(--blue-600); color:white;">Kirim Ulasan</button>
+                <button type="button" class="dpx-modal-btn dpx-modal-btn--ghost"
+                        onclick="document.getElementById('reviewModal').classList.remove('active')">
+                    Batal
+                </button>
+                <button type="submit" class="dpx-modal-btn" style="background:var(--blue-600); color:white;">
+                    Kirim Ulasan
+                </button>
             </div>
         </form>
     </div>
@@ -656,102 +666,124 @@
 
 @endsection
 
+<script src="{{ config('services.midtrans.is_production')
+    ? 'https://app.midtrans.com/snap/snap.js'
+    : 'https://app.sandbox.midtrans.com/snap/snap.js' }}"
+    data-client-key="{{ config('services.midtrans.client_key') }}">
+</script>
+
 @push('scripts')
-    <script>
-        // Star Rating Logic
-        const stars = document.querySelectorAll('.star-rating span');
+<script>
+    function initDetailPesananListeners() {
+
+        // ── Star Rating ──
+        const stars       = document.querySelectorAll('.star-rating span');
         const ratingInput = document.getElementById('ratingInput');
 
-        stars.forEach(star => {
-            star.addEventListener('click', () => {
-                const value = star.getAttribute('data-value');
-                ratingInput.value = value;
-
-                stars.forEach(s => {
-                    if(s.getAttribute('data-value') <= value) {
-                        s.style.color = '#F59E0B'; // Gold
-                    } else {
-                        s.style.color = '#d1d5db'; // Gray
-                    }
+        if (stars.length && ratingInput) {
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const value = star.getAttribute('data-value');
+                    ratingInput.value = value;
+                    stars.forEach(s => {
+                        s.style.color = s.getAttribute('data-value') <= value ? '#F59E0B' : '#d1d5db';
+                    });
                 });
             });
-        });
-    </script>
+        }
 
-    @if($pesanan->status_bayar !== 'lunas' && $pesanan->total_bayar > 0 && $pesanan->status === 'menunggu_pembayaran')
-    <script src="{{ config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
-    <script>
-        document.getElementById('pay-button').onclick = function(){
-            const btn = this;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'Memproses...';
-            btn.disabled = true;
+        // ── Bayar Sekarang (Midtrans Snap) ──
+        const payButton = document.getElementById('pay-button');
+        if (payButton) {
+            payButton.onclick = function () {
+                const btn          = this;
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML      = 'Memproses...';
+                btn.disabled       = true;
 
-            // Dapatkan token lewat Ajax
-            fetch('{{ route("user.pesanan.bayar", $pesanan->id) }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                fetch('{{ route("user.pesanan.bayar", $pesanan->id) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    btn.innerHTML = originalHTML;
+                    btn.disabled  = false;
 
-                if (data.snap_token) {
-                    // Trigger Snap popup
-                    snap.pay(data.snap_token, {
-                        onSuccess: function(result){
-                            // Lakukan POST ke success callback lokal jika berhasil
-                            const form = document.createElement('form');
-                            form.method = 'POST';
-                            form.action = '{{ route("user.pesanan.success_callback", $pesanan->id) }}';
+                    if (data.snap_token) {
+                        snap.pay(data.snap_token, {
+                            onSuccess: function () {
+                                const form       = document.createElement('form');
+                                form.method      = 'POST';
+                                form.action      = '{{ route("user.pesanan.success_callback", $pesanan->id) }}';
+                                const csrf       = document.createElement('input');
+                                csrf.type        = 'hidden';
+                                csrf.name        = '_token';
+                                csrf.value       = '{{ csrf_token() }}';
+                                form.appendChild(csrf);
+                                document.body.appendChild(form);
+                                form.submit();
+                            },
+                            onPending: function () {
+                                alert('Menunggu pembayaran Anda!');
+                                window.location.reload();
+                            },
+                            onError: function () {
+                                alert('Pembayaran gagal!');
+                                window.location.reload();
+                            },
+                            onClose: function () {
+                                // user menutup popup tanpa membayar
+                            }
+                        });
+                    } else {
+                        alert('Gagal mendapatkan token: ' + (data.error || 'Terjadi kesalahan'));
+                    }
+                })
+                .catch(err => {
+                    btn.innerHTML = originalHTML;
+                    btn.disabled  = false;
+                    alert('Terjadi kesalahan koneksi');
+                    console.error(err);
+                });
+            };
+        }
 
-                            const csrfInput = document.createElement('input');
-                            csrfInput.type = 'hidden';
-                            csrfInput.name = '_token';
-                            csrfInput.value = '{{ csrf_token() }}';
+        // ── Auto-buka modal ulasan via query string ──
+        const showReview = new URLSearchParams(window.location.search).get('show_review') === '1';
+        const canReview  = {{ ($pesanan->isSelesai() && !$pesanan->review) ? 'true' : 'false' }};
+        if (showReview && canReview) {
+            const reviewModal = document.getElementById('reviewModal');
+            if (reviewModal) reviewModal.classList.add('active');
+        }
+    }
 
-                            form.appendChild(csrfInput);
-                            document.body.appendChild(form);
-                            form.submit();
-                        },
-                        onPending: function(result){
-                            alert("Menunggu pembayaran Anda!");
-                            window.location.reload();
-                        },
-                        onError: function(result){
-                            alert("Pembayaran gagal!");
-                            window.location.reload();
-                        },
-                        onClose: function(){
-                            // alert('Anda menutup popup sebelum menyelesaikan pembayaran');
-                        }
-                    });
-                } else {
-                    alert('Gagal mendapatkan token: ' + (data.error || 'Terjadi kesalahan'));
-                }
-            })
-            .catch(error => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                alert('Terjadi kesalahan koneksi');
-                console.error(error);
-            });
-        };
-    </script>
-    @endif
+    document.addEventListener('DOMContentLoaded', function () {
+        initDetailPesananListeners();
 
-    @if(request()->query('show_review') == '1' && $pesanan->isSelesai() && !$pesanan->review)
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var reviewModal = document.getElementById('reviewModal');
-            if (reviewModal) {
-                reviewModal.classList.add('active');
-            }
-        });
-    </script>
-    @endif
+        if (window.Echo) {
+            window.Echo.private(`user.{{ auth()->id() }}`)
+                .listen('.order.updated', () => {
+                    fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(res => res.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc    = parser.parseFromString(html, 'text/html');
+
+                            const selectors = ['.detail-page', '.page-bar', '#reviewModal'];
+                            selectors.forEach(sel => {
+                                const curr = document.querySelector(sel);
+                                const next = doc.querySelector(sel);
+                                if (curr && next) curr.innerHTML = next.innerHTML;
+                            });
+
+                            initDetailPesananListeners();
+                        });
+                });
+        }
+    });
+</script>
 @endpush

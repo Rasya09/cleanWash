@@ -60,17 +60,19 @@
             <svg class="ps-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input type="text" name="search" class="ps-search-input" id="psSearch" placeholder="Cari nomor pesanan atau nama pelanggan..." value="{{ request('search') }}">
+            <input type="text" name="search" class="ps-search-input" id="psSearch"
+                   placeholder="Cari nomor pesanan atau nama pelanggan..."
+                   value="{{ request('search') }}">
             <button type="submit" style="display: none;"></button>
         </form>
 
         {{-- Tabs + Actions --}}
         <div class="ps-toolbar">
             <div class="ps-tabs">
-                <a href="{{ route('mitra.pesanan', ['tab' => 'semua', 'search' => request('search')]) }}" class="ps-tab {{ request('tab', 'semua') == 'semua' ? 'ps-tab--active' : '' }}">Semua</a>
-                <a href="{{ route('mitra.pesanan', ['tab' => 'dibatalkan', 'search' => request('search')]) }}" class="ps-tab {{ request('tab') == 'dibatalkan' ? 'ps-tab--active' : '' }}">Dibatalkan</a>
-                <a href="{{ route('mitra.pesanan', ['tab' => 'proses', 'search' => request('search')]) }}" class="ps-tab {{ request('tab') == 'proses' ? 'ps-tab--active' : '' }}">Proses</a>
-                <a href="{{ route('mitra.pesanan', ['tab' => 'selesai', 'search' => request('search')]) }}" class="ps-tab {{ request('tab') == 'selesai' ? 'ps-tab--active' : '' }}">Selesai</a>
+                <a href="{{ route('mitra.pesanan', ['tab' => 'semua',      'search' => request('search')]) }}" class="ps-tab {{ request('tab', 'semua') == 'semua'      ? 'ps-tab--active' : '' }}">Semua</a>
+                <a href="{{ route('mitra.pesanan', ['tab' => 'dibatalkan', 'search' => request('search')]) }}" class="ps-tab {{ request('tab') == 'dibatalkan'            ? 'ps-tab--active' : '' }}">Dibatalkan</a>
+                <a href="{{ route('mitra.pesanan', ['tab' => 'proses',     'search' => request('search')]) }}" class="ps-tab {{ request('tab') == 'proses'                ? 'ps-tab--active' : '' }}">Proses</a>
+                <a href="{{ route('mitra.pesanan', ['tab' => 'selesai',    'search' => request('search')]) }}" class="ps-tab {{ request('tab') == 'selesai'               ? 'ps-tab--active' : '' }}">Selesai</a>
             </div>
             <div class="ps-actions">
                 <button class="ps-btn-action" id="btnFilter">
@@ -105,25 +107,25 @@
                     @forelse($orders as $order)
                         @php
                             $badgeClass = match($order->status) {
-                                'selesai' => 'ps-badge--selesai',
+                                'selesai'                    => 'ps-badge--selesai',
                                 'dibatalkan', 'gagal_pickup' => 'ps-badge--batal',
-                                default => 'ps-badge--proses',
+                                default                      => 'ps-badge--proses',
                             };
                             $badgeLabel = match($order->status) {
-                                'selesai' => 'SELESAI',
-                                'dibatalkan' => 'DIBATALKAN',
-                                'gagal_pickup' => 'GAGAL PICKUP',
-                                'masuk' => 'MASUK',
-                                'aktif' => 'AKTIF',
-                                'pickup' => 'PICKUP',
-                                'menunggu_pembayaran' => 'BAYAR',
-                                'diproses' => 'DIPROSES',
-                                'pengantaran' => 'DIANTAR',
-                                default => strtoupper($order->status)
+                                'selesai'              => 'SELESAI',
+                                'dibatalkan'           => 'DIBATALKAN',
+                                'gagal_pickup'         => 'GAGAL PICKUP',
+                                'masuk'                => 'MASUK',
+                                'aktif'                => 'AKTIF',
+                                'pickup'               => 'PICKUP',
+                                'menunggu_pembayaran'  => 'BAYAR',
+                                'diproses'             => 'DIPROSES',
+                                'pengantaran'          => 'DIANTAR',
+                                default                => strtoupper($order->status),
                             };
-                            $initial = strtoupper(substr($order->user->name ?? '?', 0, 2));
+                            $initial       = strtoupper(substr($order->user->name ?? '?', 0, 2));
                             $avatarClasses = ['ps-avatar--blue', 'ps-avatar--green', 'ps-avatar--orange', 'ps-avatar--gray'];
-                            $avatarClass = $avatarClasses[$order->user_id % 4] ?? 'ps-avatar--gray';
+                            $avatarClass   = $avatarClasses[$order->user_id % 4] ?? 'ps-avatar--gray';
                         @endphp
                         <tr>
                             <td>
@@ -143,7 +145,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center" style="padding: 40px 0;">
+                            <td colspan="6" style="padding: 40px 0;">
                                 <div class="ps-empty" style="display:flex; flex-direction:column; align-items:center;">
                                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
@@ -160,7 +162,7 @@
 
         {{-- Pagination --}}
         @if($orders->hasPages())
-        {{ $orders->appends(request()->query())->links('mitra.layouts.pagination', ['prefix' => 'ps-']) }}
+            {{ $orders->appends(request()->query())->links('mitra.layouts.pagination', ['prefix' => 'ps-']) }}
         @endif
 
     </div>
@@ -169,12 +171,22 @@
 
 @push('scripts')
 <script>
-// Logic pencarian otomatis submit ketika enter
-document.getElementById('psSearch').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        this.closest('form').submit();
-    }
-});
+    // Submit form pencarian saat tekan Enter
+    document.getElementById('psSearch').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            this.closest('form').submit();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.Echo) {
+            // ✅ Gunakan channel mitra, bukan user
+            window.Echo.private(`mitra.{{ auth()->id() }}`)
+                .listen('.order.updated', () => {
+                    window.location.reload();
+                });
+        }
+    });
 </script>
 @endpush

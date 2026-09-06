@@ -123,7 +123,7 @@ class AuthController extends Controller
 
             if (Auth::user()->role == 'mitra') {
 
-                return redirect('/user/home');
+                return redirect('/mitra/dashboard');
             }
 
 

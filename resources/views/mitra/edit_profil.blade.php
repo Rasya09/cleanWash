@@ -159,7 +159,21 @@ Swal.fire({
                 <label class="form-label">
                 Alamat Lengkap <span class="required">*</span>
                 </label>
-                <textarea class="form-textarea" style="min-height:76px;" name="address" placeholder="Contoh: Jl. Melati No.12, RT 03/RW 05">{{ old('address', $mitra->address) }}</textarea>
+                <textarea
+                    class="form-textarea"
+                    style="min-height:76px;"
+                    name="address"
+                    id="address"
+                    maxlength="250"
+                    placeholder="Contoh: Jl. Melati No.12, RT 03/RW 05"
+                    oninput="countChar('address','count-address',250)"
+                >{{ old('address', $mitra->address) }}</textarea>
+
+                <div class="char-count">
+                    <span id="count-address">
+                        {{ strlen(old('address', $mitra->address ?? '')) }}
+                    </span>/250
+                </div>
             </div>
 
             <!-- No Telepon -->

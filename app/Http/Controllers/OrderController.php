@@ -218,6 +218,8 @@ class OrderController extends Controller
             );
         });
 
+        broadcast(new \App\Events\OrderStatusUpdated($order));
+
         return redirect()
             ->route('user.pesanan')
             ->with('success', 'Pesanan berhasil dibatalkan.');
